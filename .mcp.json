@@ -1,0 +1,45 @@
+{
+  "mcpServers": {
+    "meta-ads": {
+      "command": "uvx",
+      "args": ["meta-ads-mcp-local@latest"],
+      "env": {
+        "META_ACCESS_TOKEN": "${META_ACCESS_TOKEN}",
+        "META_APP_SECRET": "${META_APP_SECRET}"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest", "--headless"]
+    },
+    "google-sheets": {
+      "command": "uvx",
+      "args": ["mcp-google-sheets@latest"],
+      "env": {
+        "GOOGLE_CREDENTIALS_PATH": "./credentials.json",
+        "GOOGLE_TOKEN_PATH": "./token.json"
+      }
+    },
+    "figma": {
+      "command": "npx",
+      "args": ["figma-developer/figma-mcp"],
+      "env": {
+        "FIGMA_ACCESS_TOKEN": "${FIGMA_ACCESS_TOKEN}"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "@anthropic/mcp-filesystem",
+        "./tools",
+        "./workflows",
+        "./config",
+        "./.tmp"
+      ]
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-fetch"]
+    }
+  }
+}

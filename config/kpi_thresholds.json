@@ -1,0 +1,102 @@
+{
+  "review_settings": {
+    "review_frequency_days": 3,
+    "minimum_spend_before_review_eur": 15,
+    "minimum_impressions_before_review": 500,
+    "notes": "Do not make optimisation decisions until an ad has met ALL minimum thresholds. Premature kills waste budget on learning phase."
+  },
+  "brand_kpis": {
+    "carisma_spa": {
+      "brand_name": "Carisma Spa",
+      "brand_code": "CS",
+      "cpl_target_eur": 8.00,
+      "cpl_kill_threshold_eur": 16.00,
+      "ctr_minimum_pct": 1.0,
+      "cpc_maximum_eur": 1.50,
+      "conversion_rate_target_pct": 5.0,
+      "roas_target": null,
+      "frequency_cap_warning": 2.5,
+      "frequency_cap_kill": 4.0,
+      "notes": "CPL kill threshold is 2x the target. CTR below 1% signals weak creative or wrong audience."
+    },
+    "carisma_aesthetics": {
+      "brand_name": "Carisma Aesthetics",
+      "brand_code": "CA",
+      "cpl_target_eur": 12.00,
+      "cpl_kill_threshold_eur": 24.00,
+      "ctr_minimum_pct": 0.8,
+      "cpc_maximum_eur": 2.00,
+      "conversion_rate_target_pct": 4.0,
+      "roas_target": null,
+      "frequency_cap_warning": 2.5,
+      "frequency_cap_kill": 4.0,
+      "notes": "Aesthetics has higher CPL due to higher intent required. CTR threshold slightly lower due to niche audience."
+    }
+  },
+  "winner_criteria": {
+    "description": "An ad or ad set is classified as a WINNER when ALL of the following conditions are met.",
+    "conditions": {
+      "cpl_below_target": {
+        "description": "Cost per lead is at or below the brand's CPL target",
+        "check": "cpl <= brand.cpl_target_eur"
+      },
+      "minimum_leads": {
+        "description": "Ad has generated a minimum number of leads to be statistically meaningful",
+        "value": 5,
+        "check": "leads >= 5"
+      },
+      "minimum_spend_eur": {
+        "description": "Ad has spent enough to be past the learning phase",
+        "value": 30,
+        "check": "spend >= 30"
+      }
+    },
+    "action": "Scale budget by 20-30%. Duplicate to new audiences. Create variations of the winning hook."
+  },
+  "loser_criteria": {
+    "description": "An ad or ad set is classified as a LOSER when ALL of the following conditions are met.",
+    "conditions": {
+      "cpl_above_kill_threshold": {
+        "description": "Cost per lead exceeds the brand's kill threshold (2x CPL target)",
+        "check": "cpl > brand.cpl_kill_threshold_eur"
+      },
+      "minimum_spend_eur": {
+        "description": "Ad has spent enough to be fairly evaluated",
+        "value": 30,
+        "check": "spend >= 30"
+      },
+      "leads_below_minimum": {
+        "description": "Ad has generated fewer leads than the minimum threshold despite sufficient spend",
+        "value": 2,
+        "check": "leads < 2"
+      }
+    },
+    "action": "Pause the ad immediately. Analyse why it failed (hook, targeting, offer, or landing page). Document learnings."
+  },
+  "watchlist_criteria": {
+    "description": "Ads that don't clearly qualify as winner or loser. Keep running but monitor closely at next review.",
+    "conditions": {
+      "cpl_between_target_and_kill": {
+        "check": "brand.cpl_target_eur < cpl <= brand.cpl_kill_threshold_eur"
+      },
+      "or_insufficient_data": {
+        "check": "spend < minimum_spend_before_review_eur OR impressions < minimum_impressions_before_review"
+      }
+    },
+    "action": "Continue running. Review at next scheduled review cycle. Consider minor adjustments (audience, bid, creative refresh)."
+  },
+  "alert_thresholds": {
+    "daily_budget_overspend_pct": 20,
+    "cpl_spike_pct": 50,
+    "ctr_drop_pct": 40,
+    "frequency_warning": 2.5,
+    "no_leads_after_spend_eur": 25,
+    "description": "Trigger an alert notification when any of these thresholds are breached within a single day."
+  },
+  "_metadata": {
+    "version": "1.0.0",
+    "last_updated": "2026-02-15",
+    "updated_by": "system_init",
+    "notes": "Thresholds should be reviewed and adjusted monthly based on historical performance data."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx get-shit-done-cc@latest --claude --global)",
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python3:*)",
+      "Bash(open:*)",
+      "Bash(pbcopy:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(claude plugin marketplace add:*)"
+    ]
+  }
+}

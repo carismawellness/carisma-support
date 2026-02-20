@@ -1,0 +1,116 @@
+# Carisma Support — Git Ignore File
+
+# ============================================================================
+# ENVIRONMENT & CREDENTIALS (NEVER COMMIT)
+# ============================================================================
+.env
+.env.local
+.env.*.local
+credentials.json
+token.json
+*.pem
+*.key
+*.crt
+
+# ============================================================================
+# IDE & EDITOR
+# ============================================================================
+.vscode/
+.claude/
+*.code-workspace
+.DS_Store
+Thumbs.db
+
+# ============================================================================
+# TEMPORARY & CACHE FILES
+# ============================================================================
+.tmp/
+.cache/
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# ============================================================================
+# RESEARCH & WORKING DIRECTORIES (Keep structure, ignore content)
+# ============================================================================
+.tmp/research/
+.tmp/scripts/
+.tmp/briefs/
+.tmp/performance/
+.tmp/creatives/
+
+# ============================================================================
+# LOGS & DEBUG FILES
+# ============================================================================
+*.log
+*.log.*
+debug.txt
+error.log
+
+# ============================================================================
+# OS FILES
+# ============================================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+
+# ============================================================================
+# NODE & PYTHON (if used in future)
+# ============================================================================
+node_modules/
+venv/
+__pycache__/
+*.pyc
+
+# ============================================================================
+# LOCK FILES (keep for reproducibility, but can ignore if team consensus)
+# ============================================================================
+# package-lock.json
+# yarn.lock
+
+# ============================================================================
+# WINDOWS SPECIFICS
+# ============================================================================
+*.lnk
+$RECYCLE.BIN/
+
+# ============================================================================
+# ALLOW THESE (don't ignore)
+# ============================================================================
+# Knowledge files - always track
+!knowledge/
+!knowledge/**/*.md
+
+# Config files - always track
+!config/
+!config/**/*.md
+!config/**/*.json
+
+# Skill files - always track
+!skills/
+!skills/**/*.md
+
+# Templates - always track
+!templates/
+!templates/**/*.md
+
+# Locations - always track
+!locations/
+!locations/**/*.md
+
+# Hooks - always track
+!hooks/
+!hooks/**/*.bat
+!hooks/**/*.md
+
+# Docs - always track
+!docs/
+!docs/**/*.md
+
+# GitHub - always track
+!.github/
+!.github/**/*
