@@ -1,0 +1,100 @@
+{
+  "brand": "SPA",
+  "version": "1.0",
+  "description": "Brand voice validation rules for Carisma Spa & Wellness",
+
+  "forbidden_phrases": [
+    {
+      "pattern": "pamper yourself",
+      "reason": "Cliché wellness phrase",
+      "suggestion": "Take a moment for yourself"
+    },
+    {
+      "pattern": "treat yourself",
+      "reason": "Cliché wellness phrase",
+      "suggestion": "Take time for yourself"
+    },
+    {
+      "pattern": "amazing|fantastic|awesome",
+      "reason": "Overused marketing clichés",
+      "suggestion": "Use sensory or emotional language instead"
+    },
+    {
+      "pattern": "hurry|rush|urgent|limited.?time|book now|don't miss",
+      "reason": "Aggressive sales talk (conflicts with peaceful tone)",
+      "suggestion": "Invite gently: 'Whenever you're ready'"
+    },
+    {
+      "pattern": "we welcome all customers|our facilities",
+      "reason": "Generic, impersonal language",
+      "suggestion": "Make it personal: 'You're not just welcome. You belong.'"
+    },
+    {
+      "pattern": "perfect for.*holiday|spa.*vacation|spa.*escape",
+      "reason": "Touristy language (not luxury wellness)",
+      "suggestion": "Focus on transformation: 'A sanctuary, even if only for an hour'"
+    },
+    {
+      "pattern": "myofascial|lymphatic|circulation|pressure technique",
+      "reason": "Clinical/technical language (avoid medical jargon)",
+      "suggestion": "Use sensory language: 'Ease the tension. Feel whole again.'"
+    }
+  ],
+
+  "required_tone_markers": {
+    "sensory_words": [
+      "warm", "warmth", "soft", "gentle", "stillness", "breath",
+      "ease", "float", "melt", "flow", "pause", "silence",
+      "touch", "light", "stone", "soothe", "calm", "peace",
+      "serenity", "tranquil", "sanctuary", "anchor"
+    ],
+    "second_person": [
+      "you", "your", "yourself"
+    ],
+    "transformation_words": [
+      "return", "journey", "awakening", "restore", "reconnect",
+      "realign", "rebalance", "transform", "elevate", "become",
+      "heal", "refresh", "revive", "renew"
+    ],
+    "purpose_words": [
+      "wellbeing", "wellness", "purpose", "intention", "care",
+      "nurture", "holistic", "soul", "mind", "body", "spirit"
+    ]
+  },
+
+  "validation_rules": [
+    {
+      "name": "check_forbidden_phrases",
+      "description": "Reject messages containing forbidden phrases",
+      "severity": "high",
+      "enabled": true
+    },
+    {
+      "name": "check_second_person",
+      "description": "Warn if message doesn't use second-person perspective",
+      "severity": "medium",
+      "enabled": true,
+      "threshold": "Should contain at least one 'you' or 'your'"
+    },
+    {
+      "name": "check_sensory_language",
+      "description": "Warn if message lacks sensory words (optional for short responses)",
+      "severity": "low",
+      "enabled": true,
+      "threshold": "Recommended for messages longer than 2 sentences"
+    },
+    {
+      "name": "check_clinical_language",
+      "description": "Warn about clinical or technical jargon",
+      "severity": "high",
+      "enabled": true
+    }
+  ],
+
+  "feedback_templates": {
+    "forbidden_phrase_found": "⚠️ Brand Voice Check\nFound: \"{phrase}\"\nIssue: {reason}\nSuggestion: {suggestion}\n\nAllow override? (Y/N)",
+    "missing_second_person": "💡 Tone Tip\nTry using 'you' or 'your' to create intimacy.\nExample: \"You deserve a moment of stillness.\"",
+    "lacks_sensory_language": "💡 Tone Tip\nConsider adding sensory words: warmth, stillness, breath, gentle, ease\nExample: \"Ease the tension. Let go. Feel whole again.\"",
+    "clinical_language_warning": "⚠️ Tone Check\nThis sounds clinical. Try sensory language instead:\n\"{suggestion}\""
+  }
+}
