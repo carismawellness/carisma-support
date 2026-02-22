@@ -21,11 +21,13 @@ Three frameworks shape how the knowledge base captures intelligence from agents 
 
 ## Overview
 
-Claude's answers are only as good as the knowledge it reads. If the KB contains outdated prices or wrong opening hours, every customer who asks receives wrong information.
+Claude's answers are only as good as the knowledge it reads. If the KB contains outdated prices or wrong opening hours, every customer who asks receives wrong information. Beyond accuracy: if the KB doesn't capture what agents learn about what converts—what objections surface repeatedly, what messaging resonates, what moments matter most—the entire system stays static.
 
 Simultaneously, agents are on the front line learning things Claude doesn't know yet. That intelligence must enter the system quickly.
 
 The two-tier system resolves this tension: agents contribute instantly through `shared-inbox.md` (fast capture without false certainty). When a manager confirms the entry, it is promoted to `shared-knowledge.md` (the layer Claude treats as fact).
+
+**Continuous Improvement Principle:** The best sales system is a learning system. Every agent interaction is data. When an agent learns something that worked—a phrase that closed a hesitant customer, a question that uncovered a real objection, a timing that converted better—that learning belongs in the KB. The system captures it, Claude uses it, the next agent applies it, and conversion improves. This is how the 14 skills stay sharp.
 
 ---
 
