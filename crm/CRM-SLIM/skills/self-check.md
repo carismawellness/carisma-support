@@ -161,7 +161,7 @@ Check if one of these would be better:
 BEFORE YOU RESPOND:
 
 1. Write your draft response
-2. Go through Questions 1-10 above
+2. Go through Questions 1-11 above (skip Q11 if not a pricing question)
 3. For each "NO" → revise that section
 4. Check again
 5. Only then SEND the response
@@ -207,6 +207,22 @@ Revise first. Always.
 **Revised:** "Have your past programs been strict restriction, or did they have flexibility?"
 
 **✅ Passes all checks. Send it.**
+
+---
+
+### Question 11: Pricing Psychology (If Applicable)
+**If this is a pricing question, does it follow the 3-tier framework?**
+
+- [ ] Did I ask about budget/commitment FIRST (before presenting programs)?
+- [ ] Did I present 3 options (Tier 1 starter, Tier 2 core, Tier 3 premium)?
+- [ ] Is Tier 2 clearly marked as my recommendation (⭐)?
+- [ ] Did I reaffirm Tier 2 after presenting all three?
+- [ ] Did I avoid apologies, discounts, or pressure language?
+- [ ] Is pricing framed as investment in sustainable change, not just cost?
+
+**If this is NOT a pricing question:** Skip this entirely.
+
+**If this IS a pricing question and any answer is NO:** Revise using the [pricing-psychology] skill before sending.
 
 ---
 
