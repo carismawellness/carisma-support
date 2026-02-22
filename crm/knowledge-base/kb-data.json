@@ -4,18 +4,38 @@
     "generated": "2026-02-22T12:00:00Z",
     "last_updated": "2026-02-22T12:00:00Z",
     "total_entries": 10,
-    "brands": ["SPA", "AES", "SLIM"]
+    "brands": [
+      "SPA",
+      "AES",
+      "SLIM"
+    ]
   },
   "entries": [
     {
       "qid": "S1.1",
       "section": "Booking & Scheduling",
       "tier": 1,
-      "brands": ["ALL"],
+      "brands": [
+        "ALL"
+      ],
       "question": "How do I book an appointment?",
       "answer": "You can book an appointment through multiple channels. Online booking is available 24/7 on our website or through the Fresha app. You can also call our team directly during business hours or visit us in person at any of our locations. Simply select your preferred treatment, date, and time. We recommend booking at least 2-3 days in advance to secure your preferred time slot. The booking process is identical across all Carisma brands (Spa, Aesthetics, and Slimming).",
-      "keywords": ["24-hour", "appointment", "booking", "call", "first-time", "how-to", "online-booking", "phone-booking", "reserve", "schedule"],
-      "related_qids": ["S1.2", "S4.1"],
+      "keywords": [
+        "24-hour",
+        "appointment",
+        "booking",
+        "call",
+        "first-time",
+        "how-to",
+        "online-booking",
+        "phone-booking",
+        "reserve",
+        "schedule"
+      ],
+      "related_qids": [
+        "S1.2",
+        "S4.1"
+      ],
       "status": "ACTIVE",
       "owner": "Kath Mico",
       "verified_date": "2026-02-20",
@@ -26,11 +46,29 @@
       "qid": "S1.2",
       "section": "Booking & Scheduling",
       "tier": 1,
-      "brands": ["ALL"],
+      "brands": [
+        "ALL"
+      ],
       "question": "What is your cancellation policy?",
       "answer": "We offer a 24-hour cancellation window. You can cancel or reschedule your appointment free of charge up to 24 hours before your scheduled time. Cancellations made within 24 hours of your appointment may incur a cancellation fee equal to the treatment price. To cancel, contact us via phone, email, or through the Fresha app. We understand that life happens, and we're here to work with you on rescheduling whenever possible.",
-      "keywords": ["24-hour", "cancel", "cancelation", "cancellation", "cancellation-fee", "cancellation-policy", "fee", "free", "policy", "refund", "reschedule"],
-      "related_qids": ["S1.1", "S4.1", "S4.2"],
+      "keywords": [
+        "24-hour",
+        "cancel",
+        "cancelation",
+        "cancellation",
+        "cancellation-fee",
+        "cancellation-policy",
+        "fee",
+        "free",
+        "policy",
+        "refund",
+        "reschedule"
+      ],
+      "related_qids": [
+        "S1.1",
+        "S4.1",
+        "S4.2"
+      ],
       "status": "ACTIVE",
       "owner": "Adeel",
       "verified_date": "2026-02-19",
@@ -41,11 +79,35 @@
       "qid": "S2.1",
       "section": "Pricing & Offers",
       "tier": 2,
-      "brands": ["SLIM"],
+      "brands": [
+        "SLIM"
+      ],
       "question": "What are the current package prices for Slimming programs?",
-      "answer": "Our Slimming packages start at €199 for our Starter program, which includes 4 sessions over 8 weeks with personalized nutrition guidance and holistic wellness support. We offer tiered packages based on your goals: Starter (€199), Essential (€349), and Premium (€599). Each package includes access to our online wellness portal, monthly check-ins with our specialists, and access to our supportive community. Current promotions may apply—please ask about any active offers when booking.",
-      "keywords": ["199", "349", "599", "cost", "essential", "investment", "offer", "package", "premium", "price", "pricing", "promotion", "service", "slimming", "slimming-package", "starter", "support", "transformation", "wellness-journey"],
-      "related_qids": ["S2.2"],
+      "answer": "Our Slimming packages start at \u20ac199 for our Starter program, which includes 4 sessions over 8 weeks with personalized nutrition guidance and holistic wellness support. We offer tiered packages based on your goals: Starter (\u20ac199), Essential (\u20ac349), and Premium (\u20ac599). Each package includes access to our online wellness portal, monthly check-ins with our specialists, and access to our supportive community. Current promotions may apply\u2014please ask about any active offers when booking.",
+      "keywords": [
+        "199",
+        "349",
+        "599",
+        "cost",
+        "essential",
+        "investment",
+        "offer",
+        "package",
+        "premium",
+        "price",
+        "pricing",
+        "promotion",
+        "service",
+        "slimming",
+        "slimming-package",
+        "starter",
+        "support",
+        "transformation",
+        "wellness-journey"
+      ],
+      "related_qids": [
+        "S2.2"
+      ],
       "status": "ACTIVE",
       "owner": "Mert Gulen",
       "verified_date": "2026-02-20",
@@ -56,11 +118,33 @@
       "qid": "S2.2",
       "section": "Pricing & Offers",
       "tier": 2,
-      "brands": ["ALL"],
+      "brands": [
+        "ALL"
+      ],
       "question": "Do you offer gift certificates or vouchers?",
-      "answer": "Yes, we offer gift cards and vouchers in standard denominations of €50, €100, and €150. Gift cards can be purchased online, by phone, or in person at any of our locations. They can be used for any treatment or package across all three brands (Spa, Aesthetics, Slimming). Gift cards are valid for 12 months from the date of purchase and can be redeemed at any Carisma location. Custom amounts are also available—just contact us for details.",
-      "keywords": ["50", "100", "150", "buy-gift", "gift", "gift-card", "gift-certificate", "gift-idea", "gift-50", "gift-100", "gift-150", "offer", "present", "redemption", "valid-12-months", "voucher"],
-      "related_qids": ["S2.1", "S1.1"],
+      "answer": "Yes, we offer gift cards and vouchers in standard denominations of \u20ac50, \u20ac100, and \u20ac150. Gift cards can be purchased online, by phone, or in person at any of our locations. They can be used for any treatment or package across all three brands (Spa, Aesthetics, Slimming). Gift cards are valid for 12 months from the date of purchase and can be redeemed at any Carisma location. Custom amounts are also available\u2014just contact us for details.",
+      "keywords": [
+        "50",
+        "100",
+        "150",
+        "buy-gift",
+        "gift",
+        "gift-card",
+        "gift-certificate",
+        "gift-idea",
+        "gift-50",
+        "gift-100",
+        "gift-150",
+        "offer",
+        "present",
+        "redemption",
+        "valid-12-months",
+        "voucher"
+      ],
+      "related_qids": [
+        "S2.1",
+        "S1.1"
+      ],
       "status": "ACTIVE",
       "owner": "Rana",
       "verified_date": "2026-02-18",
@@ -71,11 +155,33 @@
       "qid": "S3.1",
       "section": "Treatment Details (Spa)",
       "tier": 2,
-      "brands": ["SPA"],
+      "brands": [
+        "SPA"
+      ],
       "question": "How long does a massage treatment last?",
       "answer": "Our massage treatments vary in duration depending on the style and focus. A standard full-body massage lasts 50-60 minutes and includes warm stone therapy, aromatic oils, and our signature Turkish spa techniques. Facial treatments typically last 30-40 minutes. We also offer express 30-minute treatments for busy schedules and extended 90-minute full-body treatments for deep restoration. All treatment times include time for consultation, dressing, and transition. We recommend arriving 10-15 minutes early to allow time to settle into our sanctuary.",
-      "keywords": ["30-40-minutes", "30-minute", "50-60-minutes", "90-minute", "duration", "express", "facial", "full-body", "how-long", "massage", "sanctuary", "spa-treatment", "time", "treatment", "turkish-spa", "warm-stone"],
-      "related_qids": ["S3.2", "S1.1"],
+      "keywords": [
+        "30-40-minutes",
+        "30-minute",
+        "50-60-minutes",
+        "90-minute",
+        "duration",
+        "express",
+        "facial",
+        "full-body",
+        "how-long",
+        "massage",
+        "sanctuary",
+        "spa-treatment",
+        "time",
+        "treatment",
+        "turkish-spa",
+        "warm-stone"
+      ],
+      "related_qids": [
+        "S3.2",
+        "S1.1"
+      ],
       "status": "ACTIVE",
       "owner": "Kath Mico",
       "verified_date": "2026-02-21",
@@ -86,11 +192,38 @@
       "qid": "S3.2",
       "section": "Treatment Details (Aesthetics)",
       "tier": 3,
-      "brands": ["AES"],
+      "brands": [
+        "AES"
+      ],
       "question": "What results can I expect from aesthetic treatments?",
       "answer": "Results vary based on the specific treatment and your individual circumstances. Our aesthetic treatments are designed to enhance your natural features and support your wellness goals. For non-invasive treatments like skin rejuvenation, most clients notice improved skin texture and radiance within 2-4 weeks with a series of treatments. For body contouring procedures, visible results typically appear over 4-12 weeks as the body naturally processes treated areas. Our specialists will provide a personalized timeline during your consultation. Results are best maintained with recommended follow-up treatments and a holistic wellness approach.",
-      "keywords": ["2-4-weeks", "4-12-weeks", "aesthetic", "anti-aging", "benefits", "body-contouring", "clinical", "enhancement", "glow", "improvement", "non-invasive", "procedure", "radiance", "rejuvenation", "results", "skin", "timeline", "treatment", "transformation", "visible-change", "what-to-expect"],
-      "related_qids": ["S3.1", "S5.1"],
+      "keywords": [
+        "2-4-weeks",
+        "4-12-weeks",
+        "aesthetic",
+        "anti-aging",
+        "benefits",
+        "body-contouring",
+        "clinical",
+        "enhancement",
+        "glow",
+        "improvement",
+        "non-invasive",
+        "procedure",
+        "radiance",
+        "rejuvenation",
+        "results",
+        "skin",
+        "timeline",
+        "treatment",
+        "transformation",
+        "visible-change",
+        "what-to-expect"
+      ],
+      "related_qids": [
+        "S3.1",
+        "S5.1"
+      ],
       "status": "REVIEW_NEEDED",
       "owner": "Rana",
       "verified_date": "2026-02-15",
@@ -101,11 +234,29 @@
       "qid": "S4.1",
       "section": "Cancellation & Rescheduling",
       "tier": 1,
-      "brands": ["ALL"],
+      "brands": [
+        "ALL"
+      ],
       "question": "Can I reschedule my appointment?",
       "answer": "Absolutely. You can reschedule your appointment for free up to 24 hours before your scheduled time. To reschedule, contact us via phone, email, or through the Fresha app. Simply let us know your preferred new date and time, and we'll do our best to accommodate your request. If you need to reschedule within 24 hours, a rescheduling fee may apply. Our team is flexible and committed to finding a time that works for you, so please reach out as soon as possible if your plans change.",
-      "keywords": ["24-hour", "appointment", "change-time", "flexible", "free", "how-to", "modify", "postpone", "reschedule", "rescheduling", "rescheduling-fee", "reschedule-appointment"],
-      "related_qids": ["S1.2", "S4.2"],
+      "keywords": [
+        "24-hour",
+        "appointment",
+        "change-time",
+        "flexible",
+        "free",
+        "how-to",
+        "modify",
+        "postpone",
+        "reschedule",
+        "rescheduling",
+        "rescheduling-fee",
+        "reschedule-appointment"
+      ],
+      "related_qids": [
+        "S1.2",
+        "S4.2"
+      ],
       "status": "ACTIVE",
       "owner": "Adeel",
       "verified_date": "2026-02-20",
@@ -116,11 +267,32 @@
       "qid": "S4.2",
       "section": "Cancellation & Rescheduling",
       "tier": 2,
-      "brands": ["ALL"],
+      "brands": [
+        "ALL"
+      ],
       "question": "What happens if I miss my appointment?",
-      "answer": "If you miss your appointment without notice, our no-show policy applies. A no-show fee equal to 50% of the treatment price is charged to your account. This helps us reserve time specifically for our guests and supports our team's scheduling. If you know you cannot make your appointment, please cancel or reschedule as early as possible—ideally 24 hours in advance. If you have an emergency, contact us immediately and we'll work with you to reschedule at no additional charge. We offer a grace period of 15 minutes—if you arrive within 15 minutes of your appointment time, we'll do our best to accommodate you.",
-      "keywords": ["15-minute-grace", "absence", "appointment", "cancel", "charge", "emergency", "fee", "grace-period", "late", "miss", "missed", "no-show", "no-show-fee", "no-show-policy", "policy"],
-      "related_qids": ["S1.2", "S4.1"],
+      "answer": "If you miss your appointment without notice, our no-show policy applies. A no-show fee equal to 50% of the treatment price is charged to your account. This helps us reserve time specifically for our guests and supports our team's scheduling. If you know you cannot make your appointment, please cancel or reschedule as early as possible\u2014ideally 24 hours in advance. If you have an emergency, contact us immediately and we'll work with you to reschedule at no additional charge. We offer a grace period of 15 minutes\u2014if you arrive within 15 minutes of your appointment time, we'll do our best to accommodate you.",
+      "keywords": [
+        "15-minute-grace",
+        "absence",
+        "appointment",
+        "cancel",
+        "charge",
+        "emergency",
+        "fee",
+        "grace-period",
+        "late",
+        "miss",
+        "missed",
+        "no-show",
+        "no-show-fee",
+        "no-show-policy",
+        "policy"
+      ],
+      "related_qids": [
+        "S1.2",
+        "S4.1"
+      ],
       "status": "ACTIVE",
       "owner": "Mert Gulen",
       "verified_date": "2026-02-20",
@@ -131,11 +303,36 @@
       "qid": "S5.1",
       "section": "Payment & Refunds",
       "tier": 2,
-      "brands": ["ALL"],
+      "brands": [
+        "ALL"
+      ],
       "question": "What payment methods do you accept?",
       "answer": "We accept multiple payment methods for your convenience. We take all major credit and debit cards (Visa, Mastercard, American Express), bank transfers, and cash payments. Online bookings and gift card purchases can be completed via card or bank transfer. Payment can be made at the time of booking, during your appointment, or through our Fresha platform. For corporate bookings or large purchases, we offer flexible payment arrangements. If you have questions about payment options, please contact our team.",
-      "keywords": ["accept", "american-express", "amex", "bank-transfer", "card", "cash", "corporate", "credit", "debit", "flexible-payment", "how-to-pay", "mastercard", "method", "pay", "payment", "payment-method", "payment-options", "payment-process", "visa"],
-      "related_qids": ["S2.2", "S1.1"],
+      "keywords": [
+        "accept",
+        "american-express",
+        "amex",
+        "bank-transfer",
+        "card",
+        "cash",
+        "corporate",
+        "credit",
+        "debit",
+        "flexible-payment",
+        "how-to-pay",
+        "mastercard",
+        "method",
+        "pay",
+        "payment",
+        "payment-method",
+        "payment-options",
+        "payment-process",
+        "visa"
+      ],
+      "related_qids": [
+        "S2.2",
+        "S1.1"
+      ],
       "status": "ACTIVE",
       "owner": "Abid",
       "verified_date": "2026-02-19",
@@ -146,11 +343,30 @@
       "qid": "D1.1",
       "section": "Booking & Scheduling",
       "tier": 1,
-      "brands": ["ALL"],
+      "brands": [
+        "ALL"
+      ],
       "question": "How do I reschedule my booking?",
       "answer": "You can reschedule your booking for free up to 24 hours before your scheduled appointment time. Contact us via phone, email, or through the Fresha app with your preferred new date and time. Our team will work to accommodate your request whenever possible. Rescheduling requested within 24 hours of your appointment may incur a fee. We understand that plans change, and we're here to support your wellness journey with flexible scheduling options.",
-      "keywords": ["24-hour", "appointment", "booking", "change", "change-time", "flexible", "flexible-scheduling", "free", "how-to", "reschedule", "reschedule-booking", "rescheduling", "wellness-journey"],
-      "related_qids": ["S4.1", "S1.2"],
+      "keywords": [
+        "24-hour",
+        "appointment",
+        "booking",
+        "change",
+        "change-time",
+        "flexible",
+        "flexible-scheduling",
+        "free",
+        "how-to",
+        "reschedule",
+        "reschedule-booking",
+        "rescheduling",
+        "wellness-journey"
+      ],
+      "related_qids": [
+        "S4.1",
+        "S1.2"
+      ],
       "status": "ARCHIVED",
       "owner": "Mert Gulen",
       "verified_date": "2026-02-22",
