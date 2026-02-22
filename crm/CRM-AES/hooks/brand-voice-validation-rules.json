@@ -5,97 +5,106 @@
 
   "forbidden_phrases": [
     {
-      "pattern": "pamper yourself|treat yourself",
-      "reason": "Cliché wellness phrases",
-      "suggestion": "Take a moment for yourself"
+      "pattern": "fix|fixing|flaws|problem skin|imperfections|defects",
+      "reason": "Negative framing (focus on enhancement, not fixing)",
+      "suggestion": "Use: 'Enhance your natural glow' or 'Reveal your best self'"
     },
     {
-      "pattern": "amazing|fantastic|awesome",
-      "reason": "Overused marketing clichés",
-      "suggestion": "Use sensory or emotional language instead"
+      "pattern": "book now|limited spots|hurry|urgent|don't miss",
+      "reason": "Aggressive sales talk (contradicts graceful, confident tone)",
+      "suggestion": "Use: 'Ready to feel radiant? Schedule your consultation when convenient'"
     },
     {
-      "pattern": "hurry|rush|urgent|limited.?time|book now|don't miss",
-      "reason": "Aggressive sales talk (conflicts with peaceful tone)",
-      "suggestion": "Invite gently: 'Whenever you're ready'"
+      "pattern": "guaranteed|100% results|works for everyone|no downtime",
+      "reason": "Over-promising (medical aesthetics compliance)",
+      "suggestion": "Use: 'Results tailored to you' or 'Most patients see noticeable improvement'"
     },
     {
-      "pattern": "we welcome all customers|our facilities",
-      "reason": "Generic, impersonal language",
-      "suggestion": "Make it personal: 'You're not just welcome. You belong.'"
+      "pattern": "myofascial|lymphatic|CO2|IPL|photothermolysis|fractional resurfacing",
+      "reason": "Clinical jargon in promotional copy (avoid medical terminology)",
+      "suggestion": "Use: 'Advanced laser technology' or 'Personalized treatment approach'"
     },
     {
-      "pattern": "\\bperfect\\s+for\\s+(your\\s+)?(holiday|vacation|escape)\\b",
-      "reason": "Touristy language (not luxury wellness)",
-      "suggestion": "Focus on transformation: 'A sanctuary, even if only for an hour'"
+      "pattern": "injection|Botox|filler|dermal filler",
+      "reason": "Overly clinical product names in patient-facing copy",
+      "suggestion": "Use: 'Personalized anti-aging treatment' or 'Tailored to your goals'"
+    },
+    {
+      "pattern": "we welcome all customers|generic|one-size-fits-all|standard treatment",
+      "reason": "Generic or impersonal language (Aesthetics emphasizes personalization)",
+      "suggestion": "Use: 'Your treatment is designed just for you' or 'Personalized consultation'"
+    },
+    {
+      "pattern": "amazing|fantastic|awesome|incredible|revolutionary",
+      "reason": "Overused marketing clichés (contradicts modern, honest tone)",
+      "suggestion": "Use: 'Elegant results' or 'Personalized care' or 'Radiant confidence'"
     }
   ],
 
   "required_tone_markers": {
-    "sensory_words": [
-      "warm", "warmth", "soft", "gentle", "stillness", "breath",
-      "ease", "float", "melt", "flow", "pause", "silence",
-      "touch", "light", "stone", "soothe", "calm", "peace",
-      "serenity", "tranquil", "sanctuary", "anchor"
+    "personalization_words": [
+      "personalized", "tailored", "custom", "designed for you", "your unique",
+      "your specific", "your goals", "your journey", "your needs", "individual"
     ],
-    "second_person": [
-      "you", "your", "yourself"
+    "confidence_words": [
+      "confident", "confidence", "radiant", "beautiful", "graceful", "elegant",
+      "assured", "poised", "refined", "polished", "composed"
     ],
-    "transformation_words": [
-      "return", "journey", "awakening", "restore", "reconnect",
-      "realign", "rebalance", "transform", "elevate", "become",
-      "heal", "refresh", "revive", "renew"
+    "warmth_words": [
+      "warm", "welcoming", "caring", "thoughtful", "compassionate", "understanding",
+      "supportive", "kind", "gentle", "embrace"
     ],
-    "purpose_words": [
-      "wellbeing", "wellness", "purpose", "intention", "care",
-      "nurture", "holistic", "soul", "mind", "body", "spirit"
+    "enhancement_words": [
+      "enhance", "reveal", "elevate", "complement", "highlight", "bring out",
+      "amplify", "refine", "optimize", "elevate your best self"
+    ],
+    "medical_credibility": [
+      "medical professionals", "expert team", "FDA-cleared", "clinically proven",
+      "dermatologist", "board-certified", "advanced technology", "science-backed"
     ]
   },
 
   "validation_rules": [
     {
       "name": "check_forbidden_phrases",
-      "description": "Reject messages containing forbidden phrases",
+      "description": "Reject messages with aggressive sales or clinical jargon",
       "severity": "high",
       "enabled": true
     },
     {
-      "name": "check_second_person",
-      "description": "Warn if message doesn't use second-person perspective",
+      "name": "check_personalization",
+      "description": "Warn if message lacks personalization language",
       "severity": "medium",
       "enabled": true,
-      "threshold": "Should contain at least one 'you' or 'your'"
+      "threshold": "Should contain at least one personalization word (your, tailored, custom, etc.)"
     },
     {
-      "name": "check_sensory_language",
-      "description": "Warn if message lacks sensory words (optional for short responses)",
+      "name": "check_confidence_tone",
+      "description": "Recommend confidence/radiance language for longer messages",
       "severity": "low",
       "enabled": true,
-      "threshold": "Recommended for messages longer than 2 sentences",
-      "min_character_count": 50
+      "threshold": "Recommended for messages longer than 2 sentences"
     },
     {
-      "name": "check_clinical_language",
-      "description": "Warn about clinical or technical jargon",
-      "severity": "high",
+      "name": "check_medical_credibility",
+      "description": "Ensure clinical/consultation contexts include credibility markers",
+      "severity": "medium",
       "enabled": true,
-      "clinical_keywords": [
-        "myofascial", "lymphatic", "circulation", "pressure technique",
-        "therapeutic", "stimulate", "reduce", "therapy", "treatment", "procedure"
-      ]
+      "threshold": "For messages discussing treatments or expertise, include at least one credibility marker"
     }
   ],
 
   "feedback_templates": {
     "forbidden_phrase_found": "Brand Voice Check\nFound: \"{phrase}\"\nIssue: {reason}\nSuggestion: {suggestion}\n\nAllow override? (Y/N)",
-    "missing_second_person": "Tone Tip\nTry using 'you' or 'your' to create intimacy.\nExample: \"You deserve a moment of stillness.\"",
-    "lacks_sensory_language": "Tone Tip\nConsider adding sensory words: warmth, stillness, breath, gentle, ease\nExample: \"Ease the tension. Let go. Feel whole again.\"",
-    "clinical_language_warning": "Tone Check\nThis sounds clinical. Try sensory language instead:\n\"{suggestion}\""
+    "missing_personalization": "Tone Tip\nTry adding personalization language: tailored, custom, designed for you, your unique\nExample: \"Your treatment is personalized just for you.\"",
+    "lacks_confidence_tone": "Tone Tip\nConsider adding confidence/elegance words: radiant, graceful, elegant, confident\nExample: \"Feel radiant and confident in your own skin.\"",
+    "missing_medical_credibility": "Professional Tip\nWhen discussing treatments, include credibility: expert team, board-certified, FDA-cleared, advanced technology\nExample: \"Our expert team uses FDA-cleared technology tailored to your skin.\""
   },
 
-  "usage_notes": {
-    "adaptation_for_other_brands": "These rules are tailored for Carisma Spa & Wellness. When adapting for other brands (Carisma Aesthetics, Carisma Slimming), adjust: 1) forbidden_phrases based on brand voice guidelines; 2) sensory_words and transformation_words to match brand positioning; 3) clinical_keywords to match industry terminology (e.g., add 'fillers', 'injection', 'downtime' for Aesthetics)",
-    "min_character_count_logic": "The min_character_count in check_sensory_language (50 chars) prevents false positives on short messages like greetings or simple FAQs. Adjust threshold based on response length expectations.",
-    "regex_pattern_notes": "The 'perfect for holiday' pattern uses word boundaries (\\b) and optional 'your' to catch variations while avoiding over-matching. Test new patterns against representative message samples before deploying."
+  "_notes": {
+    "adaptation_for_other_brands": "To adapt for other brands (Spa, Slimming), change 'brand' field and customize forbidden_phrases and required_tone_markers to match each brand's specific tone and risks.",
+    "personalization_emphasis": "Carisma Aesthetics emphasizes personalization above all. Validation strongly encourages personalization language in all patient-facing messages.",
+    "clinical_terminology_boundary": "Clinical terms (FDA-cleared, Alma laser, RF) are acceptable in consultation/educational contexts when paired with reassuring language. Avoid medical jargon in promotional copy.",
+    "confidence_not_arrogance": "Confidence should feel assured, not arrogant. Pair with warmth and personalization to avoid sounding dismissive of patient concerns."
   }
 }
