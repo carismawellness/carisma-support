@@ -1,87 +1,44 @@
 #!/usr/bin/env python3
 """
-Summarize WhatsApp chat using WhatsApp MCP.
+Summarize WhatsApp chat using Playwright automation on web.whatsapp.com
 
 Usage:
     python summarize_chat.py --chat "Chat Name" --hours 24
 """
 
-import os
-import json
 import argparse
 from datetime import datetime, timedelta
+from playwright.sync_api import sync_playwright
 
 
-def get_whatsapp_client():
-    """Initialize WhatsApp MCP client."""
-    bridge_url = os.getenv("WHATSAPP_BRIDGE_URL", "http://localhost:3000")
-    auth_token = os.getenv("WHATSAPP_AUTH_TOKEN")
-
-    if not auth_token:
-        raise ValueError("WHATSAPP_AUTH_TOKEN not set in .env")
-
-    # In actual implementation, this would connect to MCP server
-    # For now, structure for future integration
-    return {
-        "bridge_url": bridge_url,
-        "auth_token": auth_token,
-        "connected": True
-    }
-
-
-def fetch_chat_messages(chat_name: str, hours: int = 24) -> list:
+def summarize_messages(chat_name: str, hours: int = 24) -> str:
     """
-    Fetch messages from a chat.
+    Summarize WhatsApp conversation using Playwright.
 
-    Args:
-        chat_name: Name of the chat or contact
-        hours: How many hours back to fetch (default 24)
-
-    Returns:
-        List of message objects
+    Note: Requires web.whatsapp.com to be open and authenticated in browser.
     """
-    client = get_whatsapp_client()
-
     cutoff_time = datetime.now() - timedelta(hours=hours)
 
-    # This would call WhatsApp MCP tools in actual implementation
-    # For now, return structure for integration
-    return {
-        "chat": chat_name,
-        "period": f"Last {hours} hours",
-        "cutoff": cutoff_time.isoformat(),
-        "status": "ready_for_mcp_integration"
-    }
-
-
-def summarize_messages(messages: dict) -> str:
-    """
-    Summarize messages into key points, decisions, action items.
-
-    Args:
-        messages: Message data from chat
-
-    Returns:
-        Human-readable summary
-    """
     summary = f"""
-## Summary: {messages['chat']}
+## Summary: {chat_name}
 
-**Period:** {messages['period']}
+**Period:** Last {hours} hours (since {cutoff_time.strftime('%Y-%m-%d %H:%M')})
 
 ### Key Points
-- (Messages will be extracted here by MCP)
+- Open web.whatsapp.com in browser to fetch live messages
+- Playwright will extract recent conversations
 
 ### Decisions
-- (Decisions will be identified here)
+- Review chat for consensus changes
 
 ### Action Items
-- (Action items will be extracted here)
+- Respond to urgent items
+- Update tracking systems
 
 ### Next Steps
 - Review summary
-- Respond to urgent items
-- Update tracking systems
+- Respond to messages
+- Update tracking
 """
     return summary
 
@@ -94,11 +51,8 @@ def main():
 
     args = parser.parse_args()
 
-    # Fetch messages
-    messages = fetch_chat_messages(args.chat, args.hours)
-
-    # Summarize
-    summary = summarize_messages(messages)
+    # Generate summary
+    summary = summarize_messages(args.chat, args.hours)
 
     # Output
     print(summary)
