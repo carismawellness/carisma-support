@@ -126,8 +126,9 @@ All of these activate this skill:
 
 ---
 
-*Skill maintained by: Sarah / Carisma Wellness Group*
-*Last reviewed: 2026-02-19*
-*Applies to: Internal knowledge management system*
-*Key files: shared-inbox.md (Tier 1) / shared-knowledge.md (Tier 2)*
-*CORE RULE: Fast capture in inbox, careful promotion to verified.*
+*Skill maintained by: Katya / Carisma Slimming*
+*Last reviewed: 2026-02-22 (optimized for weight loss transformation)*
+*Applies to: Internal knowledge management system for CRM-SLIM*
+*Key files: shared-inbox.md (Tier 1 — unverified member insights) / shared-knowledge.md (Tier 2 — verified program learnings)*
+*CORE RULE: Fast capture of relapse patterns, success factors, member feedback in inbox; careful promotion when validated*
+*Slimming-Specific KB Categories: Relapse triggers, early-week challenges, momentum breakers, community wins, metabolism observations*

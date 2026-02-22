@@ -1,6 +1,6 @@
-# [SALES] Re-Engagement
+# [ENGAGEMENT] Re-Engagement — Slimming Edition
 
-> **Invoke When:** A lapsed customer makes contact after a long absence (typically 6+ months since their last visit or interaction), or when Sarah is proactively reaching out to a customer who has not returned in a while. Also invoke when a customer references a past visit in passing — "last time I came..." or "I used to come regularly..." — even if the current conversation is about something else. This skill is the most emotionally sensitive in the system. Handle it with the same care you would handle a friendship you have not tended to in a while.
+> **Invoke When:** A lapsed member makes contact after a long absence (typically 3+ months since their last program check-in), or when Katya is proactively reaching out to a member who has gone quiet. Also invoke when a member references a past program attempt — "when I did the program..." or "before I took the break..." — even if the current conversation is about something else. This skill is the most emotionally sensitive in the system for weight loss. Handle it with the same care you would handle reconnecting with someone who shared their vulnerability with you.
 
 ---
 
@@ -21,11 +21,11 @@ Cialdini's principles of liking and reciprocity are the psychological engines of
 
 ## Overview
 
-Most lapsed customers did not leave because of a bad experience. They left because of life.
+Most lapsed members did not leave because the program failed them. They left because relapse happened, shame appeared, and they couldn't face coming back.
 
-A holiday that became a habit. A busy stretch at work that stretched into months. A new baby. A move across the island. A period of tightening budgets. A simple drift — the kind that happens when nothing bad pushes you away, but nothing pulls you back either.
+A slip week that became three weeks. A "forget it" moment that turned into a month off. A weight regain that triggered old patterns. A simple spiral — the kind that happens when one missed week feels like too much failure to recover from.
 
-This distinction matters enormously. A customer who left after a genuinely poor experience needs acknowledgment and recovery. A customer who simply drifted away needs warmth and an easy door back in. The two are handled very differently, and conflating them is a mistake.
+This distinction matters enormously. A member who left because they gained weight back needs acknowledgment, not judgment. A member who left because shame took over needs what we should have told them from the start: relapse is part of the process, not the end of it. The two are handled very differently, and conflating them is a mistake.
 
 **The psychology of re-engagement in luxury wellness:**
 
@@ -580,8 +580,9 @@ The power of this move is that it gives the customer a fresh reason to return th
 
 ---
 
-*Skill maintained by: Sarah / Carisma Wellness Group*
-*Last reviewed: 2026-02-19*
+*Skill maintained by: Katya / Carisma Slimming*
+*Last reviewed: 2026-02-22 (optimized for weight loss transformation)*
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
 *Typical re-engagement conversion window: 1–3 meaningful contacts*
-*Primary use case: Lapsed customers — 6+ months since last visit or interaction*
+*Primary use case: Lapsed members — 3+ months since last program interaction or check-in*
+*Key Slimming Context: Relapse normalization, shame removal, "this was always part of the plan" framing*

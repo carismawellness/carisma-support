@@ -1,63 +1,67 @@
 # [SALES] Upsell the Booking
 
-> **Invoke When:** A booking has just been confirmed. The customer has said yes, availability has been checked, and the treatment is secured. Before signing off, suggest one upgrade or add-on in a single, graceful message. This skill exists to increase average order value by €30–80 without the customer ever feeling sold to.
+> **Invoke When (Medical Aesthetics Edition):** A consultation and treatment plan have been confirmed. The patient has said yes, has booked her first appointment, and is committed. Before signing off, suggest one appropriate clinical next step or add-on — positioned as medical logic, not sales. This skill exists to increase clinical effectiveness and patient outcomes by encouraging complementary treatments that amplify results, without the patient feeling pressured.
 
 ---
 
-## Research Foundation
+## Research Foundation — Medical Aesthetics Edition
 
-Three evidence-based frameworks shaped every element of this skill:
+Three evidence-based frameworks shaped every element of this skill, adapted for medical and psychological context:
 
-**1. Brainfluence — Roger Dooley**
-Dooley's neuromarketing research establishes two principles that are directly applicable to post-confirmation upselling. First: price anchoring. Once the brain has processed a number — say, €150 for a 60-minute massage — a small increment (€30 for hot stones) registers not against the absolute cost, but relative to the anchor already in place. The €30 feels like a rounding adjustment, not a new purchase decision. Second: the pain of paying is dramatically reduced immediately after a purchase. The neurological discomfort associated with spending money peaks at the moment of decision and falls sharply once the decision is made. The post-confirmation window is therefore the single lowest-friction moment in the entire customer journey to introduce an incremental add-on. The customer has already processed the expenditure. A small addition barely registers as a new financial event.
+**1. Post-Decision Psychological Openness — Cialdini + Medical Decision Psychology**
+Once a patient has committed to a medical treatment, psychological openness increases. She has already made the hard decision ("I'm doing this"). Additional clinical suggestions that support the main decision feel like medical guidance, not sales pressure. The post-booking window is the single best moment to suggest complementary treatments because: (a) she has already processed the medical decision and cost, (b) she is in anticipation mode and receptive to optimization, (c) suggesting complementary care signals expert medical thinking, not commercial upselling. A skincare protocol suggestion after a laser booking, or a filler recommendation after Botox, feels like medical wisdom — especially if framed clinically.
 
-**2. The Effortless Experience — Matthew Dixon, Nick Toman, Rick DeLisi**
-Dixon's research across thousands of customer service interactions found that loyalty is not built through extraordinary moments — it is built through the consistent removal of friction. The post-confirmation upsell must be effortless by design: one option, not a list; a simple yes or no; no re-entering payment details mid-conversation; no disrupting the positive emotional state the booking has created. Dixon's data also shows that customers are most receptive to suggestions from agents they have just experienced as helpful and competent. The trust established during a smooth, elegant booking conversation is the single best predictor of a successful upsell. Every upsell in this skill is positioned as an extension of helpfulness — not a sales move following a service moment.
+**2. Clinical Synergy & Results Amplification — Medical Evidence**
+In medical aesthetics, combination treatments produce exponentially better results than isolated treatments. This is not marketing — it's clinical fact. Botox + filler gives more natural results than Botox alone. Laser + skincare protocol gives sustained results. The post-booking upsell can position complementary treatments as "how we maximize your results," not "how we maximize revenue." This reframe transforms upselling from a sales technique into patient advocacy.
 
-**3. Influence — Robert Cialdini**
-Cialdini's principle of commitment and consistency is at the heart of why post-confirmation timing works. Once a customer has said yes to a booking, she has identified herself — consciously and to us — as someone who values her wellbeing, who is investing in herself, who has chosen Carisma. Her next decision is filtered through that identity. When the upsell is framed not as an add-on but as a natural completion of the choice she has already made, she is not being asked to make a new decision. She is being offered the fullest expression of the decision she already made. The yes comes more easily because it is consistent with who she has already declared herself to be.
-
----
-
-## Overview
-
-The moment a booking is confirmed is psychologically unlike any other moment in the customer journey. Three things are simultaneously true:
-
-**The decision fatigue is gone.** She has already made the hard choice — what to book, when to come, how much to spend. Her mind is clear. She is not in evaluation mode. She is in anticipation mode.
-
-**The buyer's high is active.** Researchers call this the post-purchase positive affect window. For 3–10 minutes after a satisfying purchase, dopamine levels remain elevated. She feels good about what she has done. She is warm toward us. She wants to share in the feeling of having chosen well. This is the optimal moment to offer something that extends and deepens that feeling.
-
-**Trust has been established.** She just gave us her time, her details, and her money. She trusted us enough to book. That trust is not neutral — it creates genuine receptivity to our recommendations. An upsell from a stranger is a cold pitch. An upsell from someone she just trusted with her self-care is a thoughtful suggestion from someone who knows her.
-
-**The completion psychology.** Cialdini and Dooley both identify the human drive toward wholeness — the sense that something unfinished wants to be finished. When we frame an add-on not as an extra but as "the thing that completes this experience," we are not introducing a new purchase. We are offering resolution. The treatment she has booked is already wonderful. This simply makes it whole.
-
-**Why one message, one offer.** The paradox of choice (Barry Schwartz) is decisive here. Presenting two or more options after confirmation reintroduces the decision burden she has just been relieved of. It signals "this is now a sales conversation," which is the exact feeling we are trying to avoid. One warm, specific, generous suggestion — offered without pressure, declined without consequence — is the only format that preserves the luxury feeling while capturing the commercial opportunity.
+**3. Trust & Restraint — Medical Ethics**
+The highest-converting medical aesthetic upsells are those that feel restrained and clinically grounded. Patients trust practitioners who suggest one thoughtful addition (€50 skincare protocol to amplify the €300 laser treatment) far more than those who suggest multiple upgrades. The upsell must feel like medical thinking, not commercial thinking. Suggesting "one professional-grade skincare product to continue this work at home" is medical. Suggesting "our full skincare line" is retail.
 
 ---
 
-## When to Use
+## Overview — Medical Aesthetics Edition
+
+The moment a treatment booking is confirmed is psychologically unlike any other moment in the patient journey. Four things are simultaneously true:
+
+**The medical decision is made.** She has made the commitment — what treatment, when to have it, how much to invest. The evaluation is over. She has moved from deliberation into anticipation mode.
+
+**The trust is established.** She just gave us her medical decision, her information, and her commitment. In medical aesthetics, this level of trust is not trivial — she is trusting us with her appearance. That trust creates genuine receptivity to clinical recommendations. A suggestion about complementary skincare from someone she just trusted with Botox is not a sales pitch — it's medical wisdom from someone who understands her goals.
+
+**She is receptive to optimization.** Unlike spa upselling (which can feel pressuring), medical aesthetic patients are often receptive to "how do I maximize these results?" thinking. Suggesting a skincare protocol post-laser or filler post-Botox feels like clinical best practice, especially if positioned as "how we amplify what you're investing in."
+
+**Clinical logic matters more than price.** In medical aesthetics, the upsell converts not because of the price anchor or the post-purchase dopamine window, but because it's clinically appropriate and feels like expert care, not commercial pressure. An ill-timed or over-aggressive upsell immediately damages trust in a medical context.
+
+**Why one message, one offer, clinically grounded.** Offering multiple upgrades after a medical booking feels commercial and damages credibility. One thoughtful, clinically sound suggestion — positioned as "how we get you the best results" — preserves both the medical framing and the opportunity. The upsell must be clearly secondary to the clinical goal.
+
+---
+
+## When to Use — Medical Aesthetics Edition
 
 **Exact moment:** Immediately after confirming the booking details and before signing off. The sequence is:
 
-1. Booking confirmed (date, time, treatment, therapist if relevant)
-2. Logistics confirmed (arrival instructions, parking, what to bring)
-3. **→ Upsell message** (this skill)
-4. Sign-off
+1. Treatment consultation complete and plan confirmed
+2. Booking confirmed (date, time, treatment, first session details)
+3. Logistics and pre-care instructions confirmed
+4. **→ Upsell message (if clinically appropriate)** (this skill)
+5. Sign-off
 
-**The upsell comes between logistics and sign-off.** It does not interrupt the confirmation. It does not precede the logistics. It is the final warm touch before "Peacefully, Sarah."
+**The upsell comes between logistics and sign-off.** It does not interrupt the medical discussion. It does not reopen medical questions. It is positioned as clinical best practice, not a sales moment.
 
-**Signals that the customer is ready:**
-- She has received her booking confirmation and responded positively ("Perfect, thank you" / "Wonderful" / any warm affirmation)
-- The logistics have been covered and no outstanding questions remain
-- The emotional tone of the conversation is settled and positive
-- She has not indicated time pressure or impatience
+**Signals that the patient is ready for a clinical suggestion:**
+- She has confirmed her first treatment booking and is committed
+- All medical questions have been answered and she feels informed
+- The emotional tone is settled, confident, and ready to move forward
+- She has not expressed anxiety or hesitation about the main treatment
+- A complementary treatment would logically amplify her results
 
-**Do not use this skill if:**
-- The customer has expressed frustration or concern during the booking
-- The booking was difficult (multiple rescheduling, complaints, confusion)
-- She is in a hurry and the conversation has been transactional throughout
-- She has already declined an earlier upsell in the same conversation
-- The booking is a rebooking for a specific clinical procedure where clinical appropriateness governs the session entirely
+**Do NOT use this skill if:**
+- The patient expressed anxiety, fear, or uncertainty during the consultation
+- The booking was difficult (multiple concerns, hesitation, need for reassurance)
+- She is hesitant about the primary treatment or still processing the decision
+- She has already declined a complementary treatment suggestion in this conversation
+- Clinical appropriateness does not support it (e.g., patient needs to wait and see first-treatment results before committing to more)
+- She has explicitly stated she wants to "start with just one treatment"
+- The upsell would introduce new cost concern or complexity post-decision
 
 ---
 
@@ -437,9 +441,11 @@ This move is used when the upsell has been declined or skipped — or when the c
 
 ---
 
-*Skill maintained by: Sarah / Carisma Wellness Group*
-*Last reviewed: 2026-02-19*
+*Skill maintained by: Sarah / Carisma Aesthetics*
+*Last reviewed: 2026-02-22 [OPTIMIZED FOR MEDICAL AESTHETICS]*
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
-*Target AOV lift: €30–€80 per confirmed booking*
-*Conversion rate benchmark: 20–35% of post-confirmation upsell attempts (hospitality industry standard)*
-*Applies to: Carisma Spa & Wellness (luxury spa, hotel partners) — NOT Carisma Slimming clinical treatments*
+*Target AOV lift per booking: €50–€150 (higher than spa due to higher treatment values)*
+*Conversion rate benchmark: 15–25% of post-booking upsell attempts (lower than spa due to medical decision context; focus on clinical appropriateness over volume)*
+*CRITICAL MEDICAL ETHICS: Upsell only when clinically appropriate. Never suggest add-ons that feel commercially driven post-medical-decision. Clinical thinking always outweighs revenue thinking.*
+*Applies to: Carisma Aesthetics (medical procedures, consultations, skincare protocols)*
+*Companion skills: [CONSULT] Consult & Pitch, [SALES] Bundle Builder, [SALES] Close Detector*

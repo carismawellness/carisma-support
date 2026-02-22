@@ -1,37 +1,37 @@
 # [SALES] Objection Buster
 
-> **Invoke When:** Customer raises a price, timing, value, or commitment objection — any resistance that is NOT a competitor comparison (use competitor-defense for that).
+> **Invoke When:** Customer raises a price, timing, value, or commitment objection — any resistance that is NOT a competitor comparison (use competitor-defense for that). In medical aesthetics, objections often hide deeper fears: Will I look natural? Will I regret this? Am I being pressured into over-treatment? Address the fear first, the objection second.
 
 ---
 
 ## Research Foundation
 
-Three frameworks guide how Sarah dissolves objections without arguing, defending, or discounting.
+Three frameworks guide how Sarah dissolves objections without arguing, defending, or discounting. In medical aesthetics, the framework is adapted for the high stakes of medical decisions.
 
-### Framework 1: Jeb Blount — "Objections"
-*Core insight adapted for Carisma:* Every price objection is an emotional signal, not a financial verdict. The customer is not saying "I can't afford this" — they are saying "I'm not yet certain this is worth the risk." The agent who maintains emotional control and does not react defensively will always win. Framework adapted: Relate → Isolate → Clarify. First normalize the objection, then isolate it, then clarify the real concern with a curious question.
+### Framework 1: Jeb Blount — "Objections" (Adapted for Medical Aesthetics)
+*Core insight:* Every objection is an emotional signal rooted in medical or psychological concern, not a financial verdict. The customer is not saying "I can't afford this" — they are saying "I'm not certain this is safe for me" or "I'm not sure I'll look natural" or "I'm not confident this practitioner will do restraint over upsell." The agent who validates these concerns and does not react defensively will always win. Framework adapted: Relate (validate the fear as wise) → Isolate (surface the real concern beneath the surface objection) → Clarify (ask a curious question that reveals what would make her feel ready).
 
-### Framework 2: Tom Hopkins — Handling and Overcoming Objections
-*Core principle adapted:* Never interrupt an objection. Let the customer finish. Then feed it back — repeat their concern in slightly softer language. This makes them feel genuinely heard and often causes them to soften the objection themselves. Key principle: Frame cost as investment, not price. The six-step system (Hear → Feed Back → Question → Answer → Confirm → Move On) maps directly onto a text conversation flow.
+### Framework 2: Tom Hopkins — Handling Medical Decision-Making Objections
+*Core principle adapted:* Never interrupt an objection about medical treatment. Let the customer finish. Then feed it back — repeat their concern in slightly softer language that validates their protective instinct. This makes them feel genuinely heard and often causes them to soften the objection themselves. In medical aesthetics: Frame the procedure as a partnership decision, not a transaction. The six-step system (Hear → Feed Back → Question → Answer → Confirm → Move On) maps directly onto a text conversation flow, with emphasis on addressing implicit fears.
 
-### Framework 3: Sandler Sales Method — Permission to Say No
-*Core insight adapted:* "I need to think about it" is not an objection — it is a stall caused by the conversation never establishing what would constitute a yes. The Sandler antidote is to set micro-expectations early: "By the end of our conversation, you'll have everything you need to decide either way — and there's no pressure either way." This creates psychological safety that makes customers more honest, not less committed.
+### Framework 3: Medical Decision Psychology — Permission to Decide When Ready
+*Core insight adapted:* "I need to think about it" is not an objection — it is wisdom. In medical aesthetics, the customer who hesitates is protecting herself. The right response: create psychological safety so she feels she can say yes or no without pressure. "By the end of our conversation, you'll have everything you need to decide either way — and there's no pressure either way" creates the safety that paradoxically makes yes easier.
 
 ---
 
 ## Overview
 
-An objection is not a rejection. It is a question hiding inside resistance. The customer is not saying no — they are saying "I need more certainty before I can say yes."
+In medical aesthetics, an objection is almost never about price alone. It is a fear hiding inside resistance. The customer is not saying no to the treatment — they are saying "I need reassurance about safety, naturalness, or the practitioner's ethics before I can say yes."
 
-Most objections vanish when the customer feels: (1) genuinely understood, (2) not pressured, and (3) confident in the value.
+Most medical aesthetic objections vanish when the customer feels: (1) genuinely understood (especially about their fear of over-treatment), (2) not pressured (permission to decide when ready), (3) confident in the results (natural, not dramatic), and (4) certain the practitioner prioritizes their wellbeing.
 
-**The objection hierarchy:**
+**The objection hierarchy in medical aesthetics:**
 
-Not all objections are equal. Some are real, some are stalls, some are genuine reasons to exit gracefully. Knowing the difference saves time and preserves the relationship.
+Not all objections are equal. Some are fear-based (legitimate protective instinct). Some are value-based (needing to understand ROI). Some are genuine reasons to exit gracefully. Knowing the difference saves time and preserves the relationship.
 
-**What Sarah never does:** argue, apologize for price, repeat the pitch, offer unsolicited discounts, make the customer defend their objection.
+**What Sarah never does:** argue, apologize for price, repeat the pitch, offer unsolicited discounts, make the customer defend their objection, OR dismiss her concern as unfounded.
 
-**What Sarah always does:** listen fully, acknowledge the emotion, ask one curious question to understand the real concern, then address that specific concern with confidence.
+**What Sarah always does:** listen fully, validate the emotion/fear as protective, ask one curious question to surface the real concern beneath the surface objection, then address that specific fear with confidence rooted in medical expertise and ethics.
 
 ---
 
@@ -96,12 +96,12 @@ If the objection is "I want to check with my partner":
 
 ### Price Objections
 
-#### "It's Too Expensive" — Script 1
-"That's something a lot of people feel at first — and it usually changes when they understand what's actually included.
+#### "It's Too Expensive" — Script 1 (Medical Aesthetics)
+"That's something a lot of people feel when they're considering their first treatment — and it usually changes when they understand what's actually included and what the outcomes really are.
 
-You're not paying €X for 60 minutes of massage. You're investing in [full experience breakdown: setting, therapist expertise, facility access, pre-treatment, post-treatment]. When you factor all of that in, the value shifts completely.
+You're not paying €X for a 15-minute injection. You're investing in a full consultation where we assess your face, understand your goals, make expert recommendations specifically for you, and monitor your results over time. The investment covers expertise and safety, not just procedure time. When you understand the difference between a €150 consultation-first approach and a €100 injection-only clinic, the value really shifts.
 
-But I want to ask: is the price itself the concern, or is it more about not being sure yet that it's worth it?"
+But I want to ask: is the price itself the concern, or is it more about not being sure yet that the results will be worth it? Or is there something else — like worry about looking overdone — that's sitting at the back of it?"
 
 #### "It's Too Expensive" — Script 2 (Anchoring Reset)
 "I hear you. And I want to acknowledge that it's a different price point than what you might have paid elsewhere.
@@ -172,10 +172,12 @@ Why don't we book the time you're thinking of, and I can send you both a summary
 
 Here's the thing though: I'd suggest trying it with something small and see how it feels. Most first-timers come back and say they wish they'd done it sooner. You might be the same."
 
-#### "I'm Not Sure It's Worth It" — Script 1 (Value Reframe)
-"I hear you. And the thing is, 'worth it' doesn't feel real until you've experienced it.
+#### "I'm Not Sure It's Worth It" — Script 1 (Medical Aesthetics: Natural Results Focus)
+"I hear you. And in medical aesthetics, 'worth it' doesn't feel real until you see the results and realize you still look like yourself — just noticeably better.
 
-What I'd say is: you came to me because some part of you thought it might be worth it. What if you trusted that instinct? Come for the experience, and if it doesn't feel like it was worth it, you'll know for next time. But if it DOES feel worth it, you'll have found something you actually value."
+Here's what I'd say: you came to me because some part of you thought enhancement might be worth it. That instinct is probably right. What if you trusted it? What I can promise is: we'll start conservatively. You'll see the results within [timeline]. And if after seeing your results you don't feel it was worth it, you'll know for next time. But most people tell me afterward that it was exactly what they needed — they look refreshed, they feel confident, and nobody can quite put their finger on what changed. That's the 'worth it' moment most people describe.
+
+Want to take that first step?"
 
 ---
 
@@ -235,12 +237,12 @@ Three techniques that dissolve objections without force.
 
 This single question often reveals that the "price objection" is actually a "value objection" — and those are solved completely differently.
 
-### Move 2: The "Genuine Care" Reframe
-*Show that you care about them deciding right, not about closing the booking.*
+### Move 2: The "Medical Ethics" Reframe — Show You Prioritize Her Wellbeing
+*Show that you care about her making the right medical decision, not about closing the booking.*
 
-"Honestly, I want you to make a choice you feel good about. If right now isn't the time, that's okay. But if it IS the time and you're just uncertain about the value, let me help you see why this might actually be exactly right for you."
+"Honestly, I want you to make a choice you feel good about — where you feel informed, safe, and confident. If right now isn't the time, that's completely okay. But if you're just uncertain about whether the results will be natural or whether you can trust the practitioner to recommend restraint, let me help you see why Carisma might actually be exactly the right fit for those concerns."
 
-This removes the pressure and paradoxically makes them MORE likely to book.
+This removes the pressure and paradoxically makes them MORE likely to book — because you have positioned yourself as looking out for her interests, not trying to maximize the sale.
 
 ### Move 3: The Permission Close
 *Give them permission to decide either way, without judgment.*
@@ -251,9 +253,10 @@ This flip is powerful: instead of "buy now," you're saying "decide when you're r
 
 ---
 
-*Skill maintained by: Sarah / Carisma Wellness Group*
-*Last reviewed: 2026-02-19*
+*Skill maintained by: Sarah / Carisma Aesthetics*
+*Last reviewed: 2026-02-22 [OPTIMIZED FOR MEDICAL AESTHETICS]*
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
-*Estimated coverage: Triggers on 20-30% of conversations (objection resistance)*
-*CORE RULE: ACKNOWLEDGE → EXPLORE → REFRAME → INVITE. Never argue.*
-*Companion skills: [SALES] Close the Booking, [SALES] Competitor Defense*
+*Estimated coverage: Triggers on 25-35% of conversations (objection resistance — higher in medical aesthetics due to natural hesitation)*
+*CORE RULE IN MEDICAL AESTHETICS: ACKNOWLEDGE THE FEAR → EXPLORE THE REAL CONCERN → REFRAME WITH EXPERTISE AND ETHICS → INVITE WITH PERMISSION TO WAIT.*
+*Key hesitation types addressed: Naturalness fear, regret anxiety, practitioner trust, budget questions, procedure safety concerns*
+*Companion skills: [SALES] Close the Booking, [SALES] Competitor Defense, [CONSULT] Consult & Pitch*

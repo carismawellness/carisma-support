@@ -1,6 +1,6 @@
-# [SALES] Referral Nudger
+# [ENGAGEMENT] Referral Nudger — Slimming Edition
 
-> **Invoke When:** A natural close point after a positive interaction — happy customer, booking confirmed, post-visit warmth, or any moment of high satisfaction. The customer has expressed delight, relief, or gratitude. She is at peak emotional connection with Carisma. This is the moment.
+> **Invoke When:** A natural close point after a positive interaction — member confirms enrollment, completes a successful week, hits a milestone, or expresses hope that "this time is different." The member has experienced her first real moment of believing it's possible. She is at peak emotional connection with the program. This is the moment to seed referrals — but frame them as "give someone you love permission to change."
 
 ---
 
@@ -435,9 +435,10 @@ The bridge should feel as though the gift voucher was already the right conclusi
 
 ---
 
-*Skill maintained by: Sarah / Carisma Wellness Group*
-*Last reviewed: 2026-02-19*
+*Skill maintained by: Katya / Carisma Slimming*
+*Last reviewed: 2026-02-22 (optimized for weight loss transformation)*
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
-*Companion skills: [SALES] Close the Booking — referral nudge follows after close, not before*
-*Companion knowledge bases: Gift Vouchers — connect here when customer expresses gift voucher interest*
-*Coverage: Any conversation reaching a point of expressed satisfaction — estimated 30–40% of all inbound conversations*
+*Companion skills: [SALES] Close the Booking — referral nudge follows after successful enrollment confirmation or milestone*
+*Companion knowledge bases: Referral gift programs — connect here when member expresses interest in gifting to a friend*
+*Coverage: Any conversation reaching a point of expressed belief/hope — estimated 25–35% of all member interactions*
+*Key Slimming Context: Referrals framed as "gift someone permission to change," not transactional "refer a friend" programs*

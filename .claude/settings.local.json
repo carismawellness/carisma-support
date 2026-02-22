@@ -8,7 +8,8 @@
       "Bash(open:*)",
       "Bash(pbcopy:*)",
       "WebFetch(domain:github.com)",
-      "Bash(claude plugin marketplace add:*)"
+      "Bash(claude plugin marketplace add:*)",
+      "Bash(git push:*)"
     ]
   }
 }

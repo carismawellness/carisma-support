@@ -1,6 +1,6 @@
-# [SALES] Bundle Builder
+# [SALES] Bundle Builder — Slimming Edition
 
-> **Invoke When:** The agent notes a customer has multiple needs or interests ("she wants a massage and mentioned she has dry skin"), a customer asks "what's the best value option?", any multi-need situation is identified, a customer mentions a special occasion, a group inquiry arrives, or the agent believes the customer would benefit from two or more services combined into a single experience. This skill drives the highest average order value of any interaction in the system.
+> **Invoke When:** The customer expresses multiple goals within the weight loss journey (e.g., "I want to lose weight AND regain energy AND feel confident"), asks "what's the best package for my situation?", mentions she's tried multiple things before (indicating she needs comprehensive support), or expresses concern about sustainability. This skill frames bundled support as "complete transformation architecture" — not just a program, but everything she needs to succeed and stay successful. It drives the highest average order value AND the highest long-term adherence in the system.
 
 ---
 
@@ -21,15 +21,15 @@ A body of research on hotel and spa bundling reveals a consistent finding: guest
 
 ## Overview
 
-A €280 experience that is crafted and presented as a complete journey feels profoundly different from €280 worth of individual bookings made in sequence.
+A comprehensive weight loss program that is crafted and presented as "complete transformation support" feels profoundly different from a single "weight loss program" offered in isolation.
 
-The first feels like an occasion. The second feels like a bill.
+The first feels like "I have everything I need to succeed." The second feels like "I'm on my own with this."
 
-This is the central psychology the bundle builder works with. When a customer books three treatments separately, she holds three prices in her head and experiences three small moments of spending. When the same three experiences are presented as a single, named journey — with an individual-parts anchor shown first and a unified price shown second — she holds one number in her mind and experiences one moment of decision. The saving between the two numbers registers not as a discount (which implies something was wrong with the original price) but as generosity. She is being given more than she is spending.
+This is the central psychology the bundle builder works with in Slimming. When a customer books a weight loss program without support elements, she is holding one thing in her mind: "the diet/program." When the same investment is presented as a bundle — medical supervision + accountability coaching + nutrition support + community access — she holds multiple things: "I am not doing this alone." The value between individual elements and the bundled whole does not register as a discount. It registers as permission to succeed. She is being given everything that increases her chances of lasting results.
 
-This psychological reframe is why bundle conversations, when handled well, do not feel like upselling. They feel like being taken care of.
+This psychological reframe is why bundle conversations, when handled well, do not feel like upselling. They feel like being genuinely cared for.
 
-The bundle builder exists for one purpose: to turn a multi-need customer into a guest who books a complete experience — and feels better for it than if she had booked each element separately.
+The bundle builder exists for one purpose: to turn a woman who wants to lose weight into a woman who has complete support for sustainable transformation — and feels genuinely confident that this time will be different.
 
 **What this skill is not:** It is not a way to move inventory or push high-margin add-ons at a customer who expressed a single clear need. It is for customers whose situation genuinely calls for multiple elements. Using it incorrectly — building a bundle around a customer whose world points to one focused treatment — creates confusion, not value. Read the room first.
 
@@ -147,28 +147,28 @@ The pitch is written for WhatsApp / DM by default (warm, conversational, not too
 
 ---
 
-## Bundle Archetypes
+## Bundle Archetypes — Slimming Edition
 
-Five pre-built experience frames for the most common multi-need scenarios. Use these as starting points — personalise every pitch.
+Four pre-built support bundles for the most common multi-need weight loss scenarios. These are not "experiences" — they are "success architectures." Use these as starting points — personalise every pitch based on her past attempts and stated fears.
 
 ---
 
-### Archetype 1: The Couple's Journey
+### Archetype 1: The Complete Foundation Bundle
 
-**For:** Two people visiting together — anniversary, honeymoon, Valentine's Day, a spontaneous romantic afternoon
+**For:** A customer starting weight loss who wants to maximize her chances of success — she's tried before and doesn't want to fail again.
 
 **What it includes:**
-- Side-by-side couples treatment (full body, 60–90 min) — the centrepiece
-- Shared thermal circuit access before treatment (minimum 30 min, sauna, steam, hydrotherapy pool)
-- Champagne or sparkling welcome on arrival
-- Extended relaxation time together after treatment, in a dedicated quiet space
-- Optional: rose petal room setup, a small gift of a Carisma product to take home
+- Doctor-led baseline assessment and program design (€199 foundation)
+- Weekly accountability coaching (€60/week × 12 weeks = €720)
+- Nutrition support + meal planning (€120)
+- Community access + weekly group check-ins (€0 — included)
+- Optional add-on: Baseline body composition analysis with metrics tracking (€80)
 
-**Individual parts price:** Approximately €180–€240 (two treatments + facilities + champagne separately)
-**Experience price:** Approximately €210–€260 (as a complete journey)
-**The gift:** €20–€40 — framed as "a detail I wanted to include, at no extra cost"
+**Individual parts price:** €1,139 (if booked separately)
+**Bundle price:** €899 (complete 12-week support architecture)
+**The gift:** €240 saved, framed as "I'm removing the friction that makes people quit"
 
-**Pitch angle:** The experience arc — "You arrive together, the world slips away, and you leave the same way — only lighter."
+**Pitch angle:** Not "save money" but "complete support system" — "I want you to have everything you need to succeed. No part of this is optional. Every element is here because it increases your chances of lasting results."
 
 **Pitch script:**
 
@@ -187,21 +187,22 @@ When were you thinking of coming? I would love to hold something for you."
 
 ---
 
-### Archetype 2: The Solo Restoration
+### Archetype 2: The Solo Success Bundle (For the Busy Woman)
 
-**For:** A guest coming alone who has described being overwhelmed, burned out, or in need of a genuine reset — not a quick treatment, a full pause
+**For:** A customer who is overscheduled, managing everyone else's needs, with limited time — but genuinely motivated.
 
 **What it includes:**
-- Primary body treatment (deep relaxation or deep tissue, 90 min — the centrepiece)
-- Thermal circuit access before treatment (45 min — warms the muscle, primes the mind)
-- Scalp ritual or warm oil hair treatment (30 min — often dismissed, always transformative)
-- Post-treatment rest in the silent room with herbal tea and a light snack
+- Doctor-led assessment + expedited 6-week program (€199)
+- Nutrition support (prepared meal plans to save decision-making time) (€100)
+- Accountability check-ins (every other week instead of weekly, for time realism) (€180)
+- Community access (asynchronous — text updates when she has time) (€0 — included)
+- Optional: Integration with fitness tracking app for minimal manual logging (€40)
 
-**Individual parts price:** Approximately €160–€200
-**Experience price:** Approximately €175–€210
-**The gift:** €15–€30
+**Individual parts price:** €519
+**Bundle price:** €399 (6-week sustainable pathway)
+**The gift:** €120 saved + time savings from pre-planned meals
 
-**Pitch angle:** The full permission slip — "You do not need to manage anything today. We have done that already."
+**Pitch angle:** "This isn't 'one more thing on your plate.' This is me removing complications so you can actually stick to this while your life stays full."
 
 **Pitch script:**
 
@@ -224,22 +225,23 @@ Shall I find you a time?"
 
 ---
 
-### Archetype 3: The Special Occasion Day
+### Archetype 3: The Event-Driven Bundle (Wedding/Reunion/Beach Trip)
 
-**For:** A birthday, anniversary, hen party for one, "I deserve this" visit — any occasion where the customer has named a reason to celebrate
+**For:** A customer with a specific visible goal — wedding, reunion, beach trip — within 12-16 weeks.
 
 **What it includes:**
-- Signature facial or body treatment of her choice (60–75 min)
-- Champagne or celebratory welcome ritual on arrival
-- Occasion touch in the treatment room (candles, flowers, a handwritten card — all prepared before arrival)
-- A small Carisma product to take home (a ritual to continue)
-- Optional upgrade: thermal circuit access or a second express treatment
+- Doctor-led intensive assessment + 12-week program (€199)
+- Weekly accountability coaching (€720)
+- Optional body contouring treatment (CoolSculpt or VelaShape for target areas) (€400)
+- Nutrition support tailored to event date (€120)
+- Community access + weekly progress photo tracking (€0 — included)
+- Pre-event confidence coaching (2 sessions 2 weeks before event) (€0 — included)
 
-**Individual parts price:** Approximately €130–€180
-**Experience price:** Approximately €140–€190
-**The gift:** €15–€30 — presented as "we wanted to mark the occasion properly"
+**Individual parts price:** €1,439
+**Bundle price:** €1,099 (complete event-success architecture)
+**The gift:** €340 saved + inclusion of body contouring
 
-**Pitch angle:** The occasion deserves a proper frame — "A birthday is not a Tuesday. I want to make sure we treat it as the day it is."
+**Pitch angle:** "This is about walking into that moment feeling like yourself again. Not smaller, but lighter. Not perfect, but present. We're building everything you need for exactly that."
 
 **Pitch script:**
 
@@ -258,21 +260,23 @@ When is the day? I would love to have everything ready for you."
 
 ---
 
-### Archetype 4: The First Full Experience
+### Archetype 4: The Relapse Recovery Bundle (For Women Who Regained)
 
-**For:** A first-time visitor who has never been to Carisma (or to a luxury spa at this level) and has indicated openness to a full experience — or an agent who senses this is the right introduction
+**For:** A customer who has successfully lost weight before but gained it back — she knows what works, she's demoralized about regaining, and she needs a different sustainability framework.
 
 **What it includes:**
-- Signature Carisma Journey (the hero treatment — full body, 60–75 min, multi-element)
-- Thermal circuit access (45 min before treatment — introduces the full ritual space)
-- Brief orientation on arrival — a team member walks her through the space, removes all uncertainty
-- Herbal tea and seated rest after the treatment
+- Doctor-led reassessment + "relapse recovery" program (€199)
+- Intensive weekly coaching (€60/week × 8 weeks) (€480)
+- Relapse prevention training (group sessions) (€0 — included)
+- Accountability community + check-ins (€0 — included)
+- Optional: Integration with past program data if available (€0 — included)
+- Post-8-week maintenance plan with quarterly check-ins (€0 — included)
 
-**Individual parts price:** Approximately €140–€180
-**Experience price:** Approximately €150–€185
-**The gift:** €10–€25
+**Individual parts price:** €679
+**Bundle price:** €499 (8-week recovery pathway with 1-year maintenance)
+**The gift:** €180 saved + permanent maintenance access
 
-**Pitch angle:** The complete introduction — "Carisma is more than a treatment room. I want to make sure you feel the whole of it."
+**Pitch angle:** "You didn't fail before. You succeeded, then you didn't have the structure to keep it. This time, the structure stays. You're not starting over — you're learning what you didn't know the first time."
 
 **Pitch script:**
 
@@ -643,10 +647,11 @@ Use it once, naturally, and let it land. Do not repeat the name insistently. Its
 
 ---
 
-*Skill maintained by: Sarah / Carisma Wellness Group*
-*Last reviewed: 2026-02-19*
+*Skill maintained by: Katya / Carisma Slimming*
+*Last reviewed: 2026-02-22 (optimized for weight loss transformation)*
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
-*Primary goal: Convert multi-need customers into complete experience bookings*
-*Target average order value: €175–€280*
-*Estimated coverage: 20–25% of all inbound customer interactions*
-*Companion skill: consult-and-pitch.md (for single-need diagnostic conversations)*
+*Primary goal: Convert multi-goal customers into complete success-architecture bookings*
+*Target average order value: €499–€1,099 (bundled support)*
+*Estimated coverage: 25–35% of all inbound customer interactions*
+*Companion skill: consult-and-pitch.md (for diagnostic conversations) + close-the-booking.md (for commitment)*
+*Key Slimming Focus: Framing bundles as "accountability architecture" not discounts; relapse normalization as justification*

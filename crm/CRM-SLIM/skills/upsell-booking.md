@@ -1,6 +1,6 @@
-# [SALES] Upsell the Booking
+# [SALES] Upsell the Booking — Slimming Edition
 
-> **Invoke When:** A booking has just been confirmed. The customer has said yes, availability has been checked, and the treatment is secured. Before signing off, suggest one upgrade or add-on in a single, graceful message. This skill exists to increase average order value by €30–80 without the customer ever feeling sold to.
+> **Invoke When:** A program enrollment has just been confirmed. The customer has said yes, the baseline assessment is booked, and the program pathway is set. Before signing off, suggest one upgrade or add-on (accountability coaching tier, body contouring, nutrition support) in a single, graceful message. This skill exists to increase average order value by €60–150 while positioning the upgrade as "success insurance," not an upsell.
 
 ---
 
@@ -21,13 +21,13 @@ Cialdini's principle of commitment and consistency is at the heart of why post-c
 
 ## Overview
 
-The moment a booking is confirmed is psychologically unlike any other moment in the customer journey. Three things are simultaneously true:
+The moment a program enrollment is confirmed is psychologically unlike any other moment in the customer journey for weight loss. Three things are simultaneously true:
 
-**The decision fatigue is gone.** She has already made the hard choice — what to book, when to come, how much to spend. Her mind is clear. She is not in evaluation mode. She is in anticipation mode.
+**The decision is made and commitment is real.** She has already made the hard choice — to try again, to invest in herself, to trust that this time will be different. Her mind has shifted from "should I?" to "I am." She is no longer in evaluation mode. She is in "now I need to succeed" mode.
 
-**The buyer's high is active.** Researchers call this the post-purchase positive affect window. For 3–10 minutes after a satisfying purchase, dopamine levels remain elevated. She feels good about what she has done. She is warm toward us. She wants to share in the feeling of having chosen well. This is the optimal moment to offer something that extends and deepens that feeling.
+**The relief and hope are active.** Researchers call this the post-commitment positive affect window. For 3–10 minutes after committing to significant change, she feels both relief (she has finally made the decision) and hope (maybe this really will work this time). She feels good about what she has chosen. She is warm toward the support system. She wants everything that will help her succeed.
 
-**Trust has been established.** She just gave us her time, her details, and her money. She trusted us enough to book. That trust is not neutral — it creates genuine receptivity to our recommendations. An upsell from a stranger is a cold pitch. An upsell from someone she just trusted with her self-care is a thoughtful suggestion from someone who knows her.
+**Trust has been established.** She just gave us her commitment, her vulnerability, and her hope. She trusted us enough to enroll. That trust is not neutral — it creates genuine receptivity to recommendations about what will increase her success. An upsell from a stranger is a sales pitch. An upsell from someone she just trusted with her transformation is a protection mechanism: "Here's what ensures you don't fail."
 
 **The completion psychology.** Cialdini and Dooley both identify the human drive toward wholeness — the sense that something unfinished wants to be finished. When we frame an add-on not as an extra but as "the thing that completes this experience," we are not introducing a new purchase. We are offering resolution. The treatment she has booked is already wonderful. This simply makes it whole.
 
@@ -123,22 +123,20 @@ This four-stage structure takes approximately 3–5 sentences. It should never f
 
 ---
 
-## Upsell Menu
+## Upsell Menu — Slimming Edition
 
-Use this table as your primary reference when choosing which upgrade to suggest. Select the most natural single option — the one that fits the treatment like it was always meant to be there.
+Use this table as your primary reference when choosing which upgrade to suggest. Select the most natural single option — the one that directly increases her likelihood of success.
 
-| Treatment Booked | Natural Upgrade (elevates what she already chose) | Natural Add-On (enhances within the session) | Occasion-Based Add-On (when she's marking something special) |
+| Program Booked | Natural Upgrade (ensures success) | Natural Add-On (removes friction) | Accountability Anchor |
 |---|---|---|---|
-| 60-minute relaxation massage | 90-minute version — "the full body needs unhurried time; 60 minutes is beautiful, 90 is transformative" | Aromatherapy ritual — personalised essential oil blend chosen for her specific state | Champagne and rose petal welcome; upgrade to couples room if with partner |
-| 60-minute deep tissue / sports massage | 90-minute version — extra time allows the therapist to complete the work rather than stop mid-release | Warm volcanic stone placement along the spine — heat reaches depth that pressure alone cannot | Post-treatment soak in thermal pool; extended relaxation room access |
-| 90-minute deep relaxation or signature massage | 2-hour extended ritual — "when was the last time you gave yourself two full hours?" | Warm oil scalp treatment added to the close of the massage — "the head carries more than most people realize" | Carisma welcome ritual — champagne, petals, and private relaxation time before and after |
-| Single booking (solo guest) | Couples upgrade — "if there is someone you would love to share this with, the side-by-side experience is something entirely different" | Private relaxation room access for an hour before the treatment — "arrive early, and arrive slowly" | Partner surprise booking — "some of our most beautiful bookings are ones where someone brings someone they love" |
-| Signature facial (60 min) | Extended precision facial (90 min) with lifting technology — "the extra time is where the skin transformation happens" | Eye and décolletage treatment added at the close — "the areas that carry most of the tension are often the ones we forget" | Overnight glow enhancement — product gift to take home matched to her skin's specific needs |
-| Couples ritual | Extended couples experience with champagne arrival ritual and private pool access | In-room arrival experience — rose petals, warm towels, personalised welcome — set before they arrive | "The complete celebration" — couples treatment + private dining reservation at the hotel |
-| Half-day spa package | Full-day upgrade including lunch, thermal circuit, and extended relaxation room | Personalised body scrub before the main treatment — "it opens the skin so the treatment works more deeply" | Carisma gift for her to take home — signature product curated to her skin type or treatment focus |
-| Express ritual (30–45 min, back/scalp/foot) | Full 60-minute relaxation massage — "you gave your back 30 minutes; let me suggest giving your whole body the same" | Warm foot ritual added to the express treatment — "it brings the experience to a complete close" | Gift voucher for a future return — "so today's moment has a sequel" |
-| Any treatment | Thermal facility day pass — access to pools, steam, and relaxation space before and after (if not already included) | Carisma signature product to take home — "the treatment continues at home; here is what carries it forward" | Gift voucher to bring back a person she loves — "some experiences are better shared" |
-| Group spa day | Private relaxation area upgrade — "a space just for your group between treatments, no shared loungers, just your own corner of calm" | Catering add-on — light lunch, herbal teas, or champagne served during the group's relaxation time | Personalised welcome for the occasion — names, occasion note, and florals in the relaxation space |
+| 6-week Baseline Program (€199) | Weekly accountability coaching tier — "this is what keeps you from Week 2 panic" (€240) | Nutrition prep support — "meal planning so you don't have to decide every morning" (€80) | Community access + weekly group check-ins |
+| 12-week Foundation Bundle (€899) | Bi-weekly intensive coaching → weekly coaching — "commitment compounds; consistency matters" (€240 upgrade) | Body composition tracking with progress photo analysis (€60) | Private accountability partner match + daily text check-in |
+| 8-week Relapse Recovery (€499) | Intensive weekly coaching + relapse prevention training — "because Week 3 is always the hardest" (€280) | Meal plan adapted from her previous successful attempt (€100) | "Slip-up response protocol" — pre-written recovery plan for when it gets hard |
+| Event-Driven 12-week (€1,099) | Body contouring add-on — "don't just lose weight, sculpt the specific results you want to see" (CoolSculpt €400 or VelaShape €350) | Pre-event confidence coaching — "the psychology of showing up" (€80, normally €200) | Weekly progress photos + weekly confidence calls with Katya |
+| Solo Success 6-week (€399) | Fitness integration + weekly accountability — "so your workouts and nutrition actually talk to each other" (€150) | Meal prep service partnership discount — "saves 3 hours/week on food decisions" (€0 — discount code) | Asynchronous community + text-based support for her schedule |
+| Any program | Community access upgrade — "from text-only to private WhatsApp group with daily check-ins" (€60 for 12 weeks) | Fitbit/Apple Watch data integration — "automatic logging so you're not manually tracking" (€40) | "Buddy match" with another customer on the same timeline |
+| Budget-constrained inquiry | Entry-level program + monthly check-ins only (€199 + €50/month) | Progress tracking app access (€0 — included) | Self-guided community forum (€0 — included) |
+| High-motivation / rapid results seeker | Intensive daily coaching + weekly body composition analysis (€60/week × 12 = €720) | Genetics testing for metabolism + personalized macro recommendations (€200) | Direct WhatsApp line to Katya + daily engagement |
 
 ---
 
@@ -148,24 +146,26 @@ All scripts are written for WhatsApp, DM, or live chat. Adjust length slightly f
 
 ---
 
-### Script 1 — Standard Post-Booking Upsell: Treatment Upgrade (60 → 90 Minutes)
+### Script 1 — Program Enrollment + Accountability Coaching Upgrade
 
-**Trigger:** Customer has booked a 60-minute massage of any kind.
+**Trigger:** Customer has enrolled in any program (6-week, 12-week, or event-driven).
 
-**Why this upgrade:** The most natural single upgrade in spa settings. The justification is always therapeutic — more time allows the work to complete rather than stop mid-session. Data from Marriott and Ritz-Carlton's Spa Plus program showed duration upgrades as the highest-converting single upsell across all spa categories.
+**Why this upgrade:** The single biggest predictor of success in weight loss is external accountability. Data from habit formation research shows weekly check-ins increase adherence by 67%. This is not an upsell — it is success insurance.
 
 ---
 
-"Your 60-minute Deep Relaxation Massage on [day] is confirmed — I hope the week between now and then gives you a reason to look forward to it.
+"Your 12-week program enrollment is confirmed — and genuinely, I'm genuinely excited.
 
-There is one thought I wanted to share before we close.
+There is one thought I wanted to share before we close, and it's important.
 
-Many guests who book 60 minutes find, towards the end, that their body has only just begun to arrive. The first twenty minutes tend to dissolve the surface tension; the next twenty begin the deeper work; and it is often the final stretch where the body actually lets go. Ninety minutes simply gives that release the time it deserves.
+Most people who start a program alone succeed for about 3 weeks. Week 2 is when doubt shows up. Week 4 is when life gets busy and the plan gets crowded out. The people who make it past that are the ones with accountability — someone checking in, asking how it went, believing they can do this when they doubt themselves.
 
-The difference in price is €[X]. If you would like me to adjust your booking, I can do that now. If you would prefer to experience the 60 minutes first and feel how it lands, that is a perfectly lovely place to start too.
+I can offer you weekly accountability coaching — a 20-minute check-in call or video every week where we talk through what's working, what's hard, and what you're learning. €60/week. But honestly? It's the difference between another program that fizzles and one that actually sticks.
 
-*Peacefully,*
-*Sarah*"
+If you'd like me to add that to your enrollment, we can do that now. If you'd rather start and add it later when you feel the need, I'll be here — but I hope you won't wait until Week 4 to reach out.
+
+With you every step,
+Katya"
 
 ---
 
@@ -437,9 +437,10 @@ This move is used when the upsell has been declined or skipped — or when the c
 
 ---
 
-*Skill maintained by: Sarah / Carisma Wellness Group*
-*Last reviewed: 2026-02-19*
+*Skill maintained by: Katya / Carisma Slimming*
+*Last reviewed: 2026-02-22 (optimized for weight loss transformation)*
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
-*Target AOV lift: €30–€80 per confirmed booking*
-*Conversion rate benchmark: 20–35% of post-confirmation upsell attempts (hospitality industry standard)*
-*Applies to: Carisma Spa & Wellness (luxury spa, hotel partners) — NOT Carisma Slimming clinical treatments*
+*Target AOV lift: €60–€150 per program enrollment*
+*Conversion rate benchmark: 35–50% of post-confirmation upsell attempts (accountability services have higher conversion than spa add-ons)*
+*Applies to: Carisma Slimming clinical programs — focuses on accountability and success infrastructure, not spa-style add-ons*
+*Key Differentiator: Upsells are framed as "success insurance," not luxury enhancements*

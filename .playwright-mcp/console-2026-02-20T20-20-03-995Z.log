@@ -1,0 +1,3 @@
+[     380ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.googletagmanager.com') does not match the recipient window's origin ('null'). @ https://www.googletagmanager.com/gtm.js?id=GTM-T2LNGBD:739
+[     786ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://www.kayak.com/i/api/fullstory/v1/get:0
+[    1039ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://www.kayak.com/i/api/account/dataSharing/v1/optOut:0

@@ -1,6 +1,6 @@
-# [SALES] Cross-Sell to Aesthetics or Slimming
+# [SALES] Cross-Sell from Slimming to Complementary Services
 
-> **Invoke When:** A spa customer shows signals that suggest she would benefit from Carisma Aesthetics or Carisma Slimming — at any natural conversation close point: after a booking is confirmed, after a question about skin or body, or when she volunteers something that opens the door.
+> **Invoke When:** A Slimming member shows signals that suggest she would benefit from complementary services (fitness coaching, nutrition specialist consultation, skin clinic follow-up for confidence boost) — at any natural conversation close point: after a milestone is hit, after a visible result, or when she volunteers something that opens the door. NOTE: Slimming cross-sells are about expansion within the weight loss journey, not about moving them to another clinic.
 
 ---
 
@@ -473,8 +473,9 @@ The effect: she feels like she is receiving something special, not being pitched
 
 ---
 
-*Skill maintained by: Sarah / Carisma Wellness Group*
-*Last reviewed: 2026-02-19*
+*Skill maintained by: Katya / Carisma Slimming*
+*Last reviewed: 2026-02-22 (optimized for weight loss transformation)*
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
-*Cross-sell targets: Carisma Aesthetics (skin clinic) · Carisma Slimming (doctor-led body clinic, St Julian's)*
-*Cross-sell trigger: Natural conversation close point — never during a complaint, never in first contact, never more than once per conversation*
+*Cross-sell targets: Fitness coaching, nutrition specialist, confidence/skin clinic for post-weight-loss contouring*
+*Cross-sell trigger: Milestone reached, visible result achieved, member expresses readiness for next phase — never during a complaint, never in first contact, never more than once per conversation*
+*Key Slimming Context: Cross-sells are expansion within weight loss journey, not pivots away from it. Positioning: "What comes next in your transformation."*

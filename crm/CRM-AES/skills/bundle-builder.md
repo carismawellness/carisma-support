@@ -1,69 +1,77 @@
 # [SALES] Bundle Builder
 
-> **Invoke When:** The agent notes a customer has multiple needs or interests ("she wants a massage and mentioned she has dry skin"), a customer asks "what's the best value option?", any multi-need situation is identified, a customer mentions a special occasion, a group inquiry arrives, or the agent believes the customer would benefit from two or more services combined into a single experience. This skill drives the highest average order value of any interaction in the system.
+> **Invoke When:** (Medical Aesthetics Edition) The patient has multiple concerns or a multi-phase treatment path is indicated ("she wants to address lines AND volume loss"), patient asks "what would you recommend?", a progressive treatment sequence is identified, or the patient would benefit from understanding how treatments complement each other. **In medical aesthetics, bundles are treatment PLANS, not spa day packages. They address clinical progression and patient psychology about results, not just financial savings.**
 
 ---
 
-## Research Foundation
+## Research Foundation — Medical Aesthetics Edition
 
-Three evidence-based frameworks underpin every element of this skill. They are not decorative — they are the reason the techniques work.
+Three evidence-based frameworks underpin bundling in medical aesthetics. In this context, bundling is not just about price — it's about clinical sequencing, psychological readiness, and treatment efficacy.
 
-**1. Anchoring Psychology — Dan Ariely, "Predictably Irrational"**
-Ariely's research demonstrates that the first number a person encounters sets a cognitive reference point against which every subsequent number is judged. In his famous MIT experiment, arbitrary numbers dramatically influenced willingness to pay — not because the anchors were meaningful, but because they were seen first. His Economist subscription study showed that the mere presence of a "print only" option (which no one wanted) caused 43% more people to choose the most expensive combined option — because the contrast made it feel rational. The key insight: people do not evaluate prices in isolation. They evaluate them relative to the last number they saw. Present individual prices before the experience price, always. The saving is not a discount — it is what the contrast creates.
+**1. Anchoring & Progressive Treatment Psychology**
+Ariely's anchoring principle applies, but with clinical modification: In medical aesthetics, the "anchor" is not just a number. It's the first treatment and the patient's response to it. The sequence matters. Conservative first treatments build confidence for follow-up treatments. Patients who start with a small procedure and see natural results are more willing to invest in complementary treatments. Presenting treatment sequencing as "Phase 1, Phase 2" with specific clinical rationales is vastly more persuasive than presenting a menu. The anchoring here is medical logic, not just price contrast.
 
-**2. Perceptual Contrast Principle — Robert Cialdini, "Influence"**
-Cialdini documented how Brunswick pool table salespeople doubled mid-range sales by starting every customer at the most expensive model, then walking them down the price ladder. The mid-range tables had not changed. Only the reference point had. The same principle applied in clothing retail: sell the suit first, then the €20 tie feels trivial — sell the tie first and they choose the €10 one. The key insight: contrast is not manipulation — it is how the human brain is wired to perceive value. Presenting the full sum-of-parts first, and the experience price second, does not deceive. It reveals the saving in a way that feels like a gift rather than a calculation.
+**2. Clinical Efficacy & Synergy — Medical Evidence**
+In medical aesthetics, combining treatments often produces exponentially better results than isolated treatments. Example: Botox alone is good; Botox + filler for volume restoration is transformative. Laser + skincare protocol gives sustained results. The bundle is not a sales device — it's clinical best practice. Presenting treatments as a coordinated plan signals medical expertise and increases perceived value through clinical logic, not just price anchoring.
 
-**3. Bundle Perception Psychology — Hospitality & Spa Research**
-A body of research on hotel and spa bundling reveals a consistent finding: guests who receive an all-inclusive bundled price report 20% higher perceived value than guests who pay itemised charges — even when the total cost is identical. The reason is the elimination of "psychic costs": the mental burden of calculating, anticipating hidden fees, and making micro-decisions throughout the visit. A bundled experience feels complete, generous, and cared-for. Separately, the "presenter's paradox" (Pepperdine University) warns that adding a low-quality item to a luxury bundle actively reduces its perceived value. Every element in a Carisma experience must be premium. Stack quality with quality. McKinsey research confirms that correctly executed bundling increases revenue by 10–30% without any increase in perceived pressure on the customer.
-
----
-
-## Overview
-
-A €280 experience that is crafted and presented as a complete journey feels profoundly different from €280 worth of individual bookings made in sequence.
-
-The first feels like an occasion. The second feels like a bill.
-
-This is the central psychology the bundle builder works with. When a customer books three treatments separately, she holds three prices in her head and experiences three small moments of spending. When the same three experiences are presented as a single, named journey — with an individual-parts anchor shown first and a unified price shown second — she holds one number in her mind and experiences one moment of decision. The saving between the two numbers registers not as a discount (which implies something was wrong with the original price) but as generosity. She is being given more than she is spending.
-
-This psychological reframe is why bundle conversations, when handled well, do not feel like upselling. They feel like being taken care of.
-
-The bundle builder exists for one purpose: to turn a multi-need customer into a guest who books a complete experience — and feels better for it than if she had booked each element separately.
-
-**What this skill is not:** It is not a way to move inventory or push high-margin add-ons at a customer who expressed a single clear need. It is for customers whose situation genuinely calls for multiple elements. Using it incorrectly — building a bundle around a customer whose world points to one focused treatment — creates confusion, not value. Read the room first.
+**3. Patient Psychology of Medical Progression — Results & Confidence Building**
+Research on medical aesthetics patient satisfaction shows: Patients who follow a recommended treatment sequence and see progressive results have significantly higher lifetime value and satisfaction than "one-shot" procedure patients. The bundled, phased approach:
+- Reduces fear of over-treatment (starting conservative)
+- Builds confidence through visible results
+- Creates natural touch points for follow-up care
+- Improves clinical outcomes through synergy
+The bundle is not about maximizing the initial transaction — it's about establishing a long-term care relationship.
 
 ---
 
-## When to Use
+## Overview — Medical Aesthetics Edition
+
+A medical aesthetics treatment plan that is presented as a coordinated, progressive journey feels profoundly different from isolated, reactive booking-by-booking appointments.
+
+The first feels like expert care with a clear path forward. The second feels like guesswork and hesitation.
+
+This is the central psychology the bundle builder works with in medical aesthetics. When a patient books individual treatments separately, she holds multiple decisions in her head and experiences multiple moments of uncertainty. When the same treatments are presented as a recommended PLAN — with clinical sequencing, expected outcomes, and transparent pricing — she holds one clear vision and makes one informed decision. She feels that Carisma understands her comprehensive needs and has a clinical strategy, not just selling individual procedures.
+
+In medical aesthetics, the bundle is NOT a discount play. It is a clinical recommendation backed by medical logic.
+
+The bundle builder exists for one purpose: to turn a multi-concern patient into one who commits to a coordinated treatment plan — and feels confident in the clinical strategy, not just booking because she was sold to.
+
+**What this skill is not:** It is not a way to upsell multiple procedures at a patient who expressed one clear need. It is for patients whose situation genuinely calls for multiple elements. Using it incorrectly — building a plan around a patient who clearly expressed wanting one focused treatment — creates pressure and damages trust. Read the clinical picture first.
+
+---
+
+## When to Use — Medical Aesthetics Edition
 
 Activate this skill when any of the following signals appear:
 
-**The customer explicitly signals multiple needs:**
-- "I was thinking a massage and maybe a facial?"
-- "Can you do a package for the day?"
-- "We want something for both of us"
-- "I have a full afternoon free"
-- "Is there a way to do a few things together?"
-- "What's the best way to spend a full day with you?"
+**The patient explicitly signals multiple concerns or asks for a plan:**
+- "I'm concerned about lines AND I feel like I've lost volume"
+- "What would you recommend to refresh my whole face?"
+- "I want to see results, but I'm nervous about looking overdone"
+- "Can you create a plan? I want to start conservative and build"
+- "What's the best approach for what I'm describing?"
+- "I want to address this, but I'm not sure if injectables alone will do it"
 
-**The agent identifies a multi-need opportunity:**
-- Customer describes physical tension AND mentions dull or dry skin
-- Customer describes a romantic occasion — couples experiences always benefit from a crafted arc
-- Customer is celebrating something — occasions call for completeness
-- Customer is staying at the hotel multiple nights and has time
-- Customer is visiting for the first time and the agent senses she wants to be guided through a full experience
+**The agent identifies a multi-phase treatment opportunity:**
+- Patient describes fine lines AND mentions wanting radiant skin → Micro-Botox + Skin quality treatment (laser)
+- Patient describes volume loss AND fine lines → Filler + Botox, sequenced
+- Patient describes aging concern AND expresses fear of looking overdone → Conservative Phase 1, potential Phase 2
+- Patient is first-timer and nervous → Educational introduction to conservative progression
+- Patient wants natural results → Build a "subtle enhancement" plan that shows restraint
 
-**The value question is asked:**
-- "What's the best value?"
-- "What do most people go for?"
-- "What would you recommend if I wanted to make the most of the day?"
-- "Is there a package that covers everything?"
+**The clinical question is asked:**
+- "What would you recommend?"
+- "What's the best starting point?"
+- "How would you approach this?"
+- "Can we do something that looks natural?"
+- "What's your philosophy on treatment sequencing?"
 
 **Do NOT use this skill when:**
-- The customer has a single, clear, acute need (acute lower back pain → one focused therapeutic treatment is the answer, not a day journey)
-- The customer has signalled a budget that does not accommodate a multi-element experience
-- The customer is time-constrained to under 90 minutes and has not indicated flexibility
+- The patient has a single, clear concern (deep forehead lines → Botox only; this is the right answer, not upsell into more)
+- The patient has explicitly expressed wanting one treatment only ("I just want Botox")
+- The patient has signalled budget constraints that don't accommodate multi-phase treatment
+- The patient has expressed fear of over-treatment or pressure (they need reassurance, not bundling)
+- Clinical appropriateness does not support it (e.g., patient not yet ready for progression)
 
 ---
 
@@ -643,10 +651,11 @@ Use it once, naturally, and let it land. Do not repeat the name insistently. Its
 
 ---
 
-*Skill maintained by: Sarah / Carisma Wellness Group*
-*Last reviewed: 2026-02-19*
+*Skill maintained by: Sarah / Carisma Aesthetics*
+*Last reviewed: 2026-02-22 [OPTIMIZED FOR MEDICAL AESTHETICS]*
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
-*Primary goal: Convert multi-need customers into complete experience bookings*
-*Target average order value: €175–€280*
-*Estimated coverage: 20–25% of all inbound customer interactions*
-*Companion skill: consult-and-pitch.md (for single-need diagnostic conversations)*
+*Primary goal: Convert multi-concern patients into coordinated treatment PLANS that show clinical expertise, not just sales bundling*
+*Target average order value per visit: €250–€500 (first phase); €100–€300 per follow-up visit (progressive plan)*
+*Estimated coverage: 25–35% of all inbound Aesthetics interactions (high % due to multi-concern nature of aesthetic goals)*
+*CRITICAL MEDICAL ETHICS: Bundle builder is a clinical tool, not just sales. Never bundle to maximize revenue — bundle to demonstrate best clinical approach. Conservative-first philosophy always.*
+*Companion skill: [CONSULT] Consult & Pitch (for diagnostic); [SALES] Upsell Booking (for add-ons within a booking)*

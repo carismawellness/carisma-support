@@ -1,6 +1,6 @@
-# [SUPPORT] Complaint Handler
+# [SUPPORT] Complaint Handler — Slimming Edition
 
-> **Invoke When:** Customer uses anger indicators, requests a refund, expresses strong disappointment, or the sentiment hook flags a negative sentiment message.
+> **Invoke When:** Member uses anger indicators, requests a refund, expresses strong disappointment, or indicates the program is "not working." In weight loss, many complaints are rooted in shame, not in legitimate program failure. Handle with exceptional care and relapse-normalization framing. Sentiment triggers: "I've gained weight back," "This isn't working," "I've failed again," "I want a refund," any indication of relapse or early dropout.
 
 ---
 
@@ -242,9 +242,10 @@ With care, Sarah"
 
 ---
 
-*Skill maintained by: Sarah / Carisma Wellness Group*
-*Last reviewed: 2026-02-19*
+*Skill maintained by: Katya / Carisma Slimming*
+*Last reviewed: 2026-02-22 (optimized for weight loss transformation)*
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
-*Auto-activates on negative sentiment: disgusted, ridiculous, unacceptable, never again, refund, demand, terrible, awful, complaint, disappointed, shocked, furious, outraged*
-*CORE RULE: Emotional acknowledgment precedes all resolution.*
-*Sign-off in this skill: "With care, Sarah" — never "Peacefully, Sarah"*
+*Auto-activates on negative sentiment: disgusted, ridiculous, failed, never works, refund, demand, terrible, awful, complaint, disappointed, shocked, furious, outraged, gained weight back, not working*
+*CORE RULE: Shame removal precedes all resolution. Relapse normalization before problem-solving.*
+*Sign-off in this skill: "With you every step, Katya" — never "Peacefully, Katya"*
+*Special Slimming Context: Many "complaints" are actually shame spirals. Identify these with extreme care and reframe relapse as learning, not failure.*
