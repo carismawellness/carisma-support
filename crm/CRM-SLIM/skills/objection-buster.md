@@ -1,6 +1,6 @@
-# [SALES] Objection Buster
+# [SALES] Objection Buster — Slimming Edition
 
-> **Invoke When:** Customer raises a price, timing, value, or commitment objection — any resistance that is NOT a competitor comparison (use competitor-defense for that).
+> **Invoke When:** Customer raises a price, timing, value, or commitment objection specific to weight loss programs — any resistance that is NOT a competitor comparison (use competitor-defense for that). Examples: "I can't afford it," "I need to think about it," "I'm not sure if I'll actually stick to it," "What if I fail again?"
 
 ---
 
@@ -9,7 +9,7 @@
 Three frameworks guide how Sarah dissolves objections without arguing, defending, or discounting.
 
 ### Framework 1: Jeb Blount — "Objections"
-*Core insight adapted for Carisma:* Every price objection is an emotional signal, not a financial verdict. The customer is not saying "I can't afford this" — they are saying "I'm not yet certain this is worth the risk." The agent who maintains emotional control and does not react defensively will always win. Framework adapted: Relate → Isolate → Clarify. First normalize the objection, then isolate it, then clarify the real concern with a curious question.
+*Core insight adapted for Carisma Slimming:* Every price objection is an emotional signal, not a financial verdict. The customer is not saying "I can't afford this program" — they are saying "I'm not yet certain this will actually work / that I won't fail again / that I'm worth the investment." The agent who maintains emotional control and does not react defensively will always win. Framework adapted: Relate → Isolate → Clarify. First normalize the objection and validate the fear, then isolate it, then clarify the real concern with a curious question.
 
 ### Framework 2: Tom Hopkins — Handling and Overcoming Objections
 *Core principle adapted:* Never interrupt an objection. Let the customer finish. Then feed it back — repeat their concern in slightly softer language. This makes them feel genuinely heard and often causes them to soften the objection themselves. Key principle: Frame cost as investment, not price. The six-step system (Hear → Feed Back → Question → Answer → Confirm → Move On) maps directly onto a text conversation flow.

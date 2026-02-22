@@ -1,6 +1,6 @@
-# [SALES] Close the Booking
+# [SALES] Close the Booking — Slimming Edition
 
-> **Invoke When:** Customer is interested but hesitating — says "I'll think about it", "maybe", "I need to check", "let me see", "I'll get back to you", or goes quiet after showing genuine interest. Also invoke when she has received a recommendation and the conversation has stalled without a confirmed booking.
+> **Invoke When:** Customer is interested in a weight loss program but hesitating — says "I'll think about it", "maybe", "I need to check", "let me see", "I'll get back to you", or goes quiet after showing genuine interest. Also invoke when she has received a program recommendation and the conversation has stalled without a confirmed consultation or program start.
 
 ---
 
