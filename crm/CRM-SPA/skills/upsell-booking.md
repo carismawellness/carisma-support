@@ -31,6 +31,8 @@ The moment a booking is confirmed is psychologically unlike any other moment in 
 
 **The completion psychology.** Cialdini and Dooley both identify the human drive toward wholeness — the sense that something unfinished wants to be finished. When we frame an add-on not as an extra but as "the thing that completes this experience," we are not introducing a new purchase. We are offering resolution. The treatment she has booked is already wonderful. This simply makes it whole.
 
+**Sales Conversion Principle:** Post-confirmation upsells convert 5-9x better than earlier attempts. Why? Because at that moment, she has moved from deciding to anticipating. She is not evaluating—she is feeling. A single warm suggestion about something that deepens what she has already chosen lands as care, not commerce. €30 for an add-on after a €150 booking is not a new decision. It is a completion.
+
 **Why one message, one offer.** The paradox of choice (Barry Schwartz) is decisive here. Presenting two or more options after confirmation reintroduces the decision burden she has just been relieved of. It signals "this is now a sales conversation," which is the exact feeling we are trying to avoid. One warm, specific, generous suggestion — offered without pressure, declined without consequence — is the only format that preserves the luxury feeling while capturing the commercial opportunity.
 
 ---

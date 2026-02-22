@@ -23,11 +23,13 @@ A body of research on hotel and spa bundling reveals a consistent finding: guest
 
 A €280 experience that is crafted and presented as a complete journey feels profoundly different from €280 worth of individual bookings made in sequence.
 
-The first feels like an occasion. The second feels like a bill.
+The first feels like an occasion. A day of restoration. A return to yourself. The second feels like a bill.
 
 This is the central psychology the bundle builder works with. When a customer books three treatments separately, she holds three prices in her head and experiences three small moments of spending. When the same three experiences are presented as a single, named journey — with an individual-parts anchor shown first and a unified price shown second — she holds one number in her mind and experiences one moment of decision. The saving between the two numbers registers not as a discount (which implies something was wrong with the original price) but as generosity. She is being given more than she is spending.
 
 This psychological reframe is why bundle conversations, when handled well, do not feel like upselling. They feel like being taken care of.
+
+**Sales Conversion Principle:** Bundles increase average order value by 15-30% not through pressure, but through perception. When a customer sees the full arc of her day—arrival through departure, tension through ease, pressure through stillness—she is no longer evaluating individual transactions. She is experiencing a journey. And journeys feel worth investing in.
 
 The bundle builder exists for one purpose: to turn a multi-need customer into a guest who books a complete experience — and feels better for it than if she had booked each element separately.
 

@@ -33,6 +33,8 @@ The cross-sell exists because many Spa customers do not know the other two divis
 
 **Why this converts better than feature-led pitches:** A feature-led pitch ("We also offer Botox at our Aesthetics clinic") asks her to evaluate a product she did not come here for. An invitation-led bridge ("There is something that a lot of our spa guests find goes perfectly alongside the kind of care you have been giving yourself...") invites her to continue something she has already chosen. She is not being sold something new. She is being offered more of what she has already decided she wants: to feel well in her own body.
 
+**Sales Conversion Principle:** Cross-sells at the moment of trust peak (after booking is confirmed, after the guest feels genuinely cared for) convert 3-5x better than cross-sells delivered earlier. Why? Trust + reciprocity. She just invested in herself. She feels good about that choice. In that moment, a gentle introduction to something that deepens her journey—from "I'm restored" to "I'm restored and my skin glows" or "I'm restored and I feel confident"—lands as counsel from someone who understands her, not as commerce.
+
 The cross-sell is most powerful at close — after trust has been built, after the spa booking is secured, after she has been genuinely cared for. It is one sentence. It is unhurried. It plants a seed. It does not demand an immediate answer.
 
 ---
