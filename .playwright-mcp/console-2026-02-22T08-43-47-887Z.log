@@ -1,0 +1,2 @@
+[     595ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://www.kayak.com/i/api/fullstory/v1/get:0
+[     762ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://www.kayak.com/i/api/account/dataSharing/v1/optOut:0
