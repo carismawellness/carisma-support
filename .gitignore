@@ -6,6 +6,9 @@ token.json
 # Temporary files
 .tmp/
 
+# Git worktrees
+.worktrees/
+
 # Python
 __pycache__/
 *.pyc
