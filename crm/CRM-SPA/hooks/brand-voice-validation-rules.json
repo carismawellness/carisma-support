@@ -5,14 +5,9 @@
 
   "forbidden_phrases": [
     {
-      "pattern": "pamper yourself",
-      "reason": "Cliché wellness phrase",
+      "pattern": "pamper yourself|treat yourself",
+      "reason": "Cliché wellness phrases",
       "suggestion": "Take a moment for yourself"
-    },
-    {
-      "pattern": "treat yourself",
-      "reason": "Cliché wellness phrase",
-      "suggestion": "Take time for yourself"
     },
     {
       "pattern": "amazing|fantastic|awesome",
@@ -30,14 +25,9 @@
       "suggestion": "Make it personal: 'You're not just welcome. You belong.'"
     },
     {
-      "pattern": "perfect for.*holiday|spa.*vacation|spa.*escape",
+      "pattern": "\\bperfect\\s+for\\s+(your\\s+)?(holiday|vacation|escape)\\b",
       "reason": "Touristy language (not luxury wellness)",
       "suggestion": "Focus on transformation: 'A sanctuary, even if only for an hour'"
-    },
-    {
-      "pattern": "myofascial|lymphatic|circulation|pressure technique",
-      "reason": "Clinical/technical language (avoid medical jargon)",
-      "suggestion": "Use sensory language: 'Ease the tension. Feel whole again.'"
     }
   ],
 
@@ -81,20 +71,31 @@
       "description": "Warn if message lacks sensory words (optional for short responses)",
       "severity": "low",
       "enabled": true,
-      "threshold": "Recommended for messages longer than 2 sentences"
+      "threshold": "Recommended for messages longer than 2 sentences",
+      "min_character_count": 50
     },
     {
       "name": "check_clinical_language",
       "description": "Warn about clinical or technical jargon",
       "severity": "high",
-      "enabled": true
+      "enabled": true,
+      "clinical_keywords": [
+        "myofascial", "lymphatic", "circulation", "pressure technique",
+        "therapeutic", "stimulate", "reduce", "therapy", "treatment", "procedure"
+      ]
     }
   ],
 
   "feedback_templates": {
-    "forbidden_phrase_found": "⚠️ Brand Voice Check\nFound: \"{phrase}\"\nIssue: {reason}\nSuggestion: {suggestion}\n\nAllow override? (Y/N)",
-    "missing_second_person": "💡 Tone Tip\nTry using 'you' or 'your' to create intimacy.\nExample: \"You deserve a moment of stillness.\"",
-    "lacks_sensory_language": "💡 Tone Tip\nConsider adding sensory words: warmth, stillness, breath, gentle, ease\nExample: \"Ease the tension. Let go. Feel whole again.\"",
-    "clinical_language_warning": "⚠️ Tone Check\nThis sounds clinical. Try sensory language instead:\n\"{suggestion}\""
+    "forbidden_phrase_found": "Brand Voice Check\nFound: \"{phrase}\"\nIssue: {reason}\nSuggestion: {suggestion}\n\nAllow override? (Y/N)",
+    "missing_second_person": "Tone Tip\nTry using 'you' or 'your' to create intimacy.\nExample: \"You deserve a moment of stillness.\"",
+    "lacks_sensory_language": "Tone Tip\nConsider adding sensory words: warmth, stillness, breath, gentle, ease\nExample: \"Ease the tension. Let go. Feel whole again.\"",
+    "clinical_language_warning": "Tone Check\nThis sounds clinical. Try sensory language instead:\n\"{suggestion}\""
+  },
+
+  "usage_notes": {
+    "adaptation_for_other_brands": "These rules are tailored for Carisma Spa & Wellness. When adapting for other brands (Carisma Aesthetics, Carisma Slimming), adjust: 1) forbidden_phrases based on brand voice guidelines; 2) sensory_words and transformation_words to match brand positioning; 3) clinical_keywords to match industry terminology (e.g., add 'fillers', 'injection', 'downtime' for Aesthetics)",
+    "min_character_count_logic": "The min_character_count in check_sensory_language (50 chars) prevents false positives on short messages like greetings or simple FAQs. Adjust threshold based on response length expectations.",
+    "regex_pattern_notes": "The 'perfect for holiday' pattern uses word boundaries (\\b) and optional 'your' to catch variations while avoiding over-matching. Test new patterns against representative message samples before deploying."
   }
 }
