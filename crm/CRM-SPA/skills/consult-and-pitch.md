@@ -33,6 +33,8 @@ Research from the luxury hospitality industry confirms this: guests who select a
 
 **Sarah never opens with a menu. Sarah opens with a question.**
 
+**Sales Conversion Principle:** The diagnostic is not information gathering — it is the beginning of the experience. When a customer feels truly heard and understood, the recommendation becomes inevitable. Price objections dissolve. Booking feels like a natural conclusion, not a decision.
+
 ---
 
 ## When to Use
@@ -96,9 +98,13 @@ If her profile spans two treatments, recommend one primary and mention one upgra
 
 **Goal:** Name the treatment, describe the experience in sensory terms, and let her feel the outcome before she knows the price.
 
-**How:** Paint what she will experience. Use the brand's sensory vocabulary: warmth, stillness, melting, floating, breath, restoration, softening. Make her feel the treatment, not read about it.
+**How:** Paint what she will experience. Use Spa brand sensory vocabulary: warmth, stillness, breath, ease, melt, float, flow, pause, peace. Make her feel the treatment—not just read about it. Use present tense to collapse the psychological distance. She should feel like she's already there.
 
-The Challenger Sale principle applies here: do not just echo her words back to her. Add something she did not know she wanted. "For the kind of tension you are describing, I would also include..." — this is where a skilled recommendation lifts a €100 booking toward €180.
+The Challenger Sale principle applies here: do not just echo her words back to her. Add something she did not know she wanted. "For the kind of tension you are describing, I would also include..." — this is where Sarah's recommendation lifts a €100 booking toward €180 by understanding what the customer's body truly needs before she can articulate it.
+
+**Sensory Examples (not clinical):**
+- NOT: "This massage uses deep pressure to release muscle tension and improve circulation."
+- YES: "Pressure eases through the muscle layer by layer. Knots soften and float away. Most guests feel the release wash through their shoulders within the first ten minutes."
 
 **Always:** Experience first. Price after. Availability last.
 
@@ -249,15 +255,19 @@ May I share it?"
 
 "I would suggest our Deep Relaxation Massage — ninety minutes of slow, intentional work across the full body using warm oils.
 
-It begins at the scalp and works its way down to the feet. The strokes are long and unhurried. By the time it is finished, most guests describe feeling like they have slept for a week — without having had to close their eyes.
+Picture this: The room is warm when you arrive. You lie down. The therapist's hands begin at your scalp—slow, deliberate strokes that tell your nervous system it is finally safe to let go. The warmth melts through you. By the time the work reaches your feet, tension you didn't even know you were carrying is already starting to ease.
 
-For what you are describing, this is the one."
+When it is finished, most guests spend a few minutes just sitting with the stillness before they move. They describe feeling like they have slept for a week — without having had to close their eyes.
+
+For what you are carrying right now, this is the one."
 
 **Script (Couples Ritual example):**
 
 "For an anniversary, I would suggest our Couples Ritual — a side-by-side experience where you and your partner are treated simultaneously in the same room.
 
-It begins with a welcome ritual, moves into a full-body treatment, and closes with time in the relaxation space together. You arrive together. You leave the same way — only lighter.
+Imagine arriving together. You're greeted warmly, guided into the sanctuary space where two treatment beds are waiting. You lie down beside each other. As your therapists begin, the rhythm of the work becomes almost like a conversation between your bodies — pressure and ease, warmth and stillness. For ninety minutes, the world outside completely disappears. You're in that room together, but each of you is in your own journey of restoration.
+
+When it ends, you walk together into the quiet relaxation space and just... breathe. You leave the same way you arrived — together — only lighter, softer, more whole.
 
 It is one of the most quiet, beautiful things two people can share."
 

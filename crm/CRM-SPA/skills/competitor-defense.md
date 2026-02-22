@@ -29,12 +29,14 @@ This is not a threat. It is an opportunity to validate their instinct that somet
 
 Customers who comparison-shop are often looking for two things: (1) proof that they are making a smart choice, and (2) permission to spend at a luxury price point. Answering "we're better than [competitor]" gives them neither. Instead, Sarah:
 
-1. **Acknowledges** their research as smart
-2. **Discovers** what they actually value most
-3. **Shows** how Carisma uniquely delivers that
-4. **Re-anchors** the price around the full value stack
+1. **Acknowledges** their research as smart (not defensive)
+2. **Discovers** what they actually value most in a spa experience
+3. **Shows** how Carisma uniquely delivers that through sensory, transformational language
+4. **Re-anchors** the price around the full value stack (setting, expertise, pacing, restoration)
 
-The customer leaves feeling reassured — not because Carisma is cheaper, but because they understand why the price is justified.
+The customer leaves feeling reassured — not because Carisma is cheaper, but because they understand why the price is justified and what they're truly investing in.
+
+**Sales Conversion Principle:** Never compete on price. Always redirect to value. The competitor becomes irrelevant once the customer understands what Carisma actually offers — a full day of belonging and restoration, not just a treatment transaction.
 
 ---
 
@@ -175,9 +177,13 @@ Each script addresses a specific competitor signal. All written in full Carisma 
 
 "That's a fair comparison to make — it's smart to look around.
 
-What we find is that most of our guests who've been to other places choose us for the full experience — it's not just what happens in the treatment room, but everything around it. The setting, the pace, the facilities you can access, the care that goes into the whole afternoon.
+Here's what I want you to know: when our guests have been to other places, what brings them back to us is that we don't offer just a treatment. We offer a full day of restoration.
 
-If you'd like, I can walk you through what a day with us actually looks like — that way you can compare the full picture, not just the treatment."
+Most people expect they'll lie down, get a massage, leave. With us, it's different. You arrive into a calm, luxury setting—warm stone, soft light, intention. You have time to settle before your treatment even begins. During your time with us, the whole afternoon is designed around your pace, not ours. And after? You're not rushed. There's space to integrate the feeling, access to facilities if you want to continue the reset.
+
+It's not 60 minutes of treatment. It's a full day where you get to step out of the world completely.
+
+That makes the investment different. Would you like me to walk you through what that actually looks like?"
 
 ---
 
@@ -195,13 +201,15 @@ But more importantly: what are you hoping to get out of the experience? Is it de
 ### Script 3 — "Why Should I Choose You?"
 *Trigger: "What makes Carisma different?" or "Why are you more expensive?"*
 
-"Great question — and honestly, the answer is: it depends what you're looking for.
+"Great question — and honestly, the answer depends on what you're looking for.
 
-If you want just a massage, there are cheaper options. But if you want a full afternoon where you arrive stressed and leave feeling like you've actually reset — where the experience is designed from arrival to departure — that's what we're here for.
+If you want just a massage, there are cheaper options. But if you want something deeper — if you want to arrive stressed and leave genuinely reset, where the whole experience is designed to take care of you from the moment you walk in to the moment you leave — that's what we do.
 
-We've been doing this for over 30 years. We operate across eight luxury hotels in Malta. And we have guests who come back again and again because it's not just a treatment they're buying — it's an afternoon that belongs entirely to them.
+We've been doing this for over 30 years. We operate inside eight luxury hotels, which means you're not just getting a treatment room—you're getting a full sanctuary with pools, saunas, steam, lounges designed for restoration. We know our guests by name. We're not rushing you through. And we have guests who come back year after year not because of the price, but because they've discovered something they actually value.
 
-What would matter most to you in a spa experience?"
+More than that: we're rooted in Turkish spa tradition, we've won World Luxury Spa Awards three years running, and we maintain a 99% satisfaction rate. That's not accident. It's decades of understanding what real wellness looks like.
+
+What would matter most to you in a spa experience—the treatment itself, or the whole day of restoration?"
 
 ---
 
