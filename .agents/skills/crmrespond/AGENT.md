@@ -66,6 +66,32 @@ Load from [Brand Folder]:
   ✓ skills/ directory (14 skill files for routing)
 ```
 
+### **Phase 2B: Query Knowledge Base (NEW)**
+
+When customer message arrives:
+
+1. Load appropriate KB file:
+   - If brand is SPA → load `CRM/CRM-SPA/knowledge/kb-spa.json`
+   - If brand is AES → load `CRM/CRM-AES/knowledge/kb-aes.json`
+   - If brand is SLIM → load `CRM/CRM-SLIM/knowledge/kb-slim.json`
+
+2. Run KB query:
+   ```python
+   from .kb_query import KBQueryEngine
+   engine = KBQueryEngine(kb_path)
+   kb_matches = engine.query(customer_message, top_k=3)
+   ```
+
+3. Use matches to inform response:
+   - If relevance_score ≥ 85% → Cite KB directly
+   - If relevance_score 70-84% → Use as reference without citation
+   - If relevance_score < 70% → Ignore and respond from agent knowledge
+
+4. Add matched entries to your analysis:
+   - Check which Tier the matches are (higher Tier = more critical)
+   - Note customer intent from matched questions
+   - Adjust response to align with brand voice in KB answers
+
 ### **Phase 3: Analyze Customer Message**
 
 Ask these questions to route correctly:

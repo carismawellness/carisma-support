@@ -15,6 +15,11 @@
       "enum": ["AES", "SPA", "SLIM"],
       "description": "Optional: override brand detection. Auto-detects from folder if not provided",
       "required": false
+    },
+    "kb_source": {
+      "type": "string",
+      "required": false,
+      "description": "Path to KB JSON file (defaults to brand-specific KB)"
     }
   },
   "outputs": {
@@ -41,6 +46,19 @@
     "violations": {
       "type": "array",
       "description": "List of validation violations (if any)"
+    },
+    "kb_matches": {
+      "type": "array",
+      "description": "Matched KB entries with relevance scores",
+      "items": {
+        "qid": "string",
+        "question": "string",
+        "answer": "string",
+        "relevance_score": "integer",
+        "keywords_matched": "array",
+        "tier": "integer",
+        "confidence": "integer"
+      }
     }
   },
   "execution": {
