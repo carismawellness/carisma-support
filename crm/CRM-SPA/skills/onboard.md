@@ -6,7 +6,11 @@
 
 ## Welcome
 
-You're not just learning a tool. You're learning to be Sarah — the voice Carisma customers trust. This walkthrough teaches you the system and the standard in 5 minutes.
+You're not just learning a tool. You're learning to be Sarah — the voice Carisma customers trust.
+
+Sarah is not a chatbot. Sarah is a calm presence. A trusted guide. Someone who understands that behind every message is a person considering whether they deserve to pause, breathe, and step into their own wellbeing. Your job is to make them feel that they do.
+
+This walkthrough teaches you the system and the standard in 5 minutes.
 
 ---
 
@@ -30,7 +34,7 @@ CONTEXT: [returning? voucher? first time? special occasion?]
 [paste the full conversation here]
 ```
 
-**Why:** Claude uses this to draft in the right tone, at the right level of detail, for the right channel.
+**Why:** Context is everything. This format helps Claude understand the channel, the person, and their moment — so Sarah responds at the right pace, with the right warmth, in exactly the right voice. We're not answering questions. We're welcoming people into an experience.
 
 ---
 
@@ -52,20 +56,20 @@ This is THE most important rule. When you invoke [consult-and-pitch], this is ho
 
 | Skill | When to Use | What It Does |
 |---|---|---|
-| [consult-and-pitch] | Any treatment/price inquiry | Diagnose → recommend → pitch |
-| [close-the-booking] | Customer hesitating | Warm walk to confirmation |
-| [upsell-booking] | Booking confirmed | Suggest upgrade + add-ons |
-| [close-detector] | Goodbye language detected | Surface upsell + cross-sell before close |
-| [cross-sell] | Natural close point | Pitch Aesthetics or Slimming clinic |
-| [objection-buster] | Price / timing objection | Handle objection without discounting |
-| [competitor-defense] | Competitor mentioned | Validate → differentiate → re-anchor |
-| [complaint-handler] | Upset customer / complaint | De-escalate in brand voice |
-| [bundle-builder] | Multi-need customer | Build optimal package + draft pitch |
-| [first-time-converter] | Never visited before | Special first-timer approach |
-| [re-engagement] | Lapsed customer | Bring them back |
-| [referral-nudger] | Conversation closing well | "Bring a friend" suggestion |
-| [update-knowledge] | Agent learns something new | Add it to the knowledge base |
-| [onboard] | New agent / refresher | This walkthrough |
+| [consult-and-pitch] | Any treatment/price inquiry | Listen first → understand their need → recommend with confidence → present value |
+| [close-the-booking] | Customer hesitating at the edge | Gentle reassurance → remove final doubt → warm invitation to confirm |
+| [upsell-booking] | Booking confirmed | Celebrate their choice → suggest thoughtful additions → enhance their experience |
+| [close-detector] | Goodbye language detected | Notice the moment they're about to leave → surface one perfect add-on before they go |
+| [cross-sell] | Natural close point | Warmly introduce Aesthetics or Slimming services that complement their spa journey |
+| [objection-buster] | Price / timing objection | Acknowledge their concern → reframe value → remove the barrier without discounting |
+| [competitor-defense] | Competitor mentioned | Validate their research → differentiate with Carisma's authentic difference → re-anchor to Spa purpose |
+| [complaint-handler] | Upset customer / complaint | Meet them with care → listen deeply → restore trust in our commitment to their wellbeing |
+| [bundle-builder] | Multi-need customer | Understand their whole wellness picture → design a package just for them → present as a journey |
+| [first-time-converter] | Never visited before | Welcome them home → ease their fears → make belonging feel obvious → guide them to yes |
+| [re-engagement] | Lapsed customer | Reconnect with warmth → remind them why they loved us → invite them back to their sanctuary |
+| [referral-nudger] | Conversation closing well | Celebrate their transformation → invite them to share Carisma with someone they love |
+| [update-knowledge] | Agent learns something new | Add it to the knowledge base so every agent grows smarter together |
+| [onboard] | New agent / refresher | This walkthrough — your foundation for being Sarah |
 
 ---
 
@@ -106,7 +110,10 @@ Sarah is the persona customers trust. Consistency over hundreds of conversations
 **Q3:** How would Carisma say "We welcome all customers"?
 **Answer:** "You're not just welcome. You belong."
 
-**Does your response pass?** If it sounds like it could come from any spa, rewrite it.
+**Q4:** How would Carisma say "Relax and feel better"?
+**Answer:** "Ease the tension. Let go. Feel whole again." OR "Pressure melts. Stillness flows. You return."
+
+**Does your response pass?** If it sounds like it could come from any spa, rewrite it. Use sensory words (warmth, breath, stillness, ease, melt, flow). Use second-person perspective (you, your). Make it poetic but grounded. Never rush. Never sell — invite.
 
 ---
 
@@ -227,9 +234,11 @@ Claude will flag it for you, and it should be added to the knowledge base.
 
 You have everything you need. Trust the system. Trust Sarah's voice. Trust that when you follow the intake format and use the skills, you're never starting from scratch.
 
-And remember: Sarah is YOU at your best.
+Every person who reaches out is asking the same unspoken question: "Do I deserve this moment for myself?" Your answer — in how you listen, how you welcome, how you speak — will shape whether they say yes.
 
-Go welcome someone.
+And remember: Sarah is YOU at your best. You already know how to care for people. You already know what it feels like to need a pause. Bring that to every conversation.
+
+Go welcome someone. Make them feel they belong.
 
 Peacefully,
 Sarah

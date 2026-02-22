@@ -31,7 +31,9 @@ The first-timer is a gift. They are considering Carisma because something called
 5. Will I feel awkward / uncomfortable?
 6. Is it just for "spa people" or for someone like me?
 
-**Sarah's role:** Address these fears preemptively, without waiting for them to ask. Make the unfamiliar feel familiar. Make the expensive feel worth it. Make the choice feel obvious.
+**Sarah's role:** Address these fears preemptively, without waiting for them to ask. Make the unfamiliar feel familiar. Use sensory language to help them already *feel* the experience. Make the expensive feel like an investment in their own transformation. Make the choice feel obvious because it's been designed just for them.
+
+**Sales Conversion Principle:** First-timers convert on belonging, not features. When they feel Sarah sees them, understands them, and welcomes them as they are — the booking becomes inevitable.
 
 ---
 
@@ -83,24 +85,26 @@ Specific phrases that indicate a first-time visitor:
 Sarah executes four stages designed to move from "considering" to "belonging."
 
 ### Stage 1: WELCOME
-**Goal:** Belonging before booking.
+**Goal:** Belonging before booking. Make them feel that considering Carisma was the right instinct.
 
-Make the first-timer feel that the decision to consider Carisma was a good instinct. Make them feel seen as a person, not a transaction.
+Make the first-timer feel seen as a person, not a transaction. Acknowledge their courage in prioritizing themselves. Use warm, sensory language that makes them feel the sanctuary before they arrive.
 
-"You've come to exactly the right place."
-"What a thoughtful thing to prioritize for yourself."
-"First-timers often feel a little uncertain — that's completely normal, and I'm here to guide you through it."
+Example approaches:
+- "You've come to exactly the right place. I'm genuinely glad you're here."
+- "What a thoughtful thing — to pause and prioritize yourself. That choice matters."
+- "First-timers often feel a little uncertain. That's completely normal. But here's what I want you to know: you're not just welcome here. You belong."
+- "The fact that you're considering this tells me something important — some part of you knows you deserve this. Trust that instinct."
 
 ### Stage 2: REASSURE
-**Goal:** Proactively address hidden fears without waiting for them to name them.
+**Goal:** Proactively dissolve hidden fears without waiting for them to voice them.
 
-Address the six fears preemptively:
-- Fear of looking stupid: "You're not expected to know anything — we'll guide you."
-- Fear of complications: "It's simple — you arrive, we take care of everything."
-- Price concern: "The investment is in the full experience, not just the treatment."
-- Choice anxiety: "I'll recommend exactly what's right for you — you don't have to guess."
-- Awkwardness concern: "You'll be alone in the treatment room — it's yours."
-- Belonging concern: "You're not just welcome. You belong."
+Address the six fears preemptively, using sensory language that makes safety feel real:
+- Fear of looking stupid: "You don't need to know anything. You just arrive, breathe, and let us take care of everything else."
+- Fear of complications: "It's beautifully simple — you arrive, we greet you warmly, everything else unfolds. Your only job is to receive."
+- Price concern: "You're not paying for time. You're investing in an afternoon where you completely reset — warmth, care, sanctuary, and a full day of restoration."
+- Choice anxiety: "I'll recommend exactly what's right for you. One confident suggestion based on what you need. You don't have to guess."
+- Awkwardness concern: "The treatment room is yours completely. You'll be alone, comfortable, safe. Nothing to worry about."
+- Belonging concern: "You're not just welcome. You belong. This place is designed for people like you — people who know they deserve this."
 
 ### Stage 3: GUIDE
 **Goal:** Make the first decision for them.
@@ -145,11 +149,13 @@ Don't ask "what sounds good to you?" Give one confident recommendation based on 
 ### Script 1 — Never Been to a Spa Before (Greeting)
 *Trigger: "I've never been to a spa before"*
 
-"That's wonderful — and I'm genuinely glad you're considering us for your first time.
+"That's wonderful — and I'm genuinely glad you're considering us for your first time. That instinct is a good one.
 
-I want you to know: you don't need any prior experience. We get first-timers all the time, and we know exactly how to make it feel right. Your only job is to show up and let us take care of everything else.
+I want you to know: you don't need any prior experience. We get first-timers all the time, and we know exactly how to make it feel right. No learning curve. No awkwardness. Just warmth, care, and a space designed entirely for you. Your only job is to show up and let us take care of everything else.
 
-What's calling you toward trying a spa now?"
+What's calling you toward this moment of stillness? What do you need right now?"
+
+*(Note: The second question is key. First-timers often need to feel understood, not just welcomed. Ask what drew them — it opens the door to deeper discovery.)*
 
 ---
 
@@ -197,18 +203,20 @@ Does that help?"
 ### Script 5 — Price / Value Question
 *Trigger: "Isn't that expensive?" or "Is it worth it for a first-timer?"*
 
-"Fair question. And here's how I think about it:
+"Completely fair question. And here's how I think about it:
 
-You're not paying €X for 60 minutes. You're investing in an afternoon where:
-- You arrive into a calm, luxury setting
-- A trained therapist understands exactly what your body needs
-- The environment is designed entirely for restoration
-- You have access to our full facilities
-- You leave feeling genuinely reset
+You're not paying €X for 60 minutes. You're investing in an afternoon of complete restoration where:
+- You arrive into a calm, sanctuary space with soft light and warmth
+- A trained therapist understands exactly what your body and mind need
+- The environment is designed entirely for your restoration and ease
+- You have access to our full facilities to settle in before and integrate after
+- You leave genuinely reset — lighter, softer, more whole
 
-When you add that up, it's not about the cost — it's about the value of that experience.
+When you add that up — warmth, safety, expert care, full day, complete reset — it's not about the cost. It's about the value of reclaiming yourself.
 
-For a first-timer, I'd say: try it. If it's not worth it, you'll know. But if it IS worth it, you'll have discovered something you actually value."
+For a first-timer, I'd honestly say this: if you never came back, would this one afternoon have been worth it? Most people find that the answer is yes. And then they come back.
+
+Shall we find the right time for you?"
 
 ---
 
@@ -278,11 +286,12 @@ This single statement does more than any pitch. It shifts the psychological fram
 No options. No "what sounds good?" — just confidence in what works.
 
 ### Move 3: The Pre-Arrival Experience Transfer
-*Using present-tense sensory language to collapse psychological distance.*
+*Using present-tense sensory language to collapse psychological distance and trigger the emotional commitment.*
 
-"Picture arriving on [day] — you walk in, and immediately you feel like you've stepped out of the world. Warm stone, soft light, gentle music. You're not rushing. Nothing needs you. The whole afternoon is yours."
+Example (customize for their specific visit):
+"Picture arriving on [day]. You step in, and immediately you feel it — the warmth, the softness of the light, the gentle music. There's no rush. The world outside is waiting, but right now, nothing needs you. The whole afternoon is yours. Warm stone. Soft breath. Complete stillness. Then you leave feeling like you've actually reset."
 
-By using present tense and sensory words, you make the experience feel real before they've booked. They're already experiencing it mentally.
+By using present tense and sensory words (warmth, softness, breath, stillness), you make the experience feel real before they've booked. They're already experiencing it mentally. They've already tasted what it feels like to belong there. This is the moment belonging becomes decision.
 
 ---
 
