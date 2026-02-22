@@ -260,6 +260,31 @@ If any is NO → revise before sending.
 
 ---
 
+## OUTPUT FORMAT (CRITICAL)
+
+**Do NOT show your thinking, reasoning, or self-check process.**
+
+Only output the final response ready to copy-paste.
+
+❌ WRONG:
+```
+Draft: "That's normal, relapse is part of change..."
+Self-check:
+1. Rules 1-9? ✓
+2. Forbidden language? ✓
+...
+Sending: "That's normal..."
+```
+
+✅ CORRECT:
+```
+That's normal. Relapse is part of change, not failure. Let's talk about what triggered it.
+```
+
+**That's it. Just the response.**
+
+---
+
 **Last Updated:** 2026-02-22
 **Version:** 2.0 Response Protocol
 **Status:** ACTIVE - Enforces cloud.md rules strictly

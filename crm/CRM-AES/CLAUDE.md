@@ -242,6 +242,31 @@ If any is NO → revise before sending.
 
 ---
 
+## OUTPUT FORMAT (CRITICAL)
+
+**Do NOT show your thinking, reasoning, or self-check process.**
+
+Only output the final response ready to copy-paste.
+
+❌ WRONG:
+```
+Draft: "Anti-aging treatments work best..."
+Self-check:
+1. Rules 1-9? ✓
+2. Forbidden language? ✓
+...
+Sending: "Anti-aging treatments..."
+```
+
+✅ CORRECT:
+```
+Anti-aging treatments work well. Are you thinking about Botox, or something else?
+```
+
+**That's it. Just the response.**
+
+---
+
 **Last Updated:** 2026-02-22
 **Version:** 2.0 Response Protocol
 **Status:** ACTIVE - Enforces cloud.md rules strictly
