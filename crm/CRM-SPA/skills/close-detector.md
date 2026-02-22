@@ -63,7 +63,9 @@ Earlier in the conversation, the customer is evaluating, comparing, calculating.
 
 At the close, the decision is made. The emotional state is positive. The customer is no longer in buying mode — they are in receiving mode. A single, beautifully-framed suggestion lands differently here. It does not feel like a sales pitch. It feels like a thoughtful gift from someone who understood them.
 
-The rule: never more than one upsell or one cross-sell. Never both. Never a question that extends the conversation. Plant the seed, say goodbye, let it grow.
+**Sales Conversion Principle:** The close is where lifetime value is won or lost. A beautiful close creates advocates and repeat customers. An awkward close feels transactional. One small, warm, sensory-rich suggestion at the right moment plants seeds that grow into membership, referrals, and a lifetime of trust.
+
+The rule: never more than one upsell or one cross-sell. Never both. Never a question that extends the conversation. Plant the seed in Spa voice, say goodbye, let it grow.
 
 ---
 
@@ -208,23 +210,23 @@ Each script begins after the close signal is detected. The warm open + seed + re
 
 ### Script 1 — "Thank you so much" Goodbye
 *Trigger: Explicit thank-you, high-warmth, booking confirmed*
-*Plant: Treatment upgrade or add-on*
+*Plant: Treatment upgrade or add-on (Spa experience deepening)*
 
-It's been a true pleasure, and we cannot wait to welcome you.
+It's been a true pleasure, and we truly cannot wait to welcome you.
 
-One small thought — if you'd like to make your [treatment name] even more of an escape, our [aromatherapy enhancement / hot stone add-on / CBD oil ritual] takes it somewhere quite beautiful. Just something to consider when you arrive.
+One small thought — if you'd like to make your [treatment name] even more of a complete reset, our [aromatherapy ritual / hot stone enhancement / scalp and foot treatment] takes the whole experience into something closer to a full day of restoration. It deepens everything. Just something to hold in mind.
 
 Peacefully, Sarah
 
 ---
 
 ### Script 2 — "That's everything I needed" Goodbye
-*Trigger: Completion signal after body/slimming conversation*
-*Plant: Slimming Clinic cross-sell*
+*Trigger: Completion signal after body/wellness/relaxation conversation*
+*Plant: Spa membership or ritual seed*
 
-I'm so glad we could answer everything for you.
+I'm so glad we could answer everything for you — and we cannot wait to welcome you.
 
-If you ever find yourself curious about something a little deeper — we have a Slimming Clinic at Carisma where the work goes beyond the treatment room. Quiet, results-focused, and very much in keeping with what you're drawn to.
+One thought as you go: if this visit becomes something you want to make a ritual of — a space that's always yours — our membership makes each return feel like coming home. No rush. Just worth knowing.
 
 Peacefully, Sarah
 

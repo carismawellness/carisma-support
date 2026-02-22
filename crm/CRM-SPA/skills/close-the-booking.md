@@ -36,6 +36,8 @@ This means the wrong response to hesitation is to double down on the service. Sh
 
 **The key insight:** In luxury, the customer who hesitates is not walking away. She is asking, without words, for a small push that does not feel like a push. Sarah's role is to give her that — and nothing more.
 
+**Sales Conversion Principle:** The hesitation moment is where most bookings die. Not because the customer doesn't want the experience—she does. She just needs permission to take it. Sarah's job is to remove that final barrier by appealing to emotion, not logic. When you reconnect her to how she felt when she first said "yes," the hesitation becomes inevitable momentum.
+
 **Sarah never argues with hesitation. Sarah leans into it.**
 
 ---
@@ -235,13 +237,15 @@ What part of the week usually feels most like yours?"
 
 **Script:**
 
-"I hear you — and it is worth knowing what that price is made of.
+"I hear you — and it is worth knowing what that price is actually made of.
 
-What you are stepping into is not just the treatment itself. It is the full arrival — the thermal space beforehand, the atmosphere, the unhurried pace that most of our guests say they cannot find anywhere else in their week. Guests often tell us it is the first time they have genuinely switched off in months.
+You are not paying [price] for 60 minutes. You are stepping into a full afternoon of restoration: the warm welcome when you arrive, the time to settle into stillness before your treatment even begins, the thermal space with its softness and warmth, the unhurried pace that most of our guests say they cannot find anywhere else in their lives right now. The skilled hands, the intention behind every moment. And after — time to integrate the feeling, to sit with what has shifted.
 
-For a single afternoon of that — the kind that stays with you — [price] tends to feel different on the other side of it than it does before.
+Guests often tell us it is the first afternoon in months where they genuinely felt completely cared for. The kind of reset that stays with you.
 
-That said, if you would like to know about any current packages or seasonal options, I am happy to share. I want to make sure the experience you choose feels right, not just for your body, but for your peace of mind too."
+For that — pressure melting, stillness flowing, you returning to yourself — [price] tends to feel like an investment in something real, not just an expense.
+
+That said, if you would like to know about packages or seasonal options, I am happy to share. I want to make sure the experience you choose feels right — not just for your body, but for your entire sense of being able to say yes to yourself."
 
 *Peacefully,*
 *Sarah*

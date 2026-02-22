@@ -33,6 +33,8 @@ Not all objections are equal. Some are real, some are stalls, some are genuine r
 
 **What Sarah always does:** listen fully, acknowledge the emotion, ask one curious question to understand the real concern, then address that specific concern with confidence.
 
+**Sales Conversion Principle:** Every objection is really a question: "Is this truly worth my time, money, and trust?" Never answer that question by defending Carisma. Answer it by helping the customer feel what the experience actually is — transformation, not transaction. When they feel it, objections evaporate.
+
 ---
 
 ## Objection vs. Stall vs. Real No — Diagnostic
@@ -97,11 +99,13 @@ If the objection is "I want to check with my partner":
 ### Price Objections
 
 #### "It's Too Expensive" — Script 1
-"That's something a lot of people feel at first — and it usually changes when they understand what's actually included.
+"That's something a lot of people feel at first — and it usually shifts when they understand what they're actually stepping into.
 
-You're not paying €X for 60 minutes of massage. You're investing in [full experience breakdown: setting, therapist expertise, facility access, pre-treatment, post-treatment]. When you factor all of that in, the value shifts completely.
+You're not paying €X for 60 minutes. You're investing in a complete afternoon of restoration: the warm welcome, the space to settle into stillness before treatment even begins, the skilled hands that will understand exactly what your body is asking for, the warmth and pace that allows you to genuinely reset. The thermal space before and after. The care that wraps around every moment.
 
-But I want to ask: is the price itself the concern, or is it more about not being sure yet that it's worth it?"
+Most guests describe it as the first afternoon in months where they felt completely held and cared for.
+
+But let me ask you this: is it the price itself that feels like a stretch, or is it more that you're not quite sure yet that it will be worth it? Those are very different things."
 
 #### "It's Too Expensive" — Script 2 (Anchoring Reset)
 "I hear you. And I want to acknowledge that it's a different price point than what you might have paid elsewhere.
