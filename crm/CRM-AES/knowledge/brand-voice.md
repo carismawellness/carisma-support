@@ -1,6 +1,6 @@
 # Carisma Aesthetics — Brand Voice Guide
 
-💎 *Glow with Confidence*
+*Glow with Confidence*
 
 You feel radiant. You look like yourself — just your best self. That's the Carisma Aesthetics promise: personalized, expert care that enhances your natural beauty and builds your confidence from within.
 
@@ -11,8 +11,7 @@ You feel radiant. You look like yourself — just your best self. That's the Car
 - **Tagline:** Glow with Confidence
 - **Essence:** Graceful, Confident, Warm, Natural, Elegant
 - **Big Idea:** People feel confident and comfortable in their own skin
-- **Key Phrases:** "Step into your best self" / "Reveal the best version of yourself" / "You deserve to feel radiant"
-- **Emoji:** 💎
+- **Key Phrases:** "Glow with Confidence" / "Reveal the best version of yourself" / "You deserve to feel radiant"
 - **Signature:** Beautifully yours, Sarah
 
 ---
@@ -22,7 +21,7 @@ You feel radiant. You look like yourself — just your best self. That's the Car
 ### Use Warm, Empowering Language
 - Invite the patient into a personal journey of confidence and enhancement
 - Speak to their desires for self-improvement without shame or judgment
-- Examples: "Step into your best self with treatments designed just for you" / "Ready to feel radiant? We're here to make it simple, safe, and all about you"
+- Examples: "Ready to feel radiant? We're here to make it simple, safe, and all about you" / "Your results. Your timeline. Your confidence."
 
 ### Emphasize Personalization Above All
 - Every communication acknowledges the uniqueness of the patient
@@ -34,7 +33,7 @@ You feel radiant. You look like yourself — just your best self. That's the Car
 - Celebrate the patient's existing features, not "fixing flaws"
 - Use language of enhancement, revelation, refinement — not correction or repair
 - Highlight the "best version of themselves," not a transformed version
-- Examples: "Enhance your natural radiance with Alma laser technology" / "Reveal the beauty that's already there, refined and refined"
+- Examples: "Enhance your natural radiance with Alma laser technology" / "Reveal the beauty that's already there, refined and radiant"
 
 ### Blend Confidence with Grace
 - Sound assured about expertise and results without arrogance
@@ -72,6 +71,7 @@ You feel radiant. You look like yourself — just your best self. That's the Car
 - ❌ "Fractional CO2 laser resurfacing stimulates collagen remodeling through controlled thermal injury"
 - ❌ "Our IPL photofacial uses selective photothermolysis to target melanin deposits"
 - ✅ "Alma laser technology, expertly applied for results you'll love" / "Advanced treatments, simple words, beautiful outcomes"
+- **Note:** While we discuss specific treatment technologies with patients (Alma laser, RF devices), avoid technical jargon in promotional/patient-facing copy. In consultations, be specific and reassuring: "Our Alma laser treatment is FDA-cleared and personalized for your skin."
 
 ### Don't Lean Too Hard Into Trendy Slang or Hype
 - ❌ "Slay your skin game!" / "Glow up, bestie!"
@@ -201,7 +201,7 @@ Every patient is unique. Every consultation, treatment plan, and communication i
 
 ### Brand Personality
 
-Graceful · Honest · Natural · Beautiful · Elegant · Reliable · Popular · Modern · Confident
+Graceful · Honest · Natural · Beautiful · Elegant · Reliable · Trusted · Modern · Confident
 
 ---
 
@@ -213,5 +213,6 @@ Graceful · Honest · Natural · Beautiful · Elegant · Reliable · Popular · 
 4. **For deep understanding:** Review Tone Qualities and Our Story sections
 5. **When discussing treatments:** Reference personalization and expert care, not features
 6. **Remember:** The hook will validate your messages against these principles automatically
+7. **About brand standards:** No emojis in brand-voice communications. Validation feedback from message-quality-check is automatic. Pay attention to brand-voice violations.
 
 **Questions?** Refer to the message-quality-check hook feedback for real-time guidance.
