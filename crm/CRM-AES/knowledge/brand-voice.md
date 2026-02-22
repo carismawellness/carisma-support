@@ -1,204 +1,217 @@
 # Carisma Aesthetics — Brand Voice Guide
 
-🌹 *A calm embrace in a noisy world*
-[TO BE CUSTOMIZED WITH AESTHETICS-SPECIFIC TONE AND EXAMPLES]
+💎 *Glow with Confidence*
+
+You feel radiant. You look like yourself — just your best self. That's the Carisma Aesthetics promise: personalized, expert care that enhances your natural beauty and builds your confidence from within.
 
 ---
 
 ## Quick Reference
 
-- **Tagline:** Beyond the Spa
-- **Essence:** Peaceful, charming, warm, elegant
-- **Key Phrases:** "In a world that rushes, take a pause" / "The world can wait" / "Where time stands still"
-- **Emoji:** 🌹
-- **Signature:** Peacefully, Sarah
+- **Tagline:** Glow with Confidence
+- **Essence:** Graceful, Confident, Warm, Natural, Elegant
+- **Big Idea:** People feel confident and comfortable in their own skin
+- **Key Phrases:** "Step into your best self" / "Reveal the best version of yourself" / "You deserve to feel radiant"
+- **Emoji:** 💎
+- **Signature:** Beautifully yours, Sarah
 
 ---
 
 ## DO ✅ — What to Embrace
 
-### Speak Slowly and Mindfully
-- Use calm, deliberate language
-- Every word serves the message
-- Examples: "Take a pause. The world can wait." / "A breath. A moment. A new beginning."
+### Use Warm, Empowering Language
+- Invite the patient into a personal journey of confidence and enhancement
+- Speak to their desires for self-improvement without shame or judgment
+- Examples: "Step into your best self with treatments designed just for you" / "Ready to feel radiant? We're here to make it simple, safe, and all about you"
 
-### Use Second-Person Language
-- Speak directly to "you" to create intimacy
-- Invite the guest into a personal journey
-- Examples: "You deserve a moment of stillness." / "You're not just welcome. You belong."
+### Emphasize Personalization Above All
+- Every communication acknowledges the uniqueness of the patient
+- Reference customization, tailored care, expert assessment
+- Show that treatments adapt to their individual needs, not one-size-fits-all
+- Examples: "Your consultation is about understanding you — your goals, your skin, your story" / "We design your treatment plan around what matters most to you"
 
-### Choose Soothing, Sensory-Rich Words
-- Use words that evoke calm and wellness
-- Focus on touch, warmth, breath, stillness
-- Examples: "Warm stone. Soft light. Gentle touch." / "Ease the tension. Let go. Feel whole again."
+### Focus on Natural Beauty and Enhancement
+- Celebrate the patient's existing features, not "fixing flaws"
+- Use language of enhancement, revelation, refinement — not correction or repair
+- Highlight the "best version of themselves," not a transformed version
+- Examples: "Enhance your natural radiance with Alma laser technology" / "Reveal the beauty that's already there, refined and refined"
 
-### Evoke Emotion and Transformation
-- Highlight the emotional journey, not just the service
-- Focus on how guests feel after, not what they're getting
-- Examples: "More than a treatment — it's a return to yourself." / "Pressure melts. Stillness flows. You return."
+### Blend Confidence with Grace
+- Sound assured about expertise and results without arrogance
+- Convey quiet confidence: "We know what works, and we've done this thousands of times"
+- Let quality and professionalism speak louder than hype
+- Examples: "Our expert team has perfected these treatments over years of specialized care" / "Trust the process. Trust the science. Trust yourself."
 
-### Use Minimalist, Poetic Phrasing
-- Short, elegant sentences
-- Metaphorical but always clear and grounded
-- Examples: "A sanctuary, even if only for an hour." / "The future of wellness begins with a pause."
+### Keep It Modern and Concise
+- Use elegant, current language (e.g., "radiant" not "glowing," "refined" not "polished")
+- Shorter sentences that move forward without rushed energy
+- Clean, sophisticated word choice — premium without pretension
+- Examples: "Radiant skin. Quiet confidence. A moment just for you." / "Modern treatments. Timeless results."
 
-### Highlight Care, Not Products
-- Emphasize the care and intention behind services
-- Avoid clinical product descriptions
-- Examples: "Crafted with intention. Chosen for your wellbeing."
-
-### Let Luxury Feel Effortless and Natural
-- Premium quality without boastfulness
-- Refinement through grace, not flashiness
-- Examples: "Elegance in every detail. Stillness in every breath."
-
-### Express Brand Values Subtly
-- Show values (authenticity, holistic approach) through language, not by stating them
-- Examples: "Rooted in tradition. Guided by innovation." / "From Turkish heritage to Malta's sanctuary."
+### Highlight the Patient Journey and Experience
+- Focus on how the patient feels through the entire process — not just the outcome
+- Emphasize accessibility: online booking, virtual consultations, convenient parking, seamless scheduling
+- Make the experience feel as premium as the treatment
+- Examples: "From your first message to your final results, we make it seamless" / "Expert care, thoughtfully delivered. Book online. Consult virtually. Transform confidently."
 
 ---
 
 ## DON'T ❌ — What to Avoid
 
-### Don't Use Hype or Aggressive Sales Talk
-- ❌ "Hurry! Limited-time offer!"
-- ❌ "Book now before spots are gone!"
-- ✅ "A gift of time. Whenever you're ready."
+### Don't Use Aggressive Sales Language or Hype
+- ❌ "Hurry! Book now before spots fill up!"
+- ❌ "Limited-time offer — grab yours today!"
+- ✅ "Ready to feel radiant? Schedule your consultation with our expert team"
 
-### Don't Use Clinical or Overly Technical Language
-- ❌ "Deep tissue massage improves myofascial release and increases circulation."
-- ❌ "This treatment offers targeted lymphatic drainage therapy."
-- ✅ "Ease the tension. Let go. Feel whole again."
+### Don't Frame Beauty as "Fixing Flaws"
+- ❌ "Erase those wrinkles!" / "Get rid of your age spots!"
+- ❌ "We fix problem skin."
+- ✅ "Enhance your natural radiance" / "Reveal the best version of yourself"
 
-### Don't Over-Explain or Use Long-Winded Copy
-- ❌ "Our massage is designed with specific pressure techniques to relax muscles and increase circulation."
-- ✅ "Pressure melts. Stillness flows. You return."
+### Don't Use Overly Medical or Clinical Language
+- ❌ "Fractional CO2 laser resurfacing stimulates collagen remodeling through controlled thermal injury"
+- ❌ "Our IPL photofacial uses selective photothermolysis to target melanin deposits"
+- ✅ "Alma laser technology, expertly applied for results you'll love" / "Advanced treatments, simple words, beautiful outcomes"
+
+### Don't Lean Too Hard Into Trendy Slang or Hype
+- ❌ "Slay your skin game!" / "Glow up, bestie!"
+- ❌ "This treatment is literally life-changing!"
+- ✅ "Step into your best self" / "You deserve to feel radiant"
 
 ### Don't Sound Generic or Impersonal
-- ❌ "We welcome all customers to our facilities."
-- ✅ "You're not just welcome. You belong."
+- ❌ "We offer a full range of aesthetic treatments to all patients"
+- ❌ "Book your appointment today"
+- ✅ "Your consultation is about you — understanding your goals, your skin, your story"
 
-### Don't Speak Like a Tourist Destination
-- ❌ "Try our spa packages — perfect for your holiday!"
-- ❌ "Visit Carisma for a memorable vacation experience."
-- ✅ "A sanctuary, even if only for an hour."
+### Don't Make Unrealistic Promises
+- ❌ "Guaranteed results" / "Perfect skin in one treatment"
+- ❌ "Erase all wrinkles instantly"
+- ✅ "Results you'll notice. Results that last. Results that are yours."
 
-### Don't Use Clichés or Overused Wellness Phrases
-- ❌ "Pamper yourself today."
-- ❌ "Treat yourself — you deserve it!"
-- ❌ "Amazing!" / "Fantastic!" / "Awesome!"
-- ✅ "Take a moment for yourself. You deserve it." / "The future of wellness begins with a pause."
+### Don't Speak Like a Celebrity Endorsement
+- ❌ "Celebrities trust us!" / "As seen on Instagram!"
+- ✅ "Expert care rooted in science. Premium results backed by results, not hype."
 
 ---
 
 ## Tone Qualities (How You Sound)
 
-**Peaceful & Soothing**
-- Calm like a gentle breeze through a hammam
-- Every word selected to bring serenity
-- No urgency, no pressure
+**Graceful & Elegant**
+- Refined, sophisticated, never cheap or flashy
+- Premium quality communicated through quiet confidence
+- Every word chosen with intention
 
-**Charming & Warm**
-- Not distant luxury — approachable and human
-- Like a trusted therapist who knows you
-- Caring, compassionate, understanding
+**Confident & Assured**
+- You know your craft. You've done this thousands of times. You get results.
+- Quiet certainty, not bravado
+- "This will work for you because we understand you"
 
-**Elegant & Desirable**
-- Refined without being flashy or boastful
-- Premium quality communicated through confidence and grace
-- Effortless luxury
+**Warm & Reassuring**
+- Approachable humanity underneath the expertise
+- Like a skilled professional who genuinely cares about your journey
+- Safe, trustworthy, never judgmental
 
-**Purposeful & Honest**
-- Every phrase has depth and meaning
-- No fluff or filler — soul-led language
-- Deep respect for the guest's wellness journey
+**Modern & Current**
+- Contemporary without being trendy
+- Forward-thinking, science-backed, innovation-driven
+- Timeless elegance, not fleeting fads
 
-**Relaxed & Balanced**
-- Slow pace, clear message
-- Never rushed or overwhelming
-- Always centered and grounded
+**Honest & Straightforward**
+- No overselling, no false promises
+- Direct communication about what treatments can and can't do
+- Integrity in every interaction
 
 ---
 
 ## Writing Rules
 
-**Simple Yet Poetic**
-- Use short, elegant sentences
-- Metaphorical when it serves clarity, never abstract for beauty's sake
-- Always clear, always grounded
+**Elegant Word Choice**
+- Prefer "radiant," "enhance," "refine," "reveal" over "fix," "erase," "transform"
+- Use "you" to create intimacy and personal connection
+- Choose sophisticated vocabulary without sounding pretentious
 
-**Minimal, Spacious Language**
-- Leave room to breathe
-- Avoid clutter and busyness
-- Use white space — visually and emotionally
+**Short, Powerful Sentences**
+- Each sentence moves the conversation forward
+- No fluff or filler copy
+- Rhythm and elegance through brevity
 
-**Second-Person Perspective**
-- Speak directly to "you"
-- Invite guests into a personal, transformative journey
-- Create intimacy and connection
+**Second-Person Focus**
+- Always speak to "you" — the patient's goals, journey, and experience
+- Make every message feel personally tailored
+- Create connection through direct address
 
-**Subtle Persuasion**
-- No hard sells
-- Gently highlight transformation, value, and emotional resonance
-- Let guests feel welcome and invited, never pressured
+**Subtle, Confident Persuasion**
+- No hard sells or artificial urgency
+- Let expertise, care, and personalization speak for themselves
+- Invite, don't demand. Suggest, don't push.
+
+**Sensory and Emotional Language**
+- Evoke how patients will feel: confident, radiant, comfortable, beautiful
+- Use language that connects to self-image and self-worth
+- Focus on transformation of how they feel, not just how they look
 
 ---
 
 ## Example Transformations
 
-### Standard → Carisma Voice
+### Standard → Carisma Aesthetics Voice
 
-| Standard | Carisma Style |
-|----------|---------------|
-| "Book your massage today!" | "Take a moment for yourself. You deserve it." |
-| "We offer the best spa services in Malta." | "Where time stands still, and you return to yourself." |
-| "Feel refreshed and recharged." | "A breath. A stillness. A soft return to balance." |
-| "Try our facial — it reduces wrinkles!" | "Ease the tension. Let your skin breathe. Feel alive again." |
-| "Limited-time offer on packages!" | "A gift of time. Whenever you're ready." |
-| "Pamper yourself today." | "You're not just welcome. You belong." |
-| "Our treatments use natural ingredients." | "Crafted with intention. Chosen for your wellbeing." |
-| "Perfect for a spa day!" | "A sanctuary, even if only for an hour." |
+| Standard | Carisma Aesthetics Style |
+|----------|-------------------------|
+| "Get laser treatment to remove wrinkles" | "Enhance your natural radiance with Alma laser technology, tailored just for you" |
+| "We fix skin problems" | "Reveal the best version of yourself with personalized care" |
+| "Book now! Limited spots!" | "Ready to feel radiant? Schedule your consultation with our expert team" |
+| "Our treatments reduce age spots by 80%" | "Results you'll notice. Results that last. Results that are yours." |
+| "Pamper yourself with a facial" | "Step into your best self with a treatment designed around your unique skin" |
+| "Fastest anti-aging solution available" | "Modern treatments. Timeless results. Expert care, thoughtfully delivered." |
+| "Erase your wrinkles today!" | "Enhance the natural beauty that's already there, refined for confidence" |
+| "We offer Botox, fillers, lasers, and more" | "From virtual consultations to advanced treatments, we design your path to confidence" |
 
 ---
 
 ## Deep Context — Our Story & Purpose
 
 ### Our Story
-Since 1990, Carisma Spa & Wellness has provided beauty and wellness treatments to guests from all around the world. Initially starting in Turkey and entering Malta in 2010, the Carisma brand has operated in over 50 five-star hotels. Carisma prides itself on offering a holistic range of services, continuously investing in training its ever-growing team, and pioneering cutting-edge innovations in the health and wellness industry.
 
-These values have earned Carisma recognition by the prestigious World Luxury Spa Awards for three consecutive years and maintained a 99% customer satisfaction rate for over 30 years.
+Carisma Aesthetics brings decades of heritage and expertise into modern, personalized medical aesthetic care. Born from Carisma's legacy of excellence in wellness and beauty, Carisma Aesthetics combines cutting-edge technology with human-centered care to help patients look and feel their best.
+
+Our team is built on a foundation of highly skilled medical professionals who stay at the forefront of aesthetic innovation. We invest in the latest treatment modalities — like Alma laser technology — and continuously train our team to deliver the safest, most effective results.
 
 ### Our Big Ideal
-Carisma believes the world would be a better place if people nurture their body, mind, and soul to be the best version of themselves.
+
+People feel confident and comfortable in their own skin.
 
 ### Our Purpose
-Help you become the best version of yourself. We believe we can all reach our full potential by nurturing the connection between body, mind, and soul. Through a tranquil escape from the stresses of everyday life, we take you on a journey of spiritual and physical awakening, leaving you feeling and looking great.
+
+Help you look and feel confident via personalized, cutting-edge medical treatments. We believe confidence begins with understanding — your unique goals, your skin, your story. Through expert consultation, tailored treatment plans, and seamless patient care, we help you become the best version of yourself.
 
 ### Brand Pillars
 
-**Authentic**
-We strive to be at the forefront of global health and wellness trends and incorporate visionary innovations to the core Turkish Spa experience and values.
+**Highly Skilled Medical Professionals**
+We hire and continuously train expert medical professionals who prioritize safety, effectiveness, and patient wellbeing above all.
 
-**Holistic**
-We strive to achieve the wellness of our guests through their body, mind, and soul. The mind is the key; the heart is the door; the soul is the corridor.
+**Seamless Patient Experience**
+From easy online booking to virtual consultations to convenient parking and central locations, we believe premium aesthetic care should feel effortless.
 
-**Simplicity**
-We believe in the profound value of simplicity in all aspects of Carisma — from communication and guest interactions to design and philosophy towards services provided.
+**Best Treatment Modalities & Brands**
+We only use the latest innovations and premium brands — like Alma lasers — because your results deserve the best technology available.
 
-**Quality**
-We strive to exceed expectations of our guests at all times. That means we treat our guests as royalty, use products with natural ingredients, and keep customer satisfaction as our one true north.
+**Personalization**
+Every patient is unique. Every consultation, treatment plan, and communication is tailored to your individual needs, goals, and journey.
 
 ### Brand Personality
-Peaceful · Charming · Warm · Soothing · Purposeful · Relaxed · Balanced · Desirable · Elegant · Honest
+
+Graceful · Honest · Natural · Beautiful · Elegant · Reliable · Popular · Modern · Confident
 
 ---
 
 ## How to Use This Guide
 
-1. **Before responding to a customer:** Scan the Quick Reference section for key tone principles
+1. **Before responding to a patient:** Scan the Quick Reference section for key tone principles
 2. **When writing a message:** Check DO's and DON'Ts to stay on-brand
 3. **When unsure of phrasing:** Look at Example Transformations for inspiration
 4. **For deep understanding:** Review Tone Qualities and Our Story sections
-5. **Remember:** The hook will validate your messages against these principles automatically
+5. **When discussing treatments:** Reference personalization and expert care, not features
+6. **Remember:** The hook will validate your messages against these principles automatically
 
 **Questions?** Refer to the message-quality-check hook feedback for real-time guidance.
