@@ -3,13 +3,40 @@
     "version": "1.0.0",
     "generated": "2026-02-22T12:00:00Z",
     "brand": "SPA",
-    "total_entries": 8,
+    "total_entries": 9,
     "tier_distribution": {
-      "1": 4,
+      "1": 5,
       "2": 4
     }
   },
   "entries": [
+    {
+      "qid": "S0.1",
+      "section": "Hours & Location",
+      "tier": 1,
+      "brands": [
+        "ALL"
+      ],
+      "question": "What are your opening hours?",
+      "answer": "We're open Monday to Sunday, 9am to 8pm 🧖‍♀️",
+      "keywords": [
+        "opening hours",
+        "hours",
+        "open",
+        "time",
+        "when",
+        "9am",
+        "8pm"
+      ],
+      "related_qids": [
+        "S1.1"
+      ],
+      "status": "ACTIVE",
+      "owner": "Mert Gulen",
+      "verified_date": "2026-02-22",
+      "last_reviewed": "2026-02-22",
+      "confidence_level": 100
+    },
     {
       "qid": "S1.1",
       "section": "Booking & Scheduling",
@@ -18,14 +45,13 @@
         "ALL"
       ],
       "question": "How do I book an appointment?",
-      "answer": "You can book an appointment through multiple channels. Online booking is available 24/7 on our website or through the Fresha app. You can also call our team directly during business hours or visit us in person at any of our locations. Simply select your preferred treatment, date, and time. We recommend booking at least 2-3 days in advance to secure your preferred time slot. The booking process is identical across all Carisma brands (Spa, Aesthetics, and Slimming).",
+      "answer": "You can book an appointment through multiple channels. Online booking is available 24/7 on our website. You can also call our team directly during business hours or visit us in person at any of our locations. Simply select your preferred treatment, date, and time. We recommend booking at least 2-3 days in advance to secure your preferred time slot.",
       "keywords": [
         "booking",
         "appointment",
         "reserve",
         "schedule",
         "online",
-        "fresha",
         "call",
         "visit"
       ],
@@ -47,7 +73,7 @@
         "ALL"
       ],
       "question": "What is your cancellation policy?",
-      "answer": "We offer a 24-hour cancellation window. You can cancel or reschedule your appointment free of charge up to 24 hours before your scheduled time. Cancellations made within 24 hours of your appointment may incur a cancellation fee equal to the treatment price. To cancel, contact us via phone, email, or through the Fresha app. We understand that life happens, and we're here to work with you on rescheduling whenever possible.",
+      "answer": "We offer a 24-hour cancellation window. You can cancel or reschedule your appointment free of charge up to 24 hours before your scheduled time. Cancellations made within 24 hours of your appointment may incur a cancellation fee equal to the treatment price. To cancel, contact us via phone or email. We understand that life happens, and we're here to work with you on rescheduling whenever possible.",
       "keywords": [
         "cancellation",
         "cancel",
@@ -134,7 +160,7 @@
         "ALL"
       ],
       "question": "Can I reschedule my appointment?",
-      "answer": "Absolutely. You can reschedule your appointment for free up to 24 hours before your scheduled time. To reschedule, contact us via phone, email, or through the Fresha app. Simply let us know your preferred new date and time, and we'll do our best to accommodate your request. If you need to reschedule within 24 hours, a rescheduling fee may apply. Our team is flexible and committed to finding a time that works for you, so please reach out as soon as possible if your plans change.",
+      "answer": "Absolutely. You can reschedule your appointment for free up to 24 hours before your scheduled time. To reschedule, contact us via phone or email. Simply let us know your preferred new date and time, and we'll do our best to accommodate your request. If you need to reschedule within 24 hours, a rescheduling fee may apply. Our team is flexible and committed to finding a time that works for you, so please reach out as soon as possible if your plans change.",
       "keywords": [
         "reschedule",
         "reschedule appointment",
@@ -191,7 +217,7 @@
         "ALL"
       ],
       "question": "What payment methods do you accept?",
-      "answer": "We accept multiple payment methods for your convenience. We take all major credit and debit cards (Visa, Mastercard, American Express), bank transfers, and cash payments. Online bookings and gift card purchases can be completed via card or bank transfer. Payment can be made at the time of booking, during your appointment, or through our Fresha platform. For corporate bookings or large purchases, we offer flexible payment arrangements. If you have questions about payment options, please contact our team.",
+      "answer": "We accept multiple payment methods for your convenience. We take all major credit and debit cards (Visa, Mastercard, American Express), bank transfers, and cash payments. Online bookings and gift card purchases can be completed via card or bank transfer. Payment can be made at the time of booking or during your appointment. For corporate bookings or large purchases, we offer flexible payment arrangements. If you have questions about payment options, please contact our team.",
       "keywords": [
         "payment",
         "pay",
@@ -221,7 +247,7 @@
         "ALL"
       ],
       "question": "How do I reschedule my booking?",
-      "answer": "You can reschedule your booking for free up to 24 hours before your scheduled appointment time. Contact us via phone, email, or through the Fresha app with your preferred new date and time. Our team will work to accommodate your request whenever possible. Rescheduling requested within 24 hours of your appointment may incur a fee. We understand that plans change, and we're here to support your wellness journey with flexible scheduling options.",
+      "answer": "You can reschedule your booking for free up to 24 hours before your scheduled appointment time. Contact us via phone or email with your preferred new date and time. Our team will work to accommodate your request whenever possible. Rescheduling requested within 24 hours of your appointment may incur a fee. We understand that plans change, and we're here to support your wellness journey with flexible scheduling options.",
       "keywords": [
         "reschedule",
         "booking",
