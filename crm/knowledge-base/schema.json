@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Carisma CRM Knowledge Base Schema",
+  "description": "Schema for queryable knowledge base entries across all Carisma brands (SPA, AES, SLIM)",
+  "type": "object",
+  "required": ["metadata", "entries"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["version", "generated", "last_updated", "total_entries", "brands"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Semantic versioning of the KB schema",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "generated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of KB generation"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of last KB update"
+        },
+        "total_entries": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of entries in the KB"
+        },
+        "brands": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["SPA", "AES", "SLIM", "ALL"]
+          },
+          "description": "Brands covered by this KB"
+        }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["qid", "section", "tier", "brands", "question", "answer", "status", "owner"],
+        "properties": {
+          "qid": {
+            "type": "string",
+            "description": "Question Identifier (e.g., S1.1, A2.3, D3.5 for SPA/AES/SLIM/DUP and Tier/Entry)",
+            "pattern": "^[SAD]\\d+\\.\\d+$"
+          },
+          "section": {
+            "type": "string",
+            "minLength": 3,
+            "description": "Knowledge base section or category"
+          },
+          "tier": {
+            "type": "integer",
+            "enum": [1, 2, 3, 4],
+            "description": "Priority tier: 1=Critical, 2=Important, 3=Standard, 4=Reference"
+          },
+          "brands": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["SPA", "AES", "SLIM", "ALL"]
+            },
+            "minItems": 1,
+            "description": "Brands this entry applies to"
+          },
+          "question": {
+            "type": "string",
+            "minLength": 10,
+            "description": "The customer question or knowledge entry title"
+          },
+          "answer": {
+            "type": "string",
+            "minLength": 20,
+            "description": "Complete answer to the question"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 2
+            },
+            "description": "Search tags for AI matching and discoverability"
+          },
+          "related_qids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[SAD]\\d+\\.\\d+$"
+            },
+            "description": "Cross-references to related KB entries"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ACTIVE", "ARCHIVED", "REVIEW_NEEDED"],
+            "description": "Current status of the KB entry"
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 2,
+            "description": "Team member responsible for this entry"
+          },
+          "verified_date": {
+            "type": "string",
+            "format": "date",
+            "description": "ISO 8601 date when entry was last verified"
+          },
+          "last_reviewed": {
+            "type": "string",
+            "format": "date",
+            "description": "ISO 8601 date of last review"
+          },
+          "confidence_level": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Confidence score (0-100) that the answer is current and accurate"
+          }
+        }
+      }
+    }
+  }
+}
