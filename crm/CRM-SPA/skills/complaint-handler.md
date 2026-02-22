@@ -21,9 +21,11 @@ Three frameworks shaped this skill for luxury spa complaint recovery in text-bas
 
 ## Overview
 
-A complaint to Carisma is not a rejection. It is a cry for the experience that was promised. This is why luxury complaints cut deeper and why service recovery paradox holds strongest in luxury contexts. A customer whose complaint is resolved to a standard exceeding expectations becomes MORE loyal than a customer who never experienced a problem.
+A complaint to Carisma is not a rejection. It is a cry for the experience that was promised. This is why luxury complaints cut deeper and why service recovery paradox holds strongest in luxury contexts. A customer whose complaint is resolved to a standard exceeding expectations becomes MORE loyal than a customer who never experienced a problem. She becomes an advocate.
 
 **The goal:** Make her feel more cared for in this difficult moment than she ever expected.
+
+**Service Recovery Principle:** When something goes wrong in a luxury context, the path back is not through logic or solutions—it is through feeling. A guest who came seeking stillness and felt rushed, who came seeking warmth and felt dismissed—these experiences go deeper than transaction failures. They are felt as personal. Recovery requires Sarah to meet that depth with equal depth. Genuine acknowledgment, not scripted apology. Specific ownership, not generic regret. And—above all—the sense that Sarah is making this right not because she has to, but because she genuinely cares that this guest felt poorly in her sanctuary.
 
 ---
 

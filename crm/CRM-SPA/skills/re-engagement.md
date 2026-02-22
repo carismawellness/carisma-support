@@ -35,6 +35,8 @@ What tips them is almost never a discount. Discounts signal desperation. They al
 
 What tips them is the feeling that they were noticed. That someone at Carisma actually thought of them specifically, not as a data entry in a re-engagement campaign. That feeling — the feeling of being genuinely remembered — is more powerful than any promotional offer, especially in a luxury context where the entire value proposition rests on personalised care.
 
+**Sales Retention Principle:** Every lapsed customer is a reclaimed customer in waiting. Re-engagement is not about filling empty slots—it is about restoring a guest to the sanctuary she once knew. The customer who loved Carisma and simply drifted away has one need: to feel remembered. When she feels that, she returns with loyalty that exceeds that of first-timers, because gratitude is woven through the relationship.
+
 **The authenticity test:** Before sending any re-engagement message, ask: would this message make sense coming from a person who genuinely remembered this customer — or does it only make sense coming from a system that flagged them as inactive? If it is the latter, rewrite it.
 
 ---

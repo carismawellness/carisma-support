@@ -41,6 +41,8 @@ Jantsch's principle — "you are not asking for a favour, you are offering a cha
 
 **At Carisma, you do not "refer." You share something you loved with someone who deserves it.**
 
+**Sales Growth Principle:** Referrals are the highest-converting path into Carisma. A referred guest arrives with pre-installed trust and pre-formed expectations shaped by the referrer's genuine emotion. She does not evaluate—she experiences. She does not compare—she receives. The customer who shares Carisma becomes a brand advocate without being asked. And every referred customer who books returns the favour by referring someone they love.
+
 ---
 
 ## The Referral Trigger Moments
