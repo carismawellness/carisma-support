@@ -5,97 +5,129 @@
 
   "forbidden_phrases": [
     {
-      "pattern": "pamper yourself|treat yourself",
-      "reason": "Cliché wellness phrases",
-      "suggestion": "Take a moment for yourself"
+      "pattern": "lack of discipline|willpower|lazy|undisciplined|you let yourself go|fix your body",
+      "reason": "Shame/blame language (contradicts safe shame-free space)",
+      "suggestion": "Use: 'You didn't fail; the plan failed you' or 'Let's find an approach that works with your life'"
     },
     {
-      "pattern": "amazing|fantastic|awesome",
-      "reason": "Overused marketing clichés",
-      "suggestion": "Use sensory or emotional language instead"
+      "pattern": "just love yourself|positive thinking fixes|if you really wanted to|stop making excuses",
+      "reason": "Toxic positivity (minimizes real struggle)",
+      "suggestion": "Use: 'Acknowledge the hard parts. Here's how we'll navigate them together' or 'Your struggle is real; here's the science'"
     },
     {
-      "pattern": "hurry|rush|urgent|limited.?time|book now|don't miss",
-      "reason": "Aggressive sales talk (conflicts with peaceful tone)",
-      "suggestion": "Invite gently: 'Whenever you're ready'"
+      "pattern": "lose 10kg in 10 days|drop weight fast|rapid results|guaranteed|works for everyone",
+      "reason": "Over-promising (unrealistic expectations)",
+      "suggestion": "Use: 'Sustainable weight loss of 5-10kg in a medically supervised program' or 'Results vary; we personalize for you'"
     },
     {
-      "pattern": "we welcome all customers|our facilities",
-      "reason": "Generic, impersonal language",
-      "suggestion": "Make it personal: 'You're not just welcome. You belong.'"
+      "pattern": "you will get sick if you don't|ticking time bomb|your health is failing|last chance",
+      "reason": "Fear-mongering (creates shame and urgency, not empowerment)",
+      "suggestion": "Use: 'Reclaim your energy' or 'Feel like yourself again' or 'Your health matters; let's invest in it now'"
     },
     {
-      "pattern": "\\bperfect\\s+for\\s+(your\\s+)?(holiday|vacation|escape)\\b",
-      "reason": "Touristy language (not luxury wellness)",
-      "suggestion": "Focus on transformation: 'A sanctuary, even if only for an hour'"
+      "pattern": "only discuss kilos|focus on weight|measure by size|BMI is everything",
+      "reason": "Reducing person to numbers (ignores holistic transformation)",
+      "suggestion": "Include: How life feels (energy, stairs, health, confidence, clothes fit) alongside weight metrics"
+    },
+    {
+      "pattern": "summer body|beach ready|get thin by|quick fix for the wedding",
+      "reason": "Fleeting urgency framing (contradicts sustainable, self-focused approach)",
+      "suggestion": "Use: 'Build the life you want to live in your body' or 'Long-term confidence, not deadline panic'"
+    },
+    {
+      "pattern": "one-size-fits-all|everyone should|do what I did|follow the rules exactly",
+      "reason": "Generic/impersonal (ignores personalization, individual needs, life complexity)",
+      "suggestion": "Use: 'Your plan adapts to weekends, stress, real life' or 'Designed around your unique needs'"
+    },
+    {
+      "pattern": "calories in calories out|it's simple if you try|just eat less|no excuses",
+      "reason": "Oversimplification (ignores hormones, metabolism, stress, life factors)",
+      "suggestion": "Use: 'Science-backed approach to your unique metabolism' or 'Hormones, stress, and real life matter'"
     }
   ],
 
   "required_tone_markers": {
-    "sensory_words": [
-      "warm", "warmth", "soft", "gentle", "stillness", "breath",
-      "ease", "float", "melt", "flow", "pause", "silence",
-      "touch", "light", "stone", "soothe", "calm", "peace",
-      "serenity", "tranquil", "sanctuary", "anchor"
+    "validation_words": [
+      "you are not alone", "you are not the only one", "your struggle is real",
+      "I understand", "that is hard", "acknowledge", "recognize", "valid",
+      "you have tried", "you are trying", "deserve", "matter"
     ],
-    "second_person": [
-      "you", "your", "yourself"
+    "empowerment_words": [
+      "you choose", "you control", "your agency", "your power", "your body",
+      "your decision", "you decide", "take action", "build", "create",
+      "capable", "strong", "resilient", "confident"
     ],
-    "transformation_words": [
-      "return", "journey", "awakening", "restore", "reconnect",
-      "realign", "rebalance", "transform", "elevate", "become",
-      "heal", "refresh", "revive", "renew"
+    "evidence_words": [
+      "science", "data", "research", "clinically proven", "medically supervised",
+      "evidence-based", "proven", "documented", "backed by", "studies show"
     ],
-    "purpose_words": [
-      "wellbeing", "wellness", "purpose", "intention", "care",
-      "nurture", "holistic", "soul", "mind", "body", "spirit"
+    "feeling_words": [
+      "energy", "strength", "confidence", "proud", "capable", "yourself again",
+      "feel alive", "climb stairs", "move", "breathe", "alive", "vibrant",
+      "wear", "feel", "experience", "enjoy"
+    ],
+    "relapse_normalization": [
+      "starting over", "try again", "slip-up", "that is normal", "it happens",
+      "many of us", "common", "not failure", "the plan failed", "let us adjust",
+      "next step", "moving forward"
+    ],
+    "control_choice": [
+      "your plan", "designed for you", "your unique", "you choose what",
+      "show you how", "your timeline", "your goals", "your needs",
+      "personalized", "tailored", "adapted"
     ]
   },
 
   "validation_rules": [
     {
       "name": "check_forbidden_phrases",
-      "description": "Reject messages containing forbidden phrases",
+      "description": "Reject messages with shame/blame, toxic positivity, fear-mongering, or over-promises",
       "severity": "high",
       "enabled": true
     },
     {
-      "name": "check_second_person",
-      "description": "Warn if message doesn't use second-person perspective",
+      "name": "check_validation_presence",
+      "description": "Warn if message lacks validation of struggle/experience",
       "severity": "medium",
       "enabled": true,
-      "threshold": "Should contain at least one 'you' or 'your'"
+      "threshold": "For messages about weight loss or difficulty, include at least one validation word (real, understand, not alone, etc.)"
     },
     {
-      "name": "check_sensory_language",
-      "description": "Warn if message lacks sensory words (optional for short responses)",
+      "name": "check_holistic_framing",
+      "description": "Warn if message only discusses weight/kilos without feeling words",
+      "severity": "medium",
+      "enabled": true,
+      "threshold": "When discussing results/transformation, include feeling words (energy, confidence, stairs, move) alongside weight metrics"
+    },
+    {
+      "name": "check_empowerment_tone",
+      "description": "Recommend empowerment language for customer-facing messages",
       "severity": "low",
       "enabled": true,
-      "threshold": "Recommended for messages longer than 2 sentences",
-      "min_character_count": 50
+      "threshold": "For customer communications, include at least one empowerment word (you choose, your power, capable, etc.)"
     },
     {
-      "name": "check_clinical_language",
-      "description": "Warn about clinical or technical jargon",
-      "severity": "high",
+      "name": "check_science_backing",
+      "description": "For claims about metabolism/results, ensure evidence-led language",
+      "severity": "medium",
       "enabled": true,
-      "clinical_keywords": [
-        "myofascial", "lymphatic", "circulation", "pressure technique",
-        "therapeutic", "stimulate", "reduce", "therapy", "treatment", "procedure"
-      ]
+      "threshold": "Any claim about why something works should reference science, data, or medical backing"
     }
   ],
 
   "feedback_templates": {
-    "forbidden_phrase_found": "Brand Voice Check\nFound: \"{phrase}\"\nIssue: {reason}\nSuggestion: {suggestion}\n\nAllow override? (Y/N)",
-    "missing_second_person": "Tone Tip\nTry using 'you' or 'your' to create intimacy.\nExample: \"You deserve a moment of stillness.\"",
-    "lacks_sensory_language": "Tone Tip\nConsider adding sensory words: warmth, stillness, breath, gentle, ease\nExample: \"Ease the tension. Let go. Feel whole again.\"",
-    "clinical_language_warning": "Tone Check\nThis sounds clinical. Try sensory language instead:\n\"{suggestion}\""
+    "forbidden_phrase_found": "Brand Voice Check\nFound: \"{phrase}\"\nIssue: {reason}\n\nTry instead: {suggestion}\n\nAllow override? (Y/N)",
+    "missing_validation": "Tone Tip\nTry validating their struggle first:\nExample: \"Your struggle is real. Here's what science shows...\"",
+    "only_numbers": "Tone Tip\nBeyond the numbers, how will they FEEL?\nExample: \"You'll lose weight AND have the energy to climb stairs without thinking about it.\"",
+    "missing_empowerment": "Tone Tip\nEmpower them with choice:\nExample: \"You choose what you eat. We show you how to make it work.\"",
+    "missing_science": "Professional Tip\nWhen explaining why something works, anchor in science:\nExample: \"Your hormones matter. Here is the data on how we account for that.\""
   },
 
-  "usage_notes": {
-    "adaptation_for_other_brands": "These rules are tailored for Carisma Spa & Wellness. When adapting for other brands (Carisma Aesthetics, Carisma Slimming), adjust: 1) forbidden_phrases based on brand voice guidelines; 2) sensory_words and transformation_words to match brand positioning; 3) clinical_keywords to match industry terminology (e.g., add 'fillers', 'injection', 'downtime' for Aesthetics)",
-    "min_character_count_logic": "The min_character_count in check_sensory_language (50 chars) prevents false positives on short messages like greetings or simple FAQs. Adjust threshold based on response length expectations.",
-    "regex_pattern_notes": "The 'perfect for holiday' pattern uses word boundaries (\\b) and optional 'your' to catch variations while avoiding over-matching. Test new patterns against representative message samples before deploying."
+  "_notes": {
+    "adaptation_for_other_brands": "To adapt for other brands, change 'brand' field and customize forbidden_phrases and required_tone_markers for each brand's psychological risks and values.",
+    "shame_vs_motivation": "Never use shame as a motivator. Instead, use compassion + evidence. Shame leads to relapse and abandonment.",
+    "holistic_over_numeric": "Weight is one metric. Include energy, confidence, health, life transformation to avoid reinforcing scale-obsessed thinking that damages mental health.",
+    "validation_as_retention": "Validating struggle upfront builds trust and retention. Generic or blame-focused messaging causes drop-off.",
+    "personalization_as_respect": "Every woman's body, life, and journey is different. Emphasizing personalization (not one-size-fits-all) shows respect and increases adherence."
   }
 }
