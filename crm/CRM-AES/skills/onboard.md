@@ -6,16 +6,18 @@
 
 ## Welcome
 
-You're not just learning a tool. You're learning to be Sarah — the voice Carisma customers trust. This walkthrough teaches you the system and the standard in 5 minutes.
+You're not just learning a tool. You're learning to be Sarah — the clinical voice of Carisma Aesthetics. This walkthrough teaches you the system, the medical aesthetics positioning, and the standard in 5 minutes.
+
+Carisma Aesthetics is fundamentally different from spa: we're clinical, results-driven, and built on expertise. Your voice must reflect that. Every conversation establishes trust in our medical professionalism while maintaining warmth and personalization.
 
 ---
 
 ## Step 1: What This System Does (and Doesn't)
 
-**It IS:** Your co-pilot for drafting responses, recommending treatments, handling objections, updating knowledge
+**It IS:** Your co-pilot for drafting consultations, making clinical recommendations, handling objections with expertise, updating medical knowledge
 **It's NOT:** A chatbot that replies automatically — you always review and send
 
-**Golden rule:** Sarah is YOU at your best. Claude helps you get there faster.
+**Golden rule:** Sarah is YOU at your best. Claude helps you get there faster. But in medical aesthetics, your expertise and judgment are not optional — they're essential.
 
 ---
 
@@ -34,13 +36,13 @@ CONTEXT: [returning? voucher? first time? special occasion?]
 
 ---
 
-## Step 3: The Cardinal Rule — Never Lead With Price
+## Step 3: The Cardinal Rule — Diagnose Before Recommending
 
-**WRONG:** Customer asks "how much is a massage?" → You paste it → Claude lists prices
+**WRONG:** Customer asks "how much is Botox?" → You paste it → Claude lists prices and treatments
 
-**RIGHT:** Customer asks "how much is a massage?" → Claude asks 2–3 discovery questions first → Claude recommends based on answers → price comes AFTER the experience is painted
+**RIGHT:** Customer asks "how much is Botox?" → Claude asks 2–3 diagnostic questions first → Claude recommends based on her goals and concerns → price comes AFTER you've established she wants exactly what you're recommending
 
-This is THE most important rule. When you invoke [consult-and-pitch], this is how it works.
+This is THE most important rule. Medical aesthetics is consultative, not transactional. Naturalness, safety, and personal fit come before price. When you invoke [consult-and-pitch], this is how it works — every time.
 
 ---
 
@@ -85,79 +87,88 @@ Everything in shared-inbox.md is PROVISIONAL. Managers verify and promote to sha
 
 ## Step 6: The Sign-Off Rule
 
-**Always end with "Peacefully, Sarah"**
+**Always end with "Beautifully yours, Sarah"** in Aesthetics conversations (different from spa's "Peacefully, Sarah")
 
 Exceptions:
 - **Complaints:** "With care, Sarah"
 - **Gifts:** "With warmth, Sarah"
+- **Clinical advice or treatment guidance:** "Confidently, Sarah"
 
-Sarah is the persona customers trust. Consistency over hundreds of conversations builds that relationship.
+Sarah is the persona customers trust. Consistency over hundreds of conversations builds that relationship. In medical aesthetics, the sign-off reflects our clinical confidence paired with warmth.
 
 ---
 
-## Step 7: Brand Voice Test
+## Step 7: Brand Voice Test — Medical Aesthetics Edition
 
-**Q1:** How would Carisma say "We offer the best spa services in Malta"?
-**Answer:** "Where time stands still, and you return to yourself."
+**Q1:** How would Carisma Aesthetics say "We offer Botox"?
+**Answer:** "We specialize in natural-looking enhancement using the latest techniques. Every recommendation starts with understanding your vision." (NOT "Get Botox today!")
 
-**Q2:** How would Carisma say "Book your massage today!"?
-**Answer:** "Take a moment for yourself. You deserve it." OR "A gift of time. Whenever you're ready."
+**Q2:** How would Carisma Aesthetics say "You'll look younger"?
+**Answer:** "You'll look like yourself — radiant, confident, just more rested." (NOT "Erase your wrinkles!")
 
-**Q3:** How would Carisma say "We welcome all customers"?
-**Answer:** "You're not just welcome. You belong."
+**Q3:** How would Carisma Aesthetics say "We welcome all patients"?
+**Answer:** "Your aesthetic journey is uniquely yours — we design every recommendation around your goals and comfort." (NOT "Come try our treatments!")
 
-**Does your response pass?** If it sounds like it could come from any spa, rewrite it.
+**Does your response pass the test?** If it sounds like you're selling a product instead of providing expert medical care, rewrite it. In medical aesthetics, every phrase should convey clinical expertise paired with personal care.
 
 ---
 
 ## Quick Reference Card (Print This)
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│ SARAH'S SYSTEM — QUICK START                                    │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│ EVERY SESSION:                                                   │
-│ CHANNEL: [WhatsApp/Instagram/Facebook/Email/LiveChat]          │
-│ CUSTOMER: [name if known]                                       │
-│ CONTEXT: [returning? voucher? first time?]                      │
-│ --- [paste conversation]                                         │
-│                                                                  │
-│ THE CARDINAL RULE:                                               │
-│ Never open with price. Diagnose first.                          │
-│                                                                  │
-│ WHEN TO USE SKILLS:                                              │
-│ Booking question? → [consult-and-pitch]                         │
-│ Customer hesitating? → [close-the-booking]                      │
-│ Booking confirmed? → [upsell-booking]                           │
-│ Saying goodbye? → [close-detector]                              │
-│ Upset customer? → [complaint-handler]                           │
-│ New customer? → [first-time-converter]                          │
-│ Competitor mentioned? → [competitor-defense]                    │
-│ Price objection? → [objection-buster]                           │
-│                                                                  │
-│ BRAND VOICE RULES:                                               │
-│ • Short, poetic sentences                                        │
-│ • Second-person "you"                                           │
-│ • Sensory words (warmth, stillness, breath, melt)              │
-│ • No hype: "Book now!", "Pamper yourself", "Amazing"           │
-│ • No AI tells: "Certainly!", "Absolutely!", "Of course!"       │
-│                                                                  │
-│ SIGN-OFF:                                                        │
-│ Standard: "Peacefully, Sarah"                                   │
-│ Complaints: "With care, Sarah"                                  │
-│ Gifts: "With warmth, Sarah"                                     │
-│                                                                  │
-│ WHEN TO UPDATE KB:                                               │
-│ "Add this to the knowledge base: [info]" ✓                      │
-│ "Flag this as incorrect: [info]" ✓                              │
-│                                                                  │
-│ KNOW WHEN TO ESCALATE:                                           │
-│ • Refund request > €150 → ask manager                           │
-│ • Legal threat → escalate                                       │
-│ • Abusive language → escalate                                   │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ SARAH'S SYSTEM — CARISMA AESTHETICS QUICK START                      │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│ EVERY SESSION:                                                        │
+│ CHANNEL: [WhatsApp/Instagram/Facebook/Email/LiveChat]               │
+│ CUSTOMER: [name if known]                                            │
+│ CONTEXT: [new to aesthetics? prior treatments? specific goals?]      │
+│ --- [paste conversation]                                             │
+│                                                                       │
+│ THE CARDINAL RULE (MEDICAL AESTHETICS):                               │
+│ Diagnose first. Never open with price or a treatment menu.          │
+│ Understand: goals, naturalness concerns, experience level.          │
+│ Then recommend with clinical expertise and personal care.           │
+│                                                                       │
+│ WHEN TO USE SKILLS:                                                   │
+│ Treatment inquiry? → [consult-and-pitch] (diagnostic first)         │
+│ Patient hesitating? → [close-the-booking]                           │
+│ Booking confirmed? → [upsell-booking] (safety + results focus)      │
+│ Saying goodbye? → [close-detector]                                  │
+│ Upset patient? → [complaint-handler] (medical trust is fragile)     │
+│ New to aesthetics? → [first-time-converter] (reassurance + clarity) │
+│ Competitor mentioned? → [competitor-defense] (expertise-anchored)   │
+│ Price objection? → [objection-buster] (value over discount)         │
+│                                                                       │
+│ CLINICAL VOICE RULES:                                                 │
+│ • Graceful, confident, professional tone                            │
+│ • Second-person "you" — personalized not clinical-jargon           │
+│ • Expertise signals: "We've perfected this," "Years of training"   │
+│ • Reassurance words: natural, confident, radiant, refined          │
+│ • NO hype: "Perfect skin!", "Look 10 years younger!"              │
+│ • NO promises: "Guaranteed results", "Erase your wrinkles"        │
+│ • NO clinical jargon in patient-facing copy                        │
+│                                                                       │
+│ SIGN-OFF (AESTHETICS):                                               │
+│ Standard: "Beautifully yours, Sarah"                                │
+│ Clinical advice: "Confidently, Sarah"                               │
+│ Complaints: "With care, Sarah"                                      │
+│ Gifts: "With warmth, Sarah"                                         │
+│                                                                       │
+│ WHEN TO UPDATE KB:                                                    │
+│ "Add this to the knowledge base: [info]" ✓                          │
+│ "Flag this as incorrect: [info]" ✓                                  │
+│ (Track: patient fears, results plateaus, treatment combos)         │
+│                                                                       │
+│ KNOW WHEN TO ESCALATE:                                               │
+│ • Patient safety concern → escalate immediately                    │
+│ • Adverse reaction / side effect complaint → escalate              │
+│ • Refund request > €200 → ask manager                              │
+│ • Legal threat → escalate                                          │
+│ • Patient anxiety about results → manager call recommended        │
+│                                                                       │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -198,11 +209,14 @@ Claude appends to shared-inbox.md with your name and today's date. When a manage
 
 | Mistake | Why It's a Problem | The Fix |
 |---|---|---|
-| Pasting customer question without intake format | Claude doesn't know the channel/context | Always use: CHANNEL / CUSTOMER / CONTEXT |
-| Sending the first price before discovery | Loses the chance to build value first | Let [consult-and-pitch] ask the diagnostic questions |
-| Not updating KB when you learn something | Knowledge stays scattered, Claude misses it | Say "Add this to the knowledge base: [info]" |
-| Sending Claude's draft without personalizing | Feels robotic | Always add one personal touch before sending |
-| Forgetting the sign-off | Breaks the Sarah persona | Check: does it end with "Peacefully, Sarah"? |
+| Pasting question without intake format | Claude doesn't know the channel/context/patient history | Always use: CHANNEL / CUSTOMER / CONTEXT |
+| Listing treatments before asking diagnostic questions | Turns patient into price shopper, misses her real concerns | Let [consult-and-pitch] diagnose first — always |
+| Using clinical jargon in patient-facing messages | Creates distance, loses trust, feels impersonal | Speak like an expert who cares, not a medical textbook |
+| Making promises about results | Breaks trust if results vary, creates legal risk | Use: "Results you'll notice and feel confident about" not "guaranteed" |
+| Sending Claude's draft without personalizing | Feels robotic and template-driven | Always add one personal touch: reference her specific goals |
+| Forgetting the Aesthetics sign-off | Breaks the clinical-warmth brand balance | Check: ends with "Beautifully yours, Sarah" (not spa's "Peacefully") |
+| Missing patient safety concerns in messages | Aesthetics requires higher care threshold than spa | Flag: mentions of allergies, reactions, medical concerns → escalate |
+| Not tracking patient hesitation patterns | Loses learning about common fears | Add to KB: "Patients fear over-treatment" / "Worry about naturalness" |
 
 ---
 

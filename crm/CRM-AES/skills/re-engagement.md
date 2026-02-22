@@ -1,6 +1,8 @@
-# [SALES] Re-Engagement
+# [SALES] Re-Engagement — Medical Aesthetics Edition
 
-> **Invoke When:** A lapsed customer makes contact after a long absence (typically 6+ months since their last visit or interaction), or when Sarah is proactively reaching out to a customer who has not returned in a while. Also invoke when a customer references a past visit in passing — "last time I came..." or "I used to come regularly..." — even if the current conversation is about something else. This skill is the most emotionally sensitive in the system. Handle it with the same care you would handle a friendship you have not tended to in a while.
+> **Invoke When:** A lapsed Aesthetics patient makes contact after a long absence (typically 4-6 months since their last treatment or interaction — shorter window than spa because aesthetic results plateau faster), or when Sarah is proactively reaching out to a patient who has not returned in a while. Also invoke when a patient references a past treatment — "last time I got Botox..." or "I used to come regularly..." — even if the current conversation is about something else.
+>
+> In medical aesthetics, re-engagement is about results plateau and clinical progression, not just nostalgia. This skill is the most emotionally sensitive in the system. Handle it with the same care you would handle a friendship you have not tended to in a while.
 
 ---
 
@@ -19,23 +21,41 @@ Cialdini's principles of liking and reciprocity are the psychological engines of
 
 ---
 
-## Overview
+## Overview — Why Aesthetics Patients Lapse
 
-Most lapsed customers did not leave because of a bad experience. They left because of life.
+Most lapsed aesthetic patients did not leave because of a bad experience. They left because results plateaued.
 
-A holiday that became a habit. A busy stretch at work that stretched into months. A new baby. A move across the island. A period of tightening budgets. A simple drift — the kind that happens when nothing bad pushes you away, but nothing pulls you back either.
+**Common reasons for lapse in medical aesthetics:**
 
-This distinction matters enormously. A customer who left after a genuinely poor experience needs acknowledgment and recovery. A customer who simply drifted away needs warmth and an easy door back in. The two are handled very differently, and conflating them is a mistake.
+1. **Results plateau** — Botox effectiveness peaks at 2 weeks, then gradually softens. Patient sees diminishing returns and either thinks "it's done working" or simply forgets to rebook.
 
-**The psychology of re-engagement in luxury wellness:**
+2. **Results settled to subtlety** — Some patients expect dramatic visible change and don't realize that their refined appearance IS the result. They stop coming because they think "nothing is happening," when in fact they look better than they did.
 
-Lapsed customers carry a faint guilt about not returning — especially when they genuinely loved the experience. They often think about coming back, but inertia is powerful. They need something specific to tip them from "I should go back" to "I am going to book this."
+3. **Life happened** — A new job, a move, financial tightening, health scare. The same reasons spa patients lapse, but on a shorter timeline because aesthetic maintenance is less "wellness habit" and more "specific goal."
 
-What tips them is almost never a discount. Discounts signal desperation. They also teach customers to wait for the next discount before returning — creating a price-sensitive relationship where there was once a value-driven one.
+4. **Fear of overdoing it** — Patient worried "Will I look artificial if I keep coming?" or "Am I addicted to treatments?" This fear can cause them to ghost rather than ask questions.
 
-What tips them is the feeling that they were noticed. That someone at Carisma actually thought of them specifically, not as a data entry in a re-engagement campaign. That feeling — the feeling of being genuinely remembered — is more powerful than any promotional offer, especially in a luxury context where the entire value proposition rests on personalised care.
+5. **Competitive clinic discovery** — Patient saw someone else's results on Instagram, got curious, tried another clinic. This is your biggest re-engagement risk in aesthetics.
 
-**The authenticity test:** Before sending any re-engagement message, ask: would this message make sense coming from a person who genuinely remembered this customer — or does it only make sense coming from a system that flagged them as inactive? If it is the latter, rewrite it.
+**This distinction matters enormously:** A patient who left after a poor result needs clinical acknowledgment and recovery. A patient whose results simply plateaued needs expert guidance and motivation to continue. A patient who feared overdoing it needs reassurance. The three are handled very differently.
+
+**The psychology of re-engagement in medical aesthetics:**
+
+Lapsed aesthetic patients carry a mix of feelings:
+- **Subtle guilt** — "I should have been back for my re-treatment by now"
+- **Uncertainty** — "Will results still look natural if I keep coming?" or "Have treatments changed?"
+- **Complacency** — "I look okay now, I don't need to keep going"
+- **FOMO** — "Has a competitor clinic released something better?"
+
+Inertia is powerful. They need something specific to tip them from "I could go back" to "I'm booking today."
+
+**What tips them is NOT a discount.** Discounts signal desperation in medical aesthetics and undermine clinical credibility. They also teach patients to wait for the next discount — creating price-sensitive patients instead of loyalty.
+
+**What tips them IS a clinical reason to return.** Something like: "Your results are settling now — this is the perfect time to re-treat and potentially layer with [new treatment]" or "We've added a new laser technology that works beautifully with what you've already had done."
+
+The feeling that Carisma thought of them as a patient — understanding their specific aesthetic journey and where they naturally are in results — is more powerful than any offer. It says: "We know your face. We know your goals. We're thinking about what's next for you."
+
+**The authenticity test:** Before sending any re-engagement message, ask: would this message make sense coming from someone who genuinely understood this patient's aesthetic journey — or does it only make sense from a system that flagged them as inactive? If it is the latter, rewrite it.
 
 ---
 

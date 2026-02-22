@@ -1,6 +1,6 @@
-# [SUPPORT] Complaint Handler
+# [SUPPORT] Complaint Handler — Medical Aesthetics Edition
 
-> **Invoke When:** Customer uses anger indicators, requests a refund, expresses strong disappointment, or the sentiment hook flags a negative sentiment message.
+> **Invoke When:** Patient uses anger indicators, requests a refund, expresses strong disappointment about appearance/results, or the sentiment hook flags a negative sentiment message. In medical aesthetics, complaints often involve patient safety, naturalness concerns, or results anxiety — handle with clinical sensitivity.
 
 ---
 
@@ -19,27 +19,40 @@ Three frameworks shaped this skill for luxury spa complaint recovery in text-bas
 
 ---
 
-## Overview
+## Overview — Medical Trust is Fragile
 
-A complaint to Carisma is not a rejection. It is a cry for the experience that was promised. This is why luxury complaints cut deeper and why service recovery paradox holds strongest in luxury contexts. A customer whose complaint is resolved to a standard exceeding expectations becomes MORE loyal than a customer who never experienced a problem.
+A complaint to Carisma Aesthetics is not a rejection of the brand. It is a cry of concern about her appearance, her safety, or her results. This is deeply personal territory.
 
-**The goal:** Make her feel more cared for in this difficult moment than she ever expected.
+In medical aesthetics, complaints often involve appearance anxiety, results disappointment, or safety concerns. Trust is fragile here — it is built on expertise, not just kindness. A patient who feels heard AND expertly guided back to confidence becomes MORE loyal than one who never experienced a problem. A patient who feels dismissed or unheard may not just leave — she may publicly warn others.
+
+**The goal:** Make her feel more cared for AND more clinically supported in this difficult moment than she ever expected. Emotional recovery + clinical reassurance = relationship restored.
+
+**Common aesthetic complaints:**
+- "I look overdone / unnatural"
+- "The results are not what I expected"
+- "I'm worried it looks artificial"
+- "The swelling/bruising is worse than I was told"
+- "Results don't look symmetrical"
+- "I regret doing this"
 
 ---
 
-## Complaint Severity Levels
+## Complaint Severity Levels — Aesthetics Focus
 
-### Level 1: MILD — Quiet Disappointment
-*Trigger: "I was a little disappointed..." / "Not what I expected..."*
-→ HEAT framework, shorter responses, light resolution
+### Level 1: MILD — Subtle Concern
+*Trigger: "I'm worried it looks overdone..." / "The texture feels different..." / Quiet anxiety*
+→ HEAT framework: Name the concern specifically, reassure on timeline/naturalness, light resolution
+→ Focus: Normalize settling process, distinguish "not final yet" from "wrong result"
 
-### Level 2: MODERATE — Genuine Upset
-*Trigger: "I was really disappointed" / "This is not acceptable" / Direct firmness*
-→ Full Absorb → Validate → Own → Resolve → Restore
+### Level 2: MODERATE — Clear Disappointment
+*Trigger: "This isn't what I expected" / "I regret this" / "It looks unnatural"*
+→ Full Absorb → Validate → Own → Clinical Assessment → Resolve → Restore
+→ Focus: Separate patient anxiety from clinical reality. If concern is valid, address clinically. If anxiety is timing-related, reassure on results maturation (usually 2-4 weeks for full settling).
 
-### Level 3: SEVERE — Furious / Threatening
-*Trigger: "Absolutely unacceptable" / "I want a refund" / Caps, extreme language, threats*
-→ Absorb priority, emotional holding, escalation offer
+### Level 3: SEVERE — Safety Concern or Visible Problem
+*Trigger: "Allergic reaction" / "Severe bruising" / "Completely asymmetrical" / Fury + fear combined*
+→ Absorb priority, clinical escalation to treating clinician, emotional holding, recovery plan
+→ Focus: Patient safety FIRST. Clinical assessment BEFORE commitments. Doctor involvement mandatory.
 
 ---
 

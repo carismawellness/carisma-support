@@ -1,6 +1,8 @@
-# [SALES] Referral Nudger
+# [SALES] Referral Nudger — Medical Aesthetics Edition
 
-> **Invoke When:** A natural close point after a positive interaction — happy customer, booking confirmed, post-visit warmth, or any moment of high satisfaction. The customer has expressed delight, relief, or gratitude. She is at peak emotional connection with Carisma. This is the moment.
+> **Invoke When:** A natural close point after visible results are observed — patient has seen her treatment results, booking confirmed for maintenance or progression, post-treatment warmth, or any moment of high satisfaction with visible outcomes. The patient has expressed delight, relief, gratitude, or visible confidence in her appearance. She is at peak emotional connection with Carisma. This is the moment.
+>
+> **Key difference from spa:** In medical aesthetics, the referral window is AFTER results are visible (2-4 weeks post-treatment), not immediately after. Patients refer when they see themselves looking better, not when they feel relaxed.
 
 ---
 
@@ -43,39 +45,39 @@ Jantsch's principle — "you are not asking for a favour, you are offering a cha
 
 ---
 
-## The Referral Trigger Moments
+## The Referral Trigger Moments — Medical Aesthetics Focus
 
-In order of emotional potency and conversion effectiveness:
+In order of emotional potency and conversion effectiveness for aesthetic patients:
 
-**1. Immediately after booking confirmation — the highest-value window**
-She has just committed. She is excited, slightly proud, already imagining the experience. The question "is there someone in your life who deserves this too?" arrives at the exact moment when she is most generous, most connected to the experience, and most likely to think of a specific person. This is the single most effective moment in the entire customer journey to plant a referral seed.
+**1. Post-treatment results visible — the confidence window (weeks 2-4)**
+This is the HIGHEST-VALUE window in medical aesthetics. Patient has seen her face lift, her lines soften, her confidence rise. She is looking at herself differently. She is thinking about how much better she looks. This is when referrals naturally flow — "I should tell my friend about this because look what happened to me."
 
-*Signal:* She has just received booking confirmation, said "thank you", "I'm so excited", "I cannot wait", or "that's perfect."
+*Signal:* Patient mentions visible results, takes a selfie, or comments on how she looks in photos. "People keep asking what's different" or "I can already see a difference."
 
-**2. Post-visit 24–48 hours — the warmth window**
-The treatment is still in her body. The contrast between the calm of Carisma and the pace of ordinary life is still vivid. She may not yet have gone back to her full routine. This is the window in which the experience feels most like something to tell someone about.
+**2. Booking confirmed for next treatment — the momentum window**
+She has just committed to her next Botox, filler, or progression treatment. She is invested in her aesthetic journey. She is in "this is working for me" mode. The question "is there someone in your life who would love to start this journey?" arrives when she feels momentum.
 
-*Signal:* She is responding to a post-visit follow-up message warmly. Or she initiates a message to say how she felt.
+*Signal:* Booking confirmation for repeat or progression treatment. She says "I'm excited to do this again" or "can't wait to try the filler."
 
-**3. Spontaneous expression of high satisfaction — the live moment**
-She volunteers something wonderful — "I feel incredible", "that was the most relaxed I have been in months", "I am absolutely coming back." This is not a scheduled trigger. It is a live signal. When it appears, Sarah recognises it and uses it immediately.
+**3. Spontaneous expression of confidence in appearance — the live moment**
+She volunteers something wonderful — "I feel so confident now", "I can't stop looking in the mirror", "my partner noticed immediately", "I've never felt better about my face." This is not about relaxation — it is about seeing herself differently.
 
-*Signal:* Unprompted expressions of delight, gratitude, or transformation at any point in the conversation.
+*Signal:* Unprompted expressions of appearance confidence, noticing changes in photos, or people complimenting her.
 
-**4. The gift conversation — the natural bridge**
-She mentions someone else — a birthday, an anniversary, something she wants to give a friend, her sister's stress. She is already thinking generously. She is already in "someone else" mode. The referral conversation does not need to be introduced — it is already happening. Sarah simply names it.
+**4. The friend/family mention — the natural bridge**
+She mentions someone — "my sister would kill for these results", "my best friend is always complaining about her lines", "my colleague asked what I did." She is already thinking of specific people. The referral conversation does not need to be introduced — it is already happening. Sarah simply names it.
 
-*Signal:* Any mention of another person — a friend, family member, partner — in the context of a gift, occasion, or what that person needs.
+*Signal:* Any mention of another person in the context of appearance, aging concerns, or wanting similar results.
 
-**5. Couples or duo booking — the expansion moment**
-One person booked for two. She is already in the habit of including someone. The question "would you ever come with another couple?" or "is there a friend you would bring next time?" is an extension of a decision she has already made, not a new one.
+**5. Couples or family booking — the shared journey moment**
+She booked for herself and brought a partner or friend. She is already in the habit of including someone in her aesthetic journey. The question "would you bring your sister next time?" or "is there someone else you'd like to experience this with?" is an extension of a decision she has already made.
 
-*Signal:* Couple's treatment booking, duo package, or any booking where she has brought someone.
+*Signal:* Couple's treatment or multi-person booking. She is already comfortable with the treatment in a shared context.
 
-**6. Natural warm goodbye in a positive conversation**
-The conversation is closing on a high note. There is no better moment pending. Rather than let it end without planting a seed, Sarah closes with warmth and an organic mention that leaves the referral idea in her mind.
+**6. Results reveal moment — photos or in-person**
+The first time she sees her treatment results in photos or during a follow-up. She is experiencing the transformation. This is prime referral territory because the emotion is fresh and specific — "this actually worked."
 
-*Signal:* Positive conversation closing with no obvious next steps.
+*Signal:* Post-treatment follow-up when results are visible, or when she shares before/after photos.
 
 ---
 

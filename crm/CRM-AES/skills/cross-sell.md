@@ -1,6 +1,8 @@
-# [SALES] Cross-Sell to Aesthetics or Slimming
+# [SALES] Cross-Sell within Carisma Aesthetics
 
-> **Invoke When:** A spa customer shows signals that suggest she would benefit from Carisma Aesthetics or Carisma Slimming — at any natural conversation close point: after a booking is confirmed, after a question about skin or body, or when she volunteers something that opens the door.
+> **Invoke When:** A Carisma Aesthetics patient shows signals of natural progression within our clinic — expanding from her current treatment to complementary aesthetic services. Typical progression: Botox → Dermal Filler → Laser/RF → Skincare or Skin Peels → Body treatments (if offered).
+>
+> This is NOT cross-selling to a different clinic. This is deepening the patient's relationship within Carisma Aesthetics by offering the next clinical step in her aesthetic journey.
 
 ---
 
@@ -19,87 +21,80 @@ Two principles are directly applicable to warm cross-selling in the luxury welln
 
 ---
 
-## Overview
+## Overview — Progression Within Carisma Aesthetics, Not Cross-Clinic Referrals
 
-Carisma is not three separate businesses. It is one wellbeing journey with three entry points.
+This skill is about deepening a patient's investment within Carisma Aesthetics — NOT about referring her to another clinic. Cross-selling in medical aesthetics means strategic clinical progression.
 
-- **Carisma Spa** — the body, rest, and restoration. The starting point for most guests.
-- **Carisma Aesthetics** — the skin, the face, the visible self. The natural complement to spa care for guests who have started thinking about how they look, not just how they feel.
-- **Carisma Slimming** — the shape, the composition, the relationship with the body. The clinical pathway for guests who are ready to go further than relaxation.
+**The typical aesthetic progression:**
+1. **First treatment:** Single procedure (Botox, dermal filler, or laser)
+2. **Results observation:** Patient sees results, gains confidence in her aesthetic journey
+3. **Natural expansion:** Patient is ready to address complementary concerns
+4. **Progressive pathway:** Strategic layering of treatments for optimal synergistic results
 
-The cross-sell exists because many Spa customers do not know the other two divisions exist, or do not know that their concern — a mention of their skin, a comment about their confidence, a question about body contouring — is exactly what those divisions are designed for.
+Examples of clinical progressions:
+- **Botox → Dermal Filler:** Injectables work synergistically; filler adds volume as Botox creates refinement
+- **Botox → Skincare Peel:** Refine face with injectables, then target texture
+- **Single Laser → Laser Package:** Patient sees initial results, commits to optimal outcomes
+- **Face → Neck/Décolletage:** Patient gains confidence, extends to visible areas
 
-**The philosophy:** The cross-sell is never a referral. It is never "you should try our other clinic." It is an invitation to go deeper into a journey she has already begun. The language is always: "Since you are already thinking about yourself in this way..." or "Something that complements this beautifully..." — never a product mention, never a listing of services.
+**The philosophy:** Progressive enhancement within medical aesthetics is never "upselling." It is clinical continuity. The patient has already invested in her aesthetic transformation. She is already thinking about "how she looks and feels." The next step is not a lateral move to another clinic — it is deepening the work she has already begun.
 
-**Why this converts better than feature-led pitches:** A feature-led pitch ("We also offer Botox at our Aesthetics clinic") asks her to evaluate a product she did not come here for. An invitation-led bridge ("There is something that a lot of our spa guests find goes perfectly alongside the kind of care you have been giving yourself...") invites her to continue something she has already chosen. She is not being sold something new. She is being offered more of what she has already decided she wants: to feel well in her own body.
+**Why this converts better than menu-driven selling:** A menu approach ("We also offer fillers, peels, lasers...") asks her to evaluate multiple options. A clinical progression ("Since your Botox is settling beautifully, here's what dermal filler can add to deepen the result") invites her to continue something she is already experiencing. She is not being sold something new. She is being offered the next strategic step in a transformation that is already working.
 
-The cross-sell is most powerful at close — after trust has been built, after the spa booking is secured, after she has been genuinely cared for. It is one sentence. It is unhurried. It plants a seed. It does not demand an immediate answer.
-
----
-
-## Customer Profiling: Who Goes Where
-
-### Spa → Aesthetics Signals
-
-These signals suggest the customer is thinking about her skin, her face, or her visible self — and would benefit from an introduction to Carisma Aesthetics.
-
-1. **She mentions her skin directly.** "My skin has been so dull lately." "I have been breaking out more than usual." "My skin just doesn't look the way it used to." These are not passing comments. They are open doors.
-
-2. **She asks about facials or skin treatments at the spa.** Even if the spa does not offer what she is looking for, the question tells you where her mind is.
-
-3. **She comments on aging or visible changes.** "I've noticed lines appearing around my eyes." "I feel like my face looks tired even when I'm not." "I've started to notice my skin sagging a little." She is not necessarily asking for anything — she is noticing. That noticing is the signal.
-
-4. **She mentions a special event or photos coming up.** A wedding, a milestone birthday, a reunion, a holiday. Upcoming visibility creates skin-awareness. She wants to look her best, not just feel her best.
-
-5. **She asks about "glow" or skin radiance.** "What would give me a glow for my daughter's wedding?" "I want to look fresh for the summer." Glow language is aesthetics language — she is describing a skin outcome, not a relaxation outcome.
-
-6. **She has had multiple spa visits and is looking for what's next.** A returning guest who has explored the spa's treatments and is asking "is there anything else you'd recommend?" is signalling openness to going further.
-
-7. **She mentions a specific skin concern that falls outside what spa facials can address.** Fine lines, deeper wrinkles, pigmentation, loss of facial volume, persistent acne — these are clinical concerns, and she knows it. She may be asking anyway, hoping you can help.
-
-8. **She expresses frustration with skincare products not working.** "I've tried everything and nothing works." "I've spent so much on creams." This is a woman ready to be told there is a professional answer.
-
-9. **She mentions she has been to a dermatologist or aesthetics clinic elsewhere.** She is not a stranger to aesthetics — she already knows the territory. The question is whether she knows Carisma Aesthetics exists.
-
-10. **She asks what Carisma offers beyond the spa.** Any question about the wider brand is an invitation. She wants to know if there is more. There is.
+The cross-sell within Aesthetics is most powerful after first results are visible — when the patient sees her face refreshing and begins to naturally wonder what else could be enhanced. It is one clear clinical recommendation. It is unhurried. It is based on expertise, not sales targets.
 
 ---
 
-### Spa → Slimming Signals
+## Patient Progression Signals — When to Suggest Next Steps
 
-These signals suggest the customer is thinking about her body composition, her confidence, or her shape — and would benefit from an introduction to Carisma Slimming.
+In medical aesthetics, patients naturally progress through treatment layers. Recognize these signals to identify the right moment for clinical progression.
 
-1. **She mentions weight, shape, or body composition directly.** She does not need to say "I want to lose weight." "I've been struggling with my tummy since the baby." "My body just isn't bouncing back the way it used to." Any reference to how her body is shaped or how she feels inside it is a signal.
+### Post-First Treatment → Add Complementary Treatment
 
-2. **She asks about body contouring, fat reduction, or skin tightening.** CoolSculpting, body wraps, slimming treatments — if she is asking, she already knows these things exist. She is looking for someone to show her the right door.
+**Trigger Signals:**
+1. **Patient reports visible results.** "I can already see a difference!" "My forehead feels so smooth." Results create confidence. This is the highest conversion moment for progression.
 
-3. **She mentions confidence or how she feels in her clothes.** "I just don't feel confident in a swimsuit anymore." "I have this dress I want to wear and I don't feel good in it yet." Confidence language tied to appearance is a body-composition signal, not a relaxation signal.
+2. **Patient asks about combining treatments.** "Can I do filler with my Botox?" "Would a peel help my texture too?" She is already thinking about layering.
 
-4. **She mentions a goal event — a wedding, a holiday, a reunion.** She has a target. She wants results. A spa treatment maintains wellbeing; a Slimming consultation moves toward a goal.
+3. **Patient mentions addressing a related concern.** After Botox, she notices volume loss. After filler, she notices texture. These are natural progressions, not upsells.
 
-5. **She has had multiple spa visits, suggesting a wellness commitment.** A customer who keeps returning to invest in her wellbeing is the ideal Slimming candidate — she has already proven she values professional support for her body.
+4. **Patient is booked for repeat first treatment, asking what else works with it.** "I'm coming back for my next Botox in 3 months. What should I do between now and then?"
 
-6. **She mentions she has tried diets, gym programs, or other solutions without lasting success.** "I've tried everything." "I lost weight but it came back." "The gym isn't touching my stomach." This is a woman ready to hear about a doctor-led clinical approach.
+5. **Patient shows confidence in her aesthetic decisions.** Casual, comfortable tone in conversations. Gaining comfort with the aesthetic journey. Ready to expand.
 
-7. **She asks about post-pregnancy body changes.** Loose skin, changed shape, muscle tone — these are exact target concerns for CoolSculpting, EMSculpt NEO, and VelaShape. She may not know the treatments exist by name.
+### Post-Results Plateau → Deepen or Expand
 
-8. **She mentions energy, metabolism, or hormonal changes.** "Since my forties, everything has slowed down." "My doctor mentioned my metabolism has changed." "I think it might be hormonal." This is a woman who would respond to the doctor-led, science-backed positioning of Carisma Slimming.
+**Trigger Signals:**
+1. **Patient mentions results settling down.** "The Botox isn't as strong as it was at 2 weeks." Natural timing for re-treatment or layering with filler to deepen effect.
 
-9. **She expresses frustration or hopelessness about her body.** "I've given up on trying." "I don't know what else to do." This needs to be handled with the utmost care and warmth — not as a sales opportunity, but as a moment of genuine care. The cross-sell here is an offering of hope, not a pitch.
+2. **Patient looks at before/after photos and asks "what comes after?"** She is visioning her trajectory. This is not a one-shot patient — she is planning a journey.
 
-10. **She asks about treatments for specific areas.** Belly, thighs, arms, under the chin — area-specific concerns that diet and exercise have not resolved are the precise indication for CoolSculpting and EMSculpt NEO.
+3. **Patient mentions a new event or occasion.** "I have another wedding in 6 months — what should we have done by then?" Timeline-based progression.
+
+4. **Patient has been coming 2-3 times and is clearly committed.** Loyalty signal. The conversation can move to deeper or more comprehensive approaches.
+
+5. **Patient asks about package options or "the full treatment."** "Is there a sequence that would give me the best result?" She is ready to invest in comprehensive enhancement.
+
+### Extending to New Areas → Neck, Décolletage, Hands
+
+**Trigger Signals:**
+1. **Patient shows confidence in face results, now self-aware about other visible areas.** "My neck doesn't match my face anymore." Natural extension.
+
+2. **Patient mentions the area.** "My hands always look older than my face." "My décolletage shows sun damage." She is signalling readiness.
+
+3. **Patient mentions aging concerns beyond the face.** Neck laxity, hand pigmentation, décolletage sun damage are all addressable and extend the aesthetic journey naturally.
+
+### When NOT to Progress-Sell
+
+Do not suggest progression in these situations:
+
+- **During or immediately after a complaint.** Resolve first. Trust must be re-established before suggesting anything new.
+- **If the patient expressed hesitation about her current treatment.** "I'm not sure if I should have done this." Do not layer. Let her settle.
+- **If she is new and has not completed her first treatment yet.** Let her experience and see results. Progression conversation belongs after results are visible.
+- **If she explicitly declined or said "just one thing for now."** Respect her decision. The offer remains available later.
+- **If she is on a tight budget and expressed price concern.** Progression sells better when value is established, not when budget is strained.
 
 ---
-
-### Neither — Wait
-
-Do not cross-sell in these situations. The relationship comes first. The seed can be planted another time.
-
-- **She is in the middle of a complaint or a problem.** Resolve the issue first. A customer who feels heard will return. A customer who feels sold to during a complaint will not.
-- **She is grieving or going through a personal difficulty.** A loss, a health scare, an emotional crisis. This is a time to be a calm presence, not a business.
-- **She has signalled she is "just here to relax."** Some guests want quiet restoration with no further engagement. Read this and honour it. Not every conversation needs to go further.
-- **She has already declined once.** If you have introduced the other clinic and she showed no interest, do not revisit it in the same conversation. Plant the seed once. Leave it.
-- **She is a first-time contact and trust is not yet established.** For brand-new customers, complete the primary booking first. Let her experience Carisma Spa. The cross-sell conversation belongs in the second or third interaction, when the relationship has proven itself.
 
 ---
 
@@ -145,50 +140,50 @@ The release is not a soft close disguised as generosity. It is genuine. Many cus
 
 ---
 
-## Aesthetics Cross-Sell Scripts (6 Scripts)
+## Clinical Progression Scripts — Within Carisma Aesthetics (6 Scripts)
 
 All scripts are written for WhatsApp, Facebook DM, Instagram DM, email, or live chat. Adjust length to channel. Every script follows the Acknowledge → Bridge → Invite → Release structure.
 
 ---
 
-### Aesthetics Script 1 — The Skin Mention
-**Trigger:** Customer has mentioned her skin in passing — dullness, tired appearance, or general dissatisfaction.
+### Aesthetics Script 1 — Post-Botox, Add Filler for Volume
+**Trigger:** Patient has completed Botox and is noticing the refined look. Now is the time to suggest filler to complement — creating depth that enhances the subtler face.
 
-"You mentioned your skin has been feeling a bit different lately — that kind of flatness can build up quietly, especially when life is full.
+"Your Botox results are beautiful — that smooth, rested look is exactly what we're aiming for. I wanted to mention something that a lot of our patients find complements this perfectly.
 
-Something I wanted you to know: alongside the spa, we have Carisma Aesthetics — our skin clinic where a lot of our spa guests go when they're ready to take their skin somewhere a facial can't quite reach. It's results-led work, the kind that's designed around what your skin specifically needs.
+Dermal filler adds dimension under the skin in a way that deepens the result we've created. With your face refined and movement softened, a little strategic volume in the cheeks or lips would bring out your natural features even more — and the two work beautifully together. Not something you need now, but something that tends to feel like the natural next step for patients seeing results like yours.
 
-Just wanted you to know it exists. Whenever it feels like the right moment, I'm happy to tell you more.
+It's entirely your call, of course. But I wanted to make sure you had the full picture of what's possible.
 
-Peacefully,
+Beautifully yours,
 Sarah"
 
 ---
 
-### Aesthetics Script 2 — The Event Preparation
-**Trigger:** Customer has mentioned a wedding, holiday, milestone birthday, or any occasion where she wants to look her best.
+### Aesthetics Script 2 — Post-Results, Add Laser/RF for Texture
+**Trigger:** Patient has completed injectables (Botox and/or filler) and is seeing face refinement. Now is the strategic time to address skin texture with laser or radiofrequency — the next layer of comprehensive rejuvenation.
 
-"For something as special as [wedding/holiday/occasion], the way you feel in yourself on the day matters just as much as the day itself.
+"Your injectables are settling beautifully — that structural enhancement is the foundation. Now that your face has that refined, lifted look, I want to suggest something that takes the overall result to the next level.
 
-Alongside your spa experience, something that a lot of our guests do before important occasions is visit Carisma Aesthetics — our skin clinic. They work with a small number of guests at a time, and the results are the kind you can actually see in photographs. Not overnight, but the kind of glow that builds beautifully in the weeks leading up to something important.
+A laser treatment or RF micro-needling addresses texture, tone, and skin quality in a way injectables can't. Together, the combination creates that radiant, naturally youthful appearance — structure from injectables, luminosity from laser. Patients who do both often tell us it's the difference between "I look nice" and "I look like myself, just more vibrant."
 
-I just wanted to mention it while you're in the planning stage — in case it's something you'd like to explore alongside everything else.
+We typically recommend starting laser 2-3 weeks after your last injection — that timing gives everything space to settle properly. It's not urgent, and it's not necessary right now. But it's the natural progression for someone committed to comprehensive results.
 
-Peacefully,
+Beautifully yours,
 Sarah"
 
 ---
 
-### Aesthetics Script 3 — The Post-Spa Glow Extension
-**Trigger:** Customer has just booked a spa treatment or completed one and is expressing how good she feels. She wants to hold on to that feeling.
+### Aesthetics Script 3 — Results Plateau, Time for Re-treatment + Layer
+**Trigger:** Patient completed first treatment 4-5 months ago. Results are settling. This is the optimal re-engagement moment to suggest repeat treatment plus new layer.
 
-"That feeling after a really good treatment — when your skin is warm and your whole body feels like it's exhaled — that's exactly what we want you to carry with you.
+"Your Botox results are still beautiful — that's how we know the timing is right. At around the 4-5 month mark, results start to settle, which is the perfect moment to repeat what's working and add something new if you want to deepen the effect.
 
-For guests who love that feeling and want to extend it further for their skin specifically, Carisma Aesthetics is where that conversation lives. It's our clinical skin space — the kind of place that takes what the spa starts and builds something lasting from it.
+Most of our patients who commit to this journey find that re-treating the original area keeps that foundation solid, and adding a complementary treatment — whether it's filler, a skin peel, or laser — creates more comprehensive results than any single treatment alone.
 
-Just a thought for whenever you're ready to go a little deeper. I'm here if you'd like to know more.
+I wanted to check in now, while your results are still visible, because the momentum of seeing what you look like is much stronger than waiting until everything has completely faded. What feels right to you — repeat what we did, or explore taking it further?
 
-Peacefully,
+Beautifully yours,
 Sarah"
 
 ---

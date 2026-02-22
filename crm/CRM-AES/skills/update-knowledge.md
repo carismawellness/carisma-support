@@ -1,12 +1,27 @@
-# [KB] Update Knowledge Base
+# [KB] Update Knowledge Base — Medical Aesthetics Edition
 
-> **Invoke When:** Agent says "add this to the knowledge base", "note this down", "flag this as incorrect", "update the [file] with", "I learned that", "just to let you know", "actually [contradicting something]", or any similar phrase signalling they want Claude to capture or correct information.
+> **Invoke When:** Agent says "add this to the knowledge base", "note this down", "flag this as incorrect", "I'm noticing a pattern with patients", "we've learned that", "actually [contradicting something]", or any similar phrase signalling they want Claude to capture clinical or market learning.
+
+---
+
+## Why Medical Aesthetics KB is Different
+
+In medical aesthetics, the knowledge base is not just operational (pricing, hours). It's clinical and strategic:
+
+- **Patient fears and hesitations** — recurring objections that need specific handling
+- **Results patterns** — when do patients return? When do they plateau? Why?
+- **Treatment combinations** — what sequences work best for specific goals
+- **Competitor intelligence** — what are other clinics offering? How are they positioned?
+- **Safety protocols** — any adverse reactions, allergies, medical interactions noted
+- **Market trends** — new treatments, patient preferences, what's working now
+
+This knowledge directly improves patient outcomes and referral rates.
 
 ---
 
 ## Research Foundation
 
-Three frameworks shape how the knowledge base captures intelligence from agents while maintaining accuracy.
+Three frameworks shape how the knowledge base captures intelligence from agents while maintaining accuracy and clinical safety.
 
 ### Framework 1: The Contributor-Approver-Consumer Model
 *Knowledge management research across ServiceNow, Knowmax:* Three distinct roles are needed: contributors (agents adding information), approvers (verifying before promotion), and consumers (relying on it). When roles collapse — contributors promoting their own entries — accuracy degrades. The solution: structural separation. A staging layer (`shared-inbox.md`) for contributions, a verified layer (`shared-knowledge.md`) for promoted, approved knowledge.
@@ -21,11 +36,18 @@ Three frameworks shape how the knowledge base captures intelligence from agents 
 
 ## Overview
 
-Claude's answers are only as good as the knowledge it reads. If the KB contains outdated prices or wrong opening hours, every customer who asks receives wrong information.
+Claude's answers are only as good as the knowledge it reads. If the KB is incomplete or outdated, every patient gets wrong or suboptimal advice.
 
-Simultaneously, agents are on the front line learning things Claude doesn't know yet. That intelligence must enter the system quickly.
+In medical aesthetics, incomplete knowledge is especially dangerous. If we miss that a patient fears over-treatment, we might oversell. If we miss a pattern about results timing, we lose re-engagement opportunities. If we miss competitor moves, we lose market positioning.
 
-The two-tier system resolves this tension: agents contribute instantly through `shared-inbox.md` (fast capture without false certainty). When a manager confirms the entry, it is promoted to `shared-knowledge.md` (the layer Claude treats as fact).
+Simultaneously, agents are on the front line learning things Claude doesn't know yet:
+- Patient hesitation patterns ("Everyone worries about looking artificial")
+- Results plateaus ("Patients typically return 6 months after first Botox")
+- Treatment combinations that work ("Botox + dermal filler = best results for this age group")
+- Competitive intelligence ("Competitor clinic now offers RF micro-needling")
+- Safety protocols ("Patient with [condition] cannot receive [treatment]")
+
+The two-tier system resolves this tension: agents contribute instantly through `shared-inbox.md` (fast capture without false certainty). When a manager confirms the entry, it is promoted to `shared-knowledge.md` (the layer Claude treats as fact and uses in patient conversations).
 
 ---
 
@@ -91,17 +113,26 @@ All of these activate this skill:
 
 ---
 
-## Entry Format Templates
+## Entry Format Templates — Medical Aesthetics Focus
 
 ```
-# New information (shared-inbox.md):
-[AGENT UPDATE – Sarah – 2026-02-19] Sunday massage price at Hyatt is now €90.
+# Clinical pattern (shared-inbox.md):
+[AGENT UPDATE – Sarah – 2026-02-19] Patient fear pattern: "Will I look natural?" appears in 80% of first consultations. Recommendation: lead with naturalness assurance in every diagnostic.
 
-# Possible error (shared-inbox.md):
-[NEEDS REVIEW – Sarah – 2026-02-19] Black Friday voucher expiry may be wrong. Customer says hers expires Dec 2026, not 2025.
+# Treatment combination learning (shared-inbox.md):
+[AGENT UPDATE – Sarah – 2026-02-19] Botox + dermal filler sequencing: patients see best results when Botox is done 2 weeks before filler (allows movement, filler integrates better).
+
+# Results timing (shared-inbox.md):
+[AGENT UPDATE – Sarah – 2026-02-19] Post-treatment plateau: Botox patients typically return 5-6 months after first treatment when results begin to settle. Opportunity for re-engagement at 4.5-month mark.
+
+# Competitor intelligence (shared-inbox.md):
+[AGENT UPDATE – Sarah – 2026-02-19] Competitor clinic now offering RF micro-needling at €350/session. Our equivalent Alma laser treatment positioned as more effective for collagen remodeling.
+
+# Safety flag (shared-inbox.md):
+[NEEDS REVIEW – Sarah – 2026-02-19] Patient mentioned allergy to [ingredient] — verify treatment suitability before recommending injectables.
 
 # After verification (shared-knowledge.md):
-[VERIFIED – Manager – 2026-02-19] Sunday massage price at Hyatt confirmed €90 effective 1 Feb 2026.
+[VERIFIED – Manager – 2026-02-19] Patient hesitation about naturalness is primary objection in 75% of new consultations. Response script: "We believe in enhancement that looks like you, just your best version."
 ```
 
 ---
