@@ -190,6 +190,22 @@ We strive to exceed expectations of our guests at all times. That means we treat
 ### Brand Personality
 Peaceful · Charming · Warm · Soothing · Purposeful · Relaxed · Balanced · Desirable · Elegant · Honest
 
+### Nervous System Inclusion — Positioning for All Pathways
+
+At Carisma, we recognize that restoration happens on different pathways. For some, stillness is medicine. For others, rhythm is the gateway. For others still, conscious movement is what signals safety to the nervous system. All are equally valid. All lead home.
+
+**Standard pathway (silence + stillness):**
+"Take a pause. The world can wait. In the quiet, you return to yourself."
+
+**Rhythm pathway (sound bath + frequency):**
+"Feel the healing frequencies recalibrate what stress has disrupted. You are held in sound. You are held, and you heal."
+
+**Movement pathway (breathwork + guided activation):**
+"Movement is medicine. Conscious activation is the language your nervous system understands. Feel your own power return. You are resourced again."
+
+**The umbrella:**
+"We offer several pathways to restoration. Some people love the silence; others prefer our sound bath approach or movement-based rituals. All are equally restorative—just different doorways. What speaks to you right now?"
+
 ---
 
 ## How to Use This Guide

@@ -147,6 +147,14 @@ All questions are written in Carisma voice — warm, personal, and sensory.
 7. **The pressure preference question (use when she has indicated muscle tension or physical complaint):**
    "Do you prefer a treatment that works deeply into the muscle, or one that is gentler and more focused on unwinding the nervous system? Some guests like to feel the work — others prefer to simply melt."
 
+7b. **The nervous system readiness question (use when stress/burnout is mentioned, or if her profile suggests potential sensitivity to quiet environments):**
+   "When you have quiet time alone, does that generally feel restorative for you, or do you prefer having something to focus on?"
+
+**Branching Logic for Nervous System Readiness:**
+- **If "restorative":** Proceed with standard stillness positioning (silence, minimal input, full sensory meditation)
+- **If "prefer focus":** Offer alternatives: "We have options for that too — our Sound Bath Massage or Movement-Based Ritual both provide restoration through rhythm and sensory engagement rather than silence"
+- **If hesitant/uncertain:** Probe gently: "Some people find deep quiet activating rather than calming. That's completely normal. We have pathways for that too."
+
 8. **The gift framing question (use when she is shopping for someone else):**
    "Tell me a little about the person you have in mind — what does she love, and what does she need right now? Those are sometimes very different things, and we want to get it just right."
 
@@ -164,7 +172,9 @@ Use this table as your first reference after the diagnostic. Map her profile to 
 
 | Customer Profile | Primary Recommendation | Why It Fits | Upgrade Path |
 |---|---|---|---|
-| Stressed, burned out, mind won't switch off | Deep Relaxation Massage (60–90 min) | Full-body tension release with slow, grounding strokes; shuts down the nervous system not just the muscles | Add aromatherapy ritual or warm oil scalp treatment; upgrade to 90 min |
+| Stressed, burned out, mind won't switch off — finds silence restorative | Deep Relaxation Massage (60–90 min) | Full-body tension release with slow, grounding strokes; shuts down the nervous system not just the muscles | Add aromatherapy ritual or warm oil scalp treatment; upgrade to 90 min |
+| Stressed, but prefers rhythm/focus over silence | Sound Bath Massage (60–90 min) | Deep tissue work synchronized with healing sound frequencies; nervous system regulation through rhythm + touch rather than stillness alone | Upgrade to 90 min; add meditation crystal or chakra focus |
+| Stressed, needs activation + movement | Movement-Based Ritual (60–75 min) | Guided restorative movement, breathwork, and hands-on therapy; nervous system recalibration through conscious activation and release | Combine with gentle yoga session or follow-up breathwork class |
 | Back, shoulder, or neck tension (physical / postural) | Deep Tissue or Sports Massage (60–90 min) | Therapeutic pressure on specific muscle groups; addresses root cause rather than masking symptoms | Combine with hot stone placement; add targeted back-and-shoulder focus |
 | Couple, romantic occasion (anniversary, honeymoon, Valentine's) | Couples Ritual (side-by-side treatment, 60–90 min) | Shared experience creates emotional memory; transforms a booking into a moment | Champagne on arrival, rose petal setup, extended relaxation time post-treatment |
 | First-timer, unsure, never been to a spa | Signature Carisma Journey (our hero treatment, typically 60–75 min full body) | A curated introduction that includes multiple elements; feels complete without being overwhelming | Any add-on after she experiences and trusts us; future return with partner |
@@ -261,6 +271,22 @@ When it is finished, most guests spend a few minutes just sitting with the still
 
 For what you are carrying right now, this is the one."
 
+**Script (Sound Bath Massage example — for nervous-system focus customers):**
+
+"I would suggest our Sound Bath Massage — a deep-tissue experience synchronized with healing sound frequencies that reset your nervous system through rhythm and touch rather than silence alone.
+
+Picture this: You lie down as soft, resonant sounds begin — not music, but frequencies calibrated to your body's wavelength. The therapist works deeply into the areas carrying your stress, but the sound is doing something else entirely. It is signaling your nervous system that it is safe. The rhythm becomes a conversation between the healing frequencies and your body's release. By the time the session ends, you feel not just physically released — but recalibrated. Your mind feels like it has been rebooted.
+
+For someone whose nervous system needs rhythm and input alongside release, this is the one."
+
+**Script (Movement-Based Ritual example — for activation-oriented customers):**
+
+"I would suggest our Movement-Based Ritual — a guided restoration experience that combines conscious movement, breathwork, and targeted hands-on therapy.
+
+Here's how it works: We begin with intentional movement patterns that help your nervous system recognize safe regulation. Gentle, rhythmic guided breathing. Then hands-on therapy that works with your body's natural activation and release cycles, rather than asking you to simply lie still. You're an active participant in your own restoration. When it finishes, you do not just feel relaxed — you feel resourced. Like your nervous system has been given tools it can use again.
+
+For someone who needs to actively participate in their reset, this is the pathway."
+
 **Script (Couples Ritual example):**
 
 "For an anniversary, I would suggest our Couples Ritual — a side-by-side experience where you and your partner are treated simultaneously in the same room.
@@ -328,7 +354,9 @@ Use this table when a message arrives and you need to move quickly. It is a shor
 | If she says... | Ask this... | Recommend this... |
 |---|---|---|
 | "How much is a massage?" | "Is this for you or someone else, and is there something specific you want to feel afterwards?" | Tailor based on answer — default to Deep Relaxation (60 min) if no context given |
-| "I'm really stressed" | "Do you prefer something that slows everything down, or something that works on the physical tension?" | Deep Relaxation Massage 90 min → upgrade with scalp or aromatherapy add-on |
+| "I'm really stressed" (and finds silence restorative) | "Do you prefer something that slows everything down, or something that works on the physical tension?" | Deep Relaxation Massage 90 min → upgrade with scalp or aromatherapy add-on |
+| "I'm really stressed" (but prefers rhythm/focus) | "When you have quiet time alone, does that feel restorative, or do you prefer something to focus on?" | Sound Bath Massage 60-90 min → upgrade with meditation focus or extended session |
+| "I'm really stressed" (but needs movement/activation) | "Some people find deep stillness harder than helpful. Do you prefer to actively participate in your reset?" | Movement-Based Ritual 60-75 min → combine with breathwork or follow-up session |
 | "My back is killing me" | "Is it more upper back and neck, or lower back? And has it been building for a while?" | Deep Tissue / Sports Massage 60 min → upgrade to 90 min or add hot stones |
 | "It's our anniversary" | "Is this a surprise, or are you planning it together?" | Couples Ritual → upgrade with champagne and rose petal setup |
 | "I want to treat my mum" | "Tell me a little about her — what does she love, and what does she need right now?" | Gift voucher or curated half-day experience → upgrade with product gift bag |
