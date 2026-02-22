@@ -74,6 +74,14 @@ Compassionate ≠ Long. "Your journey starts today" is stronger than a pep talk.
 
 ---
 
+### Rule 9: NO EM-DASHES (EVER)
+Never use em-dashes (—). Use periods, commas, or "and" instead.
+
+❌ "Relapse is normal — we expect it and plan for it"
+✅ "Relapse is normal. We expect it and plan for it."
+
+---
+
 ## Core Principles (Woven Into Brevity)
 
 **Validation over rambling:** "You haven't failed; programs failed you" (one sentence, not a paragraph)
