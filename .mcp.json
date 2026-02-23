@@ -48,6 +48,14 @@
     "fetch": {
       "command": "npx",
       "args": ["@anthropic/mcp-fetch"]
+    },
+    "trello": {
+      "command": "uvx",
+      "args": ["trello-mcp@latest"],
+      "env": {
+        "TRELLO_API_KEY": "${TRELLO_API_KEY}",
+        "TRELLO_API_TOKEN": "${TRELLO_API_TOKEN}"
+      }
     }
   }
 }

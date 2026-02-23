@@ -9,7 +9,9 @@
       "Bash(pbcopy:*)",
       "WebFetch(domain:github.com)",
       "Bash(claude plugin marketplace add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "WebFetch(domain:www.carismaspa.com)",
+      "WebFetch(domain:www.carismaaesthetics.com)"
     ]
   }
 }
