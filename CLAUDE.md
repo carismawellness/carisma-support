@@ -65,6 +65,9 @@ config/              # Brand definitions, offers, KPIs, naming conventions, temp
   naming_conventions.json # Campaign/ad set/ad naming patterns
   kpi_thresholds.json     # CPL targets, kill thresholds, winner/loser criteria
   creative_templates.json # Creatomate + Figma template IDs
+meetings/            # Processed meeting notes (structured, linked, browsable in Obsidian)
+  raw/               # Raw unedited transcripts (archived, hidden from Obsidian)
+  templates/         # Meeting note template
 tools/               # Python scripts for deterministic execution
 workflows/           # Markdown SOPs defining what to do and how
 .tmp/                # Temporary files. Regenerated as needed.
@@ -189,3 +192,16 @@ These documents are **living references** that evolve with learnings:
 - **When brand evolves:** Update `branding_guidelines.md` and communicate changes
 
 **Golden Rule:** If you discover a winning pattern, document it. If a document contradicts reality, update it. These references are only valuable if they're accurate.
+
+## Meeting Transcript Processing
+
+**On every session start**, run `python tools/check_unprocessed_meetings.py` to check for new raw transcripts in `meetings/raw/`. If unprocessed transcripts are found, notify the user and offer to process them.
+
+**When processing:** Follow `workflows/process_meeting_transcript.md` step by step. The key is connecting meeting content to existing vault knowledge — always search for related strategy docs, brand docs, and past meetings before writing the summary.
+
+**Automation flow:**
+1. User's transcription tool saves transcripts to `meetings/raw/` automatically
+2. Claude Code detects new files at session start via `tools/check_unprocessed_meetings.py`
+3. Claude Code processes each transcript into a structured note in `meetings/`
+4. Raw transcripts stay archived in `meetings/raw/` (hidden from Obsidian)
+5. Processed notes are visible and linked in Obsidian

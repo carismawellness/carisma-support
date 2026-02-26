@@ -11,7 +11,8 @@
       "Bash(claude plugin marketplace add:*)",
       "Bash(git push:*)",
       "WebFetch(domain:www.carismaspa.com)",
-      "WebFetch(domain:www.carismaaesthetics.com)"
+      "WebFetch(domain:www.carismaaesthetics.com)",
+      "WebFetch(domain:mcp.composio.dev)"
     ]
   }
 }

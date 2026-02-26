@@ -1,5 +1,6 @@
 # Secrets
 .env
+.mcp.json
 credentials.json
 token.json
 
@@ -16,3 +17,9 @@ __pycache__/
 
 # OS
 .DS_Store
+
+# Obsidian
+.obsidian/
+
+# Playwright logs
+.playwright-mcp/

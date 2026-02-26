@@ -7,8 +7,8 @@
       "industry": "hotel_spa",
       "country": "MT",
       "currency": "EUR",
-      "meta_ad_account_id": "TO_BE_FILLED",
-      "meta_page_id": "TO_BE_FILLED",
+      "meta_ad_account_id": "act_654279452039150",
+      "meta_page_id": "375775105843811",
       "instagram_account_id": "TO_BE_FILLED",
       "pixel_id": "TO_BE_FILLED",
       "website_url": "https://www.carismaspa.com",
@@ -79,8 +79,8 @@
       "industry": "medical_spa",
       "country": "MT",
       "currency": "EUR",
-      "meta_ad_account_id": "TO_BE_FILLED",
-      "meta_page_id": "TO_BE_FILLED",
+      "meta_ad_account_id": "act_382359687910745",
+      "meta_page_id": "117681807972195",
       "instagram_account_id": "TO_BE_FILLED",
       "pixel_id": "TO_BE_FILLED",
       "website_url": "https://www.carismaaesthetics.com",
@@ -144,6 +144,76 @@
       "cpl_target_eur": 12.00,
       "monthly_budget_eur": 1500,
       "daily_budget_eur": 50,
+      "active": true
+    },
+    {
+      "brand_id": "carisma_slimming",
+      "brand_name": "Carisma Slimming",
+      "brand_code": "SLIM",
+      "industry": "weight_management",
+      "country": "MT",
+      "currency": "USD",
+      "meta_ad_account_id": "act_1496776195316716",
+      "meta_page_id": "923445584188552",
+      "instagram_account_id": "TO_BE_FILLED",
+      "pixel_id": "TO_BE_FILLED",
+      "website_url": "https://www.carismaslimming.com",
+      "landing_pages": {},
+      "target_audience": {
+        "age_min": 25,
+        "age_max": 55,
+        "genders": [2],
+        "geo_targeting": {
+          "country_code": "MT",
+          "country_name": "Malta",
+          "radius_km": null,
+          "included_regions": ["Malta", "Gozo"]
+        },
+        "interests": [
+          "Weight loss",
+          "Body contouring",
+          "Slimming",
+          "Fat freezing",
+          "Wellness",
+          "Fitness",
+          "Healthy lifestyle"
+        ],
+        "excluded_audiences": []
+      },
+      "brand_voice": {
+        "tone": "compassionate, warm, reassuring, evidence-led",
+        "personality": "A trusted wellness companion who validates the emotional weight of the journey. Speaks with calm clarity, never shame. Emphasises control, choice, and how life feels — not just numbers on a scale.",
+        "language": "English (UK spelling preferred, with occasional Maltese phrases for local warmth)",
+        "do": [
+          "Validate the experience before offering solutions",
+          "Use calm, clear, concrete language",
+          "Normalise relapse and setbacks",
+          "Emphasise control and choice",
+          "Talk about how life feels, not just measurements"
+        ],
+        "dont": [
+          "Use shame, blame, or guilt",
+          "Promise unrealistic transformations",
+          "Use toxic positivity",
+          "Reduce the journey to numbers only",
+          "Use fear-mongering tactics"
+        ]
+      },
+      "offers": [
+        "fat_freeze",
+        "muscle_stim",
+        "skin_tightening",
+        "medical_weight_loss"
+      ],
+      "creative_formats": [
+        "ugc_hook_body_cta",
+        "founder_led",
+        "testimonial",
+        "static_offer"
+      ],
+      "cpl_target_usd": 10.00,
+      "monthly_budget_usd": 2800,
+      "daily_budget_usd": 93,
       "active": true
     }
   ],
