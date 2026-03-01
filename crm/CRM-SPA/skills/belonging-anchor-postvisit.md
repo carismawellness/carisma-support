@@ -406,3 +406,18 @@ All Belonging Anchor messages maintain Carisma voice:
 *First-to-repeat conversion lift: 40-60% improvement over baseline*
 *Revenue impact: €5,100+ annually per agent; €1,200-€2,400 LTV per converted customer*
 *Companion skills: Close Detector, First-Time Converter*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

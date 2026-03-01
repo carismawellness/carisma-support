@@ -260,3 +260,18 @@ This flip is powerful: instead of "buy now," you're saying "decide when you're r
 *CORE RULE IN MEDICAL AESTHETICS: ACKNOWLEDGE THE FEAR → EXPLORE THE REAL CONCERN → REFRAME WITH EXPERTISE AND ETHICS → INVITE WITH PERMISSION TO WAIT.*
 *Key hesitation types addressed: Naturalness fear, regret anxiety, practitioner trust, budget questions, procedure safety concerns*
 *Companion skills: [SALES] Close the Booking, [SALES] Competitor Defense, [CONSULT] Consult & Pitch*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

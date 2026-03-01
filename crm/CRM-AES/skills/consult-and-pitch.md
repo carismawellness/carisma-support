@@ -439,3 +439,18 @@ The effect: She relaxes. You become the safe choice.
 *Average transaction value when skill is applied correctly: €300–€1,200+ (initial + follow-ups)*
 *Estimated coverage: 30% of all inbound customer interactions*
 *Critical positioning: Expertise + Ethics + Personalization = Premium Medical Aesthetics*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

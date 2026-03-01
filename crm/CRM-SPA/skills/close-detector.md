@@ -370,3 +370,18 @@ Used when: the customer is a first-timer, or the cross-sell is a new category th
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
 *Estimated coverage: Triggers on 15-20% of conversations (any closing signal)*
 *Companion skills: [SALES] Upsell Booking, [SALES] Cross-Sell*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

@@ -485,3 +485,18 @@ Sarah can be that voice. Not by telling her what to do — but by reflecting bac
 *Average transaction value when skill is applied correctly: €120–€300*
 *Estimated coverage: 20–25% of all inbound conversations (any conversation that reaches recommendation stage)*
 *Companion skill: [CONSULT] Consult & Pitch — this skill activates where that one ends*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

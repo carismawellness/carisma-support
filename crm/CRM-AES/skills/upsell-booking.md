@@ -449,3 +449,18 @@ This move is used when the upsell has been declined or skipped — or when the c
 *CRITICAL MEDICAL ETHICS: Upsell only when clinically appropriate. Never suggest add-ons that feel commercially driven post-medical-decision. Clinical thinking always outweighs revenue thinking.*
 *Applies to: Carisma Aesthetics (medical procedures, consultations, skincare protocols)*
 *Companion skills: [CONSULT] Consult & Pitch, [SALES] Bundle Builder, [SALES] Close Detector*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

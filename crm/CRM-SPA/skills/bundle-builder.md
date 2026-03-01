@@ -652,3 +652,18 @@ Use it once, naturally, and let it land. Do not repeat the name insistently. Its
 *Target average order value: €175–€280*
 *Estimated coverage: 20–25% of all inbound customer interactions*
 *Companion skill: consult-and-pitch.md (for single-need diagnostic conversations)*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

@@ -132,3 +132,18 @@ All of these activate this skill:
 *Key files: shared-inbox.md (Tier 1 — unverified member insights) / shared-knowledge.md (Tier 2 — verified program learnings)*
 *CORE RULE: Fast capture of relapse patterns, success factors, member feedback in inbox; careful promotion when validated*
 *Slimming-Specific KB Categories: Relapse triggers, early-week challenges, momentum breakers, community wins, metabolism observations*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

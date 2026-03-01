@@ -257,3 +257,18 @@ This flip is powerful: instead of "buy now," you're saying "decide when you're r
 *Estimated coverage: Triggers on 20-30% of conversations (objection resistance)*
 *CORE RULE: ACKNOWLEDGE → EXPLORE → REFRAME → INVITE. Never argue.*
 *Companion skills: [SALES] Close the Booking, [SALES] Competitor Defense*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

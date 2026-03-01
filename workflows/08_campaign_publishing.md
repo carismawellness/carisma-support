@@ -397,3 +397,22 @@ After all campaigns are created in PAUSED state:
 - The Google Sheets log creates an audit trail. Every campaign, ad set, and ad should be traceable from creation through performance review.
 - Keep the `.tmp/publishing/` files for at least 2 weeks as a backup record of what was published.
 - Interest targeting IDs change over time. Periodically refresh the interest ID mapping using Meta's targeting search API.
+
+---
+
+## Known Issues & Learnings
+
+> Updated when this workflow encounters failures, edge cases, or better methods.
+> Always check this section before executing the workflow.
+> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+
+<!--
+Entry format:
+### [YYYY-MM-DD] — [Issue Title]
+**What happened:** Brief description
+**Root cause:** Why it happened
+**Fix:** What was changed
+**Rule:** ALWAYS/NEVER directive (also added to root CLAUDE.md if universal)
+-->
+
+_No issues logged yet._

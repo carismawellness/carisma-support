@@ -417,3 +417,18 @@ The feeling it creates: "She is helping me get something good before it is gone"
 *Average program commitment when skill is applied correctly: €199–€799 (6-12+ weeks)*
 *Estimated coverage: 30% of all inbound customer interactions*
 *Core validation: Must include validation of struggle + differentiation on sustainability (not just initial weight loss) + emphasis on relapse normalization*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

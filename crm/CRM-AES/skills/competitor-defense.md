@@ -375,3 +375,18 @@ This reframes the entire conversation from price-shopping to finding a clinic yo
 *GOLDEN RULE IN MEDICAL AESTHETICS: NEVER DISCOUNT. ALWAYS ANCHOR ON CLINICAL EXPERTISE, ETHICS, AND NATURAL RESULTS.*
 *Key hesitation addressed: Fear of over-treatment, desire for natural results, concerns about clinic ethics*
 *Companion skills: [SALES] Objection Buster, [SALES] Close the Booking, [CONSULT] Consult & Pitch*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

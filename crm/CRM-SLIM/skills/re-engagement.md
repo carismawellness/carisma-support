@@ -586,3 +586,18 @@ The power of this move is that it gives the customer a fresh reason to return th
 *Typical re-engagement conversion window: 1–3 meaningful contacts*
 *Primary use case: Lapsed members — 3+ months since last program interaction or check-in*
 *Key Slimming Context: Relapse normalization, shame removal, "this was always part of the plan" framing*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

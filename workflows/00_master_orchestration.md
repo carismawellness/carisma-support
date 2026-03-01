@@ -227,3 +227,22 @@ This cycle runs for each brand defined in `config/brands.json`:
 - **Carisma Aesthetics** (brand_id: `carisma_aesthetics`, code: `CA`) -- CPL target: EUR 12.00
 
 When additional brands are added to `brands.json`, they are automatically included in the cycle.
+
+---
+
+## Known Issues & Learnings
+
+> Updated when this workflow encounters failures, edge cases, or better methods.
+> Always check this section before executing the workflow.
+> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+
+<!--
+Entry format:
+### [YYYY-MM-DD] — [Issue Title]
+**What happened:** Brief description
+**Root cause:** Why it happened
+**Fix:** What was changed
+**Rule:** ALWAYS/NEVER directive (also added to root CLAUDE.md if universal)
+-->
+
+_No issues logged yet._

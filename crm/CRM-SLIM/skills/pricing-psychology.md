@@ -259,3 +259,18 @@ But I will not discount the full program. You deserve to have a system that is f
 **Status:** MANDATORY — Use for ALL pricing inquiries
 **Expected Enrollment Impact:** +25–50% in premium tiers when applied consistently
 **Lifetime Value Impact:** +40–60% from customers who start at Tier 1 and progress to Tier 2/3
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

@@ -332,3 +332,22 @@ Iteration scripts follow the same approval gates as new scripts:
 - Iterations should be published in the SAME campaign as new ads (or in a dedicated "Iterations" ad set) so CBO can compare them fairly.
 - Track the performance of iterations vs their parent ads in the lineage tracker. Over time, this data reveals which variation types produce the most improvement.
 - The ideal ratio is roughly 60% new concepts, 40% iterations of winners. Adjust based on how many winners you have to iterate on.
+
+---
+
+## Known Issues & Learnings
+
+> Updated when this workflow encounters failures, edge cases, or better methods.
+> Always check this section before executing the workflow.
+> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+
+<!--
+Entry format:
+### [YYYY-MM-DD] — [Issue Title]
+**What happened:** Brief description
+**Root cause:** Why it happened
+**Fix:** What was changed
+**Rule:** ALWAYS/NEVER directive (also added to root CLAUDE.md if universal)
+-->
+
+_No issues logged yet._

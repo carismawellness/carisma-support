@@ -40,14 +40,54 @@ Workflows should evolve as you learn. When you find better methods, discover con
 
 ## The Self-Improvement Loop
 
-Every failure is a chance to make the system stronger:
-1. Identify what broke
-2. Fix the tool
-3. Verify the fix works
-4. Update the workflow with the new approach
-5. Move on with a more robust system
+> Every mistake becomes a rule. Every rule reduces future mistakes.
+> Based on Boris Cherny's compounding engineering pattern.
 
-This loop is how the framework improves over time.
+Every failure makes the system permanently smarter. This is not optional — it's how the framework compounds intelligence over time.
+
+### The Cycle
+
+1. **Identify** — Something breaks, underperforms, or gets corrected by a human
+2. **Fix** — Correct the tool, script, response, or approach
+3. **Verify** — Confirm the fix actually works (run the script, re-execute the workflow, check output)
+4. **Document** — Add an ALWAYS/NEVER directive to the relevant CLAUDE.md file's `### Active Rules` section
+5. **Log** — Record full context in `learnings/LEARNINGS.md` with date, what happened, root cause, and the rule
+
+### Rule Format
+
+Every learning becomes a directive. Use this exact format:
+- **ALWAYS** [do X] — because [rationale]. Example: [concrete good/bad comparison]
+- **NEVER** [do Y] — because [rationale]. Example: [concrete good/bad comparison]
+
+One rule per mistake. Lead with rationale. Include a real example. Keep it to 3 lines max.
+
+### Verification Before Completion
+
+NEVER claim a task is done without verification:
+- **Scripts/Tools:** Run them and confirm output matches expectations
+- **Campaigns:** Check they're PAUSED with correct structure in Ads Manager
+- **Customer responses:** Run self-check protocol (all 10 questions must pass)
+- **Workflows:** Verify each expected output exists and is correct
+- **Data pulls:** Spot-check 3-5 data points against the source
+
+### Learning Flow
+
+Learnings flow through a centralized + brand-specific architecture:
+- **`learnings/LEARNINGS.md`** — Master log. All learnings recorded here first.
+- **Root CLAUDE.md** (this file) — Universal rules that apply to all agents
+- **Brand CLAUDE.md files** — Brand-specific rules (CRM-SPA, CRM-AES, CRM-SLIM)
+- **Workflow footers** — Execution-specific learnings (API quirks, timing, tool failures)
+- **Skill footers** — Customer interaction edge cases
+
+Cross-pollination: If a brand-specific learning applies universally, promote it to Universal Rules.
+
+### Active Rules
+
+<!-- Universal rules distilled from learnings/LEARNINGS.md go here -->
+<!-- This section grows over time as the system learns -->
+<!-- Format: ALWAYS/NEVER [directive] — [rationale] -->
+
+_No active rules yet. The system will learn as it operates._
 
 ## File Structure
 
@@ -65,6 +105,7 @@ config/              # Brand definitions, offers, KPIs, naming conventions, temp
   naming_conventions.json # Campaign/ad set/ad naming patterns
   kpi_thresholds.json     # CPL targets, kill thresholds, winner/loser criteria
   creative_templates.json # Creatomate + Figma template IDs
+learnings/           # Self-improvement loop: master learnings log and system rules
 meetings/            # Processed meeting notes (structured, linked, browsable in Obsidian)
   raw/               # Raw unedited transcripts (archived, hidden from Obsidian)
   templates/         # Meeting note template

@@ -274,3 +274,18 @@ All cancellation recovery messaging maintains Carisma voice:
 *Average recovery rate with warm messaging: 5-10%*
 *Revenue impact: €450-€900 per agent monthly; €5,400-€10,800 annually*
 *Companion skills: Close Detector, Re-engagement*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

@@ -587,3 +587,18 @@ The power of this move is that it gives the customer a fresh reason to return th
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
 *Typical re-engagement conversion window: 1–3 meaningful contacts*
 *Primary use case: Lapsed customers — 6+ months since last visit or interaction*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

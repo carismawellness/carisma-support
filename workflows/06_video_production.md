@@ -308,3 +308,22 @@ After all videos are produced (both automated and manual):
 - Manual videos typically have higher engagement but are more expensive to produce. The mix should be roughly 40% automated, 60% manual for best results.
 - Keep a library of approved stock footage and b-roll for automated renders. Source from brand photo/video shoots.
 - CapCut project files should be saved alongside exports for easy future edits and iterations.
+
+---
+
+## Known Issues & Learnings
+
+> Updated when this workflow encounters failures, edge cases, or better methods.
+> Always check this section before executing the workflow.
+> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+
+<!--
+Entry format:
+### [YYYY-MM-DD] — [Issue Title]
+**What happened:** Brief description
+**Root cause:** Why it happened
+**Fix:** What was changed
+**Rule:** ALWAYS/NEVER directive (also added to root CLAUDE.md if universal)
+-->
+
+_No issues logged yet._

@@ -266,3 +266,18 @@ Sarah
 *Last reviewed: 2026-02-19*
 *For new agents: Read this first, keep the Quick Reference Card handy, reference skills by name as you work*
 *All questions? Ask Claude by typing "/onboard" again.*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

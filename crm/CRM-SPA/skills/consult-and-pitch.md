@@ -456,3 +456,18 @@ The feeling it creates: "She is helping me get something good before it is gone"
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
 *Average transaction value when skill is applied correctly: €120–€280*
 *Estimated coverage: 30% of all inbound customer interactions*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

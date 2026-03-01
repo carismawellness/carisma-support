@@ -473,3 +473,18 @@ The effect: she feels like she is receiving something special, not being pitched
 *Applies to: WhatsApp, Facebook DM, Instagram DM, Email, Live Chat*
 *Cross-sell targets: Carisma Aesthetics (skin clinic) · Carisma Slimming (doctor-led body clinic, St Julian's)*
 *Cross-sell trigger: Natural conversation close point — never during a complaint, never in first contact, never more than once per conversation*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

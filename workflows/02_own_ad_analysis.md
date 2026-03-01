@@ -202,3 +202,22 @@ The human should verify:
 - For new campaigns (< 7 days), use 7-day data and be more conservative with classifications
 - This analysis directly feeds workflow 03 (Hook Mining) -- winning ad hooks get prioritised
 - Consider running a 7-day AND 14-day analysis to spot trends (improving or declining performance)
+
+---
+
+## Known Issues & Learnings
+
+> Updated when this workflow encounters failures, edge cases, or better methods.
+> Always check this section before executing the workflow.
+> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+
+<!--
+Entry format:
+### [YYYY-MM-DD] — [Issue Title]
+**What happened:** Brief description
+**Root cause:** Why it happened
+**Fix:** What was changed
+**Rule:** ALWAYS/NEVER directive (also added to root CLAUDE.md if universal)
+-->
+
+_No issues logged yet._

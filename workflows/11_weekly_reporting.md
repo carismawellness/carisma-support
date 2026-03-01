@@ -381,3 +381,22 @@ This workflow has **no formal approval gate** -- it is an informational delivera
 - Consider adding a monthly summary (aggregated from weekly reports) at month-end for higher-level stakeholder communication.
 - The "Next Week Plan" section is what makes this report actionable rather than just informational. Every insight should connect to a concrete action.
 - If running multiple reports in the same session, process all brands before writing to Google Sheets to ensure the report is complete.
+
+---
+
+## Known Issues & Learnings
+
+> Updated when this workflow encounters failures, edge cases, or better methods.
+> Always check this section before executing the workflow.
+> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+
+<!--
+Entry format:
+### [YYYY-MM-DD] — [Issue Title]
+**What happened:** Brief description
+**Root cause:** Why it happened
+**Fix:** What was changed
+**Rule:** ALWAYS/NEVER directive (also added to root CLAUDE.md if universal)
+-->
+
+_No issues logged yet._

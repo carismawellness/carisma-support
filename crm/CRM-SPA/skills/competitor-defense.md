@@ -360,3 +360,18 @@ This reframes the entire conversation from price-shopping to value-seeking.
 *Estimated coverage: Triggers on 5-8% of conversations (competitor mentions)*
 *GOLDEN RULE: NEVER DISCOUNT. ALWAYS ADD VALUE INSTEAD.*
 *Companion skills: [SALES] Objection Buster, [SALES] Close the Booking*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

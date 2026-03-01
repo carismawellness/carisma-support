@@ -63,3 +63,16 @@ Run every generated message through these questions. ALL must pass.
 **Skill maintained by:** Carisma Slimming Team
 **Last updated:** 2026-02-23
 **Status:** MANDATORY
+
+---
+
+### Question 10: Learning Loop
+**Did this interaction reveal something new?**
+
+If the response required improvisation, an exception to existing rules, or a judgment call not covered by current knowledge:
+
+- [ ] Log the learning in `learnings/LEARNINGS.md` under the relevant brand section
+- [ ] Add an ALWAYS/NEVER rule to the brand CLAUDE.md `### Active Rules` section if it's likely to recur
+- [ ] Update this skill's `## Edge Cases Discovered` section if it's skill-specific
+
+**If NO new learning:** Continue. Not every interaction produces a rule — only the surprising ones.

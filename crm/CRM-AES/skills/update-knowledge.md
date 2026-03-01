@@ -162,3 +162,18 @@ All of these activate this skill:
 *Applies to: Internal knowledge management system*
 *Key files: shared-inbox.md (Tier 1) / shared-knowledge.md (Tier 2)*
 *CORE RULE: Fast capture in inbox, careful promotion to verified.*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

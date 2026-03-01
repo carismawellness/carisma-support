@@ -1170,3 +1170,18 @@ This skill implements the primary retention lever for the Slimming system:
 Expected impact: 40+ incremental members retained long-term, €40,000+ revenue
 Status: Production-ready, tested, scripts finalized, deployment checklist complete
 ```
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

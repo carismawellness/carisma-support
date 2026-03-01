@@ -442,3 +442,18 @@ The bridge should feel as though the gift voucher was already the right conclusi
 *Companion knowledge bases: Referral gift programs — connect here when member expresses interest in gifting to a friend*
 *Coverage: Any conversation reaching a point of expressed belief/hope — estimated 25–35% of all member interactions*
 *Key Slimming Context: Referrals framed as "gift someone permission to change," not transactional "refer a friend" programs*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

@@ -301,3 +301,18 @@ By using present tense and sensory words (warmth, softness, breath, stillness), 
 *Estimated coverage: Triggers on 10-15% of conversations (first-time visitors)*
 *CORE BELIEF: First-timers are not transactions. They are the beginning of relationships.*
 *Companion skills: [SALES] Close the Booking, [CONSULT] Consult & Pitch*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

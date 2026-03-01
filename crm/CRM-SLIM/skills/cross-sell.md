@@ -479,3 +479,18 @@ The effect: she feels like she is receiving something special, not being pitched
 *Cross-sell targets: Fitness coaching, nutrition specialist, confidence/skin clinic for post-weight-loss contouring*
 *Cross-sell trigger: Milestone reached, visible result achieved, member expresses readiness for next phase — never during a complaint, never in first contact, never more than once per conversation*
 *Key Slimming Context: Cross-sells are expansion within weight loss journey, not pivots away from it. Positioning: "What comes next in your transformation."*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

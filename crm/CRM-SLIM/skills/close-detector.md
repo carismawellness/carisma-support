@@ -378,3 +378,18 @@ Used when: the customer is a first-timer, or the cross-sell is a new category th
 *Estimated coverage: Triggers on 15-20% of conversations (any program enrollment/booking close)*
 *Companion skills: [SALES] Bundle Builder, [SALES] Upsell Booking*
 *Key Slimming Context: First-week anchoring, relapse normalization, community seeding, not cross-selling*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

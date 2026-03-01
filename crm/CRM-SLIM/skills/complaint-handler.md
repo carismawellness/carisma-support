@@ -249,3 +249,18 @@ With care, Sarah"
 *CORE RULE: Shame removal precedes all resolution. Relapse normalization before problem-solving.*
 *Sign-off in this skill: "With you every step, Katya" — never "Peacefully, Katya"*
 *Special Slimming Context: Many "complaints" are actually shame spirals. Identify these with extreme care and reframe relapse as learning, not failure.*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

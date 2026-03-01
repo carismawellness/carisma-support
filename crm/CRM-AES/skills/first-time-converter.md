@@ -306,3 +306,18 @@ By using present tense and sensory words, you make the experience feel real befo
 *CORE BELIEF: First-timers are not transactions. They are the foundation of our reputation. Building trust now creates loyalty forever.*
 *Signature positioning: Safety + Naturalness + Expert Care + Ethics over Sales*
 *Companion skills: [CONSULT] Consult & Pitch, [SALES] Close the Consultation*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

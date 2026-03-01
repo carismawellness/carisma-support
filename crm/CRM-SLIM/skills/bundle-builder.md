@@ -655,3 +655,18 @@ Use it once, naturally, and let it land. Do not repeat the name insistently. Its
 *Estimated coverage: 25–35% of all inbound customer interactions*
 *Companion skill: consult-and-pitch.md (for diagnostic conversations) + close-the-booking.md (for commitment)*
 *Key Slimming Focus: Framing bundles as "accountability architecture" not discounts; relapse normalization as justification*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

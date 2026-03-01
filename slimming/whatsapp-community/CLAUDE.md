@@ -167,3 +167,21 @@ Not every message will speak to all five. Default to the core 35-55 woman unless
 
 For full brand voice details: ../knowledge/brand-voice.md
 For full methodology details: ../knowledge/slimming-guide.md
+
+---
+
+## Self-Improvement Loop
+
+> Every mistake becomes a rule. Every rule reduces future mistakes.
+
+When a response error is caught (by human review, self-check failure, or customer complaint):
+1. **Fix** the response or approach
+2. **Add** an ALWAYS/NEVER rule to the Active Rules section below
+3. **Log** full context in `learnings/LEARNINGS.md` under the relevant brand section
+
+### Active Rules
+
+<!-- Brand-specific rules accumulate here over time -->
+<!-- Format: ALWAYS/NEVER [directive] — [rationale] -->
+
+_No active rules yet. The system will learn as it operates._

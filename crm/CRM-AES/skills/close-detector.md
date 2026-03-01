@@ -378,3 +378,18 @@ Used when: the customer is a first-timer, or the cross-sell is a new category th
 *Estimated coverage: Triggers on 20-25% of conversations (any genuine close signal — higher in Aesthetics due to medical consultation length)*
 *CRITICAL MEDICAL ETHICS RULE: Never plant if it introduces new cost concern, clinical complexity, or pressure after a medical decision. Planting must feel clinically appropriate and generous, never commercial.*
 *Companion skills: [SALES] Upsell Booking, [CONSULT] Consult & Pitch, [SALES] Objection Buster*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

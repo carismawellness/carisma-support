@@ -225,3 +225,22 @@ The human should review:
 - Keep a cumulative hook archive (separate from weekly bank) to track which hooks have been tested and their results over time.
 - Hooks that were winners should be iterated on, not simply repeated. The novelty score helps ensure we keep testing fresh approaches.
 - For aesthetics hooks, always double-check Meta's advertising policies on health and appearance claims before including in the bank.
+
+---
+
+## Known Issues & Learnings
+
+> Updated when this workflow encounters failures, edge cases, or better methods.
+> Always check this section before executing the workflow.
+> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+
+<!--
+Entry format:
+### [YYYY-MM-DD] — [Issue Title]
+**What happened:** Brief description
+**Root cause:** Why it happened
+**Fix:** What was changed
+**Rule:** ALWAYS/NEVER directive (also added to root CLAUDE.md if universal)
+-->
+
+_No issues logged yet._

@@ -312,3 +312,18 @@ By anchoring in feeling and real-life moments, you make the transformation feel 
 *CORE BELIEF: First-timers are not transactions. They are the beginning of relationships. Validation before selling.*
 *Validation Rule: Must include at least one validation phrase + one feeling word + clear differentiation from diet culture*
 *Companion skills: [SALES] Competitor Defense, [SALES] Consult & Pitch, [SALES] Objection Buster*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

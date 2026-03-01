@@ -275,3 +275,22 @@ The human should review:
 - Consider creating a library of pre-approved images per brand so image swaps can be semi-automated in the future.
 - For the aesthetics brand, be especially careful with before/after imagery. Meta's policies on personal attributes apply to images as well as text.
 - Export at 2x and downscale for the sharpest results, especially for text-heavy creatives that need to be readable on small mobile screens.
+
+---
+
+## Known Issues & Learnings
+
+> Updated when this workflow encounters failures, edge cases, or better methods.
+> Always check this section before executing the workflow.
+> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+
+<!--
+Entry format:
+### [YYYY-MM-DD] — [Issue Title]
+**What happened:** Brief description
+**Root cause:** Why it happened
+**Fix:** What was changed
+**Rule:** ALWAYS/NEVER directive (also added to root CLAUDE.md if universal)
+-->
+
+_No issues logged yet._

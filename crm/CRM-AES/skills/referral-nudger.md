@@ -443,3 +443,18 @@ The bridge should feel as though the gift voucher was already the right conclusi
 *Companion skills: [SALES] Close the Booking — referral nudge follows after close, not before*
 *Companion knowledge bases: Gift Vouchers — connect here when customer expresses gift voucher interest*
 *Coverage: Any conversation reaching a point of expressed satisfaction — estimated 30–40% of all inbound conversations*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

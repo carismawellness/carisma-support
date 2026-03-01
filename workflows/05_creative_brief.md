@@ -288,3 +288,22 @@ After all briefs are generated:
 - Automated briefs should be fully parameterised -- no subjective decisions should remain.
 - Keep brief files in markdown for human readability, but ensure all machine-needed data is also in the JSON index.
 - Consider creating a shared reference of available Creatomate templates and Figma frames so briefs can reference them accurately.
+
+---
+
+## Known Issues & Learnings
+
+> Updated when this workflow encounters failures, edge cases, or better methods.
+> Always check this section before executing the workflow.
+> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+
+<!--
+Entry format:
+### [YYYY-MM-DD] — [Issue Title]
+**What happened:** Brief description
+**Root cause:** Why it happened
+**Fix:** What was changed
+**Rule:** ALWAYS/NEVER directive (also added to root CLAUDE.md if universal)
+-->
+
+_No issues logged yet._

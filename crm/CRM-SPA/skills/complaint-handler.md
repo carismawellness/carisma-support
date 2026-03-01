@@ -250,3 +250,18 @@ With care, Sarah"
 *Auto-activates on negative sentiment: disgusted, ridiculous, unacceptable, never again, refund, demand, terrible, awful, complaint, disappointed, shocked, furious, outraged*
 *CORE RULE: Emotional acknowledgment precedes all resolution.*
 *Sign-off in this skill: "With care, Sarah" — never "Peacefully, Sarah"*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

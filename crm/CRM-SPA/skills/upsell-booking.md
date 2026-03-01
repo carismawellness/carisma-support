@@ -445,3 +445,18 @@ This move is used when the upsell has been declined or skipped — or when the c
 *Target AOV lift: €30–€80 per confirmed booking*
 *Conversion rate benchmark: 20–35% of post-confirmation upsell attempts (hospitality industry standard)*
 *Applies to: Carisma Spa & Wellness (luxury spa, hotel partners) — NOT Carisma Slimming clinical treatments*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

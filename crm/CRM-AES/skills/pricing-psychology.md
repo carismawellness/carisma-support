@@ -246,3 +246,18 @@ What works best for you?"
 **Last updated:** 2026-02-22
 **Status:** MANDATORY — Use for ALL pricing inquiries
 **Expected AOV Impact:** +20–40% when applied consistently across 3-tier framework
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

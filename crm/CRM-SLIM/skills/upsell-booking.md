@@ -444,3 +444,18 @@ This move is used when the upsell has been declined or skipped — or when the c
 *Conversion rate benchmark: 35–50% of post-confirmation upsell attempts (accountability services have higher conversion than spa add-ons)*
 *Applies to: Carisma Slimming clinical programs — focuses on accountability and success infrastructure, not spa-style add-ons*
 *Key Differentiator: Upsells are framed as "success insurance," not luxury enhancements*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

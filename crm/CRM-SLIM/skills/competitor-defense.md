@@ -383,3 +383,18 @@ This reframes the entire conversation from price-shopping to sustainability-seek
 *GOLDEN RULE: NEVER DISCOUNT. ALWAYS REFRAME VALUE AROUND SUSTAINABILITY INSTEAD.*
 *Validation Rule: Must explore past program failures before comparing. Lead with understanding, not defensiveness.*
 *Companion skills: [SALES] First-Time Converter, [SALES] Consult & Pitch, [SALES] Objection Buster*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._

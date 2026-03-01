@@ -207,3 +207,22 @@ The human should review:
 - Malta's EU membership means we get **full transparency data** that is not available for non-EU countries. This is a significant advantage -- we can see actual spend ranges and impression counts.
 - Competitor research should capture trends over time. Consider keeping historical reports to track changes week over week.
 - The Ad Library API has a rolling 7-year archive. Older ads may still be queryable even if inactive.
+
+---
+
+## Known Issues & Learnings
+
+> Updated when this workflow encounters failures, edge cases, or better methods.
+> Always check this section before executing the workflow.
+> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+
+<!--
+Entry format:
+### [YYYY-MM-DD] — [Issue Title]
+**What happened:** Brief description
+**Root cause:** Why it happened
+**Fix:** What was changed
+**Rule:** ALWAYS/NEVER directive (also added to root CLAUDE.md if universal)
+-->
+
+_No issues logged yet._

@@ -321,3 +321,22 @@ After all scripts are generated:
 - The naming convention (`{BrandCode}_{Offer}_{Format}_{HookType}_{Version}`) is critical for downstream analysis. Enforce it strictly.
 - Scripts for manual production (UGC, founder-led) need to be practical to film. Avoid complex multi-location shoots or elaborate setups.
 - Static offer scripts are simpler but still need compelling copy. Don't treat them as afterthoughts.
+
+---
+
+## Known Issues & Learnings
+
+> Updated when this workflow encounters failures, edge cases, or better methods.
+> Always check this section before executing the workflow.
+> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+
+<!--
+Entry format:
+### [YYYY-MM-DD] — [Issue Title]
+**What happened:** Brief description
+**Root cause:** Why it happened
+**Fix:** What was changed
+**Rule:** ALWAYS/NEVER directive (also added to root CLAUDE.md if universal)
+-->
+
+_No issues logged yet._

@@ -659,3 +659,18 @@ Use it once, naturally, and let it land. Do not repeat the name insistently. Its
 *Estimated coverage: 25–35% of all inbound Aesthetics interactions (high % due to multi-concern nature of aesthetic goals)*
 *CRITICAL MEDICAL ETHICS: Bundle builder is a clinical tool, not just sales. Never bundle to maximize revenue — bundle to demonstrate best clinical approach. Conservative-first philosophy always.*
 *Companion skill: [CONSULT] Consult & Pitch (for diagnostic); [SALES] Upsell Booking (for add-ons within a booking)*
+
+---
+
+## Edge Cases Discovered
+
+> Updated when this skill encounters scenarios it didn't handle well.
+> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+
+<!--
+Entry format:
+- **[YYYY-MM-DD]**: Customer asked [X], skill responded [Y], should have [Z].
+  Rule added: ALWAYS/NEVER [directive]
+-->
+
+_No edge cases logged yet._
