@@ -1,0 +1,145 @@
+{
+  "naming_conventions": {
+    "campaign": {
+      "pattern": "{brand_code}_{objective}_{offer}_{date}",
+      "description": "Campaign-level naming convention for Meta Ads Manager. Provides quick identification of brand, goal, and offer at a glance.",
+      "components": {
+        "brand_code": {
+          "description": "Two-letter brand identifier",
+          "values": {
+            "CS": "Carisma Spa",
+            "CA": "Carisma Aesthetics"
+          }
+        },
+        "objective": {
+          "description": "Campaign objective shorthand",
+          "values": {
+            "LEAD": "Lead generation campaign",
+            "CONV": "Conversion campaign",
+            "TRAF": "Traffic campaign",
+            "ENGM": "Engagement campaign",
+            "AWRN": "Awareness / reach campaign",
+            "RETG": "Retargeting campaign"
+          }
+        },
+        "offer": {
+          "description": "Offer identifier shorthand",
+          "values": {
+            "SPADAY": "Spa day package",
+            "COUPLE": "Couples package",
+            "GIFTV": "Gift voucher",
+            "BOTOX": "Botox treatment",
+            "FILLER": "Dermal fillers"
+          }
+        },
+        "date": {
+          "description": "Launch date in YYYYMMDD format",
+          "format": "YYYYMMDD"
+        }
+      },
+      "examples": [
+        "CS_LEAD_SPADAY_20260215",
+        "CS_LEAD_COUPLE_20260301",
+        "CS_CONV_GIFTV_20260214",
+        "CA_LEAD_BOTOX_20260215",
+        "CA_LEAD_FILLER_20260301",
+        "CA_RETG_BOTOX_20260315"
+      ]
+    },
+    "ad_set": {
+      "pattern": "{brand_code}_{audience}_{placement}_{date}",
+      "description": "Ad set naming convention. Identifies the audience segment and placement for easy comparison and optimisation.",
+      "components": {
+        "brand_code": {
+          "description": "Two-letter brand identifier (same as campaign level)"
+        },
+        "audience": {
+          "description": "Target audience segment shorthand",
+          "values": {
+            "BROAD": "Broad targeting (age/gender/geo only)",
+            "INT-SPA": "Interest-based targeting — spa and wellness",
+            "INT-AES": "Interest-based targeting — aesthetics and beauty",
+            "INT-LUX": "Interest-based targeting — luxury lifestyle",
+            "LAL-LEAD": "Lookalike audience based on leads",
+            "LAL-CUST": "Lookalike audience based on customers",
+            "RETG-WEB": "Retargeting — website visitors",
+            "RETG-ENG": "Retargeting — social engagers",
+            "RETG-VV": "Retargeting — video viewers",
+            "CUST-LIST": "Custom audience — customer list upload"
+          }
+        },
+        "placement": {
+          "description": "Ad placement shorthand",
+          "values": {
+            "ALLPLC": "All placements (Advantage+)",
+            "FEED": "Facebook + Instagram feed only",
+            "STORY": "Stories + Reels only",
+            "REELS": "Reels only",
+            "INSTA": "Instagram only (all placements)"
+          }
+        },
+        "date": {
+          "description": "Launch date in YYYYMMDD format",
+          "format": "YYYYMMDD"
+        }
+      },
+      "examples": [
+        "CS_BROAD_ALLPLC_20260215",
+        "CS_INT-SPA_FEED_20260215",
+        "CS_LAL-LEAD_STORY_20260301",
+        "CA_INT-AES_ALLPLC_20260215",
+        "CA_RETG-WEB_FEED_20260315",
+        "CA_LAL-CUST_REELS_20260301"
+      ]
+    },
+    "ad": {
+      "pattern": "{brand_code}_{format}_{hook_id}_{version}",
+      "description": "Ad-level naming convention. Identifies the creative format, hook variant, and iteration for performance tracking.",
+      "components": {
+        "brand_code": {
+          "description": "Two-letter brand identifier (same as campaign and ad set level)"
+        },
+        "format": {
+          "description": "Creative format shorthand",
+          "values": {
+            "UGC": "UGC hook-body-CTA video",
+            "FDR": "Founder-led video",
+            "BA": "Before & after video (Aesthetics only)",
+            "TEST": "Client testimonial video",
+            "STAT": "Static offer image",
+            "CRSL": "Carousel format"
+          }
+        },
+        "hook_id": {
+          "description": "Hook variant identifier. H01, H02, H03, etc. Different hooks allow A/B testing of the opening line.",
+          "format": "H{nn}",
+          "examples": ["H01", "H02", "H03"]
+        },
+        "version": {
+          "description": "Creative version/iteration. V1 is the original, V2+ are iterations based on performance data.",
+          "format": "V{n}",
+          "examples": ["V1", "V2", "V3"]
+        }
+      },
+      "examples": [
+        "CS_UGC_H01_V1",
+        "CS_UGC_H02_V1",
+        "CS_FDR_H01_V1",
+        "CS_STAT_H01_V2",
+        "CA_UGC_H01_V1",
+        "CA_BA_H01_V1",
+        "CA_TEST_H01_V1",
+        "CA_STAT_H01_V3"
+      ]
+    }
+  },
+  "separator": "_",
+  "case": "UPPER",
+  "date_format": "YYYYMMDD",
+  "_metadata": {
+    "version": "1.0.0",
+    "last_updated": "2026-02-15",
+    "updated_by": "system_init",
+    "notes": "All team members must follow these conventions. Consistent naming enables automated reporting and performance tracking."
+  }
+}

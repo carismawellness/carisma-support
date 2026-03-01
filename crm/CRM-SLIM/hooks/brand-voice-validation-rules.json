@@ -1,0 +1,204 @@
+{
+  "brand": "SLIM",
+  "version": "1.0",
+  "description": "Brand voice validation rules for Carisma Slimming",
+
+  "forbidden_phrases": [
+    {
+      "pattern": "lack of discipline|willpower|lazy|undisciplined|you let yourself go|fix your body",
+      "reason": "Shame/blame language (contradicts safe shame-free space)",
+      "suggestion": "Use: 'You didn't fail; the plan failed you' or 'Let's find an approach that works with your life'"
+    },
+    {
+      "pattern": "just love yourself|positive thinking fixes|if you really wanted to|stop making excuses",
+      "reason": "Toxic positivity (minimizes real struggle)",
+      "suggestion": "Use: 'Acknowledge the hard parts. Here's how we'll navigate them together' or 'Your struggle is real; here's the science'"
+    },
+    {
+      "pattern": "lose 10kg in 10 days|drop weight fast|rapid results|guaranteed|works for everyone",
+      "reason": "Over-promising (unrealistic expectations)",
+      "suggestion": "Use: 'Sustainable weight loss of 5-10kg in a medically supervised program' or 'Results vary; we personalize for you'"
+    },
+    {
+      "pattern": "you will get sick if you don't|ticking time bomb|your health is failing|last chance",
+      "reason": "Fear-mongering (creates shame and urgency, not empowerment)",
+      "suggestion": "Use: 'Reclaim your energy' or 'Feel like yourself again' or 'Your health matters; let's invest in it now'"
+    },
+    {
+      "pattern": "only discuss kilos|focus on weight|measure by size|BMI is everything",
+      "reason": "Reducing person to numbers (ignores holistic transformation)",
+      "suggestion": "Include: How life feels (energy, stairs, health, confidence, clothes fit) alongside weight metrics"
+    },
+    {
+      "pattern": "summer body|beach ready|get thin by|quick fix for the wedding",
+      "reason": "Fleeting urgency framing (contradicts sustainable, self-focused approach)",
+      "suggestion": "Use: 'Build the life you want to live in your body' or 'Long-term confidence, not deadline panic'"
+    },
+    {
+      "pattern": "one-size-fits-all|everyone should|do what I did|follow the rules exactly",
+      "reason": "Generic/impersonal (ignores personalization, individual needs, life complexity)",
+      "suggestion": "Use: 'Your plan adapts to weekends, stress, real life' or 'Designed around your unique needs'"
+    },
+    {
+      "pattern": "calories in calories out|it's simple if you try|just eat less|no excuses",
+      "reason": "Oversimplification (ignores hormones, metabolism, stress, life factors)",
+      "suggestion": "Use: 'Science-backed approach to your unique metabolism' or 'Hormones, stress, and real life matter'"
+    }
+  ],
+
+  "required_tone_markers": {
+    "validation_words": [
+      "you are not alone", "you are not the only one", "your struggle is real",
+      "I understand", "that is hard", "acknowledge", "recognize", "valid",
+      "you have tried", "you are trying", "deserve", "matter"
+    ],
+    "empowerment_words": [
+      "you choose", "you control", "your agency", "your power", "your body",
+      "your decision", "you decide", "take action", "build", "create",
+      "capable", "strong", "resilient", "confident"
+    ],
+    "evidence_words": [
+      "science", "data", "research", "clinically proven", "medically supervised",
+      "evidence-based", "proven", "documented", "backed by", "studies show"
+    ],
+    "feeling_words": [
+      "energy", "strength", "confidence", "proud", "capable", "yourself again",
+      "feel alive", "climb stairs", "move", "breathe", "alive", "vibrant",
+      "wear", "feel", "experience", "enjoy"
+    ],
+    "relapse_normalization": [
+      "starting over", "try again", "slip-up", "that is normal", "it happens",
+      "many of us", "common", "not failure", "the plan failed", "let us adjust",
+      "next step", "moving forward"
+    ],
+    "control_choice": [
+      "your plan", "designed for you", "your unique", "you choose what",
+      "show you how", "your timeline", "your goals", "your needs",
+      "personalized", "tailored", "adapted"
+    ]
+  },
+
+  "validation_rules": [
+    {
+      "name": "check_forbidden_phrases",
+      "description": "Reject messages with shame/blame, toxic positivity, fear-mongering, or over-promises",
+      "severity": "high",
+      "enabled": true
+    },
+    {
+      "name": "check_validation_presence",
+      "description": "Warn if message lacks validation of struggle/experience",
+      "severity": "medium",
+      "enabled": true,
+      "threshold": "For messages about weight loss or difficulty, include at least one validation word (real, understand, not alone, etc.)"
+    },
+    {
+      "name": "check_holistic_framing",
+      "description": "Warn if message only discusses weight/kilos without feeling words",
+      "severity": "medium",
+      "enabled": true,
+      "threshold": "When discussing results/transformation, include feeling words (energy, confidence, stairs, move) alongside weight metrics"
+    },
+    {
+      "name": "check_empowerment_tone",
+      "description": "Recommend empowerment language for customer-facing messages",
+      "severity": "low",
+      "enabled": true,
+      "threshold": "For customer communications, include at least one empowerment word (you choose, your power, capable, etc.)"
+    },
+    {
+      "name": "check_science_backing",
+      "description": "For claims about metabolism/results, ensure evidence-led language",
+      "severity": "medium",
+      "enabled": true,
+      "threshold": "Any claim about why something works should reference science, data, or medical backing"
+    }
+  ],
+
+  "feedback_templates": {
+    "forbidden_phrase_found": "Brand Voice Check\nFound: \"{phrase}\"\nIssue: {reason}\n\nTry instead: {suggestion}\n\nAllow override? (Y/N)",
+    "missing_validation": "Tone Tip\nTry validating their struggle first:\nExample: \"Your struggle is real. Here's what science shows...\"",
+    "only_numbers": "Tone Tip\nBeyond the numbers, how will they FEEL?\nExample: \"You'll lose weight AND have the energy to climb stairs without thinking about it.\"",
+    "missing_empowerment": "Tone Tip\nEmpower them with choice:\nExample: \"You choose what you eat. We show you how to make it work.\"",
+    "missing_science": "Professional Tip\nWhen explaining why something works, anchor in science:\nExample: \"Your hormones matter. Here is the data on how we account for that.\""
+  },
+
+  "conciseness_rules": {
+    "enabled": true,
+    "description": "Enforce concise, human-like responses. Advisory only — agent may override with reason.",
+
+    "rules": [
+      {
+        "name": "max_word_count",
+        "type": "length",
+        "threshold": 150,
+        "severity": "medium",
+        "enabled": true,
+        "exception_skills": [
+          "consult-and-pitch",
+          "objection-buster",
+          "complaint-handler",
+          "week1-4-engagement"
+        ],
+        "exception_keywords": [
+          "policy", "detailed", "explanation", "FAQ", "booking terms", "terms and conditions"
+        ]
+      },
+      {
+        "name": "max_sentence_count",
+        "type": "length",
+        "threshold": 6,
+        "severity": "medium",
+        "enabled": true,
+        "exception_skills": [
+          "consult-and-pitch",
+          "objection-buster",
+          "complaint-handler",
+          "week1-4-engagement"
+        ]
+      },
+      {
+        "name": "list_formatting",
+        "type": "format",
+        "description": "If listing 3 or more items, use bullet points or numbered list",
+        "item_threshold": 3,
+        "severity": "low",
+        "enabled": true,
+        "exception_skills": []
+      },
+      {
+        "name": "ai_voice_tells",
+        "type": "tone",
+        "severity": "high",
+        "enabled": true,
+        "forbidden_phrases": [
+          "certainly",
+          "i'd be happy to",
+          "of course",
+          "great question",
+          "absolutely",
+          "wonderful",
+          "i hope this helps",
+          "feel free to",
+          "don't hesitate to"
+        ],
+        "exception_skills": []
+      }
+    ],
+
+    "feedback_templates": {
+      "word_count_warning": "Conciseness Check\nYour response is {word_count} words. Keep it under 150.\n\nTips:\n• Lead with the answer\n• Cut filler words\n• One idea per sentence\n\nOverride? (Y/N)",
+      "sentence_count_warning": "Conciseness Check\nYour response has {sentence_count} sentences. Aim for 4-6.\n\nQuick fix:\n• Combine related ideas\n• Remove nice-to-haves\n• One idea per sentence\n\nOverride? (Y/N)",
+      "list_formatting_warning": "Format Tip\nYou listed {item_count} items in paragraph form. Use bullets:\n• Cleaner to read\n• Easier to scan\n• More readable on mobile\n\nOverride? (Y/N)",
+      "ai_voice_warning": "Tone Check\nFound: \"{phrase}\"\nThis sounds like AI. Remove it and speak directly.\n\nInstead:\n• State the answer plainly\n• Use 'you' language\n• Sound like a real person\n\nOverride? (Y/N)"
+    }
+  },
+
+  "_notes": {
+    "adaptation_for_other_brands": "To adapt for other brands, change 'brand' field and customize forbidden_phrases and required_tone_markers for each brand's psychological risks and values.",
+    "shame_vs_motivation": "Never use shame as a motivator. Instead, use compassion + evidence. Shame leads to relapse and abandonment.",
+    "holistic_over_numeric": "Weight is one metric. Include energy, confidence, health, life transformation to avoid reinforcing scale-obsessed thinking that damages mental health.",
+    "validation_as_retention": "Validating struggle upfront builds trust and retention. Generic or blame-focused messaging causes drop-off.",
+    "personalization_as_respect": "Every woman's body, life, and journey is different. Emphasizing personalization (not one-size-fits-all) shows respect and increases adherence."
+  }
+}

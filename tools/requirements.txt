@@ -1,0 +1,11 @@
+# Python dependencies for Carisma AI Tools
+# Install with: pip install -r tools/requirements.txt
+
+# Core
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# For future tools
+# pandas>=2.0.0        # Data analysis
+# google-auth>=2.0.0   # Google Sheets
+# meta-ads-api>=0.1.0  # Meta Ads (if available)

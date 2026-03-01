@@ -1,0 +1,170 @@
+{
+  "brand": "SPA",
+  "version": "1.0",
+  "description": "Brand voice validation rules for Carisma Spa & Wellness",
+
+  "forbidden_phrases": [
+    {
+      "pattern": "pamper yourself|treat yourself",
+      "reason": "Cliché wellness phrases",
+      "suggestion": "Take a moment for yourself"
+    },
+    {
+      "pattern": "amazing|fantastic|awesome",
+      "reason": "Overused marketing clichés",
+      "suggestion": "Use sensory or emotional language instead"
+    },
+    {
+      "pattern": "hurry|rush|urgent|limited.?time|book now|don't miss",
+      "reason": "Aggressive sales talk (conflicts with peaceful tone)",
+      "suggestion": "Invite gently: 'Whenever you're ready'"
+    },
+    {
+      "pattern": "we welcome all customers|our facilities",
+      "reason": "Generic, impersonal language",
+      "suggestion": "Make it personal: 'You're not just welcome. You belong.'"
+    },
+    {
+      "pattern": "\\bperfect\\s+for\\s+(your\\s+)?(holiday|vacation|escape)\\b",
+      "reason": "Touristy language (not luxury wellness)",
+      "suggestion": "Focus on transformation: 'A sanctuary, even if only for an hour'"
+    }
+  ],
+
+  "required_tone_markers": {
+    "sensory_words": [
+      "warm", "warmth", "soft", "gentle", "stillness", "breath",
+      "ease", "float", "melt", "flow", "pause", "silence",
+      "touch", "light", "stone", "soothe", "calm", "peace",
+      "serenity", "tranquil", "sanctuary", "anchor"
+    ],
+    "second_person": [
+      "you", "your", "yourself"
+    ],
+    "transformation_words": [
+      "return", "journey", "awakening", "restore", "reconnect",
+      "realign", "rebalance", "transform", "elevate", "become",
+      "heal", "refresh", "revive", "renew"
+    ],
+    "purpose_words": [
+      "wellbeing", "wellness", "purpose", "intention", "care",
+      "nurture", "holistic", "soul", "mind", "body", "spirit"
+    ]
+  },
+
+  "validation_rules": [
+    {
+      "name": "check_forbidden_phrases",
+      "description": "Reject messages containing forbidden phrases",
+      "severity": "high",
+      "enabled": true
+    },
+    {
+      "name": "check_second_person",
+      "description": "Warn if message doesn't use second-person perspective",
+      "severity": "medium",
+      "enabled": true,
+      "threshold": "Should contain at least one 'you' or 'your'"
+    },
+    {
+      "name": "check_sensory_language",
+      "description": "Warn if message lacks sensory words (optional for short responses)",
+      "severity": "low",
+      "enabled": true,
+      "threshold": "Recommended for messages longer than 2 sentences",
+      "min_character_count": 50
+    },
+    {
+      "name": "check_clinical_language",
+      "description": "Warn about clinical or technical jargon",
+      "severity": "high",
+      "enabled": true,
+      "clinical_keywords": [
+        "myofascial", "lymphatic", "circulation", "pressure technique",
+        "therapeutic", "stimulate", "reduce", "therapy", "treatment", "procedure"
+      ]
+    }
+  ],
+
+  "feedback_templates": {
+    "forbidden_phrase_found": "Brand Voice Check\nFound: \"{phrase}\"\nIssue: {reason}\nSuggestion: {suggestion}\n\nAllow override? (Y/N)",
+    "missing_second_person": "Tone Tip\nTry using 'you' or 'your' to create intimacy.\nExample: \"You deserve a moment of stillness.\"",
+    "lacks_sensory_language": "Tone Tip\nConsider adding sensory words: warmth, stillness, breath, gentle, ease\nExample: \"Ease the tension. Let go. Feel whole again.\"",
+    "clinical_language_warning": "Tone Check\nThis sounds clinical. Try sensory language instead:\n\"{suggestion}\""
+  },
+
+  "conciseness_rules": {
+    "enabled": true,
+    "description": "Enforce concise, human-like responses. Advisory only — agent may override with reason.",
+
+    "rules": [
+      {
+        "name": "max_word_count",
+        "type": "length",
+        "threshold": 150,
+        "severity": "medium",
+        "enabled": true,
+        "exception_skills": [
+          "consult-and-pitch",
+          "objection-buster",
+          "complaint-handler"
+        ],
+        "exception_keywords": [
+          "policy", "detailed", "explanation", "FAQ", "booking terms", "terms and conditions"
+        ]
+      },
+      {
+        "name": "max_sentence_count",
+        "type": "length",
+        "threshold": 6,
+        "severity": "medium",
+        "enabled": true,
+        "exception_skills": [
+          "consult-and-pitch",
+          "objection-buster",
+          "complaint-handler"
+        ]
+      },
+      {
+        "name": "list_formatting",
+        "type": "format",
+        "description": "If listing 3 or more items, use bullet points or numbered list",
+        "item_threshold": 3,
+        "severity": "low",
+        "enabled": true,
+        "exception_skills": []
+      },
+      {
+        "name": "ai_voice_tells",
+        "type": "tone",
+        "severity": "high",
+        "enabled": true,
+        "forbidden_phrases": [
+          "certainly",
+          "i'd be happy to",
+          "of course",
+          "great question",
+          "absolutely",
+          "wonderful",
+          "i hope this helps",
+          "feel free to",
+          "don't hesitate to"
+        ],
+        "exception_skills": []
+      }
+    ],
+
+    "feedback_templates": {
+      "word_count_warning": "Conciseness Check\nYour response is {word_count} words. Keep it under 150.\n\nTips:\n• Lead with the answer\n• Cut filler words\n• One idea per sentence\n\nOverride? (Y/N)",
+      "sentence_count_warning": "Conciseness Check\nYour response has {sentence_count} sentences. Aim for 4-6.\n\nQuick fix:\n• Combine related ideas\n• Remove nice-to-haves\n• One idea per sentence\n\nOverride? (Y/N)",
+      "list_formatting_warning": "Format Tip\nYou listed {item_count} items in paragraph form. Use bullets:\n• Cleaner to read\n• Easier to scan\n• More readable on mobile\n\nOverride? (Y/N)",
+      "ai_voice_warning": "Tone Check\nFound: \"{phrase}\"\nThis sounds like AI. Remove it and speak directly.\n\nInstead:\n• State the answer plainly\n• Use 'you' language\n• Sound like a real person\n\nOverride? (Y/N)"
+    }
+  },
+
+  "usage_notes": {
+    "adaptation_for_other_brands": "These rules are tailored for Carisma Spa & Wellness. When adapting for other brands (Carisma Aesthetics, Carisma Slimming), adjust: 1) forbidden_phrases based on brand voice guidelines; 2) sensory_words and transformation_words to match brand positioning; 3) clinical_keywords to match industry terminology (e.g., add 'fillers', 'injection', 'downtime' for Aesthetics)",
+    "min_character_count_logic": "The min_character_count in check_sensory_language (50 chars) prevents false positives on short messages like greetings or simple FAQs. Adjust threshold based on response length expectations.",
+    "regex_pattern_notes": "The 'perfect for holiday' pattern uses word boundaries (\\b) and optional 'your' to catch variations while avoiding over-matching. Test new patterns against representative message samples before deploying."
+  }
+}

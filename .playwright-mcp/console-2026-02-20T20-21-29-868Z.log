@@ -1,0 +1,5 @@
+[     264ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://www.momondo.com/errors/404?url=/searchresults/:0
+[     564ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://www.momondo.com/i/api/fullstory/v1/get:0
+[     833ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://www.momondo.com/i/api/account/dataSharing/v1/optOut:0
+[     834ms] [ERROR] Unexpected message format received: {"url":"http://www.momondo.com/i/api/account/dataSharing/v1/optOut","errors":[{"code":"INVALID_SESSION","description":"Session is invalid or expired"}]} @ https://content.r9cdn.net/res/combined.js?v=7a067abc75f61628836f58f8656b54a3932ef162&cluster=5:7
+[     835ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://www.momondo.com/i/api/cookies/v2/:0

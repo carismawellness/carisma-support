@@ -1,0 +1,179 @@
+{
+  "brand": "AES",
+  "version": "1.0",
+  "description": "Brand voice validation rules for Carisma Aesthetics",
+
+  "forbidden_phrases": [
+    {
+      "pattern": "fix|fixing|flaws|problem skin|imperfections|defects",
+      "reason": "Negative framing (focus on enhancement, not fixing)",
+      "suggestion": "Use: 'Enhance your natural glow' or 'Reveal your best self'"
+    },
+    {
+      "pattern": "book now|limited spots|hurry|urgent|don't miss",
+      "reason": "Aggressive sales talk (contradicts graceful, confident tone)",
+      "suggestion": "Use: 'Ready to feel radiant? Schedule your consultation when convenient'"
+    },
+    {
+      "pattern": "guaranteed|100% results|works for everyone|no downtime",
+      "reason": "Over-promising (medical aesthetics compliance)",
+      "suggestion": "Use: 'Results tailored to you' or 'Most patients see noticeable improvement'"
+    },
+    {
+      "pattern": "myofascial|lymphatic|CO2|IPL|photothermolysis|fractional resurfacing",
+      "reason": "Clinical jargon in promotional copy (avoid medical terminology)",
+      "suggestion": "Use: 'Advanced laser technology' or 'Personalized treatment approach'"
+    },
+    {
+      "pattern": "injection|Botox|filler|dermal filler",
+      "reason": "Overly clinical product names in patient-facing copy",
+      "suggestion": "Use: 'Personalized anti-aging treatment' or 'Tailored to your goals'"
+    },
+    {
+      "pattern": "we welcome all customers|generic|one-size-fits-all|standard treatment",
+      "reason": "Generic or impersonal language (Aesthetics emphasizes personalization)",
+      "suggestion": "Use: 'Your treatment is designed just for you' or 'Personalized consultation'"
+    },
+    {
+      "pattern": "amazing|fantastic|awesome|incredible|revolutionary",
+      "reason": "Overused marketing clichés (contradicts modern, honest tone)",
+      "suggestion": "Use: 'Elegant results' or 'Personalized care' or 'Radiant confidence'"
+    }
+  ],
+
+  "required_tone_markers": {
+    "personalization_words": [
+      "personalized", "tailored", "custom", "designed for you", "your unique",
+      "your specific", "your goals", "your journey", "your needs", "individual"
+    ],
+    "confidence_words": [
+      "confident", "confidence", "radiant", "beautiful", "graceful", "elegant",
+      "assured", "poised", "refined", "polished", "composed"
+    ],
+    "warmth_words": [
+      "warm", "welcoming", "caring", "thoughtful", "compassionate", "understanding",
+      "supportive", "kind", "gentle", "embrace"
+    ],
+    "enhancement_words": [
+      "enhance", "reveal", "elevate", "complement", "highlight", "bring out",
+      "amplify", "refine", "optimize", "elevate your best self"
+    ],
+    "medical_credibility": [
+      "medical professionals", "expert team", "FDA-cleared", "clinically proven",
+      "dermatologist", "board-certified", "advanced technology", "science-backed"
+    ]
+  },
+
+  "validation_rules": [
+    {
+      "name": "check_forbidden_phrases",
+      "description": "Reject messages with aggressive sales or clinical jargon",
+      "severity": "high",
+      "enabled": true
+    },
+    {
+      "name": "check_personalization",
+      "description": "Warn if message lacks personalization language",
+      "severity": "medium",
+      "enabled": true,
+      "threshold": "Should contain at least one personalization word (your, tailored, custom, etc.)"
+    },
+    {
+      "name": "check_confidence_tone",
+      "description": "Recommend confidence/radiance language for longer messages",
+      "severity": "low",
+      "enabled": true,
+      "threshold": "Recommended for messages longer than 2 sentences"
+    },
+    {
+      "name": "check_medical_credibility",
+      "description": "Ensure clinical/consultation contexts include credibility markers",
+      "severity": "medium",
+      "enabled": true,
+      "threshold": "For messages discussing treatments or expertise, include at least one credibility marker"
+    }
+  ],
+
+  "feedback_templates": {
+    "forbidden_phrase_found": "Brand Voice Check\nFound: \"{phrase}\"\nIssue: {reason}\nSuggestion: {suggestion}\n\nAllow override? (Y/N)",
+    "missing_personalization": "Tone Tip\nTry adding personalization language: tailored, custom, designed for you, your unique\nExample: \"Your treatment is personalized just for you.\"",
+    "lacks_confidence_tone": "Tone Tip\nConsider adding confidence/elegance words: radiant, graceful, elegant, confident\nExample: \"Feel radiant and confident in your own skin.\"",
+    "missing_medical_credibility": "Professional Tip\nWhen discussing treatments, include credibility: expert team, board-certified, FDA-cleared, advanced technology\nExample: \"Our expert team uses FDA-cleared technology tailored to your skin.\""
+  },
+
+  "conciseness_rules": {
+    "enabled": true,
+    "description": "Enforce concise, human-like responses. Advisory only — agent may override with reason.",
+
+    "rules": [
+      {
+        "name": "max_word_count",
+        "type": "length",
+        "threshold": 150,
+        "severity": "medium",
+        "enabled": true,
+        "exception_skills": [
+          "consult-and-pitch",
+          "objection-buster",
+          "complaint-handler"
+        ],
+        "exception_keywords": [
+          "policy", "detailed", "explanation", "FAQ", "booking terms", "terms and conditions"
+        ]
+      },
+      {
+        "name": "max_sentence_count",
+        "type": "length",
+        "threshold": 6,
+        "severity": "medium",
+        "enabled": true,
+        "exception_skills": [
+          "consult-and-pitch",
+          "objection-buster",
+          "complaint-handler"
+        ]
+      },
+      {
+        "name": "list_formatting",
+        "type": "format",
+        "description": "If listing 3 or more items, use bullet points or numbered list",
+        "item_threshold": 3,
+        "severity": "low",
+        "enabled": true,
+        "exception_skills": []
+      },
+      {
+        "name": "ai_voice_tells",
+        "type": "tone",
+        "severity": "high",
+        "enabled": true,
+        "forbidden_phrases": [
+          "certainly",
+          "i'd be happy to",
+          "of course",
+          "great question",
+          "absolutely",
+          "wonderful",
+          "i hope this helps",
+          "feel free to",
+          "don't hesitate to"
+        ],
+        "exception_skills": []
+      }
+    ],
+
+    "feedback_templates": {
+      "word_count_warning": "Conciseness Check\nYour response is {word_count} words. Keep it under 150.\n\nTips:\n• Lead with the answer\n• Cut filler words\n• One idea per sentence\n\nOverride? (Y/N)",
+      "sentence_count_warning": "Conciseness Check\nYour response has {sentence_count} sentences. Aim for 4-6.\n\nQuick fix:\n• Combine related ideas\n• Remove nice-to-haves\n• One idea per sentence\n\nOverride? (Y/N)",
+      "list_formatting_warning": "Format Tip\nYou listed {item_count} items in paragraph form. Use bullets:\n• Cleaner to read\n• Easier to scan\n• More readable on mobile\n\nOverride? (Y/N)",
+      "ai_voice_warning": "Tone Check\nFound: \"{phrase}\"\nThis sounds like AI. Remove it and speak directly.\n\nInstead:\n• State the answer plainly\n• Use 'you' language\n• Sound like a real person\n\nOverride? (Y/N)"
+    }
+  },
+
+  "_notes": {
+    "adaptation_for_other_brands": "To adapt for other brands (Spa, Slimming), change 'brand' field and customize forbidden_phrases and required_tone_markers to match each brand's specific tone and risks.",
+    "personalization_emphasis": "Carisma Aesthetics emphasizes personalization above all. Validation strongly encourages personalization language in all patient-facing messages.",
+    "clinical_terminology_boundary": "Clinical terms (FDA-cleared, Alma laser, RF) are acceptable in consultation/educational contexts when paired with reassuring language. Avoid medical jargon in promotional copy.",
+    "confidence_not_arrogance": "Confidence should feel assured, not arrogant. Pair with warmth and personalization to avoid sounding dismissive of patient concerns."
+  }
+}

@@ -1,0 +1,25 @@
+# Secrets
+.env
+.mcp.json
+credentials.json
+token.json
+
+# Temporary files
+.tmp/
+
+# Git worktrees
+.worktrees/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS
+.DS_Store
+
+# Obsidian
+.obsidian/
+
+# Playwright logs
+.playwright-mcp/

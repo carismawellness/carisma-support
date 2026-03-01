@@ -1,0 +1,30 @@
+[     997ms] [ERROR]  dro-error: [2026-2-20 20:19:39.898] : Cannot read properties of undefined (reading '0') @ https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:309
+[     997ms] [ERROR] TypeError: Cannot read properties of undefined (reading '0')
+    at Object.change (https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:2689:8)
+    at fn (eval at compile (https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:439:208), <anonymous>:4:456)
+    at p.$eval (https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:337:462)
+    at https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:485:417
+    at Object.<anonymous> (https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:498:266)
+    at b (https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:186:200)
+    at Object.$$writeModelToScope (https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:498:222)
+    at https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:498:116
+    at l (https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:494:472)
+    at https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:496:203 @ https://www.budget.com/etc/designs/platform/clientlib.min.25.08.11-RELEASE.js:309
+[    1519ms] [ERROR] Framing 'https://www.googletagmanager.com/' violates the following Content Security Policy directive: "frame-src 'self' *.optimizely.com *.doubleclick.net *.adsrvr.org *.bounceexchange.com *.amazon-adsystem.com *.owneriq.net *.google.com *.facebook.com *.facebook.net *.rokt.com *.amazon.com *.paypal.com *.payments-amazon.com *.sojern.com *.qantasloyalty.com *.qantas.com tag.yieldoptimizer.com img3.avis.com img3.budget.com img3.paylesscar.com *.youtube.com quantserv.com adnxs.com impactradius-event.com dgm-au.com everestjs.net everesttech.net yahoo.com xg4ken.com *.online-metrix.net *.uplift.com *.quantummetric.com api.securedvisit.com track.securedvisit.com content.securedvisit.com images.securedvisit.com track.sv.rkdms.com *.mypurecloud.com *.nagich.com cloudfront.net bing.com go.pardot.com sme.avis.co.nz sme.avis.com.au sme.budget.co.nz sme.budget.com.au *.salecycle.com abgnz.wufoo.com *.youtube-nocookie.com *.mypurecloud.com *.mypurecloud.com.au". The request has been blocked.
+ @ https://www.googletagmanager.com/:0
+[    1526ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.googletagmanager.com') does not match the recipient window's origin ('null'). @ https://www.googletagmanager.com/gtm.js?id=GTM-T2LNGBD:739
+[    1761ms] [ERROR] Access to fetch at 'https://aacdn.nagich.com/assets/locale/en.json' from origin 'https://www.budget.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://www.budget.com/en/home:0
+[    1761ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://aacdn.nagich.com/assets/locale/en.json:0
+[    1762ms] TypeError: Failed to fetch
+    at n.LoadDefaults (https://aacdn.nagich.com/core/4.3.5/accessibility.js:1:27474)
+    at n.init (https://aacdn.nagich.com/core/4.3.5/accessibility.js:1:1732)
+    at https://aacdn.nagich.com/core/4.3.5/accessibility.js:1:726
+    at <anonymous>
+[    2026ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.googletagmanager.com') does not match the recipient window's origin ('null'). @ https://www.googletagmanager.com/gtm.js?id=GTM-T2LNGBD:739
+[    2557ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.googletagmanager.com') does not match the recipient window's origin ('null'). @ https://www.googletagmanager.com/gtm.js?id=GTM-T2LNGBD:739
+[    3057ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.googletagmanager.com') does not match the recipient window's origin ('null'). @ https://www.googletagmanager.com/gtm.js?id=GTM-T2LNGBD:739
+[    3563ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.googletagmanager.com') does not match the recipient window's origin ('null'). @ https://www.googletagmanager.com/gtm.js?id=GTM-T2LNGBD:739
+[    4068ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.googletagmanager.com') does not match the recipient window's origin ('null'). @ https://www.googletagmanager.com/gtm.js?id=GTM-T2LNGBD:739
+[    4213ms] [ERROR] Framing 'https://consentag.eu/' violates the following Content Security Policy directive: "frame-src 'self' *.optimizely.com *.doubleclick.net *.adsrvr.org *.bounceexchange.com *.amazon-adsystem.com *.owneriq.net *.google.com *.facebook.com *.facebook.net *.rokt.com *.amazon.com *.paypal.com *.payments-amazon.com *.sojern.com *.qantasloyalty.com *.qantas.com tag.yieldoptimizer.com img3.avis.com img3.budget.com img3.paylesscar.com *.youtube.com quantserv.com adnxs.com impactradius-event.com dgm-au.com everestjs.net everesttech.net yahoo.com xg4ken.com *.online-metrix.net *.uplift.com *.quantummetric.com api.securedvisit.com track.securedvisit.com content.securedvisit.com images.securedvisit.com track.sv.rkdms.com *.mypurecloud.com *.nagich.com cloudfront.net bing.com go.pardot.com sme.avis.co.nz sme.avis.com.au sme.budget.co.nz sme.budget.com.au *.salecycle.com abgnz.wufoo.com *.youtube-nocookie.com *.mypurecloud.com *.mypurecloud.com.au". The request has been blocked.
+ @ https://consentag.eu/:0
+[    4576ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.googletagmanager.com') does not match the recipient window's origin ('null'). @ https://www.googletagmanager.com/gtm.js?id=GTM-T2LNGBD:739
