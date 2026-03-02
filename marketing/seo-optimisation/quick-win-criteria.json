@@ -1,0 +1,52 @@
+{
+  "categories": {
+    "almost_page_1": {
+      "position_min": 8,
+      "position_max": 20,
+      "min_impressions": 50,
+      "action": "Target aggressively in GBP posts",
+      "priority": "high"
+    },
+    "low_ctr": {
+      "position_min": 1,
+      "position_max": 10,
+      "max_ctr": 0.03,
+      "action": "Pass to Wix SEO Optimiser for meta rewrite",
+      "priority": "high"
+    },
+    "emerging": {
+      "lookback_days": 7,
+      "min_impressions": 10,
+      "action": "Capitalise early with GBP post",
+      "priority": "medium"
+    },
+    "local_intent": {
+      "keywords": [
+        "malta",
+        "gozo",
+        "valletta",
+        "sliema",
+        "st julian",
+        "st julians",
+        "floriana",
+        "near me",
+        "mellieha",
+        "qawra",
+        "paceville"
+      ],
+      "action": "Perfect for GBP, high priority",
+      "priority": "high"
+    }
+  },
+  "thresholds": {
+    "min_impressions_to_consider": 20,
+    "max_keywords_per_run": 30,
+    "auto_addition_max_per_brand": 10
+  },
+  "keyword_bank_mapping": {
+    "almost_page_1": "primary",
+    "low_ctr": "primary",
+    "emerging": "secondary",
+    "local_intent": "local"
+  }
+}
