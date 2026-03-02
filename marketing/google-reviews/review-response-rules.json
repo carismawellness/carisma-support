@@ -1,0 +1,128 @@
+{
+  "response_rules": {
+    "5_star": {
+      "approach": "Express genuine gratitude, reference specific detail from the review, reinforce the positive experience, invite them back",
+      "tone": "warm, grateful, personal",
+      "max_length": 150,
+      "template_hints": [
+        "Thank the reviewer by name",
+        "Reference a specific detail they mentioned",
+        "Express genuine delight",
+        "Invite them to return"
+      ],
+      "include_contact": false,
+      "flag_for_human": false
+    },
+    "4_star": {
+      "approach": "Thank them warmly, acknowledge the positive aspects, gently invite feedback on what could be improved, invite return visit",
+      "tone": "warm, appreciative, curious",
+      "max_length": 180,
+      "template_hints": [
+        "Thank the reviewer by name",
+        "Acknowledge what they enjoyed",
+        "Express interest in making their next visit even better",
+        "Invite them to return"
+      ],
+      "include_contact": false,
+      "flag_for_human": false
+    },
+    "3_star": {
+      "approach": "Thank them for the honest feedback, acknowledge both positives and concerns, take responsibility without being defensive, provide contact details for follow-up",
+      "tone": "empathetic, constructive, attentive",
+      "max_length": 250,
+      "template_hints": [
+        "Thank the reviewer for their honest feedback",
+        "Acknowledge what went well",
+        "Show genuine concern for the less-than-perfect aspects",
+        "Offer to discuss further privately",
+        "Include contact email and phone number"
+      ],
+      "include_contact": true,
+      "flag_for_human": false
+    },
+    "1_2_star": {
+      "approach": "Acknowledge the poor experience sincerely, apologise without excuses, take ownership, offer to resolve privately via direct contact, do NOT get defensive or explain away the issue",
+      "tone": "sincere, apologetic, solution-focused",
+      "max_length": 250,
+      "template_hints": [
+        "Open with sincere acknowledgement of their disappointment",
+        "Apologise genuinely without qualifiers",
+        "Take responsibility without making excuses",
+        "Offer to resolve the situation privately",
+        "Include contact email and phone number",
+        "Keep it brief — do not over-explain"
+      ],
+      "include_contact": true,
+      "flag_for_human": true
+    }
+  },
+  "brand_contacts": {
+    "carisma_spa": {
+      "email": "info@carismaspa.com",
+      "phone": "+356 2138 3838"
+    },
+    "carisma_aesthetics": {
+      "email": "info@carismaaesthetics.com",
+      "phone": "+356 2138 3838"
+    },
+    "carisma_slimming": {
+      "email": "info@carismaslimming.com",
+      "phone": "+356 2780 2062"
+    }
+  },
+  "forbidden_phrases": [
+    "We're sorry you feel that way",
+    "As per our policy",
+    "Unfortunately we cannot",
+    "You should have",
+    "That's not what happened",
+    "We disagree",
+    "We offer compensation",
+    "We'll give you a discount"
+  ],
+  "abusive_review_policy": {
+    "action": "flag_and_skip",
+    "indicators": [
+      "Profanity or vulgar language directed at staff",
+      "Racial, ethnic, or discriminatory slurs",
+      "Threats of violence or harm",
+      "Clearly fabricated or spam content (e.g. irrelevant product links)",
+      "Personal attacks naming individual staff members with abusive language",
+      "Reviews that are obviously for the wrong business",
+      "Repeated identical reviews from the same user"
+    ],
+    "note": "Flag abusive reviews for human attention. The human may choose to report the review to Google for removal. Never respond publicly to abusive reviews."
+  },
+  "quality_review_layers": {
+    "tone_check": {
+      "description": "Verify the response sounds empathetic, genuine, and human-written",
+      "checks": [
+        "Response sounds like a real person, not a template",
+        "Tone matches the rating tier (grateful for 5-star, empathetic for 1-2 star)",
+        "Uses contractions where natural (we're, you'll, it's)",
+        "Varies sentence structure — not robotic or formulaic",
+        "Appropriate length for the rating tier",
+        "No AI writing patterns (elevate, unlock, transform, in today's)"
+      ]
+    },
+    "brand_voice_check": {
+      "description": "Verify the response uses correct brand persona, sign-off, and follows all rules",
+      "checks": [
+        "Correct persona name in sign-off (Sarah Caballeri / Sarah / Katya)",
+        "Correct sign-off format (Warm regards / Warmly)",
+        "Contact details included where required (3-star and below)",
+        "Contact details are correct for the brand",
+        "UK English spelling throughout (colour, centre, specialise, programme)",
+        "No forbidden phrases present",
+        "No defensive or dismissive language",
+        "Specific detail from the review is referenced"
+      ]
+    }
+  },
+  "_metadata": {
+    "version": "1.0.0",
+    "last_updated": "2026-03-02",
+    "updated_by": "system_init",
+    "notes": "Response rules for the Google Review Response automation. Rules define how to respond to reviews at each rating tier, with brand-specific contacts, forbidden phrases, and quality review layers."
+  }
+}
