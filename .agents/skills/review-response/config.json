@@ -1,0 +1,137 @@
+{
+  "name": "review-response",
+  "type": "skill",
+  "version": "1.0",
+  "description": "Monitor and respond to Google reviews for Carisma brands with brand-appropriate, AI-reviewed responses",
+  "inputs": {
+    "brand_id": {
+      "type": "string",
+      "enum": ["carisma_spa", "carisma_aesthetics", "carisma_slimming", "all"],
+      "description": "Brand to respond to reviews for, or 'all'",
+      "required": true,
+      "default": "all"
+    },
+    "days_back": {
+      "type": "integer",
+      "description": "How many days back to check for reviews",
+      "required": false,
+      "default": 30
+    },
+    "dry_run": {
+      "type": "boolean",
+      "description": "If true, generate responses but do not post via Playwright",
+      "required": false,
+      "default": false
+    }
+  },
+  "outputs": {
+    "reviews_found": {
+      "type": "object",
+      "description": "Count of reviews found per brand, categorised by rating tier"
+    },
+    "responses_generated": {
+      "type": "array",
+      "description": "Generated response objects with brand, reviewer, rating, response text, and quality review result"
+    },
+    "posting_results": {
+      "type": "array",
+      "description": "Success/fail status per response after Playwright posting"
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary report with total reviews, responses posted, failures, flagged reviews"
+    }
+  },
+  "context_files": [
+    "marketing/google-gmb/locations.json",
+    "marketing/google-reviews/review-response-rules.json",
+    "marketing/google-reviews/response-templates.md",
+    "config/brands.json"
+  ],
+  "mcp_servers": ["playwright", "google-workspace"],
+  "email_notification": {
+    "enabled": true,
+    "recipient": "mertgulen98@gmail.com",
+    "tool": "mcp__google-workspace__gmail_send_email",
+    "send_on_success": true,
+    "send_on_partial_failure": true,
+    "send_on_total_failure": true
+  },
+  "ai_quality_review": {
+    "enabled": true,
+    "layers": ["tone", "brand_voice"],
+    "max_revision_rounds": 3,
+    "auto_post_on_pass": true,
+    "human_approval_for_negative": true,
+    "skip_on_persistent_failure": true
+  },
+  "brands": {
+    "carisma_spa": {
+      "persona": "Sarah Caballeri",
+      "signature": "Warm regards, Sarah Caballeri",
+      "tone": "warm, grateful, personal",
+      "contact_email": "info@carismaspa.com",
+      "contact_phone": "+356 2138 3838",
+      "locations": 5,
+      "multi_location": true
+    },
+    "carisma_aesthetics": {
+      "persona": "Sarah",
+      "signature": "Warm regards, Sarah",
+      "tone": "professional, caring, confident",
+      "contact_email": "info@carismaaesthetics.com",
+      "contact_phone": "+356 2138 3838",
+      "locations": 1,
+      "multi_location": false
+    },
+    "carisma_slimming": {
+      "persona": "Katya",
+      "signature": "Warmly, Katya",
+      "tone": "compassionate, understanding, supportive",
+      "contact_email": "info@carismaslimming.com",
+      "contact_phone": "+356 2780 2062",
+      "locations": 1,
+      "multi_location": false
+    }
+  },
+  "response_rules": {
+    "rating_tiers": {
+      "5_star": {
+        "max_length_words": 150,
+        "include_contact": false,
+        "flag_for_human": false,
+        "auto_post": true
+      },
+      "4_star": {
+        "max_length_words": 180,
+        "include_contact": false,
+        "flag_for_human": false,
+        "auto_post": true
+      },
+      "3_star": {
+        "max_length_words": 250,
+        "include_contact": true,
+        "flag_for_human": false,
+        "auto_post": true
+      },
+      "1_2_star": {
+        "max_length_words": 250,
+        "include_contact": true,
+        "flag_for_human": true,
+        "auto_post": false
+      }
+    },
+    "post_delay_seconds": 5,
+    "max_responses_per_session": 50
+  },
+  "forbidden_phrases": [
+    "We're sorry you feel that way",
+    "As per our policy",
+    "Unfortunately we cannot",
+    "You should have",
+    "That's not what happened",
+    "We disagree",
+    "We offer compensation",
+    "We'll give you a discount"
+  ]
+}
