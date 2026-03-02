@@ -1,0 +1,111 @@
+{
+  "name": "wix-seo",
+  "type": "skill",
+  "version": "1.0",
+  "description": "Optimise Wix page meta titles and descriptions for improved search CTR across Carisma brands",
+  "inputs": {
+    "brand_id": {
+      "type": "string",
+      "enum": ["carisma_spa", "carisma_aesthetics", "carisma_slimming", "all"],
+      "description": "Brand to optimise, or 'all'",
+      "required": true,
+      "default": "all"
+    },
+    "days": {
+      "type": "integer",
+      "description": "Number of days of GSC data to analyse",
+      "required": false,
+      "default": 30
+    },
+    "max_pages": {
+      "type": "integer",
+      "description": "Maximum pages to optimise per brand per run",
+      "required": false,
+      "default": 10
+    },
+    "dry_run": {
+      "type": "boolean",
+      "description": "If true, generate optimisation plan but do not push updates to Wix",
+      "required": false,
+      "default": false
+    }
+  },
+  "outputs": {
+    "candidates": {
+      "type": "array",
+      "description": "Pages identified as candidates for optimisation (high impressions, low CTR)"
+    },
+    "optimisations": {
+      "type": "array",
+      "description": "Before/after meta title and description pairs per page, with quality review status"
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary report with pages optimised, skipped, failed, and next run date"
+    }
+  },
+  "context_files": [
+    "config/brands.json",
+    "marketing/seo-optimisation/wix-seo-rules.json"
+  ],
+  "mcp_servers": ["google-search-console", "wix", "google-workspace"],
+  "email_notification": {
+    "enabled": true,
+    "recipient": "mertgulen98@gmail.com",
+    "tool": "mcp__google-workspace__gmail_send_email",
+    "send_on_success": true,
+    "send_on_partial_failure": true,
+    "send_on_total_failure": true
+  },
+  "approval_gates": [],
+  "ai_quality_review": {
+    "enabled": true,
+    "layers": ["seo_best_practices", "brand_voice"],
+    "max_revision_rounds": 3,
+    "auto_push_on_pass": true,
+    "skip_on_persistent_failure": true
+  },
+  "safety_rules": {
+    "skip_above_ctr_percent": 5.0,
+    "skip_if_recently_changed_days": 30,
+    "skip_if_ctr_improving": true,
+    "max_pages_per_run": 10,
+    "min_impressions_threshold": 100,
+    "keep_changelog": true,
+    "revert_if_ctr_drops_percent": 20
+  },
+  "brands": {
+    "carisma_spa": {
+      "site_url": "https://www.carismaspa.com",
+      "tone": "warm, inviting, sensory",
+      "keywords_to_include": ["spa", "Malta", "wellness"],
+      "avoid": ["cheap", "discount", "deal"]
+    },
+    "carisma_aesthetics": {
+      "site_url": "https://www.carismaaesthetics.com",
+      "tone": "clinical-warm, confident, professional",
+      "keywords_to_include": ["aesthetics", "Malta", "clinic"],
+      "avoid": ["anti-ageing", "fix", "flaws"]
+    },
+    "carisma_slimming": {
+      "site_url": "https://www.carismaslimming.com",
+      "tone": "compassionate, evidence-led, supportive",
+      "keywords_to_include": ["slimming", "Malta", "body"],
+      "avoid": ["fat", "overweight", "ugly"]
+    }
+  },
+  "validation": {
+    "max_title_chars": 60,
+    "max_description_chars": 155,
+    "keyword_position": "front",
+    "max_keyword_mentions": 2,
+    "requires_cta_in_description": true,
+    "requires_uk_english": true
+  },
+  "scheduling": {
+    "frequency": "monthly",
+    "day_of_month": 1,
+    "time": "10:00",
+    "launchd_label": "com.carisma.wix-seo"
+  }
+}

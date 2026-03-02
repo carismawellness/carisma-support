@@ -1,0 +1,67 @@
+{
+  "optimisation_rules": {
+    "title": {
+      "max_chars": 60,
+      "keyword_position": "front",
+      "must_include_brand": false,
+      "require_compelling_language": true
+    },
+    "description": {
+      "max_chars": 155,
+      "must_include_cta": true,
+      "must_address_search_intent": true,
+      "require_uk_english": true
+    }
+  },
+  "safety_rules": {
+    "skip_above_ctr_percent": 5.0,
+    "skip_if_recently_changed_days": 30,
+    "skip_if_ctr_improving": true,
+    "max_pages_per_run": 10,
+    "min_impressions_threshold": 100,
+    "keep_changelog": true,
+    "revert_if_ctr_drops_percent": 20
+  },
+  "brand_meta_voice": {
+    "carisma_spa": {
+      "tone": "warm, inviting, sensory",
+      "keywords_to_include": ["spa", "Malta", "wellness"],
+      "avoid": ["cheap", "discount", "deal"]
+    },
+    "carisma_aesthetics": {
+      "tone": "clinical-warm, confident, professional",
+      "keywords_to_include": ["aesthetics", "Malta", "clinic"],
+      "avoid": ["anti-ageing", "fix", "flaws"]
+    },
+    "carisma_slimming": {
+      "tone": "compassionate, evidence-led, supportive",
+      "keywords_to_include": ["slimming", "Malta", "body"],
+      "avoid": ["fat", "overweight", "ugly"]
+    }
+  },
+  "quality_review": {
+    "layer_1_seo": {
+      "checks": [
+        "Primary keyword in title (first 30 chars if possible)",
+        "Title under 60 characters",
+        "Description under 155 characters",
+        "No keyword stuffing (max 2 mentions of primary keyword)",
+        "CTA in description (Book, Learn more, Call, Visit)",
+        "Description addresses the likely search intent"
+      ]
+    },
+    "layer_2_brand_voice": {
+      "checks": [
+        "Tone matches brand voice",
+        "No clinical claims without disclaimers (Aesthetics/Slimming)",
+        "UK English spelling",
+        "No shame language (Slimming)",
+        "Compelling — would you click this?"
+      ]
+    }
+  },
+  "_metadata": {
+    "version": "1.0.0",
+    "last_updated": "2026-03-02"
+  }
+}
