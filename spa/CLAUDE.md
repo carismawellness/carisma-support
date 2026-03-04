@@ -283,7 +283,7 @@ When working on any Carisma Spa & Wellness task:
 When a response error is caught (by human review, self-check failure, or customer complaint):
 1. **Fix** the response or approach
 2. **Add** an ALWAYS/NEVER rule to the Active Rules section below
-3. **Log** full context in `learnings/LEARNINGS.md` under the relevant brand section
+3. **Log** full context in `miscellaneous/learnings/LEARNINGS.md` under the relevant brand section
 
 ### Active Rules
 

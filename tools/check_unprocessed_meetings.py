@@ -1,7 +1,7 @@
 """
 Check for raw meeting transcripts that haven't been processed yet.
 
-Compares files in meetings/raw/ against processed notes in meetings/.
+Compares files in miscellaneous/meetings/raw/ against processed notes in miscellaneous/meetings/.
 A raw transcript is "unprocessed" if no corresponding processed note exists.
 
 Usage:
@@ -16,8 +16,8 @@ import os
 import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RAW_DIR = os.path.join(BASE_DIR, "meetings", "raw")
-PROCESSED_DIR = os.path.join(BASE_DIR, "meetings")
+RAW_DIR = os.path.join(BASE_DIR, "miscellaneous", "meetings", "raw")
+PROCESSED_DIR = os.path.join(BASE_DIR, "miscellaneous", "meetings")
 
 
 def get_unprocessed():

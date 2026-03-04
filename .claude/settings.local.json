@@ -85,7 +85,14 @@
       "mcp__google-workspace__sheets_append_values",
       "mcp__meta-ads__get_campaigns",
       "mcp__meta-ads__get_login_link",
-      "mcp__trello__get_list_cards"
+      "mcp__trello__get_list_cards",
+      "WebFetch(domain:www.aliexpress.com)",
+      "WebFetch(domain:fatfreezesupplies.com)",
+      "WebFetch(domain:lazzybeauty.com)",
+      "WebFetch(domain:mshapebeauty.com)",
+      "WebFetch(domain:www.mychway.com)",
+      "WebFetch(domain:www.ibeautymachine.com)",
+      "WebFetch(domain:rejuvafresh-wholesale.com)"
     ]
   },
   "enableAllProjectMcpServers": true,

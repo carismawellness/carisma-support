@@ -315,7 +315,7 @@ After all videos are produced (both automated and manual):
 
 > Updated when this workflow encounters failures, edge cases, or better methods.
 > Always check this section before executing the workflow.
-> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+> Log full context in `miscellaneous/learnings/LEARNINGS.md` under Workflow Learnings.
 
 <!--
 Entry format:

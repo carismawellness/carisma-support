@@ -31,7 +31,7 @@ Every mistake becomes a rule. Every rule reduces future mistakes. The system get
 
 **Funnel:**
 1. Agent encounters issue, fixes it
-2. Logs full context in `learnings/LEARNINGS.md`
+2. Logs full context in `miscellaneous/learnings/LEARNINGS.md`
 3. Distills into ALWAYS/NEVER rule in the relevant CLAUDE.md
 4. Updates workflow or skill footer if execution-specific
 5. Self-check Question 10 catches new patterns during normal operation
@@ -40,7 +40,7 @@ Every mistake becomes a rule. Every rule reduces future mistakes. The system get
 
 ## Component 1: Master Learnings Log
 
-**File:** `learnings/LEARNINGS.md`
+**File:** `miscellaneous/learnings/LEARNINGS.md`
 
 Centralized record of everything the system has learned. Contains:
 - **Meta-rules** — how to write good rules (absolute directives, rationale-first, concrete examples, one rule per mistake)
@@ -98,7 +98,7 @@ Existing self-check.md (3 files, one per brand) gets Question 10:
 
 | Category | Count | Change |
 |----------|-------|--------|
-| New file | 1 | `learnings/LEARNINGS.md` |
+| New file | 1 | `miscellaneous/learnings/LEARNINGS.md` |
 | Root CLAUDE.md | 1 | Replace self-improvement section |
 | CRM Brand CLAUDE.md | 3 | Add self-improvement loop + active rules |
 | Brand Reference CLAUDE.md | 5 | Add self-improvement loop |

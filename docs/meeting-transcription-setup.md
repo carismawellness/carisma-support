@@ -53,13 +53,13 @@ tl;dv records and transcribes it
     ↓ (automatic)
 tl;dv saves transcript as Google Doc on your Drive
     ↓ (automatic, hourly)
-Google Apps Script converts to .md in meetings/raw/
+Google Apps Script converts to .md in miscellaneous/meetings/raw/
     ↓ (automatic, via Google Drive sync)
 File appears in your local Obsidian vault
     ↓ (automatic, when you open Claude Code)
 Claude Code detects new transcript and processes it
     ↓ (automatic)
-Structured meeting note appears in meetings/ folder in Obsidian
+Structured meeting note appears in miscellaneous/meetings/ folder in Obsidian
 ```
 
 ---

@@ -11,7 +11,7 @@ User pastes a raw meeting transcript or says "process meeting" and provides a tr
 ## Steps
 
 ### 1. Save Raw Transcript
-Save the raw transcript to `meetings/raw/YYYY-MM-DD-topic-slug.md` as an archive.
+Save the raw transcript to `miscellaneous/meetings/raw/YYYY-MM-DD-topic-slug.md` as an archive.
 - Use lowercase, hyphens for spaces in the slug
 - Prefix with the meeting date
 - This is the unedited source of truth
@@ -19,14 +19,14 @@ Save the raw transcript to `meetings/raw/YYYY-MM-DD-topic-slug.md` as an archive
 ### 2. Read Context
 Before processing, search the vault for related notes:
 - Check `strategy/` for related strategy documents
-- Check `meetings/` for previous meetings on the same topic or with the same people
+- Check `miscellaneous/meetings/` for previous meetings on the same topic or with the same people
 - Check active project folders (`slimming/`, `aesthetics/`, `spa/`, `marketing/`, `CRM/`, `finance/`)
 - Check `config/` for brand or offer context if relevant
 
 This context is what makes the summary useful — it connects new information to existing knowledge.
 
 ### 3. Process Into Structured Note
-Create the meeting note at `meetings/YYYY-MM-DD-topic-slug.md` using the template in `meetings/templates/meeting-note.md`.
+Create the meeting note at `miscellaneous/meetings/YYYY-MM-DD-topic-slug.md` using the template in `miscellaneous/meetings/templates/meeting-note.md`.
 
 **Summary (5-10 bullets):**
 - Extract the actual substance — decisions, new information, disagreements, changes in direction
@@ -64,8 +64,8 @@ After processing, flag to the user:
 - Topics that came up that have no existing documentation (potential new notes)
 
 ## Output
-- Raw transcript saved: `meetings/raw/YYYY-MM-DD-topic-slug.md`
-- Processed note saved: `meetings/YYYY-MM-DD-topic-slug.md`
+- Raw transcript saved: `miscellaneous/meetings/raw/YYYY-MM-DD-topic-slug.md`
+- Processed note saved: `miscellaneous/meetings/YYYY-MM-DD-topic-slug.md`
 - Verbal summary of key takeaways and any conflicts/follow-ups
 
 ## Quality Check
@@ -81,7 +81,7 @@ The processed note should:
 
 > Updated when this workflow encounters failures, edge cases, or better methods.
 > Always check this section before executing the workflow.
-> Log full context in `learnings/LEARNINGS.md` under Workflow Learnings.
+> Log full context in `miscellaneous/learnings/LEARNINGS.md` under Workflow Learnings.
 
 <!--
 Entry format:

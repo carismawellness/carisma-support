@@ -51,7 +51,7 @@ Every failure makes the system permanently smarter. This is not optional — it'
 2. **Fix** — Correct the tool, script, response, or approach
 3. **Verify** — Confirm the fix actually works (run the script, re-execute the workflow, check output)
 4. **Document** — Add an ALWAYS/NEVER directive to the relevant CLAUDE.md file's `### Active Rules` section
-5. **Log** — Record full context in `learnings/LEARNINGS.md` with date, what happened, root cause, and the rule
+5. **Log** — Record full context in `miscellaneous/learnings/LEARNINGS.md` with date, what happened, root cause, and the rule
 
 ### Rule Format
 
@@ -73,7 +73,7 @@ NEVER claim a task is done without verification:
 ### Learning Flow
 
 Learnings flow through a centralized + brand-specific architecture:
-- **`learnings/LEARNINGS.md`** — Master log. All learnings recorded here first.
+- **`miscellaneous/learnings/LEARNINGS.md`** — Master log. All learnings recorded here first.
 - **Root CLAUDE.md** (this file) — Universal rules that apply to all agents
 - **Brand CLAUDE.md files** — Brand-specific rules (CRM-SPA, CRM-AES, CRM-SLIM)
 - **Workflow footers** — Execution-specific learnings (API quirks, timing, tool failures)
@@ -83,7 +83,7 @@ Cross-pollination: If a brand-specific learning applies universally, promote it 
 
 ### Active Rules
 
-<!-- Universal rules distilled from learnings/LEARNINGS.md go here -->
+<!-- Universal rules distilled from miscellaneous/learnings/LEARNINGS.md go here -->
 <!-- This section grows over time as the system learns -->
 <!-- Format: ALWAYS/NEVER [directive] — [rationale] -->
 
@@ -105,10 +105,11 @@ config/              # Brand definitions, offers, KPIs, naming conventions, temp
   naming_conventions.json # Campaign/ad set/ad naming patterns
   kpi_thresholds.json     # CPL targets, kill thresholds, winner/loser criteria
   creative_templates.json # Creatomate + Figma template IDs
-learnings/           # Self-improvement loop: master learnings log and system rules
-meetings/            # Processed meeting notes (structured, linked, browsable in Obsidian)
-  raw/               # Raw unedited transcripts (archived, hidden from Obsidian)
-  templates/         # Meeting note template
+miscellaneous/       # Shared resources (learnings, meetings) not tied to a specific department
+  learnings/         # Self-improvement loop: master learnings log and system rules
+  meetings/          # Processed meeting notes (structured, linked, browsable in Obsidian)
+    raw/             # Raw unedited transcripts (archived, hidden from Obsidian)
+    templates/       # Meeting note template
 tools/               # Python scripts for deterministic execution
 workflows/           # Markdown SOPs defining what to do and how
 .tmp/                # Temporary files. Regenerated as needed.
@@ -176,13 +177,13 @@ Before executing any workflow, read `config/REFERENCE_INDEX.md` for which config
 
 ## Meeting Transcript Processing
 
-**On every session start**, run `python tools/check_unprocessed_meetings.py` to check for new raw transcripts in `meetings/raw/`. If unprocessed transcripts are found, notify the user and offer to process them.
+**On every session start**, run `python tools/check_unprocessed_meetings.py` to check for new raw transcripts in `miscellaneous/meetings/raw/`. If unprocessed transcripts are found, notify the user and offer to process them.
 
 **When processing:** Follow `workflows/process_meeting_transcript.md` step by step. The key is connecting meeting content to existing vault knowledge — always search for related strategy docs, brand docs, and past meetings before writing the summary.
 
 **Automation flow:**
-1. User's transcription tool saves transcripts to `meetings/raw/` automatically
+1. User's transcription tool saves transcripts to `miscellaneous/meetings/raw/` automatically
 2. Claude Code detects new files at session start via `tools/check_unprocessed_meetings.py`
-3. Claude Code processes each transcript into a structured note in `meetings/`
-4. Raw transcripts stay archived in `meetings/raw/` (hidden from Obsidian)
+3. Claude Code processes each transcript into a structured note in `miscellaneous/meetings/`
+4. Raw transcripts stay archived in `miscellaneous/meetings/raw/` (hidden from Obsidian)
 5. Processed notes are visible and linked in Obsidian

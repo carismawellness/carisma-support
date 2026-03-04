@@ -2,7 +2,7 @@
  * Google Apps Script: Auto-convert tl;dv meeting transcripts to markdown
  *
  * Watches the tl;dv Google Docs folder and converts new transcripts
- * to .md files in your Obsidian vault's meetings/raw/ folder.
+ * to .md files in your Obsidian vault's miscellaneous/meetings/raw/ folder.
  *
  * SETUP:
  * 1. Go to script.google.com → New Project
@@ -18,8 +18,8 @@
 // Name of the folder tl;dv creates on your Drive
 var SOURCE_FOLDER_NAME = "tl;dv Meetings";
 
-// Path to your meetings/raw/ folder (navigated from Drive root)
-var TARGET_PATH = ["Carisma Wellness Group", "Carisma AI ", "Carisma AI", "meetings", "raw"];
+// Path to your miscellaneous/meetings/raw/ folder (navigated from Drive root)
+var TARGET_PATH = ["Carisma Wellness Group", "Carisma AI ", "Carisma AI", "miscellaneous", "meetings", "raw"];
 
 // Track which files we've already processed
 var PROCESSED_KEY = "processedTranscripts";
