@@ -1,0 +1,119 @@
+{
+  "name": "gbp-posting",
+  "type": "skill",
+  "version": "1.0",
+  "description": "Generate and publish Google Business Profile posts for Carisma brands",
+  "inputs": {
+    "brand_id": {
+      "type": "string",
+      "enum": ["carisma_spa", "carisma_aesthetics", "carisma_slimming", "all"],
+      "description": "Brand to generate posts for, or 'all'",
+      "required": true,
+      "default": "all"
+    },
+    "post_type": {
+      "type": "string",
+      "enum": ["update", "offer", "event", "auto"],
+      "description": "GBP post type. 'auto' uses content calendar rotation",
+      "required": false,
+      "default": "auto"
+    },
+    "num_posts": {
+      "type": "integer",
+      "description": "Posts to generate per brand",
+      "required": false,
+      "default": 2
+    },
+    "dry_run": {
+      "type": "boolean",
+      "description": "If true, generate content but do not post via Playwright",
+      "required": false,
+      "default": false
+    }
+  },
+  "outputs": {
+    "generated_posts": {
+      "type": "array",
+      "description": "Generated post objects with brand, text, keywords, CTA, link, and character count"
+    },
+    "posting_results": {
+      "type": "array",
+      "description": "Success/fail status per location after Playwright posting"
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary report with total posts, per-brand breakdown, failures, and next posting date"
+    }
+  },
+  "context_files": [
+    "marketing/google-gmb/locations.json",
+    "marketing/google-gmb/content-calendar.json",
+    "marketing/google-gmb/keyword-banks/*.md",
+    "marketing/google-gmb/templates/*.md",
+    "config/brands.json",
+    "config/offers.json"
+  ],
+  "mcp_servers": ["playwright", "google-workspace"],
+  "email_notification": {
+    "enabled": true,
+    "recipient": "mertgulen98@gmail.com",
+    "tool": "mcp__google-workspace__gmail_send_email",
+    "send_on_success": true,
+    "send_on_partial_failure": true,
+    "send_on_total_failure": true
+  },
+  "approval_gates": [],
+  "ai_quality_review": {
+    "enabled": true,
+    "layers": ["seo_optimisation", "human_tone", "brand_voice"],
+    "max_revision_rounds": 3,
+    "auto_publish_on_pass": true,
+    "skip_on_persistent_failure": true
+  },
+  "brands": {
+    "carisma_spa": {
+      "persona": "Sarah Caballeri",
+      "signature": "Peacefully, Sarah",
+      "tone": "warm, sensory, soothing",
+      "locations": 5,
+      "multi_location_copy": true,
+      "pricing_anchor": "EUR 89 Spa Day"
+    },
+    "carisma_aesthetics": {
+      "persona": "Sarah",
+      "signature": "Beautifully yours, Sarah",
+      "tagline": "Glow with Confidence",
+      "tone": "clinical-warm, confident",
+      "locations": 1,
+      "multi_location_copy": false,
+      "pricing_anchor": "Free consultation"
+    },
+    "carisma_slimming": {
+      "persona": "Katya",
+      "signature": "With you every step, Katya",
+      "tone": "compassionate, evidence-led, shame-free",
+      "locations": 1,
+      "multi_location_copy": false,
+      "pricing_anchor": "EUR 199 starter packs"
+    }
+  },
+  "validation": {
+    "max_characters": 1500,
+    "optimal_range": [400, 700],
+    "min_keywords": 1,
+    "requires_location_reference": true,
+    "requires_cta": true,
+    "requires_uk_english": true,
+    "keyword_rotation_window": 3,
+    "template_rotation_window": 4,
+    "post_delay_seconds": 10
+  },
+  "compliance": {
+    "no_medical_claims": true,
+    "no_guaranteed_results": true,
+    "pricing_prefix": "from",
+    "no_before_after": true,
+    "no_shame_language": true,
+    "doctor_approval_disclaimer": "Suitability subject to doctor approval"
+  }
+}

@@ -70,6 +70,16 @@
       "cpl_target_eur": 8.00,
       "monthly_budget_eur": 1500,
       "daily_budget_eur": 50,
+      "gbp": {
+        "posting_cadence": "2x_weekly",
+        "posting_days": ["monday", "thursday"],
+        "posting_time": "10:00",
+        "default_post_type": "update",
+        "default_cta": "Book",
+        "multi_location": true,
+        "location_count": 5,
+        "copy_post_to_all": true
+      },
       "active": true
     },
     {
@@ -144,6 +154,16 @@
       "cpl_target_eur": 12.00,
       "monthly_budget_eur": 1500,
       "daily_budget_eur": 50,
+      "gbp": {
+        "posting_cadence": "2x_weekly",
+        "posting_days": ["monday", "thursday"],
+        "posting_time": "10:00",
+        "default_post_type": "update",
+        "default_cta": "Book",
+        "multi_location": false,
+        "location_count": 1,
+        "copy_post_to_all": false
+      },
       "active": true
     },
     {
@@ -214,6 +234,16 @@
       "cpl_target_usd": 10.00,
       "monthly_budget_usd": 2800,
       "daily_budget_usd": 93,
+      "gbp": {
+        "posting_cadence": "2x_weekly",
+        "posting_days": ["monday", "thursday"],
+        "posting_time": "10:00",
+        "default_post_type": "update",
+        "default_cta": "Book",
+        "multi_location": false,
+        "location_count": 1,
+        "copy_post_to_all": false
+      },
       "active": true
     }
   ],

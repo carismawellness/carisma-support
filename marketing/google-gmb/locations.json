@@ -1,0 +1,101 @@
+{
+  "brands": {
+    "carisma_spa": {
+      "brand_name": "Carisma Spa & Wellness",
+      "gbp_group": "Carisma Spa & Wellness",
+      "multi_location": true,
+      "default_cta": "Book",
+      "default_link": "https://www.carismaspa.com",
+      "locations": [
+        {
+          "location_name": "Carisma Spa & Wellness at AX Sunny Coast - Massage & Day Spa",
+          "short_name": "AX Sunny Coast",
+          "hotel": "AX Sunny Coast Resort",
+          "address": "Dawret Il-Qawra, San Pawl il-Bahar SPB 1981",
+          "area": "Qawra",
+          "gbp_profile_url": "https://business.google.com/n/TO_BE_FILLED/profile",
+          "google_maps_url": "TO_BE_FILLED"
+        },
+        {
+          "location_name": "Carisma Spa & Wellness at Hugo's Hotels - Massage & Day Spa",
+          "short_name": "Hugo's Hotels",
+          "hotel": "Hugo's Hotels",
+          "address": "Triq Santu Wistin, San Giljan, Malta, Paceville STJ 3200",
+          "area": "St Julian's",
+          "gbp_profile_url": "https://business.google.com/n/TO_BE_FILLED/profile",
+          "google_maps_url": "TO_BE_FILLED"
+        },
+        {
+          "location_name": "Carisma Spa & Wellness at Hyatt Regency - Massage & Day Spa",
+          "short_name": "Hyatt Regency",
+          "hotel": "Hyatt Regency Malta",
+          "address": "77 Triq Sqaq Lourdes, Triq Santa Rita, Saint Julian's STJ 3311",
+          "area": "St Julian's",
+          "gbp_profile_url": "https://business.google.com/n/TO_BE_FILLED/profile",
+          "google_maps_url": "TO_BE_FILLED"
+        },
+        {
+          "location_name": "Carisma Spa & Wellness at InterContinental - Massage & Day Spa",
+          "short_name": "InterContinental",
+          "hotel": "InterContinental Malta",
+          "address": "St George's Bay, St Julians STJ 3310",
+          "area": "St Julian's",
+          "gbp_profile_url": "https://business.google.com/n/TO_BE_FILLED/profile",
+          "google_maps_url": "TO_BE_FILLED"
+        },
+        {
+          "location_name": "Carisma Spa & Wellness at Ramla Bay Resort - Massage & Day Spa",
+          "short_name": "Ramla Bay Resort",
+          "hotel": "Ramla Bay Resort",
+          "address": "Triq Ir-Ramla Il-Mellieha, Ramla Bay Resort, Mellieha MLH 7100",
+          "area": "Mellieha",
+          "gbp_profile_url": "https://business.google.com/n/TO_BE_FILLED/profile",
+          "google_maps_url": "TO_BE_FILLED"
+        }
+      ]
+    },
+    "carisma_aesthetics": {
+      "brand_name": "Carisma Aesthetics",
+      "gbp_group": "Ungrouped",
+      "multi_location": false,
+      "default_cta": "Book",
+      "default_link": "https://www.carismaaesthetics.com",
+      "locations": [
+        {
+          "location_name": "Carisma Aesthetics - Med Aesthetic Clinic Malta",
+          "short_name": "Carisma Aesthetics",
+          "address": "St George's Bay, St Julians STJ 3310",
+          "area": "St Julian's",
+          "gbp_profile_url": "https://business.google.com/n/17623777693436281177/profile?fid=1489845268117356763",
+          "google_maps_url": "TO_BE_FILLED",
+          "verified": true
+        }
+      ]
+    },
+    "carisma_slimming": {
+      "brand_name": "Carisma Slimming",
+      "gbp_group": "Ungrouped",
+      "multi_location": false,
+      "default_cta": "Book",
+      "default_link": "https://www.carismaslimming.com",
+      "locations": [
+        {
+          "location_name": "Carisma Slimming | Medical Weight Loss & Slimming Malta",
+          "short_name": "Carisma Slimming",
+          "address": "Great Siege Road, Floriana FRN 1810",
+          "area": "Floriana",
+          "phone": "+356 2780 2062",
+          "gbp_profile_url": "https://business.google.com/n/2384908909114794438/profile?fid=9106807305319974130",
+          "google_maps_url": "TO_BE_FILLED",
+          "verified": true
+        }
+      ]
+    }
+  },
+  "_metadata": {
+    "version": "1.0.0",
+    "last_updated": "2026-03-02",
+    "updated_by": "system_init",
+    "notes": "GBP profile URLs sourced from business.google.com dashboard on 2026-03-02. Spa location profile URLs need to be filled from the Spa & Wellness group view. Google Maps URLs to be filled once profiles are searched on maps.google.com."
+  }
+}

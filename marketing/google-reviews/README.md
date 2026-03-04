@@ -37,14 +37,14 @@ marketing/google-reviews/
 
 | File | Location | Purpose |
 |------|----------|---------|
-| Skill definition | `.agents/skills/review-response/SKILL.md` | Skill metadata and triggers |
-| Execution guide | `.agents/skills/review-response/AGENT.md` | 7-phase response workflow |
-| Skill config | `.agents/skills/review-response/config.json` | Skill configuration and brand settings |
-| Review fetcher | `tools/fetch_google_reviews.py` | Python review fetch and plan generation tool |
-| Workflow SOP | `workflows/13_review_response.md` | Full workflow documentation |
+| Skill definition | `marketing/google-reviews/skill/SKILL.md` | Skill metadata and triggers |
+| Execution guide | `marketing/google-reviews/skill/AGENT.md` | 7-phase response workflow |
+| Skill config | `marketing/google-reviews/skill/config.json` | Skill configuration and brand settings |
+| Review fetcher | `marketing/google-reviews/tools/fetch_google_reviews.py` | Python review fetch and plan generation tool |
+| Workflow SOP | `marketing/google-reviews/workflow.md` | Full workflow documentation |
 | Brand config | `config/brands.json` | Brand voice, targeting, GBP settings |
 | Location data | `marketing/google-gmb/locations.json` | GBP profile URLs and location details |
-| Launchd plist | `config/gbp/com.carisma.review-response.plist` | macOS daily scheduling config |
+| Launchd plist | `marketing/google-reviews/scheduling/com.carisma.review-response.plist` | macOS daily scheduling config |
 
 ## Key Rules
 

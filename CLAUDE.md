@@ -172,67 +172,7 @@ Stay pragmatic. Stay reliable. Keep learning.
 
 ## Strategic Reference Documents
 
-Before executing any workflow, consult the relevant reference documents in `config/`. These documents are your single source of truth for brand positioning, offers, competitive intelligence, and creative strategy.
-
-### When Starting Any Task, Read This First:
-
-**`config/branding_guidelines.md`** — Brand voice, visual identity, messaging guardrails
-- Use when: Writing any client-facing content (ads, scripts, briefs)
-- Ensures: Brand consistency, tone of voice, visual standards
-- Critical for: Workflows 04 (Script Writing), 05 (Creative Briefs)
-
-**`config/carisma_slimming_evergreen_offers.md`** — Complete offer structure, pricing, value props, target avatars
-- Use when: Creating campaigns, writing ad copy, positioning offers
-- Ensures: Accurate pricing (€199 packages), correct package contents, proper CTAs
-- Critical for: Workflows 04 (Scripts), 08 (Campaign Build), 09 (Performance Review)
-
-**`config/performance_marketing_angles.md`** — Proven hooks, angles, and messaging frameworks
-- Use when: Developing ad creative, testing new angles, script ideation
-- Ensures: Using high-performing messaging patterns that convert
-- Critical for: Workflows 04 (Script Development), 10 (Creative Iteration)
-
-**`config/creative_strategy_competitive_intelligence.md`** — Competitor analysis, 2026 trends, Malta market strategy
-- Use when: Planning campaigns, identifying opportunities, validating creative direction
-- Ensures: Competitive advantage, trend alignment, market-specific optimization
-- Critical for: Workflows 01-03 (Research), 04-05 (Creative Strategy)
-
----
-
-### Reference Document Hierarchy
-
-**Level 1: Foundation (Read First)**
-1. `branding_guidelines.md` — WHO we are and HOW we sound
-2. `carisma_slimming_evergreen_offers.md` — WHAT we're selling
-
-**Level 2: Strategy (Read Before Creating)**
-3. `creative_strategy_competitive_intelligence.md` — WHY these angles work (data-backed)
-4. `performance_marketing_angles.md` — WHICH angles to use (proven performers)
-
----
-
-### Quick Reference by Workflow
-
-| Workflow | Required Reading |
-|----------|------------------|
-| **01-03: Research** | `creative_strategy_competitive_intelligence.md` (update with findings) |
-| **04: Script Writing** | ALL four documents (brand voice + offers + angles + competitive intel) |
-| **05: Creative Briefs** | `branding_guidelines.md`, `carisma_slimming_evergreen_offers.md` |
-| **08: Campaign Build** | `carisma_slimming_evergreen_offers.md` (pricing, targeting, structure) |
-| **09: Performance Review** | `performance_marketing_angles.md` (compare against benchmarks) |
-| **10: Creative Iteration** | `creative_strategy_competitive_intelligence.md`, `performance_marketing_angles.md` |
-
----
-
-### Keeping References Current
-
-These documents are **living references** that evolve with learnings:
-
-- **After Workflow 01-03 (Research):** Update `creative_strategy_competitive_intelligence.md` with new competitor findings
-- **After Workflow 09 (Performance Review):** Update `performance_marketing_angles.md` with winning/losing angles
-- **When offers change:** Update `carisma_slimming_evergreen_offers.md` immediately
-- **When brand evolves:** Update `branding_guidelines.md` and communicate changes
-
-**Golden Rule:** If you discover a winning pattern, document it. If a document contradicts reality, update it. These references are only valuable if they're accurate.
+Before executing any workflow, read `config/REFERENCE_INDEX.md` for which config files to consult (brand voice, offers, angles, competitive intel) per workflow.
 
 ## Meeting Transcript Processing
 

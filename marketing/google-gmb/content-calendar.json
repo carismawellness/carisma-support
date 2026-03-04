@@ -1,0 +1,108 @@
+{
+  "default_cadence": {
+    "posts_per_week": 2,
+    "posting_days": ["monday", "thursday"],
+    "posting_time": "10:00"
+  },
+  "content_mix": {
+    "update": 0.60,
+    "offer": 0.25,
+    "event": 0.15
+  },
+  "rotation_rules": {
+    "no_same_primary_keyword_within_posts": 3,
+    "no_same_template_within_posts": 4,
+    "no_same_offer_within_posts": 4,
+    "cycle_through_all_active_offers": true,
+    "max_consecutive_same_post_type": 2
+  },
+  "weekly_template_rotation": {
+    "week_1": {
+      "monday": "service_spotlight",
+      "thursday": "trust_expertise"
+    },
+    "week_2": {
+      "monday": "first_timer_or_local",
+      "thursday": "offer"
+    },
+    "week_3": {
+      "monday": "results_transformation",
+      "thursday": "seasonal"
+    },
+    "week_4": {
+      "monday": "offer",
+      "thursday": "event_or_service_spotlight"
+    }
+  },
+  "seasonal_overrides": {
+    "valentines": {
+      "date_range": "2026-02-07 to 2026-02-14",
+      "brands": ["carisma_spa"],
+      "post_type": "offer",
+      "template": "limited_time_offer",
+      "offer_id": "couples_package",
+      "notes": "Valentine's couples upgrade. Push on both posting days in the week."
+    },
+    "mothers_day": {
+      "date_range": "2026-05-01 to 2026-05-11",
+      "brands": ["carisma_spa", "carisma_aesthetics"],
+      "post_type": "event",
+      "template": "seasonal_event",
+      "notes": "Mother's Day spa experience (Spa) and gift voucher push (Aesthetics)."
+    },
+    "summer_prep": {
+      "date_range": "2026-05-15 to 2026-06-30",
+      "brands": ["carisma_aesthetics", "carisma_slimming"],
+      "post_type": "update",
+      "template": "seasonal",
+      "notes": "Summer confidence messaging. Aesthetics: treatment prep. Slimming: body confidence (never shame-based)."
+    },
+    "christmas": {
+      "date_range": "2026-12-01 to 2026-12-24",
+      "brands": ["carisma_spa", "carisma_aesthetics"],
+      "post_type": "offer",
+      "template": "gift_voucher",
+      "offer_id": "gift_voucher",
+      "notes": "Gift voucher push across Spa and Aesthetics. Include delivery deadline messaging."
+    },
+    "new_year": {
+      "date_range": "2026-12-26 to 2027-01-15",
+      "brands": ["carisma_aesthetics", "carisma_slimming"],
+      "post_type": "update",
+      "template": "first_timer",
+      "notes": "New year fresh start messaging. Aesthetics: new client consultation. Slimming: compassionate restart."
+    },
+    "festa_season": {
+      "date_range": "2026-06-01 to 2026-09-30",
+      "brands": ["carisma_spa"],
+      "post_type": "update",
+      "template": "local_connection",
+      "notes": "Malta festa season. Use Maltese language touches, reference village festas and local traditions."
+    }
+  },
+  "brand_specific_rules": {
+    "carisma_spa": {
+      "multi_location_copy": true,
+      "location_count": 5,
+      "rotate_location_mentions": true,
+      "location_mention_order": ["InterContinental", "Hyatt Regency", "Hugo's Hotels", "AX Sunny Coast", "Ramla Bay Resort"],
+      "notes": "Post once, copy to all 5 locations. Rotate which location is mentioned first in copy."
+    },
+    "carisma_aesthetics": {
+      "multi_location_copy": false,
+      "compliance_extra": "Never reference before/after. Always include 'from' with pricing. Consultation-first messaging.",
+      "notes": "Single location. Higher compliance bar for medical claims."
+    },
+    "carisma_slimming": {
+      "multi_location_copy": false,
+      "compliance_extra": "Never use shame language. Always validate before offering. Use 'may help' not 'will'. Doctor-led authority.",
+      "notes": "Single location. Highest sensitivity bar across all brands."
+    }
+  },
+  "_metadata": {
+    "version": "1.0.0",
+    "last_updated": "2026-03-02",
+    "updated_by": "system_init",
+    "notes": "Content calendar for GBP posting system. Seasonal overrides take priority over default rotation."
+  }
+}

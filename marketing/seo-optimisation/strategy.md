@@ -126,7 +126,7 @@ The GSC Quick-Win Hunter feeds directly into the GBP Posting System through auto
 ### Flow
 
 1. GSC Hunter analyses Search Console data and identifies quick-win keywords
-2. New keywords (not already in existing banks) are written to `config/gbp/keywords_{brand}_auto_additions.json`
+2. New keywords (not already in existing banks) are written to `marketing/google-gmb/keywords_{brand}_auto_additions.json`
 3. The `gbp_generate_posts.py` tool calls `merge_auto_additions()` during keyword bank loading
 4. Auto-addition keywords are merged into the appropriate categories (primary, secondary, local)
 5. The next GBP post generation cycle includes these keywords in rotation

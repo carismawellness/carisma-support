@@ -21,7 +21,7 @@ Say "run competitor spy" or invoke the `/competitor-spy` skill. The agent will:
 5. Log results to Google Sheets and email the report
 
 ### Automated Weekly Scan (Scheduled)
-A launchd job runs every Sunday at 7pm, executing `tools/scrape_competitor_ads.py --brand_category all`. The snapshot is saved and the intelligence report is generated automatically. On your next session start, the agent reviews the report and highlights key findings.
+A launchd job runs every Sunday at 7pm, executing `marketing/competitor-intelligence/tools/scrape_competitor_ads.py --brand_category all`. The snapshot is saved and the intelligence report is generated automatically. On your next session start, the agent reviews the report and highlights key findings.
 
 ## File Structure
 
@@ -36,15 +36,15 @@ marketing/competitor-intelligence/
 
 | File | Location | Purpose |
 |------|----------|---------|
-| Skill definition | `.agents/skills/competitor-spy/SKILL.md` | Skill metadata and triggers |
-| Execution guide | `.agents/skills/competitor-spy/AGENT.md` | 5-phase intelligence workflow |
-| Scraper tool | `tools/scrape_competitor_ads.py` | Python snapshot and diff tool |
+| Skill definition | `marketing/competitor-intelligence/skill/SKILL.md` | Skill metadata and triggers |
+| Execution guide | `marketing/competitor-intelligence/skill/AGENT.md` | 5-phase intelligence workflow |
+| Scraper tool | `marketing/competitor-intelligence/tools/scrape_competitor_ads.py` | Python snapshot and diff tool |
 | Ad Library scraper | `tools/ad_library_scrape.py` | Playwright-based screenshot capture |
-| Workflow SOP | `workflows/14_competitor_ad_spy.md` | Full workflow documentation |
+| Workflow SOP | `marketing/competitor-intelligence/workflow.md` | Full workflow documentation |
 | Competitor config | `config/competitors.json` | Competitor Page IDs and metadata |
 | Brand config | `config/brands.json` | Brand voice, targeting, positioning |
-| Launchd plist | `config/gbp/com.carisma.competitor-spy.plist` | macOS scheduling config |
-| Skill config | `.agents/skills/competitor-spy/config.json` | Skill input/output schema |
+| Launchd plist | `marketing/competitor-intelligence/scheduling/com.carisma.competitor-spy.plist` | macOS scheduling config |
+| Skill config | `marketing/competitor-intelligence/skill/config.json` | Skill input/output schema |
 
 ## Key Rules
 

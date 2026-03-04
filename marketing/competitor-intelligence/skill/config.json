@@ -1,0 +1,98 @@
+{
+  "name": "competitor-spy",
+  "type": "skill",
+  "version": "1.0",
+  "description": "Weekly competitor ad intelligence — fetch, snapshot, diff, analyse, and report on competitor Meta ad activity across spa, aesthetics, and slimming verticals",
+  "inputs": {
+    "brand_category": {
+      "type": "string",
+      "enum": ["spa", "aesthetics", "slimming", "all"],
+      "description": "Brand category to scan, or 'all' for every vertical",
+      "required": true,
+      "default": "all"
+    },
+    "dry_run": {
+      "type": "boolean",
+      "description": "If true, generate instructions and report structure but do not save snapshots or send notifications",
+      "required": false,
+      "default": false
+    }
+  },
+  "outputs": {
+    "ads_found": {
+      "type": "object",
+      "description": "Dict of category -> competitor_id -> list of ad objects fetched from Meta Ad Library"
+    },
+    "intelligence_report": {
+      "type": "object",
+      "description": "Structured intelligence report with new ads, killed ads, long-running winners, pricing intel, creative trends, and recommended actions"
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary stats: total ads found, new/killed/unchanged counts, categories scanned, competitors processed"
+    }
+  },
+  "context_files": [
+    "config/competitors.json",
+    "config/brands.json",
+    "marketing/competitor-intelligence/strategy.md",
+    "marketing/competitor-intelligence/analysis-templates.md",
+    "marketing/competitor-intelligence/README.md"
+  ],
+  "mcp_servers": ["meta-ads", "google-workspace"],
+  "email_notification": {
+    "enabled": true,
+    "recipient": "mertgulen98@gmail.com",
+    "tool": "mcp__google-workspace__gmail_send_email",
+    "send_on_success": true,
+    "send_on_partial_failure": true,
+    "send_on_total_failure": true
+  },
+  "snapshot_config": {
+    "output_dir": ".tmp/research/competitor-intel",
+    "snapshot_pattern": "competitor-snapshot-{date}.json",
+    "report_pattern": "competitor-report-{date}.json",
+    "longevity_threshold_days": 30,
+    "short_lived_threshold_days": 7
+  },
+  "competitor_categories": {
+    "spa": {
+      "config_key": "spa_competitors",
+      "max_competitors": 5,
+      "current_count": 3
+    },
+    "aesthetics": {
+      "config_key": "aesthetics_competitors",
+      "max_competitors": 5,
+      "current_count": 3
+    },
+    "slimming": {
+      "config_key": "slimming_competitors",
+      "max_competitors": 5,
+      "current_count": 0,
+      "status": "TBD"
+    }
+  },
+  "analysis_framework": {
+    "dimensions": [
+      "hook_type",
+      "pain_point",
+      "offer_type",
+      "creative_format",
+      "media_style",
+      "target_audience",
+      "pricing_visible",
+      "cta_type",
+      "compliance_flags"
+    ],
+    "requires_ai_classification": true,
+    "template_file": "analysis-templates.md"
+  },
+  "schedule": {
+    "frequency": "weekly",
+    "day": "Sunday",
+    "time": "19:00",
+    "timezone": "Europe/Malta",
+    "plist": "marketing/competitor-intelligence/scheduling/com.carisma.competitor-spy.plist"
+  }
+}

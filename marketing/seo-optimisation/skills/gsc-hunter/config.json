@@ -1,0 +1,93 @@
+{
+  "name": "gsc-hunter",
+  "type": "skill",
+  "version": "1.0",
+  "description": "Analyse Google Search Console data to find quick-win ranking opportunities and feed new keywords into GBP posting",
+  "inputs": {
+    "brand_id": {
+      "type": "string",
+      "enum": ["carisma_spa", "carisma_aesthetics", "carisma_slimming", "all"],
+      "description": "Brand to analyse, or 'all'",
+      "required": true,
+      "default": "all"
+    },
+    "days": {
+      "type": "integer",
+      "description": "Lookback period in days for GSC data",
+      "required": false,
+      "default": 28
+    }
+  },
+  "outputs": {
+    "quick_wins": {
+      "type": "array",
+      "description": "Categorised quick-win keywords with position, impressions, CTR, and recommended actions"
+    },
+    "keywords_added": {
+      "type": "object",
+      "description": "Count of new keywords added to auto-addition files per brand"
+    },
+    "summary": {
+      "type": "object",
+      "description": "Summary report with total quick wins, new vs existing keywords, per-brand breakdown, and top opportunities"
+    }
+  },
+  "context_files": [
+    "config/brands.json",
+    "marketing/google-gmb/keyword-banks/*.md",
+    "marketing/seo-optimisation/quick-win-criteria.json",
+    "marketing/google-gmb/keywords_*_auto_additions.json"
+  ],
+  "mcp_servers": ["google-search-console", "google-workspace"],
+  "email_notification": {
+    "enabled": true,
+    "recipient": "mertgulen98@gmail.com",
+    "tool": "mcp__google-workspace__gmail_send_email",
+    "send_on_success": true,
+    "send_on_partial_failure": true,
+    "send_on_total_failure": true
+  },
+  "schedule": {
+    "cadence": "bi-monthly",
+    "run_days": [1, 15],
+    "run_time": "09:00",
+    "launchd_plist": "marketing/seo-optimisation/scheduling/com.carisma.gsc-hunter.plist"
+  },
+  "quick_win_categories": {
+    "almost_page_1": {
+      "position_range": "8-20",
+      "min_impressions": 50,
+      "priority": "high",
+      "action": "Target in GBP posts"
+    },
+    "low_ctr": {
+      "position_range": "1-10",
+      "max_ctr": "3%",
+      "priority": "high",
+      "action": "Flag for Wix SEO meta rewrite"
+    },
+    "emerging": {
+      "lookback": "7 days",
+      "min_impressions": 10,
+      "priority": "medium",
+      "action": "Capitalise early with GBP post"
+    },
+    "local_intent": {
+      "triggers": "malta, gozo, valletta, sliema, st julian, near me, etc.",
+      "priority": "high",
+      "action": "Perfect for GBP, high priority"
+    }
+  },
+  "integration": {
+    "gbp_posting": {
+      "auto_additions_path": "marketing/google-gmb/keywords_{brand_id}_auto_additions.json",
+      "consumed_by": "marketing/google-gmb/marketing/google-gmb/tools/gbp_generate_posts.py",
+      "merge_function": "merge_auto_additions()",
+      "max_per_brand": 10
+    },
+    "wix_seo": {
+      "low_ctr_pages": "flagged in quick-wins report for meta rewrite",
+      "cadence": "monthly"
+    }
+  }
+}

@@ -22,7 +22,7 @@ Two automated SEO systems that work together to improve organic search performan
 The two systems form a continuous SEO improvement loop:
 
 1. **GSC Quick-Win Hunter** pulls Search Console data and categorises queries into quick-win buckets (Almost Page 1, Low CTR, Emerging, Local Intent)
-2. New keyword opportunities are automatically written to `config/gbp/keywords_{brand}_auto_additions.json`
+2. New keyword opportunities are automatically written to `marketing/google-gmb/keywords_{brand}_auto_additions.json`
 3. The **GBP Posting System** picks up these auto-additions and weaves them into upcoming posts, boosting local ranking signals
 4. Low CTR pages are flagged for the **Wix SEO Auto-Optimiser**, which rewrites meta titles and descriptions to improve click-through rates
 5. Next cycle, GSC data reflects the improvements, and the loop continues
@@ -59,16 +59,16 @@ marketing/seo-optimisation/
 
 | File | Location | Purpose |
 |------|----------|---------|
-| Skill definition | `.agents/skills/gsc-hunter/SKILL.md` | Skill metadata and triggers |
-| Execution guide | `.agents/skills/gsc-hunter/AGENT.md` | 5-phase analysis workflow |
-| Skill config | `.agents/skills/gsc-hunter/config.json` | Inputs, outputs, MCP servers |
-| Quick-win finder | `tools/gsc_quick_win_finder.py` | Python analysis tool |
-| Workflow SOP | `workflows/15_gsc_quick_wins.md` | Full workflow documentation |
+| Skill definition | `marketing/seo-optimisation/skills/gsc-hunter/SKILL.md` | Skill metadata and triggers |
+| Execution guide | `marketing/seo-optimisation/skills/gsc-hunter/AGENT.md` | 5-phase analysis workflow |
+| Skill config | `marketing/seo-optimisation/skills/gsc-hunter/config.json` | Inputs, outputs, MCP servers |
+| Quick-win finder | `marketing/seo-optimisation/tools/gsc_quick_win_finder.py` | Python analysis tool |
+| Workflow SOP | `marketing/seo-optimisation/workflows/gsc_quick_wins.md` | Full workflow documentation |
 | Brand config | `config/brands.json` | Brand websites, voice, targeting |
 | Keyword banks | `marketing/google-gmb/keyword-banks/*.md` | Existing keyword banks per brand |
-| GBP auto-additions | `config/gbp/keywords_{brand}_auto_additions.json` | Auto-generated keyword additions |
-| GBP post generator | `tools/gbp_generate_posts.py` | Consumes auto-additions via `merge_auto_additions()` |
-| Launchd plist | `config/gbp/com.carisma.gsc-hunter.plist` | macOS scheduling config |
+| GBP auto-additions | `marketing/google-gmb/keywords_{brand}_auto_additions.json` | Auto-generated keyword additions |
+| GBP post generator | `marketing/google-gmb/tools/gbp_generate_posts.py` | Consumes auto-additions via `merge_auto_additions()` |
+| Launchd plist | `marketing/seo-optimisation/scheduling/com.carisma.gsc-hunter.plist` | macOS scheduling config |
 
 ## Key Rules
 

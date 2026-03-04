@@ -43,6 +43,9 @@
       "cta": "Book Your Spa Day",
       "lead_form_id": "TO_BE_FILLED",
       "landing_page": "https://www.carismaspa.com/spa-day",
+      "gbp_eligible": true,
+      "gbp_cta": "Book",
+      "gbp_link": "https://www.carismaspa.com/spa-day",
       "active": true
     },
     {
@@ -88,6 +91,9 @@
       "cta": "Book Your Couples Package",
       "lead_form_id": "TO_BE_FILLED",
       "landing_page": "https://www.carismaspa.com/couples",
+      "gbp_eligible": true,
+      "gbp_cta": "Book",
+      "gbp_link": "https://www.carismaspa.com/couples",
       "active": true
     },
     {
@@ -125,6 +131,9 @@
       "cta": "Buy a Gift Voucher",
       "lead_form_id": "TO_BE_FILLED",
       "landing_page": "https://www.carismaspa.com/gift-vouchers",
+      "gbp_eligible": true,
+      "gbp_cta": "Learn more",
+      "gbp_link": "https://www.carismaspa.com/gift-vouchers",
       "active": true
     },
     {
@@ -166,6 +175,9 @@
       "cta": "Book Your Free Consultation",
       "lead_form_id": "TO_BE_FILLED",
       "landing_page": "https://www.carismaaesthetics.com/botox",
+      "gbp_eligible": true,
+      "gbp_cta": "Book",
+      "gbp_link": "https://www.carismaaesthetics.com/botox",
       "active": true
     },
     {
@@ -207,13 +219,16 @@
       "cta": "Book Your Free Consultation",
       "lead_form_id": "TO_BE_FILLED",
       "landing_page": "https://www.carismaaesthetics.com/fillers",
+      "gbp_eligible": true,
+      "gbp_cta": "Book",
+      "gbp_link": "https://www.carismaaesthetics.com/fillers",
       "active": true
     }
   ],
   "_metadata": {
     "version": "1.0.0",
-    "last_updated": "2026-02-15",
-    "updated_by": "system_init",
-    "notes": "Prices are starting prices. Actual pricing depends on treatment area and units required."
+    "last_updated": "2026-03-02",
+    "updated_by": "gbp_system_setup",
+    "notes": "Prices are starting prices. Actual pricing depends on treatment area and units required. GBP fields (gbp_eligible, gbp_cta, gbp_link) added 2026-03-02."
   }
 }
