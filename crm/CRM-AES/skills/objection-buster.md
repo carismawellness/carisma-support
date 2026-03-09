@@ -266,7 +266,7 @@ This flip is powerful: instead of "buy now," you're saying "decide when you're r
 ## Edge Cases Discovered
 
 > Updated when this skill encounters scenarios it didn't handle well.
-> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+> Log full context in `miscellaneous/learnings/LEARNINGS.md` under Skill Learnings.
 
 <!--
 Entry format:

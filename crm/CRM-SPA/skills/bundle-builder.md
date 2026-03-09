@@ -658,7 +658,7 @@ Use it once, naturally, and let it land. Do not repeat the name insistently. Its
 ## Edge Cases Discovered
 
 > Updated when this skill encounters scenarios it didn't handle well.
-> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+> Log full context in `miscellaneous/learnings/LEARNINGS.md` under Skill Learnings.
 
 <!--
 Entry format:

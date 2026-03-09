@@ -495,7 +495,7 @@ Sarah can be that voice. Not by telling her what to do — but by reflecting bac
 ## Edge Cases Discovered
 
 > Updated when this skill encounters scenarios it didn't handle well.
-> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+> Log full context in `miscellaneous/learnings/LEARNINGS.md` under Skill Learnings.
 
 <!--
 Entry format:

@@ -267,7 +267,7 @@ With care, Sarah"
 ## Edge Cases Discovered
 
 > Updated when this skill encounters scenarios it didn't handle well.
-> Log full context in `learnings/LEARNINGS.md` under Skill Learnings.
+> Log full context in `miscellaneous/learnings/LEARNINGS.md` under Skill Learnings.
 
 <!--
 Entry format:

@@ -248,7 +248,7 @@ Self-checking takes 30 seconds. Sending a bad response and losing trust takes fo
 
 If the response required improvisation, an exception to existing rules, or a judgment call not covered by current knowledge:
 
-- [ ] Log the learning in `learnings/LEARNINGS.md` under the relevant brand section
+- [ ] Log the learning in `miscellaneous/learnings/LEARNINGS.md` under the relevant brand section
 - [ ] Add an ALWAYS/NEVER rule to the brand CLAUDE.md `### Active Rules` section if it's likely to recur
 - [ ] Update this skill's `## Edge Cases Discovered` section if it's skill-specific
 
