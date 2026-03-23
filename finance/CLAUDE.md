@@ -12,6 +12,7 @@ This folder contains all finance-related workflows, knowledge, and automation. F
 
 | Folder | Purpose |
 |--------|---------|
+| `Weekly EBITDA Calculation/` | Weekly EBITDA reconciliation and compilation agent — skills, knowledge, and config for computing per-spa and group-level EBITDA. Trigger: "run weekly EBITDA". See its own `CLAUDE.md` for details. |
 | `knowledge/` | Financial policies, budget templates, reporting standards |
 | `skills/` | Finance agent playbooks — reporting, analysis, forecasting |
 | `hooks/` | Triggers and templates for finance workflows |

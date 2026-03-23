@@ -1,0 +1,32 @@
+{
+  "description": "SG&A allocation configuration. Update when methodology changes.",
+  "current_period": "2026-02",
+  "active_spas": ["Hugos", "Hyatt", "InterContinental", "Labranda", "Ramla", "Excelsior", "Novotel", "Sunny Coast"],
+  "allocation_methods": {
+    "by_salary_ratio": {
+      "enabled": true,
+      "pool_amount": null,
+      "description": "Split proportionally by each spa's salary cost / total salary cost. Pool amount read from Raw - SG&A Detail tab, category 'Split by salary cost'."
+    },
+    "by_sales_ratio": {
+      "enabled": true,
+      "pool_amount": null,
+      "description": "Split proportionally by each spa's revenue / total revenue. Pool amount read from Raw - SG&A Detail tab, category 'Split by sales ratio among all the Spas'."
+    },
+    "equal_split": {
+      "enabled": true,
+      "pool_amount": null,
+      "description": "Split equally among all active spas. Pool amount read from Raw - SG&A Detail tab, category 'Split equally among all 8 Spa'."
+    }
+  },
+  "direct_allocations": {
+    "description": "Line items allocated directly to a specific spa by name match in the description field. Read from Raw - SG&A Detail tab where the spa name appears in the row.",
+    "matching_rules": "Match spa name (or short_name from spa-list.json) in the SG&A line item description. Items not matching any spa go into the allocation pools above."
+  },
+  "formula": {
+    "per_spa_sga": "SG&A_salary_ratio + SG&A_sales_ratio + SG&A_equal_split + direct_allocations",
+    "salary_ratio_formula": "(spa_salary / total_salary) * salary_pool_amount",
+    "sales_ratio_formula": "(spa_revenue / total_revenue) * sales_pool_amount",
+    "equal_split_formula": "equal_pool_amount / number_of_active_spas"
+  }
+}

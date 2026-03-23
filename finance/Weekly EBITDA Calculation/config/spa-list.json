@@ -1,0 +1,22 @@
+{
+  "spas": [
+    {"name": "InterContinental", "short_name": "Inter", "status": "active", "has_rent": true, "notes": "Largest spa by revenue"},
+    {"name": "Hugos", "short_name": "Hugos", "status": "active", "has_rent": false, "notes": "No separate rent line"},
+    {"name": "Hyatt", "short_name": "Hyatt", "status": "active", "has_rent": false, "notes": ""},
+    {"name": "Ramla", "short_name": "Ramla", "status": "active", "has_rent": false, "notes": ""},
+    {"name": "Labranda", "short_name": "Labranda", "status": "active", "has_rent": false, "notes": "Seasonal variation"},
+    {"name": "Sunny Coast", "short_name": "Sunny", "status": "active", "has_rent": false, "notes": "Also referred to as Seashells/Sunny Coast & Qawra"},
+    {"name": "Excelsior", "short_name": "Excelsior", "status": "active", "has_rent": false, "notes": "Added Jul 2025"},
+    {"name": "Novotel", "short_name": "Novotel", "status": "active", "has_rent": false, "notes": "Added Oct 2025"}
+  ],
+  "corporate": {
+    "name": "Corporate",
+    "short_name": "Centre",
+    "notes": "Central overhead — not a revenue-generating spa. Also called 'Center' or 'Centre'."
+  },
+  "other_units": [
+    {"name": "Aesthetics", "status": "active", "vat_rate_services": 0.18, "vat_rate_doctors": 0.12, "notes": "Doctor payouts are a separate cost line. VAT varies by service type."},
+    {"name": "Slimming", "status": "active", "notes": "Added Feb 2026. Separate P&L."},
+    {"name": "Velvet", "status": "dormant", "notes": "Currently showing 0 EBITDA. May become active again."}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "description": "Fixed monthly rent by spa. Update when rent changes.",
+  "current_period": "2026-02",
+  "rents": {
+    "InterContinental": 5100,
+    "Hugos": 0,
+    "Hyatt": 0,
+    "Ramla": 0,
+    "Labranda": 0,
+    "Sunny Coast": 0,
+    "Excelsior": 0,
+    "Novotel": 0
+  },
+  "total_rent": 18452.15,
+  "notes": "Total rent from Spa P&L row 12. InterContinental is the only spa with a direct rent line in the per-spa breakdown. The remainder (18452.15 - 5100 = 13352.15) is allocated at the consolidated Spa P&L level.",
+  "history": [
+    {"period": "2024-01 to 2024-06", "InterContinental": 4400, "total": 8233},
+    {"period": "2024-07 to 2024-12", "InterContinental": 5100, "total": 8933},
+    {"period": "2025-01 to 2025-06", "InterContinental": 5100, "total": 10299},
+    {"period": "2025-07 to 2025-11", "InterContinental": 5100, "total": 10340},
+    {"period": "2025-12", "InterContinental": 5100, "total": 20946.42},
+    {"period": "2026-01 to present", "InterContinental": 5100, "total": 18452.15}
+  ]
+}

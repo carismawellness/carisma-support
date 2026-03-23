@@ -1,0 +1,86 @@
+{
+  "description": "Google Sheet mapping for the Weekly EBITDA workbook. Update spreadsheet_id after creating the sheet.",
+  "spreadsheet_id": "PLACEHOLDER — fill after creating Google Sheet",
+  "input_tabs": {
+    "zoho_spa_pl": {
+      "tab_name": "Raw - Zoho Spa P&L",
+      "description": "Full P&L export from Zoho Books for Carisma Spa & Wellness International Ltd.",
+      "expected_columns": ["Account", "Account Code", "Total"],
+      "source": "Zoho Books → Reports → Profit and Loss → Export"
+    },
+    "zoho_aesthetics_pl": {
+      "tab_name": "Raw - Zoho Aesthetics P&L",
+      "description": "Full P&L export from Zoho Books for Aesthetics entity.",
+      "expected_columns": ["Account", "Account Code", "Total"],
+      "source": "Zoho Books → Reports → Profit and Loss → Export"
+    },
+    "lapis_revenue": {
+      "tab_name": "Raw - Lapis Revenue",
+      "description": "Revenue by spa location, split by Service vs Product. Already VAT-exclusive from Lapis.",
+      "expected_columns": ["Spa", "Type", "Amount"],
+      "source": "Lapis POS → Quick Service Search + Material Report"
+    },
+    "lapis_cogs": {
+      "tab_name": "Raw - Lapis COGS",
+      "description": "Cost of goods sold by product line (Phytomer, Purest, Others) per spa.",
+      "expected_columns": ["Spa", "Product Line", "Amount"],
+      "source": "Lapis POS → Product reports"
+    },
+    "payroll": {
+      "tab_name": "Raw - Payroll",
+      "description": "Monthly payroll data by employee with spa assignment.",
+      "expected_columns": ["Employee", "Salary", "Spa/Department"],
+      "source": "Payroll Google Sheet (bank-paid salaries)"
+    },
+    "cash_salaries": {
+      "tab_name": "Raw - Cash Salaries",
+      "description": "Cash salary payments by employee with spa assignment.",
+      "expected_columns": ["Employee ID", "Employee Name", "Cash Amount", "Spa/Department"],
+      "source": "Manual entry"
+    },
+    "sga_detail": {
+      "tab_name": "Raw - SG&A Detail",
+      "description": "SG&A line items with allocation categories. Must include the 3 pool totals and any direct allocations.",
+      "expected_columns": ["Description", "Amount", "Category"],
+      "source": "Zoho Books → SG&A expense report"
+    },
+    "aesthetics_data": {
+      "tab_name": "Raw - Aesthetics Data",
+      "description": "Aesthetics-specific data: revenue, doctor payouts, staff costs, COGS.",
+      "expected_columns": ["Line Item", "Amount"],
+      "source": "Manual/Zoho composite"
+    },
+    "fixed_costs": {
+      "tab_name": "Raw - Fixed Costs",
+      "description": "Weekly proportional fixed costs (towels, linens, slippers, amenities). Each row is a cost item with its weekly amount. Allocated to spas by revenue ratio.",
+      "expected_columns": ["Cost Item", "Category", "Weekly Amount"],
+      "source": "Manual entry — update weekly"
+    }
+  },
+  "output_tabs": {
+    "ebitda_summary": {
+      "tab_name": "EBITDA Summary",
+      "description": "Group-level EBITDA by period. Spa total + Aesthetics + Slimming + Velvet."
+    },
+    "spa_pl": {
+      "tab_name": "Spa P&L",
+      "description": "Consolidated Spa P&L: Revenue, COGS, Gross Profit, Salaries, SG&A, Rent, EBITDA."
+    },
+    "spa_detail": {
+      "tab_name": "Spa Detail",
+      "description": "Per-spa P&L breakdown for all 8 locations + Corporate."
+    },
+    "aesthetics_pl": {
+      "tab_name": "Aesthetics P&L",
+      "description": "Aesthetics and Slimming P&L with doctor payouts."
+    },
+    "sga_allocation": {
+      "tab_name": "SG&A Allocation",
+      "description": "Full SG&A allocation audit trail showing each method and direct allocations."
+    },
+    "reconciliation": {
+      "tab_name": "Reconciliation",
+      "description": "Revenue, Salaries, SG&A, and Rent checks with pass/fail and variance."
+    }
+  }
+}

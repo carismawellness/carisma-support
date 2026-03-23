@@ -1,0 +1,29 @@
+{
+  "description": "Proportional fixed costs allocated to spas by revenue ratio. These are centrally purchased items distributed based on each spa's share of total weekly revenue. Add new cost items as needed.",
+  "allocation_method": "by_revenue_ratio",
+  "allocation_formula": "(spa_weekly_revenue / total_weekly_revenue) * cost_item_amount",
+  "cost_items": [
+    {
+      "name": "Towels",
+      "category": "Linens & Laundry",
+      "amount": null,
+      "frequency": "weekly",
+      "notes": "Enter weekly cost in Raw - Fixed Costs tab"
+    },
+    {
+      "name": "Linens",
+      "category": "Linens & Laundry",
+      "amount": null,
+      "frequency": "weekly",
+      "notes": "Enter weekly cost in Raw - Fixed Costs tab"
+    },
+    {
+      "name": "Slippers",
+      "category": "Amenities",
+      "amount": null,
+      "frequency": "weekly",
+      "notes": "Enter weekly cost in Raw - Fixed Costs tab"
+    }
+  ],
+  "notes": "Amounts are read dynamically from the 'Raw - Fixed Costs' Google Sheet tab each week. To add a new proportional cost, add it both here and as a row in the Google Sheet tab. All items are allocated by revenue ratio — no other method is currently supported for these costs."
+}
