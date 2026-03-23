@@ -1,0 +1,6 @@
+Escalation category,Meaning
+NONE,Agent can answer and proceed.
+OPS,"Operational check needed (scheduling, package admin, facilities rules)."
+CLINICIAN_REVIEW,Clinician must confirm suitability or give guidance.
+CLINICIAN_URGENT,"Urgent clinician contact required. If severe red flags, advise emergency care per protocol."
+MANAGER,"Refund disputes, complaints, policy exceptions."

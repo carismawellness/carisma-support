@@ -1,6 +1,86 @@
 {
-  "description": "Google Sheet mapping for the Weekly EBITDA workbook. Update spreadsheet_id after creating the sheet.",
-  "spreadsheet_id": "PLACEHOLDER — fill after creating Google Sheet",
+  "description": "Google Sheet mapping for the Weekly EBITDA workbook. All data sources and output tabs.",
+  "output_spreadsheet_id": "1WWM7W6S5wtSC-5hdlcuJgW3zbYaO7YRgg4_-Bju4-5s",
+  "source_sheets": {
+    "weekly_kpis": {
+      "spreadsheet_id": "1JGlBdii7Zu25yha0zrmi72PPH1BFZRdVeGvcig3r6GE",
+      "title": "Weekly KPIs",
+      "tabs": {
+        "sales": {
+          "tab_name": "Sales",
+          "description": "Spa weekly sales data — already aggregated by week, per spa. Ex VAT.",
+          "week_dates_row": 2,
+          "week_dates_start_col": "D",
+          "spa_sales_section": {
+            "header_row": 44,
+            "header_label": "Sales - from guest sales report (Services & Packages)",
+            "company_wide_row": 45,
+            "spas": {
+              "Inter": 46,
+              "Hugos": 47,
+              "Hyatt": 48,
+              "Ramla": 49,
+              "Labranda": 50,
+              "Odycy": 51,
+              "Novotel": 52,
+              "Excelsior": 53
+            }
+          }
+        },
+        "aesthetics": {
+          "tab_name": "Aesthetics ",
+          "description": "Aesthetics KPIs — service revenue, retail, consults, etc."
+        },
+        "slimming": {
+          "tab_name": "Slimming",
+          "description": "Slimming KPIs — started Feb 2026."
+        }
+      }
+    },
+    "leticia_aesthetics": {
+      "spreadsheet_id": "1Mr_aRRbRf3ex--WmUJIqXwko7okCyD82KxBOXWYnW24",
+      "title": "Aesthetics sales - Leticia",
+      "description": "Transaction-level aesthetics sales. Monthly tabs named 'Sale {Month} {Year}' or 'Sales {Month} {Year}'. Group by week using date column.",
+      "tab_pattern": "Sale* {Month} {Year}",
+      "columns": {
+        "invoice": "A",
+        "customer": "B",
+        "service": "C",
+        "date_of_service": "D",
+        "price": "E",
+        "payment": "F",
+        "sales_staff": "G",
+        "note": "H",
+        "commission_6pct": "I",
+        "commission_3pct": "J",
+        "retail": "L"
+      },
+      "revenue_column": "E",
+      "date_column": "D",
+      "notes": "Prices appear with $ symbol but are EUR. Group transactions by week (Mon-Sun) to get weekly totals."
+    },
+    "slimming_sales": {
+      "spreadsheet_id": "1j6tz8k8TRSulB35Sg4X1xSlcV_JLf-8QKx-32UUkoBc",
+      "title": "Slimming Sales March",
+      "description": "Transaction-level slimming sales. Monthly tabs named 'Sales {Month}'. Group by week using date column.",
+      "tab_pattern": "Sales {Month}",
+      "columns": {
+        "date": "A",
+        "client": "B",
+        "weight_loss": "C",
+        "treatments": "D",
+        "medical_consultation": "E",
+        "products": "F",
+        "full_price": "G",
+        "paid": "H",
+        "sale_of": "I",
+        "commission": "J"
+      },
+      "revenue_column": "H",
+      "date_column": "A",
+      "notes": "Use 'Paid' column (H) for actual revenue received. 'Full price' (G) is list price before payment plans. Started Feb 2026."
+    }
+  },
   "input_tabs": {
     "zoho_spa_pl": {
       "tab_name": "Raw - Zoho Spa P&L",
@@ -40,7 +120,7 @@
     },
     "sga_detail": {
       "tab_name": "Raw - SG&A Detail",
-      "description": "SG&A line items with allocation categories. Must include the 3 pool totals and any direct allocations.",
+      "description": "SG&A line items with allocation categories.",
       "expected_columns": ["Description", "Amount", "Category"],
       "source": "Zoho Books → SG&A expense report"
     },
@@ -52,7 +132,7 @@
     },
     "fixed_costs": {
       "tab_name": "Raw - Fixed Costs",
-      "description": "Weekly proportional fixed costs (towels, linens, slippers, amenities). Each row is a cost item with its weekly amount. Allocated to spas by revenue ratio.",
+      "description": "Weekly proportional fixed costs (towels, linens, slippers, amenities).",
       "expected_columns": ["Cost Item", "Category", "Weekly Amount"],
       "source": "Manual entry — update weekly"
     }
@@ -60,23 +140,23 @@
   "output_tabs": {
     "ebitda_summary": {
       "tab_name": "EBITDA Summary",
-      "description": "Group-level EBITDA by period. Spa total + Aesthetics + Slimming + Velvet."
-    },
-    "spa_pl": {
-      "tab_name": "Spa P&L",
-      "description": "Consolidated Spa P&L: Revenue, COGS, Gross Profit, Salaries, SG&A, Rent, EBITDA."
+      "description": "Group-level weekly EBITDA. Spa + Aesthetics + Slimming. Weeks as columns."
     },
     "spa_detail": {
       "tab_name": "Spa Detail",
-      "description": "Per-spa P&L breakdown for all 8 locations + Corporate."
+      "description": "Per-spa weekly P&L: Trading Income, Wages, Advertising, Rent, Utilities, COGS, SG&A, OPEX, EBITDA. Each spa in its own section."
     },
     "aesthetics_pl": {
       "tab_name": "Aesthetics P&L",
-      "description": "Aesthetics and Slimming P&L with doctor payouts."
+      "description": "Aesthetics weekly P&L in standard format."
+    },
+    "slimming_pl": {
+      "tab_name": "Slimming P&L",
+      "description": "Slimming weekly P&L in standard format. Started Feb 2026."
     },
     "sga_allocation": {
       "tab_name": "SG&A Allocation",
-      "description": "Full SG&A allocation audit trail showing each method and direct allocations."
+      "description": "Full SG&A allocation audit trail."
     },
     "reconciliation": {
       "tab_name": "Reconciliation",
