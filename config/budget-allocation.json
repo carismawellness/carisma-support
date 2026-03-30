@@ -1,0 +1,39 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-03-30",
+  "currency": "EUR",
+  "weekly_budgets": {
+    "spa": {
+      "meta_eur": 350,
+      "google_eur": 840,
+      "total_eur": 1190,
+      "channel_split_note": "Spa skews Google-heavy (30/70) due to strong search intent for hotel spa and spa day queries"
+    },
+    "aesthetics": {
+      "meta_eur": 560,
+      "google_eur": 140,
+      "total_eur": 700,
+      "channel_split_note": "Meta-primary (80/20). Google supplements with search and remarketing"
+    },
+    "slimming": {
+      "meta_eur": 400,
+      "google_eur": 100,
+      "total_eur": 500,
+      "channel_split_note": "Meta-primary (80/20). Newer brand, awareness-driven"
+    }
+  },
+  "meta_campaign_split": {
+    "evergreen_pct": 60,
+    "seasonal_pct": 40,
+    "note": "Evergreen = always-on campaigns (Spa Day, Massage, Botox, Fat Freeze). Seasonal = occasion-based campaigns from the quarterly-marketing-calendar skill."
+  },
+  "minimum_campaign_daily_eur": 5,
+  "minimum_campaign_note": "No single Meta campaign should receive less than EUR 5/day. Below this, Meta's delivery algorithm underperforms. Reduce campaign count rather than spreading too thin.",
+  "q4_override": {
+    "months": [10, 11, 12],
+    "method": "spreadsheet_read",
+    "spreadsheet_id": "1q40Ke8wRsjnoVOngDupVdwxIWiTFXwYfh1ZwvUa9xtc",
+    "sheet_name": "Calendar '25",
+    "instructions": "For Oct/Nov/Dec planning, read actual Q4 2025 budget values from the Meta and Google Budget rows for each brand. Use those as the weekly budget baseline instead of the defaults above."
+  }
+}
