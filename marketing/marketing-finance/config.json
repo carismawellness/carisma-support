@@ -1,0 +1,70 @@
+{
+  "name": "marketing-finance-specialist",
+  "type": "skill",
+  "description": "Marketing finance specialist agent for the CMO. Handles budget allocation, spend tracking, ROAS/CPL analysis, revenue attribution, and weekly consolidated reporting across all 3 Carisma brands.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": true,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "argument-hint": "<phase|all> [brand]",
+  "metadata": {
+    "tags": ["finance", "budget", "roas", "cpl", "marketing", "analytics"],
+    "triggers": [
+      "marketing finance",
+      "budget allocation",
+      "spend tracking",
+      "roas analysis",
+      "marketing report"
+    ]
+  },
+  "inputs": {
+    "phase": {
+      "type": "string",
+      "enum": ["budget", "spend", "roas", "revenue", "report", "all"],
+      "description": "Which phase to run. 'all' runs the full weekly cycle (phases 2-5).",
+      "required": true
+    },
+    "brand": {
+      "type": "string",
+      "enum": ["spa", "aesthetics", "slimming", "all"],
+      "description": "Which brand to analyse. Defaults to 'all'.",
+      "required": false,
+      "default": "all"
+    }
+  },
+  "outputs": {
+    "budget_table": {
+      "type": "object",
+      "description": "Per-campaign daily budgets by brand and channel (Phase 1)"
+    },
+    "spend_variance": {
+      "type": "object",
+      "description": "Actual vs. planned spend by brand (Phase 2)"
+    },
+    "performance_scorecard": {
+      "type": "object",
+      "description": "CPL/CPA/ROAS per campaign with winner/loser classification (Phase 3)"
+    },
+    "roi_analysis": {
+      "type": "object",
+      "description": "Revenue vs. spend by brand and campaign type (Phase 4)"
+    },
+    "weekly_report": {
+      "type": "string",
+      "description": "Consolidated CMO-ready report (Phase 5)"
+    }
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node",
+    "requires_context": ["meta-ads MCP", "google-sheets MCP", "google-analytics MCP"]
+  },
+  "integrations": {
+    "reads": [
+      "config/budget-allocation.json",
+      "config/kpi_thresholds.json",
+      "config/brands.json"
+    ],
+    "mcp_servers": ["meta-ads", "google-workspace", "google-analytics"]
+  }
+}
