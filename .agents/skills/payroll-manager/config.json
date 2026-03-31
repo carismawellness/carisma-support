@@ -1,0 +1,12 @@
+{
+  "name": "Payroll Manager",
+  "slug": "payroll-manager",
+  "reports-to": "CHRO",
+  "org-layer": "hr-specialists",
+  "model": "claude-sonnet-4-6",
+  "icon": "database",
+  "tags": ["payroll", "hr", "malta", "FSS", "compliance", "finance"],
+  "description": "Processes monthly payroll for 80-110 staff across 3 brands. Manages Malta FSS/NI filings, gross-to-net calculations, payslip generation, and statutory compliance.",
+  "inputs": ["timesheets", "approved salary changes", "new hire/leaver notifications", "bonus approvals"],
+  "outputs": ["monthly payroll report", "FSS filing", "NI filing", "payslips", "cost summary for CFO"]
+}

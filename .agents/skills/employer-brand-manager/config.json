@@ -1,0 +1,25 @@
+{
+  "name": "Employer Brand Manager",
+  "slug": "employer-brand-manager",
+  "reports-to": "Recruitment Manager",
+  "org-layer": "recruitment-sub-team",
+  "model": "claude-haiku-4-5-20251001",
+  "icon": "star",
+  "tags": ["employer-brand", "glassdoor", "linkedin", "careers-page", "culture"],
+  "description": "Manages Carisma employer brand: careers page, Glassdoor, LinkedIn culture content, Indeed. Monthly content calendar, employer review responses, quarterly brand health report.",
+  "inputs": ["team stories", "culture moments", "open role list", "review platforms"],
+  "outputs": ["monthly employer brand calendar", "review response drafts", "culture content", "quarterly brand report"],
+  "agent-id": "708abaad-db58-45ec-9b43-f4e6f4f382bb",
+  "kpis": {
+    "glassdoor-rating-target": 4.0,
+    "review-response-sla-working-days": 5,
+    "linkedin-posts-per-week": 1,
+    "careers-page-review-frequency": "monthly"
+  },
+  "platforms": [
+    "glassdoor",
+    "linkedin-company-page",
+    "indeed",
+    "careers-page"
+  ]
+}

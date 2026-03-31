@@ -1,0 +1,25 @@
+{
+  "name": "Recruitment Manager",
+  "slug": "recruitment-manager",
+  "reports-to": "CHRO",
+  "org-layer": "hr-specialists",
+  "model": "claude-sonnet-4-6",
+  "icon": "target",
+  "tags": ["recruitment", "hr", "hiring", "talent-acquisition", "malta"],
+  "description": "Manages end-to-end recruitment for all 3 brands. Owns hiring funnel from job brief to offer. Manages 3 sub-agents: LinkedIn Manager, Meta Ads Recruitment, Employer Brand Manager.",
+  "inputs": ["role briefs from CHRO/GMs", "salary bands", "headcount plan"],
+  "outputs": ["offer letters", "monthly recruitment dashboard", "candidate pipeline", "source-of-hire report"],
+  "agent-id": "6d3df3aa-3391-4ee0-9643-4c8e71505ab4",
+  "sub-agents": [
+    "linkedin-manager",
+    "meta-ads-recruitment",
+    "employer-brand-manager"
+  ],
+  "kpis": {
+    "time-to-hire-standard-days": 30,
+    "time-to-hire-urgent-days": 15,
+    "time-to-hire-critical-days": 7,
+    "offer-acceptance-rate-target": 0.80,
+    "90-day-retention-target": 0.85
+  }
+}

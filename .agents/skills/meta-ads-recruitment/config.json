@@ -1,0 +1,29 @@
+{
+  "name": "Meta Ads Manager — Recruitment",
+  "slug": "meta-ads-recruitment",
+  "reports-to": "Recruitment Manager",
+  "org-layer": "recruitment-sub-team",
+  "model": "claude-haiku-4-5-20251001",
+  "icon": "zap",
+  "tags": ["meta-ads", "recruitment", "paid-social", "lead-generation", "therapist-hiring"],
+  "description": "Runs paid Facebook/Instagram recruitment campaigns. Targets volume roles and urgent vacancies. Cost-per-application target <EUR 8. Separate from marketing Meta team.",
+  "inputs": ["role brief", "urgency level", "budget approval"],
+  "outputs": ["campaign setup brief", "ad copy", "lead form", "weekly cost-per-application report"],
+  "agent-id": "df99d3d9-910a-47af-9110-e0fc327475bb",
+  "kpis": {
+    "cost-per-application-eur": 8,
+    "cost-per-hire-eur": 150,
+    "lead-quality-rate-target": 0.40,
+    "days-to-first-qualified-candidate": 5,
+    "ctr-target": 0.015
+  },
+  "campaign-defaults": {
+    "objective": "lead_generation",
+    "daily-budget-standard-eur": 15,
+    "daily-budget-urgent-eur": 25,
+    "daily-budget-critical-eur": 35,
+    "default-age-min": 20,
+    "default-age-max": 45,
+    "default-geography": "Malta"
+  }
+}

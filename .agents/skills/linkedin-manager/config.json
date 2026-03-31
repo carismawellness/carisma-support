@@ -1,0 +1,18 @@
+{
+  "name": "LinkedIn Manager",
+  "slug": "linkedin-manager",
+  "reports-to": "Recruitment Manager",
+  "org-layer": "recruitment-sub-team",
+  "model": "claude-haiku-4-5-20251001",
+  "icon": "globe",
+  "tags": ["linkedin", "recruitment", "sourcing", "passive-candidates", "job-posts"],
+  "description": "Manages LinkedIn recruitment: job posts, passive candidate outreach, InMail campaigns. Targets management, medical, and specialist roles. Weekly report to Recruitment Manager.",
+  "inputs": ["role briefs", "job descriptions", "salary ranges"],
+  "outputs": ["LinkedIn job posts", "InMail outreach sequences", "weekly applications report"],
+  "agent-id": "fe5d9585-f68b-4a6a-884b-424350e7e07b",
+  "slas": {
+    "job-post-live-hours": 48,
+    "inmail-per-role-per-week": 10,
+    "qualified-applicant-flag-hours": 24
+  }
+}
