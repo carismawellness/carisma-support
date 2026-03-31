@@ -1,0 +1,12 @@
+{
+  "name": "AEO Agent",
+  "slug": "aeo-agent",
+  "reports-to": "SEO Manager",
+  "org-layer": "seo-sub-team",
+  "model": "claude-haiku-4-5-20251001",
+  "icon": "brain",
+  "tags": ["aeo", "ai-search", "faq", "content", "chatgpt", "perplexity"],
+  "description": "Owns Answer Engine Optimisation — ensuring Carisma appears in AI-generated answers on ChatGPT, Perplexity, and Google AI Overview. Creates FAQ pages, treatment authority content, and local authority pages.",
+  "inputs": ["treatment list per brand", "blog FAQ sections", "AI search audit results", "competitor citation analysis"],
+  "outputs": ["FAQ pages per service", "treatment authority pages", "monthly AEO visibility report", "schema markup recommendations"]
+}

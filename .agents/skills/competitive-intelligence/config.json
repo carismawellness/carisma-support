@@ -1,0 +1,22 @@
+{
+  "name": "Competitive Intelligence Agent",
+  "slug": "competitive-intelligence",
+  "reports-to": "CMO",
+  "org-layer": "cmo-specialists",
+  "model": "claude-sonnet-4-6",
+  "icon": "radar",
+  "tags": ["competitive-intelligence", "meta-ads-library", "seo", "competitor-monitoring", "weekly"],
+  "description": "Runs weekly competitive intelligence across all 3 brands. Scrapes Meta Ad Library for all competitor brands, tracks Google rankings for 30 target keywords, monitors competitor reviews, and delivers structured brief to CMO + channel specialists every Friday.",
+  "inputs": [
+    "Meta Ad Library (Playwright)",
+    "Google search results",
+    "competitor review platforms",
+    "config/competitive-intelligence/competitor-database.md"
+  ],
+  "outputs": [
+    "Weekly Competitive Intelligence Brief (delivered Friday)",
+    "Creative opportunity gaps",
+    "Google ranking report",
+    "Competitor review sentiment summary"
+  ]
+}

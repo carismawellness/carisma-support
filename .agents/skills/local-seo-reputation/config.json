@@ -1,0 +1,12 @@
+{
+  "name": "Local SEO & Reputation Agent",
+  "slug": "local-seo-reputation",
+  "reports-to": "SEO Manager",
+  "org-layer": "seo-sub-team",
+  "model": "claude-haiku-4-5-20251001",
+  "icon": "star",
+  "tags": ["local-seo", "google-business-profile", "reviews", "reputation", "citations"],
+  "description": "Manages all 10 Carisma GBP listings weekly. Audits for completeness, generates location posts, monitors review velocity, drafts review responses for human approval.",
+  "inputs": ["fresha_venues.json", "marketing calendar", "brand voice configs", "new review data"],
+  "outputs": ["weekly GBP audit", "GBP posts (1 per location per week)", "review response drafts", "review velocity report"]
+}

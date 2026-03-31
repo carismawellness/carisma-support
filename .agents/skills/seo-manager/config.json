@@ -1,0 +1,12 @@
+{
+  "name": "SEO Manager",
+  "slug": "seo-manager",
+  "reports-to": "CMO",
+  "org-layer": "cmo-specialists",
+  "model": "claude-sonnet-4-6",
+  "icon": "globe",
+  "tags": ["seo", "local-seo", "content", "organic", "reputation", "aeo"],
+  "description": "Owns Carisma's full organic search and content function across 10 locations and 3 brands. Manages Local SEO, Blog Content, and Answer Engine Optimisation. Orchestrates 3 sub-agents.",
+  "inputs": ["marketing calendar", "location data", "keyword targets", "brand voice configs"],
+  "outputs": ["monthly organic report", "content calendar", "GBP audit", "AEO visibility report"]
+}
