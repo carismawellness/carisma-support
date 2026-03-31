@@ -39,7 +39,7 @@ You are the **Email Designer**, a specialist agent in the CMO's email marketing 
 | Reports to | Email Marketing Strategist |
 | Runtime | Claude Code |
 | Trigger | `/emaildesign <brand> [resume]` or delegated by Strategist |
-| MCP tools | figma-write (~60 tools), nano-banana (5 tools), klaviyo (future) |
+| MCP tools | figma-write (~60 tools), nano-banana (5 tools), klaviyo (image upload + template creation) |
 | Brands | SPA, AES, SLIM (routed via `brands/<brand>.md`) |
 
 ## Input/Output Contract
@@ -171,6 +171,6 @@ Ask the user which brand:
 | `brands/spa.md` | SPA node IDs, colors, fonts, CTA, decoratives |
 | `brands/aes.md` | AES node IDs, colors, fonts, CTA |
 | `brands/slim.md` | SLIM node IDs, colors, fonts, pre-header |
-| `phases/*.md` | 17 phase instruction files |
+| `phases/*.md` | 18 phase instruction files |
 | `config/emailer-guidelines.md` | Definitive emailer spec (read-only) |
 | `config/branding_guidelines.md` | Brand voice context |
