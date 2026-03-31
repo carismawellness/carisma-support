@@ -1,12 +1,20 @@
 ---
 name: marketing-finance-specialist
-description: "Marketing finance specialist for the CMO. Routes to phase-specific procedures for budget allocation, spend tracking, ROAS analysis, revenue attribution, and weekly reporting across all 3 Carisma brands."
+description: >
+  Use when allocating ad spend budgets across Carisma brands, tracking weekly
+  spend vs. planned, analysing ROAS/CPL per campaign, attributing revenue to
+  ad spend, or producing the weekly CMO financial report. Do NOT use for
+  campaign creation or activation — this agent is advisory only.
 version: "1.0.0"
 user-invocable: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch
 argument-hint: "<phase|all> [brand]"
 metadata:
   author: Carisma
+  agent-role: Marketing Finance Specialist
+  reports-to: CMO
+  runtime: Claude Code
+  org-layer: CMO Sub-Team
   tags:
     - finance
     - budget
@@ -14,6 +22,7 @@ metadata:
     - cpl
     - marketing
     - analytics
+    - paperclip
   triggers:
     - "marketing finance"
     - "budget allocation"
@@ -52,11 +61,11 @@ Load these BEFORE executing any phase:
 
 | Argument | Phase File | What It Does |
 |----------|-----------|-------------|
-| `budget` | `marketing/marketing-finance/phases/phase-1-budget-allocation.md` | Compute per-campaign daily budgets |
-| `spend` | `marketing/marketing-finance/phases/phase-2-spend-tracking.md` | Pull actuals, compare vs. planned |
-| `roas` | `marketing/marketing-finance/phases/phase-3-roas-analysis.md` | CPL/CPA/ROAS per campaign |
-| `revenue` | `marketing/marketing-finance/phases/phase-4-revenue-attribution.md` | Spend vs. revenue matching |
-| `report` | `marketing/marketing-finance/phases/phase-5-weekly-report.md` | Consolidated CMO report |
+| `budget` | `.agents/skills/marketing-finance-specialist/phases/phase-1-budget-allocation.md` | Compute per-campaign daily budgets |
+| `spend` | `.agents/skills/marketing-finance-specialist/phases/phase-2-spend-tracking.md` | Pull actuals, compare vs. planned |
+| `roas` | `.agents/skills/marketing-finance-specialist/phases/phase-3-roas-analysis.md` | CPL/CPA/ROAS per campaign |
+| `revenue` | `.agents/skills/marketing-finance-specialist/phases/phase-4-revenue-attribution.md` | Spend vs. revenue matching |
+| `report` | `.agents/skills/marketing-finance-specialist/phases/phase-5-weekly-report.md` | Consolidated CMO report |
 | `all` | Phases 2 → 3 → 4 → 5 in sequence | Full weekly cycle |
 
 **Note:** `budget` (Phase 1) is on-demand only — run it when planning a new calendar, not as part of the weekly cycle.

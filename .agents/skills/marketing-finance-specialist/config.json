@@ -8,7 +8,11 @@
   "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
   "argument-hint": "<phase|all> [brand]",
   "metadata": {
-    "tags": ["finance", "budget", "roas", "cpl", "marketing", "analytics"],
+    "agent-role": "Marketing Finance Specialist",
+    "reports-to": "CMO",
+    "runtime": "Claude Code",
+    "org-layer": "CMO Sub-Team",
+    "tags": ["finance", "budget", "roas", "cpl", "marketing", "analytics", "paperclip"],
     "triggers": [
       "marketing finance",
       "budget allocation",
