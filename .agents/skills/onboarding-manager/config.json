@@ -1,0 +1,12 @@
+{
+  "name": "Onboarding Manager",
+  "slug": "onboarding-manager",
+  "reports-to": "Learning & Development Manager",
+  "org-layer": "hr-sub-agents",
+  "model": "claude-haiku-4-5-20251001",
+  "icon": "heart",
+  "tags": ["onboarding", "new-hire", "probation", "check-ins", "hr", "l&d"],
+  "description": "Manages new hire onboarding from offer acceptance to probation completion across all 3 brands. Coordinates pre-start checklist (contracts, permits, payroll), Day 1 programme, 30-60-90 day check-ins, and probation review. Maintains active onboarding tracker for all current hires.",
+  "inputs": ["new hire confirmation", "start date", "brand and location", "work permit status"],
+  "outputs": ["pre-start checklist", "day 1 programme", "check-in prompts", "probation review coordination", "onboarding tracker"]
+}

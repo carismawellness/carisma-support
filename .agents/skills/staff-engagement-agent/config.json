@@ -1,0 +1,12 @@
+{
+  "name": "Staff Engagement Agent",
+  "slug": "staff-engagement-agent",
+  "reports-to": "Employee Relations Manager",
+  "org-layer": "hr-sub-agents",
+  "model": "claude-haiku-4-5-20251001",
+  "icon": "star",
+  "tags": ["engagement", "birthdays", "recognition", "perks", "referral", "hr"],
+  "description": "Manages staff recognition and engagement across all 3 brands. Monthly birthday calendar with personalised messages, work anniversary milestones, employee referral programme tracking, staff discounts framework, quarterly pulse surveys, and annual engagement calendar.",
+  "inputs": ["staff list with birthdays and hire dates", "referral notifications", "pulse survey results"],
+  "outputs": ["monthly birthday calendar", "anniversary alerts", "referral bonus report", "quarterly pulse summary", "engagement calendar"]
+}
