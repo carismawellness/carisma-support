@@ -1,45 +1,12 @@
 {
-  "name": "smm-content-planner",
-  "type": "skill",
-  "description": "Social media content calendar manager for Carisma Wellness Group. Plans weekly and monthly content calendars for all 3 brands, rotates content pillars (Pain-Solution, Hooked Insight, Objection Flip, Viral, Behind-Scenes), maintains pillar ratios, creates content briefs for the Content Writer, and ensures seasonal alignment across Instagram, Facebook, and TikTok.",
-  "version": "1.0.0",
-  "author": "Carisma",
-  "user-invocable": false,
-  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
-  "metadata": {
-    "agent-role": "SMM Content Planner",
-    "agent-id": "3640e3be-9671-4463-a6f6-0d92af50e9f1",
-    "reports-to": "SMM Expert",
-    "runtime": "Claude Haiku",
-    "org-layer": "SMM Sub-Team",
-    "tags": ["social-media", "content-planning", "calendar", "content-calendar", "pillar-rotation", "content-briefs", "scheduling", "instagram", "facebook", "tiktok"],
-    "triggers": [
-      "plan content calendar",
-      "build content plan",
-      "weekly content plan",
-      "monthly content calendar",
-      "content brief",
-      "pillar rotation",
-      "pillar balance",
-      "schedule content",
-      "content slots",
-      "calendar planning"
-    ]
-  },
-  "execution": {
-    "timeout": 300,
-    "environment": "node"
-  },
-  "integrations": {
-    "reads": [
-      "config/brands.json",
-      "config/branding_guidelines.md",
-      "config/smm-content-pillars/spa-smm.md",
-      "config/smm-content-pillars/aesthetics-smm.md",
-      "config/smm-content-pillars/slimming-smm.md",
-      "config/social_media_calendar.json",
-      "marketing/marketing-calendar/"
-    ],
-    "mcp_servers": ["google-workspace"]
-  }
+  "name": "SMM Content Planner & Creative Strategist",
+  "slug": "smm-content-planner",
+  "reports-to": "SMM Manager",
+  "org-layer": "smm-sub-team",
+  "model": "claude-haiku-4-5-20251001",
+  "icon": "palette",
+  "tags": ["smm", "content-planning", "creative-strategy", "social-media", "content-calendar"],
+  "description": "Plans SMM content calendar and develops creative direction for all 3 brands. Owns content pillar rotation, hook formulas, visual direction, storytelling frameworks. Briefs SMM Content Writer.",
+  "inputs": ["marketing calendar", "brand content pillars", "trend research from Researcher", "campaign briefs"],
+  "outputs": ["monthly content calendar", "weekly creative briefs", "content pillar mapping", "A/B test hypotheses"]
 }

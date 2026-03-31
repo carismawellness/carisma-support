@@ -1,7 +1,7 @@
 {
-  "name": "email-creative-strategist",
+  "name": "Email Copywriter & Planner",
   "type": "skill",
-  "description": "Email Creative Strategist for the CMO's email marketing sub-team. Plans email creative direction, subject line testing, layout strategy, visual concepts, and A/B test frameworks for all 3 Carisma brands. Reports to the Email Marketing Strategist.",
+  "description": "Email Copywriter & Planner for the CMO's email marketing sub-team. Plans and writes all campaign copy for all 3 Carisma brands. Takes research briefs from Email Researcher and produces fully drafted campaigns with 6-8 subject line variants. Reports to the Email Manager.",
   "version": "1.0.0",
   "author": "Carisma",
   "user-invocable": false,

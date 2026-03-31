@@ -1,0 +1,12 @@
+{
+  "name": "WhatsApp Specialist",
+  "slug": "whatsapp-specialist",
+  "reports-to": "Email Manager",
+  "org-layer": "email-sub-team",
+  "model": "claude-haiku-4-5-20251001",
+  "icon": "message-square",
+  "tags": ["whatsapp", "messaging", "copywriting", "campaigns", "retention"],
+  "description": "Writes high-converting WhatsApp Business campaign messages for all 3 Carisma brands. Specialises in conversational mobile copy: broadcasts, reminders, follow-ups, flash offers, re-engagement, Slimming accountability check-ins.",
+  "inputs": ["campaign calendar", "brand voice configs", "customer segment lists", "treatment/program context"],
+  "outputs": ["WhatsApp campaign copy (3 A/B/C variants)", "reminder sequences", "follow-up drips", "re-engagement messages"]
+}

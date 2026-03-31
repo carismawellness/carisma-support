@@ -1,0 +1,12 @@
+{
+  "name": "Email Researcher",
+  "slug": "email-researcher",
+  "reports-to": "Email Manager",
+  "org-layer": "email-sub-team",
+  "model": "claude-haiku-4-5-20251001",
+  "icon": "search",
+  "tags": ["email", "research", "content-ideas", "campaigns"],
+  "description": "Researches content angles, customer stories, seasonal hooks, and Malta context for all 3 brands. Maps findings to the 7 Carisma email content frameworks. Delivers weekly research brief to Email Copywriter.",
+  "inputs": ["brand knowledge", "seasonal calendar", "customer testimonials", "competitor emails", "previous campaign data"],
+  "outputs": ["weekly research brief (3-5 angles per brand)", "content framework mapping", "subject line hypotheses"]
+}

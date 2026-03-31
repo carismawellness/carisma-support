@@ -1,0 +1,12 @@
+{
+  "name": "Email Data Analyst",
+  "slug": "email-data-analyst",
+  "reports-to": "Email Manager",
+  "org-layer": "email-sub-team",
+  "model": "claude-haiku-4-5-20251001",
+  "icon": "database",
+  "tags": ["email", "analytics", "performance", "reporting", "KPI"],
+  "description": "Tracks email and WhatsApp campaign performance. Computes open rates, CTRs, unsubscribe rates, revenue per email. Classifies winners/watchlist/underperformers. Weekly report every Friday.",
+  "inputs": ["email platform data", "WhatsApp analytics", "campaign history"],
+  "outputs": ["weekly performance report", "winner/loser classification", "subject line pattern analysis", "send time recommendations"]
+}
