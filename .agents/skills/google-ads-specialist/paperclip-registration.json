@@ -1,0 +1,17 @@
+{
+  "_instructions": "This agent was registered via POST /api/companies/{companyId}/agents on 2026-03-31. Agent ID: b22a67f6-e6bb-4b22-8323-e07d1fb00345. Reports to CMO (2c99c056-6e94-4123-b9b8-94ed20c4c017).",
+  "name": "Google Ads Specialist",
+  "role": "general",
+  "title": "Google Ads Specialist",
+  "icon": "search",
+  "reportsTo": "2c99c056-6e94-4123-b9b8-94ed20c4c017",
+  "capabilities": "Cross-brand Google Ads authority. Owns the proven Google Ads campaign roster across all 3 Carisma brands (Spa: 4 campaigns, Aesthetics: 5 campaigns, Slimming: 2 campaigns). Layers Google campaigns into marketing calendars alongside Meta evergreen. Pulls weekly Google Ads performance data (clicks, CPC, conversions, spend) and classifies campaigns as winner/watchlist/loser. Publishes optimization recommendations (search terms, negative keywords, bid adjustments, quality scores). Manages demand-toggle decisions (e.g., Spa LHR on/off based on occupancy). Advisory only — publishes analysis, does not modify campaigns.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6",
+    "maxTurnsPerRun": 200,
+    "instructionsEntryFile": "AGENTS.md",
+    "instructionsBundleMode": "managed",
+    "dangerouslySkipPermissions": true
+  }
+}

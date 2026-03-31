@@ -1,0 +1,40 @@
+{
+  "name": "google-ads-report-analyst",
+  "type": "skill",
+  "description": "Google Ads Report Analyst sub-agent. Pulls weekly performance data across all 11 campaigns (Spa 4, Aesthetics 5, Slimming 2), computes KPIs (CTR, CPC, CPA, ROAS, impression share, Quality Score), classifies campaigns as Winner/Watchlist/Loser, analyses search term reports for wasted spend and expansion opportunities. Reports to Google Ads Specialist.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": false,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "metadata": {
+    "agent-role": "Google Ads Report Analyst",
+    "reports-to": "Google Ads Specialist",
+    "runtime": "Claude Haiku",
+    "org-layer": "Google Ads Sub-Team",
+    "tags": ["google-ads", "analytics", "reporting", "kpi", "performance", "search-terms", "quality-score", "impression-share", "ppc", "paperclip"],
+    "triggers": [
+      "google ads report",
+      "google ads performance",
+      "search term analysis",
+      "campaign performance",
+      "google ads kpi",
+      "weekly google report",
+      "impression share",
+      "quality score audit",
+      "wasted spend"
+    ]
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node"
+  },
+  "integrations": {
+    "reads": [
+      "config/kpi_thresholds.json",
+      "config/brands.json",
+      "config/budget-allocation.json",
+      "config/naming_conventions.json"
+    ],
+    "mcp_servers": ["google-workspace", "google-analytics"]
+  }
+}

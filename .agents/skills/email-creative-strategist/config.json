@@ -1,0 +1,38 @@
+{
+  "name": "email-creative-strategist",
+  "type": "skill",
+  "description": "Email Creative Strategist for the CMO's email marketing sub-team. Plans email creative direction, subject line testing, layout strategy, visual concepts, and A/B test frameworks for all 3 Carisma brands. Reports to the Email Marketing Strategist.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": false,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "metadata": {
+    "agent-role": "Email Creative Strategist",
+    "reports-to": "Email Marketing Strategist",
+    "runtime": "Claude Haiku",
+    "org-layer": "Email Sub-Team",
+    "tags": ["email", "creative", "strategy", "subject-lines", "layout", "a-b-testing", "paperclip"],
+    "triggers": [
+      "email creative",
+      "subject line test",
+      "email layout",
+      "email visual concept",
+      "email a/b test"
+    ]
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node"
+  },
+  "integrations": {
+    "reads": [
+      "config/branding_guidelines.md",
+      "config/emailer-guidelines.md",
+      "config/kpi_thresholds.json",
+      "marketing/email-marketing/spa-Q2-2026-email-plan.md",
+      "marketing/email-marketing/aesthetics-Q2-2026-email-plan.md",
+      "marketing/email-marketing/slimming-Q2-2026-email-plan.md"
+    ],
+    "mcp_servers": ["klaviyo", "google-workspace"]
+  }
+}

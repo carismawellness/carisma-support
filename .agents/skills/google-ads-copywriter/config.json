@@ -1,0 +1,40 @@
+{
+  "name": "google-ads-copywriter",
+  "type": "skill",
+  "description": "Google Ads Copywriter sub-agent. Writes RSA headlines (30 chars), descriptions (90 chars), sitelinks, callouts, and structured snippets for all 3 Carisma brands. Adapts tone per brand voice (Spa warm/sensory, Aesthetics clinical-warm, Slimming compassionate). Reports to Google Ads Specialist.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": false,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "metadata": {
+    "agent-role": "Google Ads Copywriter",
+    "reports-to": "Google Ads Specialist",
+    "runtime": "Claude Haiku",
+    "org-layer": "Google Ads Sub-Team",
+    "tags": ["google-ads", "copywriting", "rsa", "headlines", "descriptions", "sitelinks", "callouts", "search-ads", "ppc", "paperclip"],
+    "triggers": [
+      "write google ad copy",
+      "rsa headlines",
+      "ad descriptions",
+      "sitelink copy",
+      "callout extensions",
+      "google ads copy refresh",
+      "ad copy test",
+      "headline variations"
+    ]
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node"
+  },
+  "integrations": {
+    "reads": [
+      "config/brands.json",
+      "config/offers.json",
+      "config/naming_conventions.json",
+      "config/kpi_thresholds.json",
+      "config/performance_marketing_angles.md"
+    ],
+    "mcp_servers": ["google-workspace"]
+  }
+}

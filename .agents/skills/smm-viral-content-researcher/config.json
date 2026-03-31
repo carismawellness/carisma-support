@@ -1,0 +1,45 @@
+{
+  "name": "smm-viral-content-researcher",
+  "type": "skill",
+  "description": "Viral content intelligence specialist for Carisma Wellness Group. Researches trending TikTok and Instagram formats in the wellness, aesthetics, and slimming verticals. Scouts competitor content via SortFeed and Viral Finder. Delivers weekly trend reports with brand-adapted content concepts to the Creative Strategist, filtered through each brand's voice guardrails.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": false,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "metadata": {
+    "agent-role": "SMM Viral Content Researcher",
+    "agent-id": "432d1754-9cab-4ae2-88ae-04d4d0a2257c",
+    "reports-to": "SMM Expert",
+    "runtime": "Claude Haiku",
+    "org-layer": "SMM Sub-Team",
+    "tags": ["social-media", "viral-content", "trend-research", "tiktok", "instagram", "competitor-analysis", "content-trends", "wellness", "aesthetics", "slimming", "sortfeed", "viral-finder"],
+    "triggers": [
+      "viral content research",
+      "trend report",
+      "what is trending",
+      "viral trends",
+      "competitor content",
+      "content trends",
+      "social media trends",
+      "tiktok trends",
+      "instagram trends",
+      "viral format",
+      "trend brief",
+      "weekly trends"
+    ]
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node"
+  },
+  "integrations": {
+    "reads": [
+      "config/brands.json",
+      "config/branding_guidelines.md",
+      "config/smm-content-pillars/spa-smm.md",
+      "config/smm-content-pillars/aesthetics-smm.md",
+      "config/smm-content-pillars/slimming-smm.md"
+    ],
+    "mcp_servers": ["playwright", "google-workspace"]
+  }
+}

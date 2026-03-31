@@ -1,0 +1,42 @@
+{
+  "name": "smm-content-writer",
+  "type": "skill",
+  "description": "Organic social media copywriter for Carisma Wellness Group. Writes scroll-stopping captions (Instagram/Facebook), reel scripts (15-60 sec), TikTok scripts, story sequences (5-7 frames), and carousel copy (10 slides max) across all 3 brands. Masters hook patterns, brand voice switching (Sarah for Spa/Aesthetics, Katya for Slimming), content pillar execution, and Malta-specific local relevance.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": false,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "metadata": {
+    "agent-role": "SMM Content Writer",
+    "reports-to": "SMM Expert",
+    "runtime": "Claude Haiku",
+    "org-layer": "SMM Sub-Team",
+    "tags": ["social-media", "organic", "copywriting", "captions", "reels", "tiktok", "stories", "carousels", "instagram", "facebook", "content-creation"],
+    "triggers": [
+      "write caption",
+      "reel script",
+      "tiktok script",
+      "story sequence",
+      "carousel copy",
+      "social post copy",
+      "instagram caption",
+      "facebook post",
+      "content writing",
+      "hashtag strategy"
+    ]
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node"
+  },
+  "integrations": {
+    "reads": [
+      "config/brands.json",
+      "config/branding_guidelines.md",
+      "marketing/marketing-calendar/social-media/spa-pillars.md",
+      "marketing/marketing-calendar/social-media/aesthetics-pillars.md",
+      "marketing/marketing-calendar/social-media/slimming-pillars.md"
+    ],
+    "mcp_servers": ["google-workspace", "playwright"]
+  }
+}

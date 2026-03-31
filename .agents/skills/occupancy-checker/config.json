@@ -1,0 +1,70 @@
+{
+  "name": "occupancy-checker",
+  "type": "skill",
+  "description": "Supply-demand optimizer for the CMO. Scrapes Fresha for practitioner availability, pulls Meta Ads performance data, cross-references capacity vs ad spend, and generates budget reallocation proposals. Advisory role — publishes proposals, does not modify campaigns.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": true,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "argument-hint": "[slimming|aesthetics|all]",
+  "metadata": {
+    "agent-role": "Occupancy Checker",
+    "reports-to": "CMO",
+    "runtime": "Claude Code",
+    "org-layer": "CMO Sub-Team",
+    "tags": ["fresha", "capacity", "meta-ads", "budget", "optimization", "paperclip"],
+    "triggers": [
+      "occupancy",
+      "capacity check",
+      "check availability",
+      "budget reallocation",
+      "supply demand"
+    ]
+  },
+  "inputs": {
+    "venue": {
+      "type": "string",
+      "enum": ["slimming", "aesthetics", "all"],
+      "description": "Which venue(s) to check. Defaults to all.",
+      "required": false,
+      "default": "all"
+    },
+    "days": {
+      "type": "integer",
+      "description": "Number of days to check ahead on Fresha. Defaults to 14.",
+      "required": false,
+      "default": 14
+    }
+  },
+  "outputs": {
+    "capacity_report": {
+      "type": "object",
+      "description": "Per-service capacity data from Fresha at .tmp/performance/fresha_capacity_report.json"
+    },
+    "optimizer_report": {
+      "type": "string",
+      "description": "Markdown report with reallocation proposals at .tmp/performance/occupancy-optimizer-report.md"
+    },
+    "google_sheet": {
+      "type": "string",
+      "description": "Updated Google Sheet with capacity + spend + proposed reallocation"
+    }
+  },
+  "execution": {
+    "timeout": 600,
+    "environment": "python",
+    "requires_context": ["meta-ads MCP", "google-workspace MCP"]
+  },
+  "integrations": {
+    "reads": [
+      "config/fresha_venues.json",
+      "config/brands.json",
+      "config/naming_conventions.json",
+      "config/kpi_thresholds.json",
+      "workflows/12_capacity_check.md",
+      ".tmp/performance/fresha_capacity_report.json",
+      ".tmp/performance/meta_ads_by_service.json"
+    ],
+    "mcp_servers": ["meta-ads", "google-workspace", "playwright"]
+  }
+}

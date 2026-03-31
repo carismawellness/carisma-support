@@ -1,0 +1,17 @@
+{
+  "_instructions": "This agent was registered via POST /api/companies/{companyId}/agents on 2026-03-31. Agent ID: 09600a30-2096-49a9-a543-6bf2a2e41a47. Reports to CMO (2c99c056-6e94-4123-b9b8-94ed20c4c017).",
+  "name": "Occupancy Checker",
+  "role": "general",
+  "title": "Occupancy Checker",
+  "icon": "target",
+  "reportsTo": "2c99c056-6e94-4123-b9b8-94ed20c4c017",
+  "capabilities": "Supply-demand optimizer for the CMO. Scrapes Fresha booking pages for practitioner availability across Slimming (9 services) and Aesthetics (4 services). Cross-references capacity data with Meta Ads campaign performance. Generates budget reallocation proposals: identifies WASTE (spending on full services) and OPPORTUNITY (open capacity with no ads). Publishes optimizer reports (markdown + Google Sheet) and prints executive summary. Advisory only -- does not modify campaigns or budgets.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6",
+    "maxTurnsPerRun": 200,
+    "instructionsEntryFile": "AGENTS.md",
+    "instructionsBundleMode": "managed",
+    "dangerouslySkipPermissions": true
+  }
+}

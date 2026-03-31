@@ -1,0 +1,17 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: a1980898-4cde-4c2b-aeea-d1129eeadfd9. Reports to CMO (2c99c056-6e94-4123-b9b8-94ed20c4c017).",
+  "name": "SMM Expert",
+  "role": "general",
+  "title": "SMM Expert Specialist",
+  "icon": "sparkles",
+  "reportsTo": "2c99c056-6e94-4123-b9b8-94ed20c4c017",
+  "capabilities": "Owns all organic social media across Carisma Spa, Carisma Aesthetics, and Carisma Slimming. Plans monthly and weekly content calendars using brand-specific content pillar ratios. Creates all organic content: captions, reel scripts, TikTok scripts, story sequences, and creative briefs. Publishes posts via Meta Page API (Facebook/Instagram) and Playwright (TikTok/Stories). Pulls weekly organic performance metrics (reach, engagement, saves, shares, profile visits) per brand. Reports organic social KPIs to CMO weekly. Coordinates seasonal themes across brands.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6",
+    "maxTurnsPerRun": 200,
+    "instructionsEntryFile": "AGENTS.md",
+    "instructionsBundleMode": "managed",
+    "dangerouslySkipPermissions": true
+  }
+}

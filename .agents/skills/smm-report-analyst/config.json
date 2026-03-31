@@ -1,0 +1,43 @@
+{
+  "name": "smm-report-analyst",
+  "type": "skill",
+  "description": "Organic social media analytics specialist for Carisma Wellness Group. Tracks reach, engagement rate, saves, shares, follower growth, and story completion rate across Instagram, Facebook, and TikTok for all 3 brands. Analyses content pillar performance, identifies optimal posting times, classifies posts as Top Performer/Average/Underperformer, detects multi-week trends, and produces weekly/monthly performance reports with actionable recommendations.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": false,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "metadata": {
+    "agent-role": "SMM Report Analyst",
+    "reports-to": "SMM Expert",
+    "runtime": "Claude Haiku",
+    "org-layer": "SMM Sub-Team",
+    "tags": ["social-media", "organic", "analytics", "reporting", "metrics", "engagement", "performance", "instagram", "facebook", "tiktok"],
+    "triggers": [
+      "social media report",
+      "organic performance",
+      "engagement analysis",
+      "content pillar performance",
+      "weekly social report",
+      "monthly social report",
+      "follower growth",
+      "posting time analysis",
+      "social metrics",
+      "content performance"
+    ]
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node"
+  },
+  "integrations": {
+    "reads": [
+      "config/brands.json",
+      "config/branding_guidelines.md",
+      "config/kpi_thresholds.json",
+      "marketing/marketing-calendar/social-media/spa-pillars.md",
+      "marketing/marketing-calendar/social-media/aesthetics-pillars.md",
+      "marketing/marketing-calendar/social-media/slimming-pillars.md"
+    ],
+    "mcp_servers": ["meta-ads", "google-workspace", "playwright"]
+  }
+}

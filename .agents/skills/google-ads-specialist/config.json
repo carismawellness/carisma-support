@@ -1,0 +1,73 @@
+{
+  "name": "google-ads-specialist",
+  "type": "skill",
+  "description": "Dedicated Google Ads Specialist agent for the CMO team. Owns the proven Google Ads campaign roster across all 3 Carisma brands, layers Google campaigns into marketing calendars, pulls weekly performance data, and publishes optimization recommendations. Reports to the CMO.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": true,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "argument-hint": "<action> [brand]",
+  "metadata": {
+    "agent-role": "Google Ads Specialist",
+    "reports-to": "CMO",
+    "runtime": "Claude Code",
+    "org-layer": "CMO Sub-Team",
+    "tags": ["google-ads", "search", "pmax", "remarketing", "maps", "ppc", "sem", "paperclip"],
+    "triggers": [
+      "google ads",
+      "google campaigns",
+      "search campaigns",
+      "pmax",
+      "performance max",
+      "google performance",
+      "google optimization"
+    ]
+  },
+  "inputs": {
+    "action": {
+      "type": "string",
+      "enum": ["roster", "layer", "report", "optimize"],
+      "description": "Which action to run. 'roster' shows proven campaigns, 'layer' merges into calendar, 'report' pulls performance, 'optimize' analyses and recommends.",
+      "required": true
+    },
+    "brand": {
+      "type": "string",
+      "enum": ["spa", "aesthetics", "slimming", "all"],
+      "description": "Which brand to focus on. Defaults to 'all'.",
+      "required": false,
+      "default": "all"
+    }
+  },
+  "outputs": {
+    "campaign_roster": {
+      "type": "object",
+      "description": "Proven Google Ads campaigns per brand with type and status"
+    },
+    "calendar_layer": {
+      "type": "object",
+      "description": "Google Ads campaigns formatted for marketing calendar integration"
+    },
+    "performance_report": {
+      "type": "object",
+      "description": "Weekly Google Ads performance — clicks, CPC, conversions, spend per campaign"
+    },
+    "optimization_brief": {
+      "type": "object",
+      "description": "Search term analysis, keyword recommendations, bid adjustments"
+    }
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node",
+    "requires_context": ["google-ads API (future)", "google-sheets MCP", "google-analytics MCP"]
+  },
+  "integrations": {
+    "reads": [
+      "~/.claude/skills/google-ads-strategist/SKILL.md",
+      "config/kpi_thresholds.json",
+      "config/brands.json",
+      "config/budget-allocation.json"
+    ],
+    "mcp_servers": ["google-workspace", "google-analytics"]
+  }
+}

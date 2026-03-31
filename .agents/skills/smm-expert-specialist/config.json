@@ -1,0 +1,83 @@
+{
+  "name": "smm-expert-specialist",
+  "type": "skill",
+  "description": "Social Media Marketing Expert Specialist for the CMO team. Owns all organic social media across all 3 Carisma brands — end-to-end from content planning through publishing and performance reporting. Plans content calendars, creates captions/reel scripts/TikTok scripts/story sequences/creative briefs, publishes via Meta Page API and Playwright, and reports weekly organic KPIs.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": true,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "argument-hint": "<action> [brand]",
+  "metadata": {
+    "agent-role": "SMM Expert Specialist",
+    "reports-to": "CMO",
+    "runtime": "Claude Code",
+    "org-layer": "CMO Sub-Team",
+    "tags": ["social-media", "organic", "instagram", "facebook", "tiktok", "reels", "content", "publishing", "paperclip"],
+    "triggers": [
+      "social media",
+      "organic social",
+      "social post",
+      "content calendar",
+      "reel script",
+      "tiktok script",
+      "story sequence",
+      "caption",
+      "social performance",
+      "organic insights"
+    ]
+  },
+  "inputs": {
+    "action": {
+      "type": "string",
+      "enum": ["plan", "create", "publish", "report", "calendar"],
+      "description": "Which action to run. 'plan' builds weekly content plan, 'create' generates content for a slot, 'publish' posts to platforms, 'report' pulls organic performance, 'calendar' manages the Google Sheets content calendar.",
+      "required": true
+    },
+    "brand": {
+      "type": "string",
+      "enum": ["spa", "aesthetics", "slimming", "all"],
+      "description": "Which brand to target. Defaults to 'all'.",
+      "required": false,
+      "default": "all"
+    }
+  },
+  "outputs": {
+    "content_plan": {
+      "type": "object",
+      "description": "Weekly content plan with pillar assignments per slot"
+    },
+    "content_piece": {
+      "type": "object",
+      "description": "Generated content — caption, reel script, story sequence, or brief"
+    },
+    "publish_result": {
+      "type": "object",
+      "description": "Post IDs and confirmation from Meta Graph API"
+    },
+    "performance_report": {
+      "type": "object",
+      "description": "Weekly organic metrics — reach, engagement, saves, shares per brand"
+    },
+    "calendar_update": {
+      "type": "object",
+      "description": "Updated Google Sheets content calendar with statuses"
+    }
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node",
+    "requires_context": ["meta-ads MCP", "playwright MCP", "google-sheets MCP", "google-workspace MCP"]
+  },
+  "integrations": {
+    "reads": [
+      ".agents/skills/social-media-content-strategy/SKILL.md",
+      "marketing/marketing-calendar/social-media/spa-pillars.md",
+      "marketing/marketing-calendar/social-media/aesthetics-pillars.md",
+      "marketing/marketing-calendar/social-media/slimming-pillars.md",
+      "config/brands.json",
+      "config/branding_guidelines.md",
+      "config/social_media_calendar.json"
+    ],
+    "mcp_servers": ["meta-ads", "playwright", "google-workspace"]
+  }
+}

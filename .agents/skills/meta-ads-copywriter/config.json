@@ -1,0 +1,25 @@
+{
+  "name": "meta-ads-copywriter",
+  "type": "skill",
+  "description": "Writes Facebook and Instagram ad copy (primary text, headlines, descriptions, CTAs) for all 3 Carisma brands. Produces 3-5 variants per component with scroll-stopping hooks, brand-persona-matched tone, and funnel-stage-appropriate messaging.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": false,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "metadata": {
+    "agent-role": "Meta Ads Copywriter",
+    "reports-to": "Meta Strategist",
+    "runtime": "Claude Haiku",
+    "org-layer": "Meta Ads Sub-Team",
+    "tags": ["meta-ads", "copywriting", "ad-copy", "lead-gen", "facebook-ads", "instagram-ads", "brand-voice"],
+    "triggers": ["write ad copy", "create ad text", "headline variants", "primary text", "refresh copy", "hook bank", "ad copy for", "write headlines"]
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node"
+  },
+  "integrations": {
+    "reads": ["config/brands.json", "config/offers.json", "config/kpi_thresholds.json", "config/naming_conventions.json", "config/performance_marketing_angles.md"],
+    "mcp_servers": ["meta-ads", "google-workspace"]
+  }
+}

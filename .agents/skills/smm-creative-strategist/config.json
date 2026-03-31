@@ -1,0 +1,44 @@
+{
+  "name": "smm-creative-strategist",
+  "type": "skill",
+  "description": "Organic social media creative strategist for Carisma Wellness Group. Plans content themes and visual aesthetics per brand (colour palettes, photography style, grid layout, graphic design direction). Develops trend integration strategies (adopt/adapt/ignore framework for TikTok/Reels trends), designs UGC strategies, creates seasonal creative concepts, plans A/B tests for content format and visual style, and briefs the Content Writer on creative direction.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": false,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "metadata": {
+    "agent-role": "SMM Creative Strategist",
+    "reports-to": "SMM Expert",
+    "runtime": "Claude Haiku",
+    "org-layer": "SMM Sub-Team",
+    "tags": ["social-media", "organic", "creative-strategy", "visual-direction", "trends", "ugc", "ab-testing", "brand-aesthetics", "content-themes"],
+    "triggers": [
+      "creative strategy",
+      "content theme",
+      "visual direction",
+      "trend integration",
+      "ugc strategy",
+      "grid layout",
+      "seasonal creative",
+      "ab test design",
+      "brand aesthetics",
+      "creative brief",
+      "mood board",
+      "story highlights"
+    ]
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node"
+  },
+  "integrations": {
+    "reads": [
+      "config/brands.json",
+      "config/branding_guidelines.md",
+      "marketing/marketing-calendar/social-media/spa-pillars.md",
+      "marketing/marketing-calendar/social-media/aesthetics-pillars.md",
+      "marketing/marketing-calendar/social-media/slimming-pillars.md"
+    ],
+    "mcp_servers": ["meta-ads", "google-workspace", "playwright"]
+  }
+}

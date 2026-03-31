@@ -1,0 +1,74 @@
+{
+  "name": "meta-strategist",
+  "type": "skill",
+  "description": "Dedicated Meta Ads Strategist agent for the CMO's performance marketing team. Manages evergreen campaign rosters across all 3 Carisma brands, layers always-on campaigns into marketing calendars, and advises on Meta Ads campaign structure, budget allocation, naming conventions, and seasonal creative rotation. Reports to the CMO.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": true,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "argument-hint": "<action> [brand]",
+  "metadata": {
+    "agent-role": "Meta Strategist",
+    "reports-to": "CMO",
+    "delegates-to": ["Meta Ads Copywriter", "Meta Ads Report Analyst", "Meta Ads Creative Strategist"],
+    "runtime": "Claude Code",
+    "org-layer": "CMO Sub-Team",
+    "tags": ["meta-ads", "performance-marketing", "evergreen-campaigns", "campaign-strategy", "media-buying", "paperclip"],
+    "triggers": [
+      "meta strategy",
+      "meta campaigns",
+      "evergreen campaigns",
+      "meta ads plan",
+      "meta performance",
+      "meta audit"
+    ]
+  },
+  "inputs": {
+    "action": {
+      "type": "string",
+      "enum": ["plan", "layer", "review", "audit"],
+      "description": "Which action to run. 'plan' generates evergreen roster, 'layer' merges into calendar, 'review' audits live campaigns, 'audit' pulls 30-day performance.",
+      "required": true
+    },
+    "brand": {
+      "type": "string",
+      "enum": ["spa", "aesthetics", "slimming", "all"],
+      "description": "Which brand to focus on. Defaults to 'all'.",
+      "required": false,
+      "default": "all"
+    }
+  },
+  "outputs": {
+    "campaign_roster": {
+      "type": "object",
+      "description": "Evergreen Meta Ads campaigns per brand with objectives, audiences, budgets"
+    },
+    "calendar_layer": {
+      "type": "object",
+      "description": "Evergreen campaigns formatted for marketing calendar integration"
+    },
+    "audit_report": {
+      "type": "object",
+      "description": "Live campaign audit — missing, misconfigured, or rogue campaigns flagged"
+    },
+    "performance_report": {
+      "type": "object",
+      "description": "30-day performance — CPL, ROAS, spend, winner/watchlist/loser classification"
+    }
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node",
+    "requires_context": ["meta-ads MCP"]
+  },
+  "integrations": {
+    "reads": [
+      "config/brands.json",
+      "config/offers.json",
+      "config/carisma_slimming_evergreen_offers.md",
+      "config/performance_marketing_angles.md",
+      "marketing/*/meta-ads.md"
+    ],
+    "mcp_servers": ["meta-ads", "google-workspace"]
+  }
+}

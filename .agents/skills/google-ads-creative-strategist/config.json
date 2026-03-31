@@ -1,0 +1,43 @@
+{
+  "name": "google-ads-creative-strategist",
+  "type": "skill",
+  "description": "Google Ads Creative Strategist sub-agent. Plans campaign structures (keyword themes to ad groups to copy variants), designs A/B test hypotheses with single-variable isolation, ensures landing page to ad copy message match, develops negative keyword strategy, and creates seasonal creative rotation schedules aligned with Carisma's marketing calendar. Reports to Google Ads Specialist.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": false,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "metadata": {
+    "agent-role": "Google Ads Creative Strategist",
+    "reports-to": "Google Ads Specialist",
+    "runtime": "Claude Haiku",
+    "org-layer": "Google Ads Sub-Team",
+    "tags": ["google-ads", "strategy", "campaign-structure", "ab-testing", "keywords", "negative-keywords", "seasonal", "landing-pages", "ppc", "paperclip"],
+    "triggers": [
+      "google ads strategy",
+      "campaign structure",
+      "keyword strategy",
+      "ab test plan",
+      "negative keywords",
+      "seasonal rotation",
+      "landing page alignment",
+      "keyword expansion",
+      "new google campaign",
+      "quarterly strategy review"
+    ]
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node"
+  },
+  "integrations": {
+    "reads": [
+      "config/brands.json",
+      "config/offers.json",
+      "config/naming_conventions.json",
+      "config/kpi_thresholds.json",
+      "config/budget-allocation.json",
+      "config/performance_marketing_angles.md"
+    ],
+    "mcp_servers": ["google-workspace", "google-analytics"]
+  }
+}
