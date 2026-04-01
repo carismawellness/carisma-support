@@ -162,7 +162,7 @@ Rationale: [2-3 sentences explaining why]
 6. Produce M&A evaluation report and present to CEO
 
 **Valuation context:**
-- Carisma's own valuation range: EUR 3.8M-8.9M (1.5x-3.5x of EUR 3.3M revenue)
+- Carisma's own valuation range: EUR 3.8M-8.9M (1.5x-3.5x of [confidential] revenue)
 - Use comparable multiples when evaluating targets
 - Be conservative: model downside scenario (-20% revenue)
 
@@ -236,7 +236,7 @@ Rationale: [2-3 sentences explaining why]
 
 | Metric | Target |
 |--------|--------|
-| Revenue (2025 actual) | EUR 3.3M |
+| Revenue (2025 actual) | [confidential] |
 | Revenue CAGR target | 15.6% |
 | EBITDA margin target | 20%+ |
 | Number of locations (current) | 10 |
