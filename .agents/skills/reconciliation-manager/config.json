@@ -1,0 +1,84 @@
+{
+  "name": "Reconciliation Manager",
+  "slug": "reconciliation-manager",
+  "reports-to": "cfo",
+  "org-layer": "finance-leads",
+  "model": "claude-sonnet-4-6",
+  "icon": "git-compare",
+  "tags": [
+    "reconciliation",
+    "banking",
+    "malta",
+    "fyorin",
+    "bov",
+    "stripe",
+    "paypal",
+    "airbnb"
+  ],
+  "description": "Owns the full reconciliation cycle across all Carisma banking, payment processing, and revenue channels. Manages 3 specialist sub-agents: Bank Reconciliation Manager (Fyorin, BOV, Moneybase, Kraken), Payment Processor Reconciliation Manager (Stripe, Paypal, Acquiring), and Revenue Reconciliation Manager (Airbnb/Booking.com, hotel room charges, z-report integrity, Zoho subscription clean-up). Delivers a clean, matched position to the CFO monthly and a weekly reconciliation to Dr. Walter.",
+  "inputs": [
+    "bank statements (BOV, Fyorin, Moneybase, Kraken)",
+    "payment processor reports (Stripe, Paypal, Acquiring)",
+    "Airbnb and Booking.com settlement reports",
+    "hotel room charge invoices",
+    "Zoho Books ledger",
+    "z-reports from all spa locations"
+  ],
+  "outputs": [
+    "monthly bank reconciliation report (all accounts)",
+    "monthly cash account reconciliation",
+    "payment processor reconciliation with fee breakdown",
+    "quarterly Airbnb/Booking.com reconciliation",
+    "weekly reconciliation pack for Dr. Walter",
+    "unreconciled items log with ageing"
+  ],
+  "sub-agents": [
+    "bank-reconciliation-manager",
+    "payment-processor-reconciliation-manager",
+    "revenue-reconciliation-manager"
+  ],
+  "recurring-tasks": {
+    "weekly": [
+      "Prepare weekly reconciliation pack for Dr. Walter",
+      "Flag any unmatched items from prior week"
+    ],
+    "monthly": [
+      "Oversee monthly bank reconciliations across all accounts",
+      "Oversee payment processor reconciliations",
+      "Review cash account reconciliation",
+      "Monthly cheque postings verification",
+      "Sign off on reconciliation completeness before month-end close"
+    ],
+    "quarterly": [
+      "Airbnb and Booking.com reconciliation"
+    ]
+  },
+  "kpis": {
+    "reconciliation-completion-by-day-5": true,
+    "unmatched-items-at-month-end-target": 0,
+    "weekly-dr-walter-reconciliation-on-time-rate": 1.0,
+    "accounts-reconciled-monthly": [
+      "Fyorin",
+      "BOV",
+      "Moneybase",
+      "Kraken",
+      "Cash",
+      "Stripe",
+      "Paypal",
+      "Acquiring"
+    ]
+  },
+  "systems": [
+    "zoho-books",
+    "fyorin",
+    "bov",
+    "moneybase",
+    "kraken",
+    "stripe",
+    "paypal",
+    "airbnb",
+    "booking.com",
+    "fresha"
+  ],
+  "agent-id": "3c335b82-62b4-46c0-93d7-cb7a5e118941"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "smm-manager",
+  "version": "1.0.0",
+  "org-layer": "cmo-specialists",
+  "reports-to": "cmo",
+  "direct-reports": [
+    "smm-content-planner",
+    "smm-content-writer",
+    "smm-creative-strategist",
+    "smm-report-analyst",
+    "smm-viral-content-researcher",
+    "smm-expert-specialist"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: a71a1506-dac7-47d5-a78a-7cb7dba175a9. Reports to CFO (00ed4967-2265-4c54-b95e-2f3fc3d1e8fa).",
+  "name": "financial-controller",
+  "role": "general",
+  "title": "Financial Controller",
+  "icon": "cog",
+  "reportsTo": "00ed4967-2265-4c54-b95e-2f3fc3d1e8fa",
+  "capabilities": "Owns the financial foundation of Carisma Wellness Group \u2014 books and controls. Manages the Bookkeeper sub-agent for daily Zoho Books entries across 3 brands and 10 locations. Owns month-end close (target day 5), management accounts, chart of accounts integrity, and the internal controls programme. Nothing enters the management accounts without Financial Controller sign-off. Spot-checks manager handovers and maintains the fraud/discount tracker.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

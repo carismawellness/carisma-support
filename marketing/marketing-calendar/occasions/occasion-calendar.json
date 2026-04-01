@@ -1,0 +1,253 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-03-31",
+  "note": "Official Carisma occasion calendar. TBD offers should use thematic/awareness angles, not invented discounts.",
+
+  "occasions": [
+    {
+      "month": 1,
+      "name": "New Year New Me",
+      "date_type": "fixed",
+      "anchor_date": "January 1",
+      "campaign_window_weeks": 2,
+      "campaign_start_rule": "December 18 (2 weeks before Jan 1)",
+      "priority": "HIGH",
+      "offers": {
+        "spa": "Book 3 get 1 free",
+        "aesthetics": null,
+        "slimming": "Book 3 get 1 free"
+      },
+      "themes": {
+        "spa": "Fresh start, reset, permission to invest in yourself",
+        "aesthetics": "New year glow, skin refresh, confidence reboot",
+        "slimming": "New beginning, this year is different, structured plan"
+      }
+    },
+    {
+      "month": 2,
+      "name": "Valentine's Day",
+      "date_type": "fixed",
+      "anchor_date": "February 14",
+      "campaign_window_weeks": 2,
+      "campaign_start_rule": "February 1",
+      "priority": "HIGH",
+      "offers": {
+        "spa": "50% off your friend",
+        "aesthetics": null,
+        "slimming": "50% off your friend"
+      },
+      "themes": {
+        "spa": "Couples escape, gift of relaxation, self-love",
+        "aesthetics": "Date-night glow, confidence for Valentine's, treat yourself",
+        "slimming": "Love your body, bring a friend on the journey"
+      }
+    },
+    {
+      "month": 3,
+      "name": "Women's Day",
+      "date_type": "fixed",
+      "anchor_date": "March 8",
+      "campaign_window_weeks": 2,
+      "campaign_start_rule": "February 22",
+      "priority": "MEDIUM",
+      "offers": {
+        "spa": null,
+        "aesthetics": null,
+        "slimming": null
+      },
+      "themes": {
+        "spa": "Celebrate her, empowerment through rest, women who choose themselves",
+        "aesthetics": "Confidence is power, women supporting women, self-investment",
+        "slimming": "Strength in every step, women reclaiming their health"
+      }
+    },
+    {
+      "month": 4,
+      "name": "Easter",
+      "date_type": "moveable",
+      "lookup": "Easter Sunday of the target year",
+      "reference_dates": {
+        "2026": "April 5",
+        "2027": "March 28"
+      },
+      "campaign_window_weeks": 2,
+      "priority": "HIGH",
+      "combined_theme": "Easter + Summer Ready",
+      "offers": {
+        "spa": null,
+        "aesthetics": null,
+        "slimming": null
+      },
+      "themes": {
+        "spa": "Easter escape, spring renewal, golden bloom",
+        "aesthetics": "Spring skin reset, Easter glow, fresh start",
+        "slimming": "New season new you, summer body prep begins"
+      }
+    },
+    {
+      "month": 5,
+      "name": "Mother's Day",
+      "date_type": "moveable",
+      "lookup": "Second Sunday of May",
+      "reference_dates": {
+        "2026": "May 10",
+        "2027": "May 9"
+      },
+      "campaign_window_weeks": 2,
+      "priority": "HIGH",
+      "combined_theme": "Mother's Day + Summer Ready",
+      "offers": {
+        "spa": null,
+        "aesthetics": null,
+        "slimming": null
+      },
+      "themes": {
+        "spa": "The greatest gift for mum, mother-daughter spa day",
+        "aesthetics": "Mum's glow moment, gift of confidence",
+        "slimming": "Me time for mum, reclaim your energy"
+      }
+    },
+    {
+      "month": 6,
+      "name": "Father's Day",
+      "date_type": "moveable",
+      "lookup": "Third Sunday of June",
+      "reference_dates": {
+        "2026": "June 21",
+        "2027": "June 20"
+      },
+      "campaign_window_weeks": 2,
+      "priority": "MEDIUM",
+      "combined_theme": "Father's Day + Summer Ready",
+      "offers": {
+        "spa": null,
+        "aesthetics": null,
+        "slimming": null
+      },
+      "themes": {
+        "spa": "Gift of deep relief for dad, couples summer glow",
+        "aesthetics": "Dad's glow-up, men's confidence treatments",
+        "slimming": "Built for him, the men's sculpt plan"
+      },
+      "note": "Malta also celebrates Father's Day on March 19 (St. Joseph's Day). This entry covers the June celebration."
+    },
+    {
+      "month": 7,
+      "name": "Summer Sale",
+      "date_type": "flexible",
+      "anchor_date": "Mid-July",
+      "campaign_window_weeks": 3,
+      "campaign_start_rule": "July 1",
+      "priority": "MEDIUM",
+      "combined_theme": "Summer Sale / PRIME DAY tie-in (if applicable)",
+      "offers": {
+        "spa": null,
+        "aesthetics": null,
+        "slimming": null
+      },
+      "themes": {
+        "spa": "Malta's finest escape, summer indulgence",
+        "aesthetics": "Summer skin maintenance, holiday glow",
+        "slimming": "Summer confidence, express sessions"
+      }
+    },
+    {
+      "month": 8,
+      "name": "TBD",
+      "date_type": "flexible",
+      "anchor_date": "TBD",
+      "campaign_window_weeks": 2,
+      "priority": "LOW",
+      "offers": {
+        "spa": null,
+        "aesthetics": null,
+        "slimming": null
+      },
+      "themes": {
+        "spa": "End of summer self-care, autumn prep",
+        "aesthetics": "Post-summer skin repair, back-to-routine glow",
+        "slimming": "Reset after summer, new routine"
+      },
+      "note": "August occasion TBD. Use general seasonal themes."
+    },
+    {
+      "month": 9,
+      "name": "Back to School",
+      "date_type": "fixed",
+      "anchor_date": "September 1",
+      "campaign_window_weeks": 2,
+      "campaign_start_rule": "August 18",
+      "priority": "MEDIUM",
+      "offers": {
+        "spa": null,
+        "aesthetics": null,
+        "slimming": null
+      },
+      "themes": {
+        "spa": "Back to routine, your time when they're at school",
+        "aesthetics": "Autumn skin prep, back to self-care routine",
+        "slimming": "New term, new commitment, back on track"
+      }
+    },
+    {
+      "month": 10,
+      "name": "Anniversary",
+      "date_type": "fixed",
+      "anchor_date": "October (company anniversary)",
+      "campaign_window_weeks": 3,
+      "campaign_start_rule": "Early October",
+      "priority": "HIGH",
+      "offers": {
+        "spa": "30% Discount",
+        "aesthetics": null,
+        "slimming": "EUR 30 Discount"
+      },
+      "themes": {
+        "spa": "Celebrating X years of wellness, thank you discount",
+        "aesthetics": "Anniversary glow, celebrate with us",
+        "slimming": "X years of transformations, anniversary special"
+      }
+    },
+    {
+      "month": 11,
+      "name": "BFCM",
+      "date_type": "moveable",
+      "lookup": "Fourth Friday of November (Black Friday) + following Monday (Cyber Monday)",
+      "reference_dates": {
+        "2026": "November 27 (BF) / November 30 (CM)",
+        "2027": "November 26 (BF) / November 29 (CM)"
+      },
+      "campaign_window_weeks": 4,
+      "priority": "HIGH",
+      "offers": {
+        "spa": "Pay EUR 50 Get EUR 100",
+        "aesthetics": null,
+        "slimming": "Free facial + voucher"
+      },
+      "themes": {
+        "spa": "The gift that keeps giving, biggest deal of the year",
+        "aesthetics": "Black Friday beauty, exclusive packages",
+        "slimming": "BFCM transformation starter, free facial bonus"
+      }
+    },
+    {
+      "month": 12,
+      "name": "XMAS",
+      "date_type": "fixed",
+      "anchor_date": "December 25",
+      "campaign_window_weeks": 4,
+      "campaign_start_rule": "December 1",
+      "priority": "HIGH",
+      "offers": {
+        "spa": "Pay EUR 50 Get EUR 100",
+        "aesthetics": null,
+        "slimming": "Free facial"
+      },
+      "themes": {
+        "spa": "The perfect gift, holiday escape, Christmas wellness",
+        "aesthetics": "Holiday glow, New Year's Eve ready, gift of confidence",
+        "slimming": "End the year strong, holiday confidence, gift of transformation"
+      }
+    }
+  ]
+}

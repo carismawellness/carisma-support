@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: 52f50ce9-b845-406b-8054-ef9f44fc81db. Reports to payroll-statutory-compliance-manager (bc3778f3-7606-4918-879f-62c8440ef23e).",
+  "name": "benefits-incentives-manager",
+  "role": "general",
+  "title": "Benefits & Incentives Manager",
+  "icon": "star",
+  "reportsTo": "bc3778f3-7606-4918-879f-62c8440ef23e",
+  "capabilities": "Manages all employee benefit programmes and government fiscal incentive claims. Owns the annual disability foundation filing (January \u2014 recovers 25% of qualifying salaries), micro-invest scheme application and prior year redemption, and director travel reimbursements (legally capped at EUR 140/day). Maximises all eligible Malta government incentives to reduce net payroll cost.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

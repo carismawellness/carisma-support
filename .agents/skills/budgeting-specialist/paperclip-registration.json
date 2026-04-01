@@ -1,0 +1,13 @@
+{
+  "_instructions": "POST this to /api/companies/{companyId}/agents on your Paperclip instance. Replace <MARKETING_CALENDAR_STRATEGIST_AGENT_ID> with the actual Marketing Calendar Strategist agent ID from your Paperclip dashboard.",
+  "name": "budgeting-specialist",
+  "role": "specialist",
+  "title": "Budgeting Specialist",
+  "reportsTo": "<MARKETING_CALENDAR_STRATEGIST_AGENT_ID>",
+  "capabilities": "Budget allocation across Spa/Aesthetics/Slimming brands and Meta/Google channels. Weekly spend tracking (actual vs. planned). ROAS/CPL analysis with winner/loser classification. Revenue attribution matching ad spend to business revenue. Weekly consolidated financial report for the Marketing Calendar Strategist.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6",
+    "skillsDirectory": ".agents/skills/budgeting-specialist"
+  }
+}

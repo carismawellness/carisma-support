@@ -1,0 +1,7 @@
+{
+  "name": "funnel-manager",
+  "version": "1.0.0",
+  "org-layer": "cmo-specialists",
+  "reports-to": "cmo",
+  "direct-reports": []
+}

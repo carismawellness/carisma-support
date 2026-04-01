@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: a0986a16-0157-48a5-b303-b50d3c37af71. Reports to fpa-manager (cafc0fe5-bd34-4a7d-8a18-c7d9ee7585cc).",
+  "name": "budget-manager",
+  "role": "general",
+  "title": "Budget Manager",
+  "icon": "puzzle",
+  "reportsTo": "cafc0fe5-bd34-4a7d-8a18-c7d9ee7585cc",
+  "capabilities": "Owns the annual budget construction and tracking for Carisma Wellness Group. Builds bottom-up budgets for all 10 locations and 3 brands, consolidates into a group P&L, and distributes budget holder packs to every location manager by January. Updates the monthly budget vs actuals tracker within 7 days of each month-end close. Flags any budget line running more than 10% off plan.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

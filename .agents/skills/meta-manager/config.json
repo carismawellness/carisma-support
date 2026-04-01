@@ -1,0 +1,13 @@
+{
+  "name": "meta-manager",
+  "version": "1.0.0",
+  "org-layer": "cmo-specialists",
+  "reports-to": "cmo",
+  "direct-reports": [
+    "meta-ads-copywriter",
+    "meta-ads-report-analyst",
+    "meta-ads-creative-strategist",
+    "meta-ads-implementation",
+    "meta-strategist"
+  ]
+}

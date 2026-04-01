@@ -1,0 +1,53 @@
+{
+  "venues": {
+    "slimming": {
+      "name": "Carisma Slimming",
+      "url": "https://www.fresha.com/a/carisma-slimming-floriana-great-siege-road-wxxyuj9p",
+      "booking_base": "https://www.fresha.com/a/carisma-slimming-floriana-great-siege-road-wxxyuj9p/booking",
+      "team": [
+        {"name": "Brunna", "role": "Slimming Therapist"},
+        {"name": "Zaid", "role": "Medical Consultant"},
+        {"name": "Diana", "role": "Clinic Slimming Specialist"},
+        {"name": "Ivana", "role": "Slimming Clinic Director"}
+      ],
+      "services_to_check": [
+        "Lipocavitation",
+        "CoolSculpting – Fat Freezing 30 mins",
+        "CoolSculpting – Fat Freezing 40 mins",
+        "Anti-cellulite treatment",
+        "VelaShape – Radiofrequency Skin Tightening 40 mins",
+        "Emsculpt NEO – Muscle Stimulation, RF Tightening & Fat Reduction 45 mins",
+        "Medical Weight Loss Consultation",
+        "Free Initial Tanita Body Composition Analysis",
+        "Slimming Body wrap"
+      ],
+      "hours": "Mon-Sat 9:00 AM - 7:00 PM, Sun Closed"
+    },
+    "aesthetics": {
+      "name": "Carisma Aesthetics",
+      "url": "https://www.fresha.com/a/carisma-aesthetics-st-julians-st-julians-stj-3310-malta-uip7g6p8",
+      "booking_base": "https://www.fresha.com/a/carisma-aesthetics-st-julians-st-julians-stj-3310-malta-uip7g6p8/booking",
+      "team": [],
+      "services_to_check": [
+        "4-1 hydrafacial",
+        "Ultimate facelift",
+        "Snatch jawline - 1st session",
+        "Lip & Glow"
+      ],
+      "hours": ""
+    }
+  },
+  "scraper_config": {
+    "days_to_check": 14,
+    "capacity_thresholds": {
+      "full": 0,
+      "limited": 3,
+      "open": 6
+    },
+    "ad_recommendations": {
+      "full_capacity": "PAUSE or reduce budget — no slots to fill",
+      "limited_capacity": "MAINTAIN minimum budget — keep pipeline warm",
+      "open_capacity": "SCALE aggressively — slots available to fill"
+    }
+  }
+}

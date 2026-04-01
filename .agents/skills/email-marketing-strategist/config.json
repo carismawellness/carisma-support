@@ -1,0 +1,92 @@
+{
+  "name": "email-marketing-strategist",
+  "type": "skill",
+  "description": "Email Marketing Strategist agent for the CMO's marketing team. Plans email campaigns (topics, calendar, audiences, A/B strategy), creates briefs for the Email Designer, reviews QC output, and audits email performance via Klaviyo. Covers all 3 Carisma brands (Spa, Aesthetics, Slimming) using the email-marketing-content-strategy knowledge base.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": true,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "argument-hint": "<action> [brand]",
+  "metadata": {
+    "agent-role": "Email Marketing Strategist",
+    "reports-to": "CMO",
+    "delegates-to": "Email Designer",
+    "runtime": "Claude Sonnet",
+    "org-layer": "CMO Sub-Team",
+    "tags": [
+      "email",
+      "strategy",
+      "campaign-planning",
+      "klaviyo",
+      "content-strategy",
+      "brand-voice",
+      "paperclip"
+    ],
+    "triggers": [
+      "emailstrategy",
+      "email strategy",
+      "plan email",
+      "email campaign",
+      "email brief",
+      "email audit"
+    ]
+  },
+  "inputs": {
+    "action": {
+      "type": "string",
+      "enum": ["plan", "brief", "review", "audit"],
+      "description": "Which action to execute",
+      "required": true
+    },
+    "brand": {
+      "type": "string",
+      "enum": ["spa", "aesthetics", "slimming"],
+      "description": "Which Carisma brand",
+      "required": true
+    },
+    "period": {
+      "type": "string",
+      "description": "Time period for plan/audit (e.g. 'Q2-2026', 'April 2026')",
+      "required": false
+    },
+    "topic": {
+      "type": "string",
+      "description": "Campaign topic for brief action",
+      "required": false
+    }
+  },
+  "outputs": {
+    "campaign_plan": {
+      "type": "string",
+      "description": "Markdown campaign plan with week-by-week schedule (plan action)"
+    },
+    "design_brief": {
+      "type": "string",
+      "description": "Structured brief for Email Designer (brief action)"
+    },
+    "review_decision": {
+      "type": "string",
+      "description": "Approve/revise/escalate decision with rationale (review action)"
+    },
+    "performance_report": {
+      "type": "string",
+      "description": "Email performance analysis with recommendations (audit action)"
+    }
+  },
+  "execution": {
+    "timeout": 300,
+    "environment": "node"
+  },
+  "integrations": {
+    "reads": [
+      "marketing/email-marketing/SKILL.md",
+      "marketing/email-marketing/spa-email-strategy.md",
+      "marketing/email-marketing/aesthetics-email-strategy.md",
+      "marketing/email-marketing/slimming-email-strategy.md",
+      "marketing/marketing-calendar/*.md",
+      "config/branding_guidelines.md",
+      "config/kpi_thresholds.json"
+    ],
+    "mcp_servers": ["klaviyo", "google-sheets", "google-workspace"]
+  }
+}

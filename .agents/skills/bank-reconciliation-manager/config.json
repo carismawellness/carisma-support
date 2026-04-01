@@ -1,0 +1,62 @@
+{
+  "name": "Bank Reconciliation Manager",
+  "slug": "bank-reconciliation-manager",
+  "reports-to": "reconciliation-manager",
+  "org-layer": "finance-specialists",
+  "model": "claude-sonnet-4-6",
+  "icon": "landmark",
+  "tags": [
+    "reconciliation",
+    "banking",
+    "fyorin",
+    "bov",
+    "moneybase",
+    "kraken",
+    "malta"
+  ],
+  "description": "Performs monthly reconciliation for all Carisma bank and treasury accounts: BOV (Bank of Valletta), Fyorin (treasury platform), Moneybase (Malta fintech), and Kraken (crypto/trading). Matches all ledger entries to bank statements, identifies and resolves discrepancies, and delivers a clean reconciliation file to the Reconciliation Manager by day 5 of each month. Also maintains the running cash position log for Treasury.",
+  "inputs": [
+    "Zoho Books general ledger (bank accounts)",
+    "BOV bank statements",
+    "Fyorin platform transaction exports",
+    "Moneybase transaction logs",
+    "Kraken trading and withdrawal logs"
+  ],
+  "outputs": [
+    "monthly BOV reconciliation (matched + unmatched items)",
+    "monthly Fyorin reconciliation",
+    "monthly Moneybase reconciliation",
+    "monthly Kraken reconciliation",
+    "monthly cash account reconciliation",
+    "unreconciled items log with ageing and resolution notes"
+  ],
+  "recurring-tasks": {
+    "monthly": [
+      "Reconcile BOV account against Zoho Books",
+      "Reconcile Fyorin platform transactions",
+      "Reconcile Moneybase account",
+      "Reconcile Kraken trading logs and money movements",
+      "Perform monthly cash account reconciliation",
+      "Submit completed reconciliation pack to Reconciliation Manager"
+    ]
+  },
+  "kpis": {
+    "reconciliation-completion-by-day-5": true,
+    "unmatched-items-at-submission-target": 0,
+    "accounts-reconciled": [
+      "BOV",
+      "Fyorin",
+      "Moneybase",
+      "Kraken",
+      "Cash"
+    ]
+  },
+  "systems": [
+    "zoho-books",
+    "bov",
+    "fyorin",
+    "moneybase",
+    "kraken"
+  ],
+  "agent-id": "ae37325d-88ea-4910-9438-d9c2b8854b3b"
+}

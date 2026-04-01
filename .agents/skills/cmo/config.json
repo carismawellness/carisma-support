@@ -1,0 +1,20 @@
+{
+  "name": "cmo",
+  "version": "1.0.0",
+  "org-layer": "c-suite",
+  "reports-to": "ceo",
+  "direct-reports": [
+    "email-manager",
+    "meta-manager",
+    "smm-manager",
+    "google-ads-manager",
+    "calendar-manager",
+    "offer-strategist",
+    "funnel-manager",
+    "design-manager",
+    "budget-manager",
+    "gm-aesthetics",
+    "gm-slimming",
+    "gm-spa"
+  ]
+}

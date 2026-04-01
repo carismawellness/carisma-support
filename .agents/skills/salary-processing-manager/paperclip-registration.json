@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: 3239a236-9539-4ce7-ae21-f854f1aa386c. Reports to payroll-statutory-compliance-manager (bc3778f3-7606-4918-879f-62c8440ef23e).",
+  "name": "salary-processing-manager",
+  "role": "general",
+  "title": "Salary Processing Manager",
+  "icon": "cpu",
+  "reportsTo": "bc3778f3-7606-4918-879f-62c8440ef23e",
+  "capabilities": "Executes the monthly payroll cycle for all Carisma staff (80-110 headcount across 3 brands). Posts payroll journal to Zoho Books, submits FS5 to Mr Mustafa for payment authorisation, confirms FS5 payment for prior month, and sends Dr. Walter payout calculations. Target: payroll posted by day 5, FS5 submitted on time every month.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

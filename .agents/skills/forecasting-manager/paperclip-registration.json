@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: 4a92d422-6921-4e7a-ac8d-aafa1d79622e. Reports to fpa-manager (cafc0fe5-bd34-4a7d-8a18-c7d9ee7585cc).",
+  "name": "forecasting-manager",
+  "role": "general",
+  "title": "Forecasting Manager",
+  "icon": "brain",
+  "reportsTo": "cafc0fe5-bd34-4a7d-8a18-c7d9ee7585cc",
+  "capabilities": "Maintains the rolling 12-month financial forecast updated monthly with the latest actuals and assumptions. Always shows where the business will land vs where it was planned to land. Runs scenario modelling (base, upside, downside) for new location openings, acquisitions, pricing changes, and headcount moves. Produces quarterly reforecasts and 3-year plan updates. Delivers models within 3 business days of ad-hoc requests.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

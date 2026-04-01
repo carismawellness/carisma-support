@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: f2920540-bbd2-42d4-84ff-e372602249e3. Reports to CFO (00ed4967-2265-4c54-b95e-2f3fc3d1e8fa).",
+  "name": "treasury-cash-manager",
+  "role": "general",
+  "title": "Treasury & Cash Manager",
+  "icon": "gem",
+  "reportsTo": "00ed4967-2265-4c54-b95e-2f3fc3d1e8fa",
+  "capabilities": "Manages the daily cash position and treasury function across all accounts: BOV, Fyorin, Moneybase, and Kraken. Monitors inflows and outflows, maintains minimum 2-month cash coverage, tracks Moneybase and Kraken trading activity, submits monthly trading logs to Bookkeeper for Zoho Books entry, produces a daily cash position report and a weekly 4-week rolling cash flow forecast. Alerts CFO immediately if any account falls below minimum threshold.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

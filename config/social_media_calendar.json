@@ -1,0 +1,28 @@
+{
+  "spreadsheet_id": "1Sd45cb5MPtxn3EGz0Vt7GQrMGvNC688ilOSMYy5koEk",
+  "spreadsheet_url": "https://docs.google.com/spreadsheets/d/1Sd45cb5MPtxn3EGz0Vt7GQrMGvNC688ilOSMYy5koEk/edit",
+  "tabs": {
+    "dashboard": "Dashboard",
+    "carisma_spa": "Spa",
+    "carisma_aesthetics": "Aesthetics",
+    "carisma_slimming": "Slimming"
+  },
+  "columns": {
+    "A": "Date",
+    "B": "Day",
+    "C": "Platform",
+    "D": "Type",
+    "E": "Pillar",
+    "F": "Sub-Topic",
+    "G": "Caption",
+    "H": "Status",
+    "I": "Post ID",
+    "J": "Time",
+    "K": "Notes"
+  },
+  "status_values": ["Pending", "Approved", "Published", "Skipped"],
+  "_metadata": {
+    "created": "2026-03-31",
+    "created_by": "smm_expert_implementation"
+  }
+}

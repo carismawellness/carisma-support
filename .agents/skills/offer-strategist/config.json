@@ -1,0 +1,11 @@
+{
+  "name": "offer-strategist",
+  "version": "1.0.0",
+  "org-layer": "cmo-specialists",
+  "reports-to": "cmo",
+  "direct-reports": [
+    "aesthetics-offer-specialist",
+    "slimming-offer-specialist",
+    "spa-offer-specialist"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: 578d2fdf-8df4-4b13-a8de-dce511c6c0c8. Reports to CFO (00ed4967-2265-4c54-b95e-2f3fc3d1e8fa).",
+  "name": "tax-vat-manager",
+  "role": "general",
+  "title": "Tax & VAT Manager",
+  "icon": "fingerprint",
+  "reportsTo": "00ed4967-2265-4c54-b95e-2f3fc3d1e8fa",
+  "capabilities": "Manages all Malta tax and VAT obligations across all Carisma entities. Owns the staggered quarterly VAT return cycle: Dec/Jan/Feb accounts to CLA (file April), Jun/Jul/Aug accounts to CSA (file Oct), Sep/Oct/Nov accounts to CSA (file Jan). Manages 2 sub-agents: VAT Compliance Manager and Audit Preparation Manager. Tracks CFR deadlines proactively. Zero late filings permitted.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

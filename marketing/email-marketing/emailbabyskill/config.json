@@ -1,0 +1,58 @@
+{
+  "name": "emailbaby",
+  "type": "skill",
+  "description": "Build production-ready emailers in Figma for Carisma Wellness brands. v5.1 isolated-brand pipeline with granular QC gates, image bank discovery, semantic image matching, resolution verification, AI image generation (Nano Banana), icon generation with numbered fallback, decorative variety scoring, overlap detection, external QC prompt artifacts, and optional Figma-to-HTML export.",
+  "version": "5.1.0",
+  "author": "Carisma",
+  "user-invocable": true,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "argument-hint": "<brand> [resume]",
+  "metadata": {
+    "tags": ["figma", "emailer", "design", "production", "nano-banana", "html-export"],
+    "triggers": [
+      "emailbaby",
+      "build emailer",
+      "figma emailer",
+      "email production",
+      "design emailer"
+    ]
+  },
+  "inputs": {
+    "brand": {
+      "type": "string",
+      "enum": ["spa", "aesthetics", "slimming"],
+      "description": "Which Carisma brand to build for",
+      "required": true
+    },
+    "resume": {
+      "type": "boolean",
+      "description": "If true, read the existing FIGMA-FINISH-PROMPT.md and continue from where we left off instead of starting fresh; legacy completed state files without QC gates enter retrofit QC mode",
+      "required": false,
+      "default": false
+    }
+  },
+  "outputs": {
+    "production_frame": {
+      "type": "object",
+      "description": "Completed Figma production frame with node map, copy manifest, QC gate results, external QC artifacts, and optional HTML export"
+    },
+    "state_file": {
+      "type": "string",
+      "description": "Path to FIGMA-FINISH-PROMPT.md for session continuity"
+    }
+  },
+  "execution": {
+    "timeout": 600,
+    "environment": "node",
+    "requires_context": ["figma-write MCP", "nano-banana MCP"]
+  },
+  "integrations": {
+    "reads": [
+      "config/emailer-guidelines.md",
+      "config/branding_guidelines.md",
+      ".tmp/emails/*/FIGMA-FINISH-PROMPT.md",
+      ".tmp/emails/*/qc/*"
+    ],
+    "mcp_servers": ["figma-write", "nano-banana"]
+  }
+}

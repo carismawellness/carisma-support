@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: 3c335b82-62b4-46c0-93d7-cb7a5e118941. Reports to CFO (00ed4967-2265-4c54-b95e-2f3fc3d1e8fa).",
+  "name": "reconciliation-manager",
+  "role": "general",
+  "title": "Reconciliation Manager",
+  "icon": "git-branch",
+  "reportsTo": "00ed4967-2265-4c54-b95e-2f3fc3d1e8fa",
+  "capabilities": "Owns the full reconciliation cycle across all Carisma banking, payment processing, and revenue channels. Manages 3 sub-agents: Bank Reconciliation Manager (Fyorin, BOV, Moneybase, Kraken), Payment Processor Reconciliation Manager (Stripe, Paypal, Acquiring), and Revenue Reconciliation Manager (Airbnb/Booking.com, hotel room charges, z-report integrity, Zoho subscription double-count verification). Delivers a weekly reconciliation pack to Dr. Walter and a clean monthly position to the CFO.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

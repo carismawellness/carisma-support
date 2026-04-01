@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: 0ee5d8d2-e022-43c6-9f21-699f9e4d836f. Reports to cost-control-procurement-manager (11c4b9ba-83f6-4dcd-ba4a-d71ca8c00225).",
+  "name": "product-cost-controller",
+  "role": "general",
+  "title": "Product Cost Controller",
+  "icon": "microscope",
+  "reportsTo": "11c4b9ba-83f6-4dcd-ba4a-d71ca8c00225",
+  "capabilities": "Owns COGS analysis for all Carisma treatments and retail products. Calculates fully-loaded product cost per treatment, tracks margin per SKU, reconciles Phytomer product usage against the monthly sales report (a contractual submission to Phytomer), monitors product wastage by location, and flags any abnormal consumption. Produces the margin-per-treatment ranking used by Commercial Finance for pricing decisions.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

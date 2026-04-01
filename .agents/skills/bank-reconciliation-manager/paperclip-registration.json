@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: ae37325d-88ea-4910-9438-d9c2b8854b3b. Reports to reconciliation-manager (3c335b82-62b4-46c0-93d7-cb7a5e118941).",
+  "name": "bank-reconciliation-manager",
+  "role": "general",
+  "title": "Bank Reconciliation Manager",
+  "icon": "lock",
+  "reportsTo": "3c335b82-62b4-46c0-93d7-cb7a5e118941",
+  "capabilities": "Performs monthly reconciliation for all Carisma bank and treasury accounts: BOV (Bank of Valletta), Fyorin, Moneybase, and Kraken. Matches all ledger entries to bank statements, resolves discrepancies, and delivers a complete reconciliation file to the Reconciliation Manager by day 5 of each month. Also performs monthly cash account reconciliation.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

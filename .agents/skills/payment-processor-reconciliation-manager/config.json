@@ -1,0 +1,53 @@
+{
+  "name": "Payment Processor Reconciliation Manager",
+  "slug": "payment-processor-reconciliation-manager",
+  "reports-to": "reconciliation-manager",
+  "org-layer": "finance-specialists",
+  "model": "claude-sonnet-4-6",
+  "icon": "credit-card",
+  "tags": [
+    "reconciliation",
+    "stripe",
+    "paypal",
+    "acquiring",
+    "processing-fees",
+    "malta"
+  ],
+  "description": "Reconciles all card and digital payment processor accounts for Carisma Wellness Group: Stripe, Paypal, and Acquiring (card terminal). Matches processor settlement reports against Zoho Books entries, computes and manually enters processing fees (which do not auto-post in Zoho Books), and identifies any settlements that are missing or miscoded. Also maintains a monthly processing fee schedule to track margin erosion from payment costs.",
+  "inputs": [
+    "Stripe monthly settlement and fee report",
+    "Paypal monthly settlement and transaction export",
+    "Acquiring (card terminal) monthly settlement report",
+    "Zoho Books payment entries for all 3 processors",
+    "Bookkeeper confirmation of any manual entries already posted"
+  ],
+  "outputs": [
+    "monthly Stripe reconciliation",
+    "monthly Paypal reconciliation",
+    "monthly Acquiring reconciliation",
+    "processing fee entry confirmation (posted to Zoho Books)",
+    "monthly processing fee summary (total cost, % of revenue, by processor)",
+    "unmatched settlements log"
+  ],
+  "recurring-tasks": {
+    "monthly": [
+      "Download and reconcile Stripe settlement report vs Zoho Books",
+      "Download and reconcile Paypal settlement report vs Zoho Books",
+      "Download and reconcile Acquiring settlement report vs Zoho Books",
+      "Manually enter processing fees for all 3 processors into Zoho Books",
+      "Produce processing fee summary for CFO review"
+    ]
+  },
+  "kpis": {
+    "reconciliation-completion-by-day-5": true,
+    "processing-fees-posted-accuracy-rate": 1.0,
+    "unmatched-processor-settlements-target": 0
+  },
+  "systems": [
+    "zoho-books",
+    "stripe",
+    "paypal",
+    "acquiring"
+  ],
+  "agent-id": "d3841427-0cef-4c27-aee3-55f03ba533c4"
+}

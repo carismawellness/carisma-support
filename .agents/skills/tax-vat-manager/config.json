@@ -1,0 +1,92 @@
+{
+  "name": "Tax & VAT Manager",
+  "slug": "tax-vat-manager",
+  "reports-to": "cfo",
+  "org-layer": "finance-leads",
+  "model": "claude-sonnet-4-6",
+  "icon": "percent",
+  "tags": [
+    "tax",
+    "vat",
+    "malta",
+    "compliance",
+    "CLA",
+    "CSA",
+    "CFR",
+    "audit",
+    "annual-accounts"
+  ],
+  "description": "Manages all tax and VAT obligations for Carisma Wellness Group across all entities. Owns the quarterly VAT return cycle (submitted to CLA and CSA on a staggered schedule), the annual tax filing calendar, and year-end audit preparation. Manages 2 sub-agents: VAT Compliance Manager (quarterly returns, multi-entity VAT position) and Audit Preparation Manager (year-end close, prior year accounts, annual document submission). Tracks Malta CFR deadlines proactively and ensures zero late submissions.",
+  "inputs": [
+    "monthly management accounts from Bookkeeper",
+    "Zoho Books trial balance",
+    "accounts receivable and payable listings",
+    "prior year accounts and audit reports",
+    "director tax and social security data",
+    "bank statements for all entities"
+  ],
+  "outputs": [
+    "quarterly VAT returns to CLA (Dec/Jan/Feb period \u2014 filed April)",
+    "quarterly VAT returns to CSA (Jun/Jul/Aug period \u2014 filed Oct)",
+    "quarterly VAT returns to CSA (Sep/Oct/Nov period \u2014 filed Jan)",
+    "annual accounts submitted for audit",
+    "annual return payment to CSA Group",
+    "prior year tax payment (September deadline)",
+    "3-year VAT compliance calendar",
+    "tax risk register"
+  ],
+  "sub-agents": [
+    "vat-compliance-manager",
+    "audit-preparation-manager"
+  ],
+  "recurring-tasks": {
+    "quarterly": [
+      "Compile accounts for the relevant quarter and submit to CLA or CSA per schedule",
+      "Confirm filing receipt and reference number from CFR",
+      "Update VAT compliance calendar"
+    ],
+    "annual": [
+      "Ensure prior year tax payment filed by September",
+      "Pay annual return to CSA Group",
+      "Send all documents and close prior year accounts for audit submission",
+      "Confirm tax position for all 3 entities"
+    ]
+  },
+  "kpis": {
+    "vat-returns-filed-on-time-rate": 1.0,
+    "annual-accounts-submission-on-time-rate": 1.0,
+    "tax-penalty-count-annual-target": 0,
+    "audit-completion-days-target": 90
+  },
+  "systems": [
+    "zoho-books",
+    "cfr-malta-portal",
+    "google-sheets"
+  ],
+  "external-parties": [
+    "CLA \u2014 accountants handling VAT for Dec/Jan/Feb quarter (file by April)",
+    "CSA Group \u2014 accountants handling VAT for Jun/Jul/Aug (file Oct) and Sep/Oct/Nov (file Jan) quarters",
+    "CFR \u2014 Malta Commissioner for Revenue (VAT and income tax authority)"
+  ],
+  "vat-calendar": {
+    "quarter-1": {
+      "period": "Dec/Jan/Feb",
+      "send-to": "CLA",
+      "send-by": "end March",
+      "file-by": "April"
+    },
+    "quarter-2": {
+      "period": "Jun/Jul/Aug",
+      "send-to": "CSA",
+      "send-by": "end Sept",
+      "file-by": "October"
+    },
+    "quarter-3": {
+      "period": "Sep/Oct/Nov",
+      "send-to": "CSA",
+      "send-by": "end Dec",
+      "file-by": "January"
+    }
+  },
+  "agent-id": "578d2fdf-8df4-4b13-a8de-dce511c6c0c8"
+}

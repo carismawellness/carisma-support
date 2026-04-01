@@ -1,0 +1,12 @@
+{
+  "name": "design-manager",
+  "version": "1.0.0",
+  "org-layer": "cmo-specialists",
+  "reports-to": "cmo",
+  "direct-reports": [
+    "email-designer",
+    "meta-ads-creative-strategist",
+    "smm-creative-strategist",
+    "google-ads-creative-strategist"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "email-manager",
+  "version": "1.0.0",
+  "org-layer": "cmo-specialists",
+  "reports-to": "cmo",
+  "direct-reports": [
+    "email-designer",
+    "email-creative-strategist",
+    "email-copywriter-planner",
+    "email-data-analyst"
+  ]
+}

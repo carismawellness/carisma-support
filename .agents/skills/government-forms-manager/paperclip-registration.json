@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: 52018dce-3c84-43c2-bae2-395c8abe12f3. Reports to payroll-compliance-manager (6e42ae07-4c48-4b36-ad85-60fc4ed94753).",
+  "name": "government-forms-manager",
+  "role": "general",
+  "title": "Government Forms Manager",
+  "icon": "file-code",
+  "reportsTo": "6e42ae07-4c48-4b36-ad85-60fc4ed94753",
+  "capabilities": "Handles all Malta government statutory form submissions for Carisma Wellness Group. Owns: FS3, FS5, FS7 annual cycle to CSA (January deadline). Provisional tax payment (August). Director social security for Mustafa, Mert, and Bilgi. Tax returns for all 3rd-country national employees (reviewed with Mustafa before submission). Disability foundation annual filing (January \u2014 recovers 25% of qualifying salaries). Micro-invest scheme application and prior-year redemption. Director travel reimbursements (EUR 140/day cap). Maintains hard-deadline statutory calendar.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

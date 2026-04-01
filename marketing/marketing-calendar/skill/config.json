@@ -1,0 +1,285 @@
+{
+  "name": "calendar-strategy",
+  "type": "skill",
+  "version": "2.0.0",
+  "description": "Marketing calendar strategy and execution for Carisma Wellness Group",
+
+  "spreadsheet": {
+    "id": "1q40Ke8wRsjnoVOngDupVdwxIWiTFXwYfh1ZwvUa9xtc",
+    "sheet_name": "Calendar '26",
+    "sheet_id": 703110006
+  },
+
+  "months": {
+    "Jan": { "start_col": 2, "end_col": 32, "days": 31 },
+    "Feb": { "start_col": 33, "end_col": 60, "days": 28 },
+    "Mar": { "start_col": 61, "end_col": 91, "days": 31 },
+    "Apr": { "start_col": 92, "end_col": 121, "days": 30 },
+    "May": { "start_col": 122, "end_col": 152, "days": 31 },
+    "Jun": { "start_col": 153, "end_col": 182, "days": 30 },
+    "Jul": { "start_col": 183, "end_col": 213, "days": 31 },
+    "Aug": { "start_col": 214, "end_col": 244, "days": 31 },
+    "Sep": { "start_col": 245, "end_col": 274, "days": 30 },
+    "Oct": { "start_col": 275, "end_col": 305, "days": 31 },
+    "Nov": { "start_col": 306, "end_col": 335, "days": 30 },
+    "Dec": { "start_col": 336, "end_col": 366, "days": 31 }
+  },
+
+  "brands": {
+    "spa": {
+      "name": "Carisma Spa & Wellness",
+      "rows": { "start": 5, "end": 95 },
+      "meta": {
+        "name_rows": [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40],
+        "budget_rows": [7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41],
+        "pairs": 18,
+        "note": "18 Name/Budget campaign pairs for Meta"
+      },
+      "tablet_display": { "row": 42 },
+      "sms_wa_campaign": { "rows": [43, 44] },
+      "google_campaign": {
+        "rows": [45, 46, 47, 48, 49, 50],
+        "pairs": 3,
+        "note": "3 Name/Budget pairs for Google campaigns"
+      },
+      "email": { "row": 51 },
+      "whatsapp": { "row": 52 },
+      "smm_post": { "row": 53 },
+      "smm_story": { "row": 54 },
+      "influencer_ugc": { "rows": [55, 56, 57, 58, 59, 60] },
+      "google_aon": {
+        "rows": [61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72],
+        "pairs": 6,
+        "note": "6 Name/Budget pairs for Google Always-On"
+      },
+      "giveaway_seasonal": {
+        "rows": [75, 76, 77, 78, 79, 80, 81, 82, 83, 84],
+        "note": "Giveaway and seasonal campaign rows"
+      },
+      "bing": { "row": 87 },
+      "pop_up": { "row": 89 },
+      "blog": { "row": 92 },
+      "linkbuilding": { "rows": [94, 95] },
+      "background_color": { "red": 0.973, "green": 0.953, "blue": 0.922 },
+      "currency": "EUR",
+      "ad_account": "act_654279452039150",
+      "page_id": "375775105843811"
+    },
+
+    "aesthetics": {
+      "name": "Carisma Aesthetics",
+      "rows": { "start": 98, "end": 175 },
+      "meta": {
+        "name_rows": [99, 101, 103, 105, 107, 109, 111, 113, 115, 117, 119, 121, 123, 125, 127, 129, 131],
+        "budget_rows": [100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132],
+        "pairs": 17,
+        "note": "17 Name/Budget campaign pairs for Meta"
+      },
+      "email": { "row": 139 },
+      "whatsapp": { "row": 140 },
+      "smm_post": { "row": 141 },
+      "smm_story": { "row": 142 },
+      "influencer_giveaway": { "rows": [143, 144, 145, 146, 147, 148, 149, 150] },
+      "partner_hotel_sms": { "rows": [151, 152, 153, 154, 155, 156] },
+      "google_campaigns": {
+        "rows": [157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170],
+        "pairs": 7,
+        "note": "7 Name/Budget pairs for Google campaigns"
+      },
+      "pop_up": { "row": 171 },
+      "blog": { "row": 172 },
+      "linkbuilding": { "rows": [173, 174] },
+      "background_color": { "red": 0.918, "green": 0.945, "blue": 0.941 },
+      "currency": "EUR",
+      "ad_account": "act_382359687910745",
+      "page_id": "117681807972195"
+    },
+
+    "slimming": {
+      "name": "Carisma Slimming",
+      "rows": { "start": 176, "end": 250 },
+      "meta": {
+        "name_rows": [177, 179, 181, 183, 185, 187, 189, 191, 193, 195, 197, 199, 201, 203, 205, 207, 209, 211],
+        "budget_rows": [178, 180, 182, 184, 186, 188, 190, 192, 194, 196, 198, 200, 202, 204, 206, 208, 210, 212],
+        "pairs": 18,
+        "note": "18 Name/Budget campaign pairs for Meta"
+      },
+      "email": { "row": 219 },
+      "whatsapp": { "row": 220 },
+      "smm_post": { "row": 221 },
+      "smm_story": { "row": 222 },
+      "influencer_giveaway": { "rows": [223, 224, 225, 226, 227, 228, 229, 230] },
+      "partner_hotel_sms": { "rows": [231, 232, 233, 234, 235, 236] },
+      "google_campaigns": {
+        "rows": [237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248],
+        "pairs": 6,
+        "note": "6 Name/Budget pairs for Google campaigns"
+      },
+      "pop_up": { "row": 249 },
+      "blog": { "row": 250 },
+      "background_color": { "red": 0.973, "green": 1.000, "blue": 0.965 },
+      "currency_meta": "USD",
+      "currency_note": "Slimming Meta Ads account uses USD, not EUR",
+      "ad_account": "act_1496776195316716",
+      "page_id": "923445584188552"
+    }
+  },
+
+  "design": {
+    "font_color": {
+      "red": 0.608,
+      "green": 0.553,
+      "blue": 0.514,
+      "note": "Warm brownish-gray — applied to ALL data cells"
+    },
+    "campaign_bold": false,
+    "green_highlight": "manual_only",
+    "green_highlight_note": "Green = human marks campaign as live. NEVER add green programmatically.",
+    "font_fields": "userEnteredFormat.textFormat.foregroundColorStyle"
+  },
+
+  "naming_conventions": {
+    "meta_campaign": "Campaign Name | CPL XX or Campaign Name | ROAS XX |",
+    "google_search": "Search: keyword | CPC XX | XXx",
+    "google_pmax": "Pmax | description | CPC xxx",
+    "google_maps": "Maps: description",
+    "google_remarketing": "Remarketing: description",
+    "email_text_based": "TB_Topic Name (prefix TB_ = text-based, no pricing)",
+    "email_design": "Offer Name or Seasonal Theme (no prefix = design/promo)",
+    "smm_story": "Themed content 3x per week (Mon, Wed, Fri only)",
+    "whatsapp": "WA: [Offer Name] (1-2 per month, offer-based only)",
+    "blog": "SEO: [Blog Title] (1 per week per brand, on Thursdays)",
+    "popup": "Spin wheel pop up (default) or Occasion-specific (every Monday)",
+    "tablet": "General (default) or Occasion name (when active)"
+  },
+
+  "tools": {
+    "values_read_write": {
+      "method": "Google Sheets MCP",
+      "tools": ["sheets_read_values", "sheets_update_values", "sheets_batch_update"]
+    },
+    "formatting": {
+      "method": "Direct Google Sheets API via googleapiclient",
+      "auth_secrets": "~/.go-google-mcp/client_secrets.json",
+      "auth_token": "~/.go-google-mcp/token.json",
+      "reference_script": "tools/fix_april_font_colors.py"
+    },
+    "creative_briefs": {
+      "method": "sheets_batch_update with updateCells",
+      "fields": "note"
+    },
+    "format_cloning": {
+      "method": "sheets_batch_update with copyPaste",
+      "paste_type": "PASTE_FORMAT"
+    }
+  },
+
+  "context_files": [
+    "config/brands.json",
+    "config/offers.json",
+    "config/branding_guidelines.md",
+    "config/creative_strategy_master.md",
+    "config/budget-allocation.json",
+    "CRM/CRM-SPA/knowledge/brand-voice.md",
+    "CRM/CRM-AES/knowledge/brand-voice.md",
+    "CRM/CRM-SLIM/knowledge/brand-voice.md",
+    "marketing/spa/meta-ads.md",
+    "marketing/aesthetics/meta-ads.md",
+    "marketing/slimming/meta-ads.md",
+    "marketing/marketing-calendar/email-marketing/spa-email-strategy.md",
+    "marketing/marketing-calendar/email-marketing/aesthetics-email-strategy.md",
+    "marketing/marketing-calendar/email-marketing/slimming-email-strategy.md",
+    "marketing/marketing-calendar/social-media/spa-pillars.md",
+    "marketing/marketing-calendar/social-media/aesthetics-pillars.md",
+    "marketing/marketing-calendar/social-media/slimming-pillars.md"
+  ],
+
+  "dependent_skills": [
+    {
+      "name": "quarterly-marketing-calendar",
+      "location": "~/.claude/skills/quarterly-marketing-calendar/SKILL.md",
+      "purpose": "Occasion research, mandatory calendar, brand filtering, campaign design",
+      "invoked_in": "Phase 2"
+    },
+    {
+      "name": "meta-strategist",
+      "location": "~/.claude/skills/meta-strategist/SKILL.md",
+      "purpose": "Meta Ads evergreen campaigns and layering rules",
+      "invoked_in": "Phase 2"
+    },
+    {
+      "name": "google-ads-strategist",
+      "location": "~/.claude/skills/google-ads-strategist/SKILL.md",
+      "purpose": "Google Ads proven campaigns and demand-toggle rules",
+      "invoked_in": "Phase 2"
+    },
+    {
+      "name": "email-marketing-content-strategy",
+      "location": "marketing/marketing-calendar/email-marketing/SKILL.md",
+      "purpose": "Email content types, arcs, flows, and creative briefs with 7 universal content types",
+      "invoked_in": "Phase 3",
+      "brand_files": [
+        "marketing/marketing-calendar/email-marketing/spa-email-strategy.md",
+        "marketing/marketing-calendar/email-marketing/aesthetics-email-strategy.md",
+        "marketing/marketing-calendar/email-marketing/slimming-email-strategy.md"
+      ]
+    },
+    {
+      "name": "social-media-content-strategy",
+      "location": "marketing/marketing-calendar/social-media/SKILL.md",
+      "purpose": "SMM post/story rotation using brand-specific content pillars and hook templates",
+      "invoked_in": "Phase 3",
+      "brand_files": [
+        "marketing/marketing-calendar/social-media/spa-pillars.md",
+        "marketing/marketing-calendar/social-media/aesthetics-pillars.md",
+        "marketing/marketing-calendar/social-media/slimming-pillars.md"
+      ]
+    },
+    {
+      "name": "budget-allocation",
+      "location": "~/.claude/skills/budget-allocation/SKILL.md",
+      "purpose": "Per-campaign daily budgets with 60/40 Meta split and 50/30/20 Google split",
+      "invoked_in": "Phase 3",
+      "config_file": "config/budget-allocation.json"
+    },
+    {
+      "name": "occasion-campaigns",
+      "location": "marketing/marketing-calendar/occasions/SKILL.md",
+      "purpose": "Company occasion calendar with dates, offers per brand, and campaign window rules",
+      "invoked_in": "Phase 2",
+      "data_file": "marketing/marketing-calendar/occasions/occasion-calendar.json"
+    },
+    {
+      "name": "whatsapp-marketing",
+      "location": "marketing/marketing-calendar/whatsapp/SKILL.md",
+      "purpose": "WhatsApp broadcast planning — 1-2x per month, offer-based only",
+      "invoked_in": "Phase 3"
+    },
+    {
+      "name": "tablet-popup",
+      "location": "marketing/marketing-calendar/tablet-popup/SKILL.md",
+      "purpose": "Tablet display and website pop-up planning with occasion integration",
+      "invoked_in": "Phase 4"
+    },
+    {
+      "name": "blog-content",
+      "location": "marketing/marketing-calendar/blog/SKILL.md",
+      "purpose": "Weekly SEO blog post planning per brand aligned with campaign themes",
+      "invoked_in": "Phase 3"
+    },
+    {
+      "name": "qc-verification",
+      "location": "marketing/marketing-calendar/qc/SKILL.md",
+      "purpose": "Comprehensive QC checklist covering data completeness, naming, formatting, alignment, cross-section integrity, and budget validation",
+      "invoked_in": "Phase 7"
+    }
+  ],
+
+  "mcp_servers": ["google-workspace"],
+
+  "approval_gates": [
+    { "phase": 2, "name": "Strategy approval", "blocks": "Phase 3" },
+    { "phase": 3, "name": "Campaign plan approval", "blocks": "Phase 4" },
+    { "phase": 7, "name": "QC verification", "blocks": "Completion" }
+  ]
+}

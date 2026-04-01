@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: cafc0fe5-bd34-4a7d-8a18-c7d9ee7585cc. Reports to CFO (00ed4967-2265-4c54-b95e-2f3fc3d1e8fa).",
+  "name": "fpa-manager",
+  "role": "general",
+  "title": "FP&A Manager",
+  "icon": "telescope",
+  "reportsTo": "00ed4967-2265-4c54-b95e-2f3fc3d1e8fa",
+  "capabilities": "Owns all forward-looking financial planning for Carisma Wellness Group. Manages 2 sub-agents: Budget Manager (annual budget for 3 brands and 10 locations) and Forecasting Manager (rolling 12-month forecast, quarterly reforecast, scenario modelling). Produces monthly variance analysis (actuals vs budget with root-cause commentary), full-year landing estimates, and a 3-year strategic financial plan. The CFO's primary tool for proactive rather than reactive financial management.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "name": "email-designer",
+  "type": "skill",
+  "description": "Dedicated Email Designer agent for the CMO's email marketing team. Builds production-ready emailers in Figma for Carisma Wellness brands using a 17-phase pipeline with automated QC scoring (/170), semantic image matching, AI image generation, and Figma-to-HTML export. Reports to the Email Marketing Strategist.",
+  "version": "1.0.0",
+  "author": "Carisma",
+  "user-invocable": true,
+  "allowed-tools": "Bash, Read, Write, Edit, Glob, Grep, Task, ToolSearch",
+  "argument-hint": "<brand> [resume]",
+  "metadata": {
+    "agent-role": "Email Designer",
+    "reports-to": "Email Marketing Strategist",
+    "runtime": "Claude Code",
+    "org-layer": "CMO Sub-Team",
+    "tags": ["figma", "emailer", "design", "production", "nano-banana", "html-export", "paperclip"],
+    "triggers": [
+      "emaildesign",
+      "build email",
+      "design email",
+      "email production",
+      "figma emailer"
+    ]
+  },
+  "inputs": {
+    "brand": {
+      "type": "string",
+      "enum": ["spa", "aesthetics", "slimming"],
+      "description": "Which Carisma brand to build for",
+      "required": true
+    },
+    "resume": {
+      "type": "boolean",
+      "description": "If true, read existing FIGMA-FINISH-PROMPT.md and continue from last completed phase",
+      "required": false,
+      "default": false
+    }
+  },
+  "outputs": {
+    "production_frame": {
+      "type": "object",
+      "description": "Completed Figma production frame with node map, copy manifest, QC results, and HTML export"
+    },
+    "state_file": {
+      "type": "string",
+      "description": "Path to FIGMA-FINISH-PROMPT.md for session continuity"
+    }
+  },
+  "execution": {
+    "timeout": 600,
+    "environment": "node",
+    "requires_context": ["figma-write MCP", "nano-banana MCP"]
+  },
+  "integrations": {
+    "reads": [
+      "config/emailer-guidelines.md",
+      "config/branding_guidelines.md",
+      ".tmp/emails/*/FIGMA-FINISH-PROMPT.md",
+      ".tmp/emails/*/qc/*"
+    ],
+    "mcp_servers": ["figma-write", "nano-banana", "klaviyo"]
+  }
+}

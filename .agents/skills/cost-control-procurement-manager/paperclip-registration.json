@@ -1,0 +1,13 @@
+{
+  "_instructions": "Registered via POST /api/companies/a5fa2ad1-fb06-4a1c-a690-436bec394e85/agents on 2026-03-31. Agent ID: 11c4b9ba-83f6-4dcd-ba4a-d71ca8c00225. Reports to CFO (00ed4967-2265-4c54-b95e-2f3fc3d1e8fa).",
+  "name": "cost-control-procurement-manager",
+  "role": "general",
+  "title": "Cost Control & Procurement Manager",
+  "icon": "wrench",
+  "reportsTo": "00ed4967-2265-4c54-b95e-2f3fc3d1e8fa",
+  "capabilities": "Owns the cost base and supplier ecosystem across 3 brands and 10 locations. Manages 2 sub-agents: Procurement Manager (supplier contracts, preferred supplier register, POs) and Product Cost Controller (COGS per treatment, Phytomer monthly sales report, product wastage flagging). Produces monthly COGS reports, cost vs budget variance, and a ranked cost reduction opportunity log. All supplier contracts above EUR 5,000/year require this agent's review before signature.",
+  "adapterType": "claude_local",
+  "adapterConfig": {
+    "model": "claude-sonnet-4-6"
+  }
+}
