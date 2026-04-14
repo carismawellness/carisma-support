@@ -1,11 +1,15 @@
 """
 Carisma Intelligence — Action Executor
-Dispatches approved alert actions to the appropriate MCP server.
+Resolves approved alert actions into MCP call details and marks them as processed.
+Claude Code agents pick up the resolved payloads for actual dispatch.
 """
+import logging
 import os
 from datetime import datetime, timezone
 from supabase import create_client
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env.local'))
 
@@ -21,7 +25,7 @@ def get_approved_actions() -> list[dict]:
     return result.data or []
 
 def execute_action(alert: dict) -> dict:
-    payload = alert.get('action_payload', {})
+    payload = alert.get('action_payload') or {}
     action_type = payload.get('type', 'alert_only')
     result = {'alert_id': alert['id'], 'action_type': action_type, 'status': 'pending_execution'}
     if action_type == 'pause_meta_ad':
@@ -42,6 +46,17 @@ def execute_action(alert: dict) -> dict:
         result['mcp_params'] = {'chatId': payload.get('data', {}).get('chat_id'), 'message': f"CI Alert: {alert['title']}\n{alert['recommendation']}"}
     elif action_type == 'alert_only':
         result['status'] = 'no_action_needed'
+
+    # Store resolved MCP call details back into the alert so Claude Code agents can pick up and execute
+    resolved_payload = {**payload, 'resolved_mcp': {
+        'server': result.get('mcp_server'),
+        'action': result.get('mcp_action'),
+        'params': result.get('mcp_params'),
+        'resolved_at': datetime.now(timezone.utc).isoformat(),
+    }}
+    client = get_client()
+    client.table('ci_alerts').update({'action_payload': resolved_payload}).eq('id', alert['id']).execute()
+
     return result
 
 def mark_executed(alert_id: int):
@@ -52,6 +67,16 @@ def process_all_approved() -> list[dict]:
     alerts = get_approved_actions()
     results = []
     for alert in alerts:
-        result = execute_action(alert)
-        results.append(result)
+        try:
+            result = execute_action(alert)
+            mark_executed(alert['id'])
+            result['status'] = 'executed'
+            results.append(result)
+        except Exception as e:
+            logger.error("Failed to process alert %s: %s", alert.get('id'), e)
+            results.append({
+                'alert_id': alert.get('id'),
+                'status': 'error',
+                'error': str(e),
+            })
     return results
