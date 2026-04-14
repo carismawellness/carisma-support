@@ -1,5 +1,6 @@
 "use client";
 
+import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
 import { DataTable } from "@/components/dashboard/DataTable";
@@ -101,6 +102,7 @@ export default function FinancePage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Location</h2>
             <DataTable columns={locationColumns} data={locationData} />
           </Card>
+          <CIChat />
         </>
       )}
     </DashboardShell>

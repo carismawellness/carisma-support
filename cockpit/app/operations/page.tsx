@@ -1,5 +1,6 @@
 "use client";
 
+import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
 import { DataTable } from "@/components/dashboard/DataTable";
@@ -102,6 +103,7 @@ export default function OperationsPage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Location Scorecard</h2>
             <DataTable columns={scorecardColumns} data={scorecardData} />
           </Card>
+          <CIChat />
         </>
       )}
     </DashboardShell>

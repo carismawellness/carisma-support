@@ -1,5 +1,6 @@
 "use client";
 
+import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
 import { DataTable } from "@/components/dashboard/DataTable";
@@ -103,6 +104,7 @@ export default function SalesPage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Rep Leaderboard</h2>
             <DataTable columns={repColumns} data={repData} />
           </Card>
+          <CIChat />
         </>
       )}
     </DashboardShell>
