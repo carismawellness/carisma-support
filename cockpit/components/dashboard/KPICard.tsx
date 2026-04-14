@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
 
 interface KPICardProps {
   label: string;
@@ -10,6 +11,7 @@ interface KPICardProps {
   targetValue?: number;
   currentValue?: number;
   format?: "currency" | "percent" | "number" | "time";
+  href?: string;
 }
 
 export function KPICard({
@@ -19,6 +21,7 @@ export function KPICard({
   target,
   targetValue,
   currentValue,
+  href,
 }: KPICardProps) {
   const trendColor =
     trend === undefined || trend === 0
@@ -39,8 +42,8 @@ export function KPICard({
       ? Math.min((currentValue / targetValue) * 100, 100)
       : null;
 
-  return (
-    <Card className="p-6">
+  const content = (
+    <>
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm text-gray-500 font-medium">{label}</span>
         {trend !== undefined && (
@@ -50,7 +53,7 @@ export function KPICard({
           </span>
         )}
       </div>
-      <div className="text-3xl font-bold text-foreground mb-2">{value}</div>
+      <div className="text-3xl font-bold text-gray-900 mb-2">{value}</div>
       {progressPct !== null && (
         <div className="space-y-1">
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -65,6 +68,22 @@ export function KPICard({
           {target && <span className="text-xs text-gray-400">Target: {target}</span>}
         </div>
       )}
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className="block">
+        <Card className="p-6 group cursor-pointer hover:shadow-md transition-shadow">
+          {content}
+        </Card>
+      </Link>
+    );
+  }
+
+  return (
+    <Card className="p-6">
+      {content}
     </Card>
   );
 }

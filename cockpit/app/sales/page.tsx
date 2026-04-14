@@ -1,14 +1,12 @@
 "use client";
 
+import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import { ExecutiveSummary } from "@/components/dashboard/ExecutiveSummary";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
-import { FreshnessIndicator } from "@/components/dashboard/FreshnessIndicator";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { Card } from "@/components/ui/card";
-import { chartColors, chartDefaults, formatMinutes, formatPercent } from "@/lib/charts/config";
+import { chartColors, chartDefaults, formatCurrency, formatPercent } from "@/lib/charts/config";
 import { useKPIData } from "@/lib/hooks/useKPIData";
-import { ExportMenu } from "@/components/dashboard/ExportMenu";
 import {
   BarChart,
   Bar,
@@ -18,190 +16,178 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Cell,
+  ReferenceLine,
 } from "recharts";
 
-/* ── Mock fallbacks ────────────────────────────────────────── */
+interface SalesWeekly {
+  week_start: string;
+  location_id: number;
+  brand_id: number;
+  revenue_ex_vat: number;
+  revenue_yoy_delta_pct: number;
+  retail_pct: number;
+  addon_pct: number;
+  hotel_capture_pct: number;
+}
 
-const mockKpis: KPIData[] = [
-  { label: "Speed to Lead", value: "4.2m", trend: 5, trendMoM: 10, target: "5m", targetValue: 5, currentValue: 4.2, sparkline: [5.8, 5.1, 4.6, 4.2], lowerIsBetter: true },
-  { label: "Conversion Rate", value: "27.3%", trend: 2, trendMoM: 4, target: "25%", targetValue: 25, currentValue: 27.3, sparkline: [24.5, 25.8, 26.9, 27.3] },
-  { label: "Deposit %", value: "68%", trend: 4, sparkline: [60, 63, 66, 68] },
-  { label: "Total Calls", value: "342", trend: 12, sparkline: [280, 305, 325, 342] },
-  { label: "Appointments", value: "198", trend: 8, sparkline: [165, 175, 188, 198] },
-];
+const locationNames: Record<number, string> = {
+  1: "InterContinental",
+  2: "Hugo's",
+  3: "Hyatt",
+  4: "Ramla Bay",
+  5: "Labranda",
+  6: "Odycy",
+  7: "Novotel",
+  8: "Excelsior",
+  9: "Aesthetics Clinic",
+  10: "Slimming Clinic",
+};
 
-const mockStlDistribution = [
-  { bucket: "<1m", count: 48 },
-  { bucket: "1-3m", count: 82 },
-  { bucket: "3-5m", count: 65 },
-  { bucket: "5-15m", count: 42 },
-  { bucket: "15-30m", count: 18 },
-  { bucket: "30m+", count: 8 },
-];
-
-const mockFunnelData = [
-  { stage: "Leads", value: 525 },
-  { stage: "Calls", value: 342 },
-  { stage: "Appointments", value: 198 },
-  { stage: "Sales", value: 143 },
-];
-
-const funnelColors = [chartColors.spa, chartColors.aesthetics, chartColors.slimming, "#8B5CF6"];
-
-const repColumns = [
-  { key: "rep", label: "Rep" },
-  { key: "calls", label: "Calls", align: "right" as const, sortable: true },
-  { key: "bookings", label: "Bookings", align: "right" as const, sortable: true },
-  { key: "conversions", label: "Conversions", align: "right" as const, sortable: true },
-  { key: "rate", label: "Conv. Rate", align: "right" as const, sortable: true, render: (v: unknown) => `${v}%` },
-  { key: "stl", label: "STL", align: "right" as const, sortable: true, render: (v: unknown) => `${v}m` },
-];
-
-const mockRepData = [
-  { rep: "Maria C.", calls: 98, bookings: 52, conversions: 38, rate: 38.8, stl: 2.1 },
-  { rep: "Diane S.", calls: 92, bookings: 48, conversions: 35, rate: 38.0, stl: 3.4 },
-  { rep: "Jake T.", calls: 85, bookings: 44, conversions: 28, rate: 32.9, stl: 4.8 },
-  { rep: "Anna R.", calls: 67, bookings: 32, conversions: 22, rate: 32.8, stl: 5.2 },
+const locationColumns = [
+  { key: "location", label: "Location" },
+  { key: "revenue", label: "Revenue", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+  { key: "yoy", label: "YoY%", align: "right" as const, sortable: true, render: (v: unknown) => formatPercent(v as number) },
+  { key: "retail", label: "Retail%", align: "right" as const, sortable: true, render: (v: unknown) => formatPercent(v as number) },
+  { key: "addon", label: "Add-on%", align: "right" as const, sortable: true, render: (v: unknown) => formatPercent(v as number) },
+  { key: "hotelCapture", label: "Hotel Capture%", align: "right" as const, sortable: true, render: (v: unknown) => formatPercent(v as number) },
 ];
 
 export default function SalesPage() {
   return (
     <DashboardShell>
       {({ dateFrom, dateTo, brandFilter }) => {
-        const { data: crmData, loading: crmLoading, lastUpdated: crmLastUpdated } = useKPIData<{
-          date: string;
-          speed_to_lead_median_min: number;
-          conversion_rate_pct: number;
-          total_calls: number;
-          appointments_booked: number;
-          total_leads: number;
-        }>({ table: "crm_daily", dateFrom, dateTo, brandFilter });
+        const { data: salesData, loading } = useKPIData<SalesWeekly>({
+          table: "sales_weekly",
+          dateFrom,
+          dateTo,
+          brandFilter,
+          dateColumn: "week_start",
+        });
 
-        const { data: repData, loading: repLoading } = useKPIData<{
-          date: string;
-          rep: string;
-          calls: number;
-          bookings: number;
-          conversions: number;
-          rate: number;
-          stl: number;
-        }>({ table: "crm_by_rep", dateFrom, dateTo, brandFilter });
+        // Aggregate by location
+        const byLocation = salesData.reduce<
+          Record<number, { revenue: number; yoySum: number; retailSum: number; addonSum: number; hotelSum: number; count: number }>
+        >((acc, row) => {
+          const lid = row.location_id;
+          if (!acc[lid]) {
+            acc[lid] = { revenue: 0, yoySum: 0, retailSum: 0, addonSum: 0, hotelSum: 0, count: 0 };
+          }
+          acc[lid].revenue += row.revenue_ex_vat ?? 0;
+          acc[lid].yoySum += row.revenue_yoy_delta_pct ?? 0;
+          acc[lid].retailSum += row.retail_pct ?? 0;
+          acc[lid].addonSum += row.addon_pct ?? 0;
+          acc[lid].hotelSum += row.hotel_capture_pct ?? 0;
+          acc[lid].count += 1;
+          return acc;
+        }, {});
 
-        const { data: stlData, loading: stlLoading } = useKPIData<{
-          date: string;
-          bucket: string;
-          count: number;
-        }>({ table: "speed_to_lead_distribution", dateFrom, dateTo, brandFilter });
+        const locationData = Object.entries(byLocation).map(([id, d]) => ({
+          locationId: Number(id),
+          location: locationNames[Number(id)] ?? `Location ${id}`,
+          revenue: d.revenue,
+          yoy: d.count > 0 ? d.yoySum / d.count : 0,
+          retail: d.count > 0 ? d.retailSum / d.count : 0,
+          addon: d.count > 0 ? d.addonSum / d.count : 0,
+          hotelCapture: d.count > 0 ? d.hotelSum / d.count : 0,
+        }));
 
-        const isLoading = crmLoading || repLoading || stlLoading;
-
-        /* ── Compute KPIs ── */
-        const avgStl = crmData.length > 0
-          ? crmData.reduce((s, r) => s + (r.speed_to_lead_median_min || 0), 0) / crmData.length
+        // Global KPIs
+        const totalRevenue = salesData.reduce((s, r) => s + (r.revenue_ex_vat ?? 0), 0);
+        const avgYoy = salesData.length > 0
+          ? salesData.reduce((s, r) => s + (r.revenue_yoy_delta_pct ?? 0), 0) / salesData.length
           : 0;
-        const avgConv = crmData.length > 0
-          ? crmData.reduce((s, r) => s + (r.conversion_rate_pct || 0), 0) / crmData.length
+        const avgRetail = salesData.length > 0
+          ? salesData.reduce((s, r) => s + (r.retail_pct ?? 0), 0) / salesData.length
           : 0;
-        const totalCalls = crmData.reduce((s, r) => s + (r.total_calls || 0), 0);
-        const totalAppointments = crmData.reduce((s, r) => s + (r.appointments_booked || 0), 0);
+        const avgAddon = salesData.length > 0
+          ? salesData.reduce((s, r) => s + (r.addon_pct ?? 0), 0) / salesData.length
+          : 0;
+        const avgHotel = salesData.length > 0
+          ? salesData.reduce((s, r) => s + (r.hotel_capture_pct ?? 0), 0) / salesData.length
+          : 0;
 
-        const computedKpis: KPIData[] = isLoading || crmData.length === 0 ? mockKpis : [
-          {
-            label: "Speed to Lead",
-            value: formatMinutes(avgStl),
-            target: "5m",
-            targetValue: 5,
-            currentValue: avgStl,
-          },
-          {
-            label: "Conversion Rate",
-            value: formatPercent(avgConv),
-            target: "25%",
-            targetValue: 25,
-            currentValue: avgConv,
-          },
-          { label: "Deposit %", value: "—" },
-          { label: "Total Calls", value: totalCalls.toLocaleString() },
-          { label: "Appointments", value: totalAppointments.toLocaleString() },
+        const kpis: KPIData[] = [
+          { label: "Total Revenue", value: loading ? "..." : formatCurrency(totalRevenue) },
+          { label: "YoY Growth", value: loading ? "..." : formatPercent(avgYoy) },
+          { label: "Retail %", value: loading ? "..." : formatPercent(avgRetail), target: "12%", targetValue: 12, currentValue: avgRetail },
+          { label: "Add-on %", value: loading ? "..." : formatPercent(avgAddon), target: "4%", targetValue: 4, currentValue: avgAddon },
+          { label: "Hotel Capture %", value: loading ? "..." : formatPercent(avgHotel), target: "5%", targetValue: 5, currentValue: avgHotel },
         ];
 
-        /* ── STL Distribution chart ── */
-        const stlChart = isLoading || stlData.length === 0 ? mockStlDistribution : stlData;
-
-        /* ── Funnel chart ── */
-        const totalLeads = crmData.reduce((s, r) => s + (r.total_leads || 0), 0);
-        const funnelChart = isLoading || crmData.length === 0 ? mockFunnelData : [
-          { stage: "Leads", value: totalLeads },
-          { stage: "Calls", value: totalCalls },
-          { stage: "Appointments", value: totalAppointments },
-          { stage: "Sales", value: Math.round(totalAppointments * (avgConv / 100)) },
-        ];
-
-        /* ── Rep leaderboard ── */
-        const repTableData = isLoading || repData.length === 0 ? mockRepData : repData;
+        // Chart data sorted by location id
+        const chartData = [...locationData].sort((a, b) => a.locationId - b.locationId);
 
         return (
           <>
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-charcoal">Sales / CRM Dashboard</h1>
-              <ExportMenu pageTitle="Sales" kpiData={computedKpis as unknown as Record<string, unknown>[]} />
-            </div>
-            <ExecutiveSummary
-              page="Sales"
-              dateFrom={dateFrom}
-              dateTo={dateTo}
-              brandFilter={brandFilter}
-              kpiSnapshot={computedKpis}
-              isDataLoading={isLoading}
-            />
-            <KPICardRow kpis={computedKpis} lastUpdated={crmLastUpdated} />
+            <h1 className="text-2xl font-bold text-gray-900">Sales Dashboard</h1>
+            <KPICardRow kpis={kpis} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-charcoal">Speed to Lead Distribution</h2>
-                  <FreshnessIndicator lastUpdated={stlLoading ? null : (stlData.length > 0 ? new Date(stlData[stlData.length - 1].date) : null)} />
-                </div>
+              <Card className="p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Location</h2>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={stlChart} margin={chartDefaults.margin}>
+                  <BarChart data={chartData} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="bucket" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="count" name="Leads" fill={chartColors.spa} />
+                    <XAxis dataKey="location" angle={-35} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
+                    <YAxis tickFormatter={(v: number) => formatCurrency(v)} />
+                    <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+                    <Bar dataKey="revenue" name="Revenue" fill={chartColors.spa} />
                   </BarChart>
                 </ResponsiveContainer>
               </Card>
 
-              <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-charcoal">Conversion Funnel</h2>
-                  <FreshnessIndicator lastUpdated={crmLoading ? null : (crmData.length > 0 ? new Date(crmData[crmData.length - 1].date) : null)} />
-                </div>
+              <Card className="p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">YoY Delta by Location</h2>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={funnelChart} layout="vertical" margin={chartDefaults.margin}>
+                  <BarChart data={chartData} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis type="category" dataKey="stage" width={100} />
-                    <Tooltip />
-                    <Bar dataKey="value" name="Count">
-                      {funnelChart.map((_entry, index) => (
-                        <Cell key={`cell-${index}`} fill={funnelColors[index]} />
-                      ))}
-                    </Bar>
+                    <XAxis dataKey="location" angle={-35} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
+                    <YAxis tickFormatter={(v: number) => `${v.toFixed(0)}%`} />
+                    <Tooltip formatter={(v) => formatPercent(Number(v))} />
+                    <ReferenceLine y={0} stroke={chartColors.target} strokeDasharray="3 3" label="0%" />
+                    <Bar dataKey="yoy" name="YoY %" fill={chartColors.aesthetics} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+
+              <Card className="p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Retail % by Location</h2>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={chartData} margin={chartDefaults.margin}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="location" angle={-35} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
+                    <YAxis tickFormatter={(v: number) => `${v.toFixed(0)}%`} />
+                    <Tooltip formatter={(v) => formatPercent(Number(v))} />
+                    <ReferenceLine y={12} stroke={chartColors.target} strokeDasharray="3 3" label="Target 12%" />
+                    <Bar dataKey="retail" name="Retail %" fill={chartColors.slimming} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+
+              <Card className="p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Add-on % by Location</h2>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={chartData} margin={chartDefaults.margin}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="location" angle={-35} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
+                    <YAxis tickFormatter={(v: number) => `${v.toFixed(0)}%`} />
+                    <Tooltip formatter={(v) => formatPercent(Number(v))} />
+                    <ReferenceLine y={4} stroke={chartColors.target} strokeDasharray="3 3" label="Target 4%" />
+                    <Bar dataKey="addon" name="Add-on %" fill={chartColors.spa} />
                   </BarChart>
                 </ResponsiveContainer>
               </Card>
             </div>
 
-            <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-charcoal">Rep Leaderboard</h2>
-                <FreshnessIndicator lastUpdated={repLoading ? null : (repData.length > 0 ? new Date(repData[repData.length - 1].date) : null)} />
-              </div>
-              <DataTable columns={repColumns} data={repTableData} />
+            <Card className="p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Location Scorecard</h2>
+              {loading ? (
+                <p className="text-sm text-gray-500">Loading...</p>
+              ) : (
+                <DataTable columns={locationColumns} data={locationData} />
+              )}
             </Card>
+            <CIChat />
           </>
         );
       }}
