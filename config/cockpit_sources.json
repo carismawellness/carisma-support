@@ -1,0 +1,276 @@
+{
+  "description": "Cockpit dashboard data source mappings. Consolidates all Google Sheet IDs, tab names, cell ranges, and API sources for ETL scripts.",
+  "brands": ["carisma_spa", "carisma_aesthetics", "carisma_slimming"],
+  "locations": {
+    "carisma_spa": ["Inter", "Hugos", "Hyatt", "Ramla", "Labranda", "Odycy", "Excelsior", "Novotel"],
+    "carisma_aesthetics": ["Aesthetics Clinic"],
+    "carisma_slimming": ["Slimming Clinic"]
+  },
+  "google_sheets": {
+    "weekly_kpis": {
+      "spreadsheet_id": "1JGlBdii7Zu25yha0zrmi72PPH1BFZRdVeGvcig3r6GE",
+      "title": "Weekly KPIs",
+      "tabs": {
+        "management": {
+          "tab_name": "Management",
+          "description": "Executive updates, qualitative notes per location"
+        },
+        "growth": {
+          "tab_name": "Growth",
+          "description": "Marketing KPIs — website sales, ad spend, ROAS, CPL, email metrics",
+          "kpi_start_row": 7,
+          "sections": {
+            "spa": {"label_row": 8, "metrics_start_row": 10},
+            "aesthetics": {"label_row": 45},
+            "slimming": {"label_row": null}
+          },
+          "week_dates_row": 2,
+          "week_dates_start_col": "D"
+        },
+        "aesthetics": {
+          "tab_name": "Aesthetics ",
+          "description": "Aesthetics department KPIs — consult funnel, revenue, AOV, repeat customers",
+          "week_dates_row": 2,
+          "week_dates_start_col": "C"
+        },
+        "slimming": {
+          "tab_name": "Slimming",
+          "description": "Slimming department KPIs — revenue, consult funnel, course conversion",
+          "week_dates_row": 3,
+          "week_dates_start_col": "C"
+        },
+        "operations": {
+          "tab_name": "Operations",
+          "description": "Google reviews per location, complaints, maintenance, brand standards",
+          "week_dates_row": 2,
+          "week_dates_start_col": "D"
+        },
+        "hr": {
+          "tab_name": "HR ",
+          "description": "HC% per location, utilization, recruitment funnel, employee movement, headcount",
+          "week_dates_row": 2,
+          "week_dates_start_col": "D"
+        },
+        "sales": {
+          "tab_name": "Sales",
+          "description": "Weekly sales by location (ex VAT), YoY delta, retail %, add-on %, hotel capture",
+          "week_dates_row": 2,
+          "week_dates_start_col": "D",
+          "spa_sales_section": {
+            "header_row": 44,
+            "company_wide_row": 45,
+            "spas": {
+              "Inter": 46,
+              "Hugos": 47,
+              "Hyatt": 48,
+              "Ramla": 49,
+              "Labranda": 50,
+              "Odycy": 51,
+              "Novotel": 52,
+              "Excelsior": 53
+            }
+          }
+        }
+      }
+    },
+    "crm_master": {
+      "spreadsheet_id": "1bHF_7bXic08pcyXQhq310zG6McqXD50oT0EuVkjzDdI",
+      "title": "CRM Master",
+      "tabs": {
+        "kpi_spa": {
+          "tab_name": " Spa",
+          "description": "Spa CRM daily KPIs — sales per rep, bookings by type, leads, CRM check"
+        },
+        "kpi_aes": {
+          "tab_name": " Aes",
+          "description": "Aesthetics CRM daily KPIs — sales per rep, bookings, leads"
+        },
+        "kpi_slm": {
+          "tab_name": " Slm",
+          "description": "Slimming CRM daily KPIs — sales, bookings, leads, conversion, messages"
+        },
+        "dials_spa": {
+          "tab_name": "Spa",
+          "description": "Spa outbound call tracking"
+        },
+        "dials_aes": {
+          "tab_name": "Aes",
+          "description": "Aesthetics outbound call tracking"
+        },
+        "dials_slm": {
+          "tab_name": "Slm",
+          "description": "Slimming outbound call tracking"
+        },
+        "roster": {
+          "tab_name": "Roster",
+          "description": "CRM team roster and assignment"
+        }
+      }
+    },
+    "ebitda": {
+      "spreadsheet_id": "1WWM7W6S5wtSC-5hdlcuJgW3zbYaO7YRgg4_-Bju4-5s",
+      "title": "Monthly KPIs / EBITDA",
+      "output_tabs": {
+        "ebitda_summary": "EBITDA Summary",
+        "spa_detail": "Spa Detail",
+        "aesthetics_pl": "Aesthetics P&L",
+        "slimming_pl": "Slimming P&L",
+        "sga_allocation": "SG&A Allocation",
+        "reconciliation": "Reconciliation"
+      }
+    },
+    "aesthetics_sales": {
+      "spreadsheet_id": "1Mr_aRRbRf3ex--WmUJIqXwko7okCyD82KxBOXWYnW24",
+      "title": "Aesthetics Sales (Leticia)",
+      "tab_pattern": "Sale* {Month} {Year}",
+      "columns": {
+        "invoice": "A",
+        "customer": "B",
+        "service": "C",
+        "date_of_service": "D",
+        "price": "E",
+        "payment": "F",
+        "sales_staff": "G",
+        "note": "H",
+        "commission_6pct": "I",
+        "commission_3pct": "J",
+        "retail": "L"
+      },
+      "revenue_column": "E",
+      "date_column": "D"
+    },
+    "slimming_sales": {
+      "spreadsheet_id": "1j6tz8k8TRSulB35Sg4X1xSlcV_JLf-8QKx-32UUkoBc",
+      "title": "Slimming Sales",
+      "tab_pattern": "Sales {Month}",
+      "columns": {
+        "date": "A",
+        "client": "B",
+        "weight_loss": "C",
+        "treatments": "D",
+        "medical_consultation": "E",
+        "products": "F",
+        "full_price": "G",
+        "paid": "H",
+        "sale_of": "I",
+        "commission": "J"
+      },
+      "revenue_column": "H",
+      "date_column": "A"
+    },
+    "salary_master": {
+      "spreadsheet_id": "1AAnfm-SAYso6RpJhbdhJbTbcGDH1Ftlk0FHBPHfN98w",
+      "title": "Salary Master",
+      "tab_pattern": "{Mon} {YY} (C)"
+    },
+    "budget_allocation": {
+      "spreadsheet_id": "1q40Ke8wRsjnoVOngDupVdwxIWiTFXwYfh1ZwvUa9xtc",
+      "title": "Marketing Budget Calendar",
+      "tabs": {
+        "calendar_25": "Calendar '25",
+        "calendar_26": "Calendar '26"
+      }
+    },
+    "analytics_revenue": {
+      "spreadsheet_id": "1q_aqO9QpCaRoqhOI0Fd41YPO7NMrRAlv5EjShmZK6RM",
+      "title": "Carisma Analytics (Revenue)",
+      "tabs": {
+        "revenue_improved": {"tab_name": "Revenue Improved", "sheet_id": 856432233}
+      }
+    }
+  },
+  "api_sources": {
+    "meta_ads": {
+      "type": "mcp",
+      "server": "meta-ads",
+      "ad_accounts": {
+        "carisma_spa": "act_654279452039150",
+        "carisma_aesthetics": "act_382359687910745",
+        "carisma_slimming": "act_1496776195316716"
+      },
+      "fields": ["spend", "impressions", "clicks", "actions", "cost_per_action_type", "ctr", "cpc"],
+      "schedule": "every_6h"
+    },
+    "google_analytics": {
+      "type": "mcp",
+      "server": "google-analytics",
+      "metrics": ["sessions", "totalUsers", "newUsers", "screenPageViews", "averageSessionDuration", "bounceRate", "conversions"],
+      "schedule": "daily_6am"
+    },
+    "google_search_console": {
+      "type": "mcp",
+      "server": "google-search-console",
+      "metrics": ["clicks", "impressions", "ctr", "position"],
+      "schedule": "daily_6am"
+    },
+    "klaviyo": {
+      "type": "mcp",
+      "server": "klaviyo",
+      "metrics": ["campaign_reports", "flow_reports", "profiles"],
+      "schedule": "daily_8am"
+    },
+    "zoho_crm": {
+      "type": "mcp",
+      "server": "zoho-crm",
+      "modules": ["Leads", "Contacts", "Deals"],
+      "speed_to_lead_fields": {
+        "lead_created": "Created_Time",
+        "first_activity": "Last_Activity_Time"
+      },
+      "schedule": "every_4h"
+    },
+    "wix": {
+      "type": "mcp",
+      "server": "wix",
+      "schedule": "daily_7am"
+    },
+    "we360": {
+      "type": "api",
+      "description": "Employee productivity tracking — online/active/idle time, productivity %",
+      "schedule": "daily_10pm",
+      "api_docs": "https://we360.ai/api-docs"
+    }
+  },
+  "kpi_targets": {
+    "sales": {
+      "retail_pct": 12.0,
+      "addon_pct": 4.0,
+      "hotel_capture_pct": 5.0
+    },
+    "marketing": {
+      "roas_target": 5.0,
+      "cpl_spa_eur": 8.0,
+      "cpl_aesthetics_eur": 12.0,
+      "cpl_slimming_usd": 10.0,
+      "email_revenue_pct": 35.0,
+      "popup_capture_pct": 8.0
+    },
+    "crm": {
+      "speed_to_lead_target_min": 5,
+      "conversion_rate_pct": 25.0,
+      "workable_leads_per_sdr": 60
+    },
+    "hr": {
+      "hc_pct_target": 40.0,
+      "utilisation_target_pct": 75.0,
+      "therapist_mgmt_ratio": 3.0
+    },
+    "aesthetics": {
+      "consult_conversion_pct": 50.0,
+      "aov_target_eur": 245,
+      "consults_per_week": 70
+    },
+    "slimming": {
+      "course_conversion_pct": 65.0,
+      "max_course_conversion_pct": 12.5,
+      "bookings_per_therapist": 45,
+      "consult_showup_pct": 85.0,
+      "retail_pct": 20.0
+    }
+  },
+  "_metadata": {
+    "version": "1.0.0",
+    "created": "2026-04-14",
+    "description": "Consolidated data source configuration for the Cockpit dashboard ETL pipeline"
+  }
+}

@@ -1,0 +1,1374 @@
+- generic [ref=e1]:
+  - generic: 🔄
+  - generic [ref=e3]:
+    - region "top of page"
+    - button "Skip to Main Content"
+    - generic [ref=e10]:
+      - banner [ref=e11]:
+        - generic [ref=e17]:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - img [ref=e20]
+                    - heading "27802062" [level=4] [ref=e23]:
+                      - generic [ref=e25]: "27802062"
+              - generic "Group 3754 (1).png" [ref=e26] [cursor=pointer]:
+                - link "icon" [ref=e27]:
+                  - /url: https://www.carismaspa.com
+                  - img "icon" [ref=e28]
+              - link "BOOK" [ref=e30] [cursor=pointer]:
+                - /url: https://www.carismaspa.com/contact-us
+                - generic [ref=e32]: BOOK
+              - navigation "Site" [ref=e34]:
+                - list [ref=e35]:
+                  - listitem [ref=e36] [cursor=pointer]:
+                    - link "PACKAGES" [ref=e37]:
+                      - /url: https://www.carismaspa.com/spa-packages
+                      - paragraph [ref=e40]: PACKAGES
+                    - button "More PACKAGES pages" [ref=e41]:
+                      - img [ref=e42]
+                  - listitem [ref=e44] [cursor=pointer]:
+                    - button "TREATMENTS" [ref=e45]:
+                      - paragraph [ref=e48]: TREATMENTS
+                    - button "More TREATMENTS pages" [ref=e49]:
+                      - img [ref=e50]
+                  - listitem [ref=e52] [cursor=pointer]:
+                    - link "MEMBERSHIP" [ref=e53]:
+                      - /url: https://www.carismaspa.com/join-the-spa-club
+                      - paragraph [ref=e56]: MEMBERSHIP
+                  - listitem [ref=e57] [cursor=pointer]:
+                    - link "GIFTS" [ref=e58]:
+                      - /url: https://www.carismaspa.com/gifts
+                      - paragraph [ref=e61]: GIFTS
+                  - listitem [ref=e62] [cursor=pointer]:
+                    - link "LOCATIONS" [ref=e63]:
+                      - /url: https://www.carismaspa.com/carisma-spa-locations-in-malta
+                      - paragraph [ref=e66]: LOCATIONS
+                    - button "More LOCATIONS pages" [ref=e67]:
+                      - img [ref=e68]
+              - generic [ref=e75]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic "Group 3754 (1).png" [ref=e79] [cursor=pointer]:
+                            - link "icon" [ref=e80]:
+                              - /url: https://www.carismaspa.com
+                              - img "icon" [ref=e81]
+                          - navigation "Site" [ref=e83]:
+                            - list [ref=e84]:
+                              - listitem [ref=e85] [cursor=pointer]:
+                                - link "PACKAGES" [ref=e86]:
+                                  - /url: https://www.carismaspa.com/spa-packages
+                                  - paragraph [ref=e89]: PACKAGES
+                                - button "More PACKAGES pages" [ref=e90]:
+                                  - img [ref=e91]
+                              - listitem [ref=e93] [cursor=pointer]:
+                                - button "TREATMENTS" [ref=e94]:
+                                  - paragraph [ref=e97]: TREATMENTS
+                                - button "More TREATMENTS pages" [ref=e98]:
+                                  - img [ref=e99]
+                              - listitem [ref=e101] [cursor=pointer]:
+                                - link "MEMBERSHIP" [ref=e102]:
+                                  - /url: https://www.carismaspa.com/join-the-spa-club
+                                  - paragraph [ref=e105]: MEMBERSHIP
+                              - listitem [ref=e106] [cursor=pointer]:
+                                - link "GIFTS" [ref=e107]:
+                                  - /url: https://www.carismaspa.com/gifts
+                                  - paragraph [ref=e110]: GIFTS
+                              - listitem [ref=e111] [cursor=pointer]:
+                                - link "LOCATIONS" [ref=e112]:
+                                  - /url: https://www.carismaspa.com/carisma-spa-locations-in-malta
+                                  - paragraph [ref=e115]: LOCATIONS
+                                - button "More LOCATIONS pages" [ref=e116]:
+                                  - img [ref=e117]
+                          - link "BOOK" [ref=e120] [cursor=pointer]:
+                            - /url: https://www.carismaspa.com/contact-us
+                            - generic [ref=e122]: BOOK
+                          - img [ref=e125]
+                          - heading "27802062" [level=4] [ref=e128]:
+                            - generic [ref=e130]: "27802062"
+                          - button "Cart with 0 items" [ref=e134] [cursor=pointer]:
+                            - img [ref=e136]:
+                              - generic [ref=e141]: "0"
+                    - iframe [ref=e145]:
+                      
+              - button "Cart with 0 items" [ref=e149] [cursor=pointer]:
+                - img [ref=e151]:
+                  - generic [ref=e156]: "0"
+      - main [ref=e157]:
+        - generic [ref=e162]:
+          - generic:
+            - generic:
+              - generic:
+                - generic [ref=e172]:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - heading "spa day & lunch" [level=1] [ref=e177]:
+                              - generic [ref=e178]: spa day & lunch
+                            - heading "Rejuvenate with spa & gourmet lunch" [level=4] [ref=e179]:
+                              - generic [ref=e180]: Rejuvenate with spa & gourmet lunch
+                      - generic:
+                        - generic:
+                          - generic:
+                            - heading "scroll down" [level=4] [ref=e181]:
+                              - link "scroll down" [ref=e182] [cursor=pointer]:
+                                - /url: https://www.carismaspa.com/spa-day-lunch
+                                - generic [ref=e183]: scroll down
+                            - link [ref=e185] [cursor=pointer]:
+                              - /url: https://www.carismaspa.com/spa-day-lunch
+                              - img [ref=e187]
+                - generic [ref=e190]:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - img "Group 440.png" [ref=e196]
+                            - heading "AWARD-WINNING CHAIN" [level=4] [ref=e197]:
+                              - generic [ref=e206]: AWARD-WINNING CHAIN
+                      - generic:
+                        - generic:
+                          - generic:
+                            - img "Vector 12 (2).png" [ref=e209]
+                            - img [ref=e212]
+                            - img [ref=e217]
+                            - img [ref=e222]
+                            - img [ref=e227]
+                            - img [ref=e232]
+                            - heading "over 4000+ reviews" [level=4] [ref=e235]:
+                              - generic [ref=e244]: over 4000+ reviews
+                      - generic:
+                        - generic:
+                          - generic:
+                            - heading "35+" [level=4] [ref=e245]:
+                              - generic [ref=e254]: 35+
+                            - heading "YEARS OF EXCELLENCE" [level=4] [ref=e255]:
+                              - generic [ref=e264]: YEARS OF EXCELLENCE
+                - generic [ref=e265]:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - img "Line 959" [ref=e271]
+                            - heading "ultimate getaway experience" [level=2] [ref=e272]
+                            - img "Line 959" [ref=e275]
+                      - paragraph [ref=e276]:
+                        - generic [ref=e279]:
+                          - text: Indulge in our Spa Day and Lunch Packages, where relaxation treatments meet culinary delight. Experience rejuvenating
+                          - link "massage" [ref=e280] [cursor=pointer]:
+                            - /url: https://www.carismaspa.com/massages
+                          - text: s,
+                          - link "facials" [ref=e281] [cursor=pointer]:
+                            - /url: https://www.carismaspa.com
+                          - text: ", and exclusive therapies, followed by a delicious lunch selection from top local restaurants. Treat yourself to a day of ultimate relaxation and gourmet dining with complimentary use of spa leisure facilities for hammam, massages, and facials."
+                - generic [ref=e282]:
+                  - generic:
+                    - generic:
+                      - link "Spa Day & Lunch at Hugo's H Hotel" [ref=e287] [cursor=pointer]:
+                        - /url: https://www.carismaspa.com/spa-day-lunch-hugos
+                        - img "Spa Day & Lunch at Hugo's H Hotel" [ref=e288]
+                      - generic [ref=e289]:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - heading "spa day & lunch at hugo's h hotel" [level=3] [ref=e291]:
+                                    - link "spa day & lunch at hugo's h hotel" [ref=e292] [cursor=pointer]:
+                                      - /url: https://www.carismaspa.com/spa-day-lunch-hugos
+                                  - paragraph [ref=e294]:
+                                    - generic [ref=e295]: Elevate your relaxation by increasing cell rejuvenation with chromotherapy in the heated Indoor Pool and award-winning Spa leisure facilities for the day, topped off with delicious cuisine to choose from at Hugo's Pizza & Pasta.
+                            - list [ref=e296]:
+                              - listitem [ref=e297]:
+                                - paragraph [ref=e298]:
+                                  - generic [ref=e299]: Unwind with an exclusive choice of treatments
+                              - listitem [ref=e300]:
+                                - paragraph [ref=e301]:
+                                  - generic [ref=e302]: Rich choice of delicious lunch menu
+                              - listitem [ref=e303]:
+                                - paragraph [ref=e304]:
+                                  - generic [ref=e305]: Unlimited use of Spa facilities for the day at your
+                              - listitem [ref=e306]:
+                                - paragraph [ref=e307]:
+                                  - generic [ref=e308]: Relax, sipping bubbly Prosecco or Tea
+                      - link "BOOK NOW" [ref=e310] [cursor=pointer]:
+                        - /url: https://www.carismaspa.com/spa-day-lunch-hugos
+                        - generic [ref=e311]: BOOK NOW
+                - generic [ref=e312]:
+                  - generic:
+                    - generic:
+                      - link "Spa Day & Lunch at Hyatt Regency" [ref=e317] [cursor=pointer]:
+                        - /url: https://www.carismaspa.com/spa-day-lunch-hyatt
+                        - img "Spa Day & Lunch at Hyatt Regency" [ref=e318]
+                      - generic [ref=e319]:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - heading "spa day & lunch at Hyatt regency" [level=3] [ref=e321]:
+                                    - link "spa day & lunch at Hyatt regency" [ref=e322] [cursor=pointer]:
+                                      - /url: https://www.carismaspa.com/spa-day-lunch-hyatt
+                                  - paragraph [ref=e324]:
+                                    - generic [ref=e325]: Relax, unwind and dive into pure relaxation with your wellness getaway by the indoor pool, rejuvenating in our award-winning Spa facilities and share flavorful moments at "Seed" or "Thyme" restaurant - Hyatt Regency Malta
+                            - list [ref=e326]:
+                              - listitem [ref=e327]:
+                                - paragraph [ref=e328]: Incredible choice of Body Treatments and Massages
+                              - listitem [ref=e329]:
+                                - paragraph [ref=e330]: Recharge with delicious lunch at "Thyme" or "Seed"
+                              - listitem [ref=e331]:
+                                - paragraph [ref=e332]: Unlimited use of Spa facilities for the day
+                              - listitem [ref=e333]:
+                                - paragraph [ref=e334]: Take your time and relax on the Spa beds by the pool
+                              - listitem [ref=e335]:
+                                - paragraph [ref=e336]: Sip on bubbly Prosecco, diving into tranquility
+                      - link "BOOK NOW" [ref=e338] [cursor=pointer]:
+                        - /url: https://www.carismaspa.com/spa-day-lunch-hyatt
+                        - generic [ref=e339]: BOOK NOW
+                - generic [ref=e340]:
+                  - generic:
+                    - generic:
+                      - generic [ref=e344]:
+                        - generic:
+                          - generic:
+                            - heading "Spa day & lunch at riviera spa RESORT" [level=3] [ref=e346]:
+                              - link "Spa day & lunch at riviera spa RESORT" [ref=e348] [cursor=pointer]:
+                                - /url: https://www.carismaspa.com/spa-day-lunch-riviera-hotel
+                            - paragraph [ref=e350]:
+                              - generic [ref=e351]: "Escape the chaos and embark on a journey of self-care and well-being. Craft your unique retreat with our Stress-breaking Pack:"
+                            - list [ref=e352]:
+                              - listitem [ref=e353]:
+                                - paragraph [ref=e354]:
+                                  - generic [ref=e355]: Stress-breaking Massages (25, 50, or 80min)
+                              - listitem [ref=e356]:
+                                - paragraph [ref=e357]:
+                                  - generic [ref=e358]: Use of Spa Leisure Facilities
+                              - listitem [ref=e359]:
+                                - paragraph [ref=e360]:
+                                  - generic [ref=e361]: Spa Kit Rental (Bathrobe, Slippers)
+                              - listitem [ref=e362]:
+                                - paragraph [ref=e363]:
+                                  - generic [ref=e364]: Herbal Tea Service
+                              - listitem [ref=e365]:
+                                - paragraph [ref=e366]:
+                                  - generic [ref=e367]: Lunch Voucher Valid @ 4 Restaurants
+                            - paragraph [ref=e368]:
+                              - generic [ref=e370]:
+                                - text: "*Excluding Weekends and Public Holidays"
+                                - text: "*Limited Availability: max 10 retreats per day"
+                      - link "BOOK NOW" [ref=e372] [cursor=pointer]:
+                        - /url: https://www.carismaspa.com/spa-day-lunch-riviera-hotel
+                        - generic [ref=e373]: BOOK NOW
+                      - link "Spa Day & Lunch at Riviera Hotel" [ref=e375] [cursor=pointer]:
+                        - /url: https://www.carismaspa.com/spa-day-lunch-riviera-hotel
+                        - img "Spa Day & Lunch at Riviera Hotel" [ref=e376]
+                - generic [ref=e377]:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - img "Line 959" [ref=e383]
+                            - heading "ultimate spa day & gourmet lunch" [level=2] [ref=e384]:
+                              - generic [ref=e390]: ultimate spa day & gourmet lunch
+                            - img "Line 959" [ref=e393]
+                      - img "lunch 1.png" [ref=e396]
+                      - generic:
+                        - generic:
+                          - generic:
+                            - heading "rejuvenating treatments & massages" [level=3] [ref=e397]:
+                              - generic [ref=e411]: rejuvenating treatments & massages
+                            - paragraph [ref=e413]:
+                              - generic [ref=e414]: Enjoy a variety of treatments, from stress-breaking massages to specialized body treatments, designed to revitalize your body and mind.
+                      - img "lunch 2.png" [ref=e417]
+                      - heading "delicious lunch options" [level=1] [ref=e418]:
+                        - generic [ref=e446]: delicious lunch options
+                      - paragraph [ref=e448]:
+                        - generic [ref=e449]: Savor a flavorful and healthy lunch at renowned restaurants, ensuring a complete and delightful wellness experience.
+                      - img "lunch 3.png" [ref=e452]
+                      - generic:
+                        - generic:
+                          - generic:
+                            - heading "access to award-winning spa facilities" [level=1] [ref=e453]:
+                              - generic [ref=e481]: access to award-winning spa facilities
+                            - paragraph [ref=e483]:
+                              - generic [ref=e496]: Benefit from unlimited use of relaxing spa amenities, including pools, saunas, and relaxation lounges, to enhance your day of relaxation.
+                - generic [ref=e497]:
+                  - generic:
+                    - generic:
+                      - heading "personalise your spa day & lunch experience" [level=2] [ref=e501]:
+                        - generic [ref=e502]: personalise your spa day & lunch experience
+                      - heading "chat with us or fill the form below" [level=5] [ref=e503]:
+                        - generic [ref=e504]: chat with us or fill the form below
+                      - iframe [ref=e508]:
+                        - iframe [ref=f3e2]:
+                          - form [ref=f7e6]:
+                            - generic [ref=f7e11]:
+                              - list [ref=f7e12]:
+                                - listitem [ref=f7e13]:
+                                  - heading "personalise your spa day & lunch" [level=2] [ref=f7e14]:
+                                    - emphasis [ref=f7e15]: personalise your spa day & lunch
+                                  - paragraph
+                              - list [ref=f7e17]:
+                                - listitem [ref=f7e18]:
+                                  - generic [ref=f7e19]:
+                                    - text: Name
+                                    - emphasis [ref=f7e20]: "*"
+                                  - generic [ref=f7e22]:
+                                    - generic [ref=f7e23]:
+                                      - generic [ref=f7e24]: Required
+                                      - textbox "Name First Name Required" [ref=f7e25]:
+                                        - /placeholder: ""
+                                      - generic [ref=f7e26]: First Name
+                                    - generic [ref=f7e27]:
+                                      - generic [ref=f7e28]: Required
+                                      - textbox "Name Last Name Required" [ref=f7e29]:
+                                        - /placeholder: ""
+                                      - generic [ref=f7e30]: Last Name
+                                - listitem [ref=f7e31]:
+                                  - generic [ref=f7e32]:
+                                    - text: Email
+                                    - emphasis [ref=f7e33]: "*"
+                                  - textbox "Email Required" [ref=f7e37]:
+                                    - /placeholder: ""
+                                - listitem [ref=f7e38]:
+                                  - generic [ref=f7e39]:
+                                    - text: Phone
+                                    - emphasis [ref=f7e40]: "*"
+                                  - generic [ref=f7e44]:
+                                    - 'generic "Malta: +356" [ref=f7e46]':
+                                      - generic [ref=f7e48]: "+356"
+                                    - textbox "Phone Required" [ref=f7e50]:
+                                      - /placeholder: ""
+                                - listitem [ref=f7e51]:
+                                  - generic [ref=f7e52]:
+                                    - text: Comment
+                                    - emphasis [ref=f7e53]: "*"
+                                  - textbox "Comment Required" [ref=f7e56]:
+                                    - /placeholder: ""
+                                - listitem [ref=f7e57]:
+                                  - generic [ref=f7e58]:
+                                    - text: Where did you hear about us?
+                                    - emphasis [ref=f7e59]: "*"
+                                  - combobox "Where did you hear about us? Required" [ref=f7e63]:
+                                    - option "-Select-" [selected]
+                                    - option "Social Media (Facebook/Instagram)"
+                                    - option "Google"
+                                    - option "Influencer"
+                                    - option "Hotel/Hotel website"
+                                    - option "Friend referral"
+                                    - option "Corporate partnership"
+                                    - option "Repeat Customer"
+                                    - option "Other"
+                                - listitem [ref=f7e64]:
+                                  - generic [ref=f7e65]:
+                                    - text: Captcha
+                                    - emphasis [ref=f7e66]: "*"
+                                  - group "Captcha Required" [ref=f7e68]:
+                                    - generic [ref=f7e69]:
+                                      - checkbox "I am not a robot" [ref=f7e70]
+                                      - emphasis [ref=f7e72] [cursor=pointer]: I am not a robot
+                              - list [ref=f7e73]:
+                                - listitem [ref=f7e74]:
+                                  - button "Submit" [ref=f7e77] [cursor=pointer]:
+                                    - emphasis [ref=f7e78]: Submit
+      - contentinfo [ref=e519]:
+        - generic [ref=e525]:
+          - generic:
+            - generic:
+              - heading "real people, real reviews" [level=2] [ref=e526]:
+                - generic [ref=e527]: real people, real reviews
+              - img "line" [ref=e530]
+              - img "line" [ref=e533]
+              - heading "Over 4000+ five-star reviews across our spa venues in malta" [level=4] [ref=e534]:
+                - generic [ref=e536]: Over 4000+ five-star reviews across our spa venues in malta
+              - heading "intercontinental" [level=4] [ref=e537]:
+                - link "intercontinental" [ref=e539] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/place/Carisma+Spa+%26+Wellness+InterContinental+-+Massage+%26+Day+Spa/@35.923587,14.4853208,17z/data=!4m8!3m7!1s0x130e45693dd0e62d:0x8b86af67493292ea!8m2!3d35.923587!4d14.4878957!9m1!1b1!16s%2Fg%2F11c1nx6y3g?entry=ttu&g_ep=EgoyMDI0MDkwOC4wIKXMDSoASAFQAw%3D%3D
+                  - generic [ref=e540]: intercontinental
+              - heading "Riviera spa resort" [level=4] [ref=e541]:
+                - link "Riviera spa resort" [ref=e543] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/place/Carisma+Spa+%26+Wellness+at+Labranda+Riviera+Hotel/@35.9860488,14.33959,17z/data=!4m18!1m9!3m8!1s0x130e4d1077dafe55:0xca218e0956586cd9!2sCarisma+Spa+%26+Wellness+at+Labranda+Riviera+Hotel!8m2!3d35.9860489!4d14.3444609!9m1!1b1!16s%2Fg%2F11ldddd0w9!3m7!1s0x130e4d1077dafe55:0xca218e0956586cd9!8m2!3d35.9860489!4d14.3444609!9m1!1b1!16s%2Fg%2F11ldddd0w9?entry=ttu&g_ep=EgoyMDI0MDkwOC4wIKXMDSoASAFQAw%3D%3D
+                  - generic [ref=e544]: Riviera spa resort
+              - heading "hugo's h hotel" [level=4] [ref=e545]:
+                - link "hugo's h hotel" [ref=e547] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/place/Carisma+Spa+%26+Wellness+at+Hugo's+Hotels+-+Massage+%26+Day+Spa/@35.9248345,14.4859118,17z/data=!4m8!3m7!1s0x130e45c2f4d1b907:0xe41e662ab2681166!8m2!3d35.9248345!4d14.4884867!9m1!1b1!16s%2Fg%2F11n09vc7kx?entry=ttu&g_ep=EgoyMDI0MDkwOC4wIKXMDSoASAFQAw%3D%3D
+                  - generic [ref=e548]: hugo's h hotel
+              - heading "ax sunny coast" [level=4] [ref=e549]:
+                - link "ax sunny coast" [ref=e551] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/place/Carisma+Spa+%26+Wellness+AX+ODYCY+-+Massage+%26+Day+Spa/@35.9516538,14.4216264,17z/data=!4m8!3m7!1s0x130e4f33f7f45bdb:0xf3803cde266f3849!8m2!3d35.9516538!4d14.4242013!9m1!1b1!16s%2Fg%2F11k5f6mwyw?entry=ttu&g_ep=EgoyMDI0MDkwOC4wIKXMDSoASAFQAw%3D%3D
+                  - generic [ref=e552]: ax sunny coast
+              - heading "hyatt regency" [level=4] [ref=e553]:
+                - link "hyatt regency" [ref=e555] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/place/Carisma+Spa+%26+Wellness+at+Hyatt+Regency+-+Massage+%26+Day+Spa/@35.9240979,14.4848589,17z/data=!4m8!3m7!1s0x130e45e204ab840b:0xb1bf29964758f501!8m2!3d35.9240979!4d14.4874338!9m1!1b1!16s%2Fg%2F11mvg0dttk?entry=ttu&g_ep=EgoyMDI0MDkwOC4wIKXMDSoASAFQAw%3D%3D
+                  - generic [ref=e556]: hyatt regency
+              - heading "novotel" [level=4] [ref=e557]:
+                - link "novotel" [ref=e558] [cursor=pointer]:
+                  - /url: https://www.carismaspa.com/novotel-malta-sliema
+                  - generic [ref=e560]: novotel
+              - heading "ramla bay resort" [level=4] [ref=e561]:
+                - link "ramla bay resort" [ref=e563] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/place/Carisma+Spa+at+Ramla+Bay+Resort+-+Massage+%26+Day+Spa/@35.9874288,14.3456052,17z/data=!4m8!3m7!1s0x130e4d510ea7c96f:0x266c6f868a066578!8m2!3d35.9874288!4d14.3481801!9m1!1b1!16s%2Fg%2F11gxn25c9m?entry=ttu&g_ep=EgoyMDI0MDkwOC4wIKXMDSoASAFQAw%3D%3D
+                  - generic [ref=e564]: ramla bay resort
+              - heading "grand hotel excelsior" [level=4] [ref=e565]:
+                - link "grand hotel excelsior" [ref=e567] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/place/Carisma+Spa+%26+Wellness+at+Labranda+Riviera+Hotel/@35.9860488,14.33959,17z/data=!4m18!1m9!3m8!1s0x130e4d1077dafe55:0xca218e0956586cd9!2sCarisma+Spa+%26+Wellness+at+Labranda+Riviera+Hotel!8m2!3d35.9860489!4d14.3444609!9m1!1b1!16s%2Fg%2F11ldddd0w9!3m7!1s0x130e4d1077dafe55:0xca218e0956586cd9!8m2!3d35.9860489!4d14.3444609!9m1!1b1!16s%2Fg%2F11ldddd0w9?entry=ttu&g_ep=EgoyMDI0MDkwOC4wIKXMDSoASAFQAw%3D%3D
+                  - generic [ref=e568]: grand hotel excelsior
+              - generic [ref=e788]:
+                - generic [ref=e790] [cursor=pointer]:
+                  - generic [ref=e791]:
+                    - generic [ref=e792]:
+                      - generic [ref=e793]: "5"
+                      - generic [ref=e794]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e795]:
+                        - generic [ref=e796]: ★
+                        - generic [ref=e797]: ★
+                        - generic [ref=e798]: ★
+                        - generic [ref=e799]: ★
+                        - generic [ref=e800]: ★
+                    - generic [ref=e802]: 1 week ago
+                  - generic [ref=e803]: Comfortable couples massage by Karla and Kristina. Will visit again!
+                  - generic [ref=e804]:
+                    - link "Opens in new window." [ref=e808]:
+                      - /url: https://maps.google.com/maps?cid=2768710494557988216
+                      - img "Google Business icon" [ref=e809]
+                    - generic [ref=e813]: Mark V.
+                - generic [ref=e815] [cursor=pointer]:
+                  - generic [ref=e816]:
+                    - generic [ref=e817]:
+                      - generic [ref=e818]: "5"
+                      - generic [ref=e819]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e820]:
+                        - generic [ref=e821]: ★
+                        - generic [ref=e822]: ★
+                        - generic [ref=e823]: ★
+                        - generic [ref=e824]: ★
+                        - generic [ref=e825]: ★
+                    - generic [ref=e827]: 1 week ago
+                  - generic [ref=e828]: I had a massage and Darsi was amazing. Definitely recommend.
+                  - generic [ref=e829]:
+                    - link "Opens in new window." [ref=e833]:
+                      - /url: https://maps.google.com/maps?cid=2768710494557988216
+                      - img "Google Business icon" [ref=e834]
+                    - generic [ref=e838]: Lidia O.
+                - generic [ref=e840] [cursor=pointer]:
+                  - generic [ref=e841]:
+                    - generic [ref=e842]:
+                      - generic [ref=e843]: "5"
+                      - generic [ref=e844]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e845]:
+                        - generic [ref=e846]: ★
+                        - generic [ref=e847]: ★
+                        - generic [ref=e848]: ★
+                        - generic [ref=e849]: ★
+                        - generic [ref=e850]: ★
+                    - generic [ref=e852]: 1 week ago
+                  - generic [ref=e853]:
+                    - text: Amazing nice relaxing and very clean
+                    - text: Juliana and Karen was absolutely amazing
+                  - generic [ref=e854]:
+                    - generic [ref=e855]:
+                      - img "Elton A.'s avatar image." [ref=e857]
+                      - link "Opens in new window." [ref=e859]:
+                        - /url: https://maps.google.com/maps?cid=2768710494557988216
+                        - img "Google Business icon" [ref=e860]
+                    - generic [ref=e864]: Elton A.
+                - generic [ref=e866] [cursor=pointer]:
+                  - generic [ref=e867]:
+                    - generic [ref=e868]:
+                      - generic [ref=e869]: "5"
+                      - generic [ref=e870]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e871]:
+                        - generic [ref=e872]: ★
+                        - generic [ref=e873]: ★
+                        - generic [ref=e874]: ★
+                        - generic [ref=e875]: ★
+                        - generic [ref=e876]: ★
+                    - generic [ref=e878]: 1 week ago
+                  - generic [ref=e880]:
+                    - text: She was amazing, honestly the best massage I have had in my life. I got a Japanese massage done. She was very skilled and amazing at what she does. Definitely recommend!!...
+                    - link "Show More" [ref=e881]:
+                      - /url: "#"
+                  - generic [ref=e882]:
+                    - generic [ref=e883]:
+                      - img "Nimisha V.'s avatar image." [ref=e885]
+                      - link "Opens in new window." [ref=e887]:
+                        - /url: https://maps.google.com/maps?cid=16437688023516713318
+                        - img "Google Business icon" [ref=e888]
+                    - generic [ref=e892]: Nimisha V.
+                - generic [ref=e894] [cursor=pointer]:
+                  - generic [ref=e895]:
+                    - generic [ref=e896]:
+                      - generic [ref=e897]: "4"
+                      - generic [ref=e898]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e899]:
+                        - generic [ref=e900]: ★
+                        - generic [ref=e901]: ★
+                        - generic [ref=e902]: ★
+                        - generic [ref=e903]: ★
+                    - generic [ref=e906]: 1 week ago
+                  - generic [ref=e907]: Merci à Marivic pour son massage amazing
+                  - generic [ref=e908]:
+                    - generic [ref=e909]:
+                      - img "Ghislaine L.'s avatar image." [ref=e911]
+                      - link "Opens in new window." [ref=e913]:
+                        - /url: https://maps.google.com/maps?cid=2768710494557988216
+                        - img "Google Business icon" [ref=e914]
+                    - generic [ref=e918]: Ghislaine L.
+                - generic [ref=e920] [cursor=pointer]:
+                  - generic [ref=e921]:
+                    - generic [ref=e922]:
+                      - generic [ref=e923]: "5"
+                      - generic [ref=e924]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e925]:
+                        - generic [ref=e926]: ★
+                        - generic [ref=e927]: ★
+                        - generic [ref=e928]: ★
+                        - generic [ref=e929]: ★
+                        - generic [ref=e930]: ★
+                    - generic [ref=e932]: 1 week ago
+                  - generic [ref=e934]:
+                    - text: Cannot thank Darsi and the rest of the staff at Carisma Spa - Ramla Bay enough. The staff made me feel welcome, whilst Darsi’s excellent massage helped me relax and reall...
+                    - link "Show More" [ref=e935]:
+                      - /url: "#"
+                  - generic [ref=e936]:
+                    - generic [ref=e937]:
+                      - img "Marta M.'s avatar image." [ref=e939]
+                      - link "Opens in new window." [ref=e941]:
+                        - /url: https://maps.google.com/maps?cid=2768710494557988216
+                        - img "Google Business icon" [ref=e942]
+                    - generic [ref=e946]: Marta M.
+                - generic [ref=e948] [cursor=pointer]:
+                  - generic [ref=e949]:
+                    - generic [ref=e950]:
+                      - generic [ref=e951]: "5"
+                      - generic [ref=e952]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e953]:
+                        - generic [ref=e954]: ★
+                        - generic [ref=e955]: ★
+                        - generic [ref=e956]: ★
+                        - generic [ref=e957]: ★
+                        - generic [ref=e958]: ★
+                    - generic [ref=e960]: 1 week ago
+                  - generic [ref=e962]:
+                    - text: I did a sensitive facial and also foot and hand massage, it was beautiful and i loved every bit of it ❤️ thank you Karla for your stunning hands, you are an asset to Cari...
+                    - link "Show More" [ref=e963]:
+                      - /url: "#"
+                  - generic [ref=e964]:
+                    - generic [ref=e965]:
+                      - img "Chantelle T.'s avatar image." [ref=e1587]
+                      - link "Opens in new window." [ref=e968]:
+                        - /url: https://maps.google.com/maps?cid=2768710494557988216
+                        - img "Google Business icon" [ref=e969]
+                    - generic [ref=e973]: Chantelle T.
+                - generic [ref=e975] [cursor=pointer]:
+                  - generic [ref=e976]:
+                    - generic [ref=e977]:
+                      - generic [ref=e978]: "5"
+                      - generic [ref=e979]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e980]:
+                        - generic [ref=e981]: ★
+                        - generic [ref=e982]: ★
+                        - generic [ref=e983]: ★
+                        - generic [ref=e984]: ★
+                        - generic [ref=e985]: ★
+                    - generic [ref=e987]: 1 week ago
+                  - generic [ref=e989]:
+                    - text: Today I had an incredible experience. It was the first time having Hammam. I feel my spirit and body renewed. The environment is very luxurious and comfortable. The massa...
+                    - link "Show More" [ref=e990]:
+                      - /url: "#"
+                  - generic [ref=e991]:
+                    - generic [ref=e992]:
+                      - img "Lucas M.'s avatar image." [ref=e1588]
+                      - link "Opens in new window." [ref=e995]:
+                        - /url: https://maps.google.com/maps?cid=16437688023516713318
+                        - img "Google Business icon" [ref=e996]
+                    - generic [ref=e1000]: Lucas M.
+                - generic [ref=e1002] [cursor=pointer]:
+                  - generic [ref=e1003]:
+                    - generic [ref=e1004]:
+                      - generic [ref=e1005]: "4"
+                      - generic [ref=e1006]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1007]:
+                        - generic [ref=e1008]: ★
+                        - generic [ref=e1009]: ★
+                        - generic [ref=e1010]: ★
+                        - generic [ref=e1011]: ★
+                    - generic [ref=e1014]: 1 week ago
+                  - generic [ref=e1015]:
+                    - generic [ref=e1016]:
+                      - img "Jeanelle C.'s avatar image." [ref=e1589]
+                      - link "Opens in new window." [ref=e1019]:
+                        - /url: https://maps.google.com/maps?cid=16437688023516713318
+                        - img "Google Business icon" [ref=e1020]
+                    - generic [ref=e1024]: Jeanelle C.
+                - generic [ref=e1026] [cursor=pointer]:
+                  - generic [ref=e1027]:
+                    - generic [ref=e1028]:
+                      - generic [ref=e1029]: "5"
+                      - generic [ref=e1030]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1031]:
+                        - generic [ref=e1032]: ★
+                        - generic [ref=e1033]: ★
+                        - generic [ref=e1034]: ★
+                        - generic [ref=e1035]: ★
+                        - generic [ref=e1036]: ★
+                    - generic [ref=e1038]: 1 week ago
+                  - generic [ref=e1040]:
+                    - text: A very special thank you to Debora and Sangayat Carisma spa Excelsior for the incredible massage. Their professionalism, skill, and attention to detail made the whole exp...
+                    - link "Show More" [ref=e1041]:
+                      - /url: "#"
+                  - generic [ref=e1042]:
+                    - generic [ref=e1043]:
+                      - img "Ritienne F.'s avatar image." [ref=e1590]
+                      - link "Opens in new window." [ref=e1046]:
+                        - /url: https://maps.google.com/maps?cid=6908875372516475903
+                        - img "Google Business icon" [ref=e1047]
+                    - generic [ref=e1051]: Ritienne F.
+                - generic [ref=e1053] [cursor=pointer]:
+                  - generic [ref=e1054]:
+                    - generic [ref=e1055]:
+                      - generic [ref=e1056]: "5"
+                      - generic [ref=e1057]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1058]:
+                        - generic [ref=e1059]: ★
+                        - generic [ref=e1060]: ★
+                        - generic [ref=e1061]: ★
+                        - generic [ref=e1062]: ★
+                        - generic [ref=e1063]: ★
+                    - generic [ref=e1065]: 1 week ago
+                  - generic [ref=e1067]:
+                    - text: Thank you and well done goes to Sylvia & Blago for the therapiutic services they provided for me & my sister at Riviera Spa & Wellness. They are both highly ...
+                    - link "Show More" [ref=e1068]:
+                      - /url: "#"
+                  - generic [ref=e1069]:
+                    - generic [ref=e1070]:
+                      - img "Doris G.'s avatar image." [ref=e1591]
+                      - link "Opens in new window." [ref=e1073]:
+                        - /url: https://maps.google.com/maps?cid=14565078840647380185
+                        - img "Google Business icon" [ref=e1074]
+                    - generic [ref=e1078]: Doris G.
+                - generic [ref=e1080] [cursor=pointer]:
+                  - generic [ref=e1081]:
+                    - generic [ref=e1082]:
+                      - generic [ref=e1083]: "5"
+                      - generic [ref=e1084]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1085]:
+                        - generic [ref=e1086]: ★
+                        - generic [ref=e1087]: ★
+                        - generic [ref=e1088]: ★
+                        - generic [ref=e1089]: ★
+                        - generic [ref=e1090]: ★
+                    - generic [ref=e1092]: 1 week ago
+                  - generic [ref=e1093]: Marivic was my therapist for a great experience - she was very attentive in checking whether pressure was good and if I was ok. Overall recommended
+                  - generic [ref=e1094]:
+                    - link "Opens in new window." [ref=e1098]:
+                      - /url: https://maps.google.com/maps?cid=2768710494557988216
+                      - img "Google Business icon" [ref=e1099]
+                    - generic [ref=e1103]: Helga E.
+                - generic [ref=e1105] [cursor=pointer]:
+                  - generic [ref=e1106]:
+                    - generic [ref=e1107]:
+                      - generic [ref=e1108]: "5"
+                      - generic [ref=e1109]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1110]:
+                        - generic [ref=e1111]: ★
+                        - generic [ref=e1112]: ★
+                        - generic [ref=e1113]: ★
+                        - generic [ref=e1114]: ★
+                        - generic [ref=e1115]: ★
+                    - generic [ref=e1117]: 1 week ago
+                  - generic [ref=e1118]:
+                    - link "Opens in new window." [ref=e1122]:
+                      - /url: https://maps.google.com/maps?cid=17546091073060681801
+                      - img "Google Business icon" [ref=e1123]
+                    - generic [ref=e1127]: Juanita B.
+                - generic [ref=e1129] [cursor=pointer]:
+                  - generic [ref=e1130]:
+                    - generic [ref=e1131]:
+                      - generic [ref=e1132]: "5"
+                      - generic [ref=e1133]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1134]:
+                        - generic [ref=e1135]: ★
+                        - generic [ref=e1136]: ★
+                        - generic [ref=e1137]: ★
+                        - generic [ref=e1138]: ★
+                        - generic [ref=e1139]: ★
+                    - generic [ref=e1141]: 1 week ago
+                  - generic [ref=e1142]:
+                    - text: A fabulous hammam experience with professional therapist Kunya. A thorough experience from head to toe!
+                    - text: Really enjoyable.
+                  - generic [ref=e1144]:
+                    - link "Opens in new window." [ref=e1148]:
+                      - /url: https://maps.google.com/maps?cid=16437688023516713318
+                      - img "Google Business icon" [ref=e1149]
+                    - generic [ref=e1153]: Annabelle C.
+                - generic [ref=e1155] [cursor=pointer]:
+                  - generic [ref=e1156]:
+                    - generic [ref=e1157]:
+                      - generic [ref=e1158]: "5"
+                      - generic [ref=e1159]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1160]:
+                        - generic [ref=e1161]: ★
+                        - generic [ref=e1162]: ★
+                        - generic [ref=e1163]: ★
+                        - generic [ref=e1164]: ★
+                        - generic [ref=e1165]: ★
+                    - generic [ref=e1167]: 1 week ago
+                  - generic [ref=e1168]:
+                    - link "Opens in new window." [ref=e1172]:
+                      - /url: https://maps.google.com/maps?cid=12808001590683825409
+                      - img "Google Business icon" [ref=e1173]
+                    - generic [ref=e1177]: Karen M.
+                - generic [ref=e1179] [cursor=pointer]:
+                  - generic [ref=e1180]:
+                    - generic [ref=e1181]:
+                      - generic [ref=e1182]: "5"
+                      - generic [ref=e1183]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1184]:
+                        - generic [ref=e1185]: ★
+                        - generic [ref=e1186]: ★
+                        - generic [ref=e1187]: ★
+                        - generic [ref=e1188]: ★
+                        - generic [ref=e1189]: ★
+                    - generic [ref=e1191]: 1 week ago
+                  - generic [ref=e1192]: The comfiest massage beds I’ve ever had a treatment on! Had a massage and face mask by Tina and felt extremely relaxed afterwards, would definitely recommend!
+                  - generic [ref=e1193]:
+                    - link "Opens in new window." [ref=e1197]:
+                      - /url: https://maps.google.com/maps?cid=16437688023516713318
+                      - img "Google Business icon" [ref=e1198]
+                    - generic [ref=e1202]: Kerry M.
+                - generic [ref=e1204] [cursor=pointer]:
+                  - generic [ref=e1205]:
+                    - generic [ref=e1206]:
+                      - generic [ref=e1207]: "5"
+                      - generic [ref=e1208]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1209]:
+                        - generic [ref=e1210]: ★
+                        - generic [ref=e1211]: ★
+                        - generic [ref=e1212]: ★
+                        - generic [ref=e1213]: ★
+                        - generic [ref=e1214]: ★
+                    - generic [ref=e1216]: 1 week ago
+                  - generic [ref=e1217]: Glecy is a great therapist. Loved the treatment
+                  - generic [ref=e1218]:
+                    - link "Opens in new window." [ref=e1222]:
+                      - /url: https://maps.google.com/maps?cid=6068969971828778751
+                      - img "Google Business icon" [ref=e1223]
+                    - generic [ref=e1227]: Kurt G.
+                - generic [ref=e1229] [cursor=pointer]:
+                  - generic [ref=e1230]:
+                    - generic [ref=e1231]:
+                      - generic [ref=e1232]: "5"
+                      - generic [ref=e1233]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1234]:
+                        - generic [ref=e1235]: ★
+                        - generic [ref=e1236]: ★
+                        - generic [ref=e1237]: ★
+                        - generic [ref=e1238]: ★
+                        - generic [ref=e1239]: ★
+                    - generic [ref=e1241]: 1 week ago
+                  - generic [ref=e1242]: CHRISTOPHER is really Good
+                  - generic [ref=e1243]:
+                    - link "Opens in new window." [ref=e1247]:
+                      - /url: https://maps.google.com/maps?cid=10053916076295754474
+                      - img "Google Business icon" [ref=e1248]
+                    - generic [ref=e1252]: Denise R.
+                - generic [ref=e1254] [cursor=pointer]:
+                  - generic [ref=e1255]:
+                    - generic [ref=e1256]:
+                      - generic [ref=e1257]: "5"
+                      - generic [ref=e1258]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1259]:
+                        - generic [ref=e1260]: ★
+                        - generic [ref=e1261]: ★
+                        - generic [ref=e1262]: ★
+                        - generic [ref=e1263]: ★
+                        - generic [ref=e1264]: ★
+                    - generic [ref=e1266]: 1 week ago
+                  - generic [ref=e1267]: Fantastic relaxing massage done by Patricia 🙏❤️! I strongly recommend her Magic Hands !
+                  - generic [ref=e1268]:
+                    - link "Opens in new window." [ref=e1272]:
+                      - /url: https://maps.google.com/maps?cid=12808001590683825409
+                      - img "Google Business icon" [ref=e1273]
+                    - generic [ref=e1277]: Elena S.
+                - generic [ref=e1279] [cursor=pointer]:
+                  - generic [ref=e1280]:
+                    - generic [ref=e1281]:
+                      - generic [ref=e1282]: "5"
+                      - generic [ref=e1283]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1284]:
+                        - generic [ref=e1285]: ★
+                        - generic [ref=e1286]: ★
+                        - generic [ref=e1287]: ★
+                        - generic [ref=e1288]: ★
+                        - generic [ref=e1289]: ★
+                    - generic [ref=e1291]: 1 week ago
+                  - generic [ref=e1292]: My wife and I had a great experience today with Juliana & Karen with green tea and procsacco, thank you to you both.
+                  - generic [ref=e1293]:
+                    - link "Opens in new window." [ref=e1297]:
+                      - /url: https://maps.google.com/maps?cid=2768710494557988216
+                      - img "Google Business icon" [ref=e1298]
+                    - generic [ref=e1302]: Stephen W.
+                - generic [ref=e1304] [cursor=pointer]:
+                  - generic [ref=e1305]:
+                    - generic [ref=e1306]:
+                      - generic [ref=e1307]: "5"
+                      - generic [ref=e1308]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1309]:
+                        - generic [ref=e1310]: ★
+                        - generic [ref=e1311]: ★
+                        - generic [ref=e1312]: ★
+                        - generic [ref=e1313]: ★
+                        - generic [ref=e1314]: ★
+                    - generic [ref=e1316]: 1 week ago
+                  - generic [ref=e1317]: My first, certainly not last visit at a Carisma spa. Great massage by Vivi ❤️
+                  - generic [ref=e1318]:
+                    - link "Opens in new window." [ref=e1322]:
+                      - /url: https://maps.google.com/maps?cid=12808001590683825409
+                      - img "Google Business icon" [ref=e1323]
+                    - generic [ref=e1327]: Sephora C.
+                - generic [ref=e1329] [cursor=pointer]:
+                  - generic [ref=e1330]:
+                    - generic [ref=e1331]:
+                      - generic [ref=e1332]: "4"
+                      - generic [ref=e1333]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1334]:
+                        - generic [ref=e1335]: ★
+                        - generic [ref=e1336]: ★
+                        - generic [ref=e1337]: ★
+                        - generic [ref=e1338]: ★
+                    - generic [ref=e1341]: 1 week ago
+                  - generic [ref=e1342]: Highly recommend Tamara Lourdes for a professional massage she was amazing 👏🏻
+                  - generic [ref=e1343]:
+                    - link "Opens in new window." [ref=e1347]:
+                      - /url: https://maps.google.com/maps?cid=16437688023516713318
+                      - img "Google Business icon" [ref=e1348]
+                    - generic [ref=e1352]: Rachelle C.
+                - generic [ref=e1354] [cursor=pointer]:
+                  - generic [ref=e1355]:
+                    - generic [ref=e1356]:
+                      - generic [ref=e1357]: "5"
+                      - generic [ref=e1358]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1359]:
+                        - generic [ref=e1360]: ★
+                        - generic [ref=e1361]: ★
+                        - generic [ref=e1362]: ★
+                        - generic [ref=e1363]: ★
+                        - generic [ref=e1364]: ★
+                    - generic [ref=e1366]: 1 week ago
+                  - generic [ref=e1367]: Patricia was hands down the best! Gentle and attentive. Best 1hour invested !
+                  - generic [ref=e1368]:
+                    - link "Opens in new window." [ref=e1372]:
+                      - /url: https://maps.google.com/maps?cid=12808001590683825409
+                      - img "Google Business icon" [ref=e1373]
+                    - generic [ref=e1377]: marie D.
+                - generic [ref=e1379] [cursor=pointer]:
+                  - generic [ref=e1380]:
+                    - generic [ref=e1381]:
+                      - generic [ref=e1382]: "5"
+                      - generic [ref=e1383]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1384]:
+                        - generic [ref=e1385]: ★
+                        - generic [ref=e1386]: ★
+                        - generic [ref=e1387]: ★
+                        - generic [ref=e1388]: ★
+                        - generic [ref=e1389]: ★
+                    - generic [ref=e1391]: 1 week ago
+                  - generic [ref=e1393]:
+                    - text: Karla and Marvic are amazing, We have booked deep tissue massage and it was perfect! The spa is beatiful, modern, big, with a beautiful view and sauna, hammam, jakuzzi, p...
+                    - link "Show More" [ref=e1394]:
+                      - /url: "#"
+                  - generic [ref=e1395]:
+                    - link "Opens in new window." [ref=e1399]:
+                      - /url: https://maps.google.com/maps?cid=2768710494557988216
+                      - img "Google Business icon" [ref=e1400]
+                    - generic [ref=e1404]: AZ D.
+                - generic [ref=e1406] [cursor=pointer]:
+                  - generic [ref=e1407]:
+                    - generic [ref=e1408]:
+                      - generic [ref=e1409]: "5"
+                      - generic [ref=e1410]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1411]:
+                        - generic [ref=e1412]: ★
+                        - generic [ref=e1413]: ★
+                        - generic [ref=e1414]: ★
+                        - generic [ref=e1415]: ★
+                        - generic [ref=e1416]: ★
+                    - generic [ref=e1418]: 1 week ago
+                  - generic [ref=e1419]:
+                    - text: I'm very happy with the experience! I had a relaxing massage. The specialist Claudia was fantastic. One of the best massages in my life.
+                    - text: Will come again for sure!
+                  - generic [ref=e1420]:
+                    - link "Opens in new window." [ref=e1424]:
+                      - /url: https://maps.google.com/maps?cid=10053916076295754474
+                      - img "Google Business icon" [ref=e1425]
+                    - generic [ref=e1429]: Александра И.
+                - generic [ref=e1431] [cursor=pointer]:
+                  - generic [ref=e1432]:
+                    - generic [ref=e1433]:
+                      - generic [ref=e1434]: "5"
+                      - generic [ref=e1435]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1436]:
+                        - generic [ref=e1437]: ★
+                        - generic [ref=e1438]: ★
+                        - generic [ref=e1439]: ★
+                        - generic [ref=e1440]: ★
+                        - generic [ref=e1441]: ★
+                    - generic [ref=e1443]: 1 week ago
+                  - generic [ref=e1444]: Comfortable couples massage by Karla and Kristina. Will visit again!
+                  - generic [ref=e1445]:
+                    - link "Opens in new window." [ref=e1449]:
+                      - /url: https://maps.google.com/maps?cid=2768710494557988216
+                      - img "Google Business icon" [ref=e1450]
+                    - generic [ref=e1454]: Mark V.
+                - generic [ref=e1456] [cursor=pointer]:
+                  - generic [ref=e1457]:
+                    - generic [ref=e1458]:
+                      - generic [ref=e1459]: "5"
+                      - generic [ref=e1460]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1461]:
+                        - generic [ref=e1462]: ★
+                        - generic [ref=e1463]: ★
+                        - generic [ref=e1464]: ★
+                        - generic [ref=e1465]: ★
+                        - generic [ref=e1466]: ★
+                    - generic [ref=e1468]: 1 week ago
+                  - generic [ref=e1469]: I had a massage and Darsi was amazing. Definitely recommend.
+                  - generic [ref=e1470]:
+                    - link "Opens in new window." [ref=e1474]:
+                      - /url: https://maps.google.com/maps?cid=2768710494557988216
+                      - img "Google Business icon" [ref=e1475]
+                    - generic [ref=e1479]: Lidia O.
+                - generic [ref=e1481] [cursor=pointer]:
+                  - generic [ref=e1482]:
+                    - generic [ref=e1483]:
+                      - generic [ref=e1484]: "5"
+                      - generic [ref=e1485]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1486]:
+                        - generic [ref=e1487]: ★
+                        - generic [ref=e1488]: ★
+                        - generic [ref=e1489]: ★
+                        - generic [ref=e1490]: ★
+                        - generic [ref=e1491]: ★
+                    - generic [ref=e1493]: 1 week ago
+                  - generic [ref=e1494]:
+                    - text: Amazing nice relaxing and very clean
+                    - text: Juliana and Karen was absolutely amazing
+                  - generic [ref=e1495]:
+                    - link "Opens in new window." [ref=e1499]:
+                      - /url: https://maps.google.com/maps?cid=2768710494557988216
+                      - img "Google Business icon" [ref=e1500]
+                    - generic [ref=e1504]: Elton A.
+                - generic [ref=e1506] [cursor=pointer]:
+                  - generic [ref=e1507]:
+                    - generic [ref=e1508]:
+                      - generic [ref=e1509]: "5"
+                      - generic [ref=e1510]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1511]:
+                        - generic [ref=e1512]: ★
+                        - generic [ref=e1513]: ★
+                        - generic [ref=e1514]: ★
+                        - generic [ref=e1515]: ★
+                        - generic [ref=e1516]: ★
+                    - generic [ref=e1518]: 1 week ago
+                  - generic [ref=e1520]:
+                    - text: She was amazing, honestly the best massage I have had in my life. I got a Japanese massage done. She was very skilled and amazing at what she does. Definitely recommend!!...
+                    - link "Show More" [ref=e1521]:
+                      - /url: "#"
+                  - generic [ref=e1522]:
+                    - generic [ref=e1523]:
+                      - img "Nimisha V.'s avatar image." [ref=e1525]
+                      - link "Opens in new window." [ref=e1527]:
+                        - /url: https://maps.google.com/maps?cid=16437688023516713318
+                        - img "Google Business icon" [ref=e1528]
+                    - generic [ref=e1532]: Nimisha V.
+                - generic [ref=e1534] [cursor=pointer]:
+                  - generic [ref=e1535]:
+                    - generic [ref=e1536]:
+                      - generic [ref=e1537]: "4"
+                      - generic [ref=e1538]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1539]:
+                        - generic [ref=e1540]: ★
+                        - generic [ref=e1541]: ★
+                        - generic [ref=e1542]: ★
+                        - generic [ref=e1543]: ★
+                    - generic [ref=e1546]: 1 week ago
+                  - generic [ref=e1547]: Merci à Marivic pour son massage amazing
+                  - generic [ref=e1548]:
+                    - generic [ref=e1549]:
+                      - img "Ghislaine L.'s avatar image." [ref=e1551]
+                      - link "Opens in new window." [ref=e1553]:
+                        - /url: https://maps.google.com/maps?cid=2768710494557988216
+                        - img "Google Business icon" [ref=e1554]
+                    - generic [ref=e1558]: Ghislaine L.
+                - generic [ref=e1560] [cursor=pointer]:
+                  - generic [ref=e1561]:
+                    - generic [ref=e1562]:
+                      - generic [ref=e1563]: "5"
+                      - generic [ref=e1564]:
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                        - generic: ★
+                      - generic [ref=e1565]:
+                        - generic [ref=e1566]: ★
+                        - generic [ref=e1567]: ★
+                        - generic [ref=e1568]: ★
+                        - generic [ref=e1569]: ★
+                        - generic [ref=e1570]: ★
+                    - generic [ref=e1572]: 1 week ago
+                  - generic [ref=e1574]:
+                    - text: Cannot thank Darsi and the rest of the staff at Carisma Spa - Ramla Bay enough. The staff made me feel welcome, whilst Darsi’s excellent massage helped me relax and reall...
+                    - link "Show More" [ref=e1575]:
+                      - /url: "#"
+                  - generic [ref=e1576]:
+                    - generic [ref=e1577]:
+                      - img "Marta M.'s avatar image." [ref=e1579]
+                      - link "Opens in new window." [ref=e1581]:
+                        - /url: https://maps.google.com/maps?cid=2768710494557988216
+                        - img "Google Business icon" [ref=e1582]
+                    - generic [ref=e1586]: Marta M.
+              - img "line" [ref=e572]
+              - paragraph [ref=e573]:
+                - generic [ref=e575]: the carisma difference
+              - img "line" [ref=e578]
+              - img "30 years of legacy in wellness and spa therapies" [ref=e581]
+              - paragraph [ref=e582]:
+                - generic [ref=e583]: years of excellence
+              - img "award winning spa in malta" [ref=e586]
+              - paragraph [ref=e587]:
+                - generic [ref=e588]: award-winning chain
+              - img "natural therapies in malta" [ref=e591]
+              - paragraph [ref=e592]:
+                - generic [ref=e593]: world famous treatments
+              - img "highest rated spa in malta" [ref=e596]
+              - paragraph [ref=e597]:
+                - generic [ref=e598]: "#1 reviewed on google"
+              - link "learn more" [ref=e600] [cursor=pointer]:
+                - /url: https://www.carismaspa.com/about-us
+                - generic [ref=e602]: learn more
+              - generic:
+                - generic:
+                  - generic:
+                    - paragraph [ref=e603]:
+                      - generic [ref=e604]: Testament to our 35 year long commitment to delighting our spa guests from around the world and to our strive to retain our 99% Customer satisfaction rate.
+                    - heading "experience an award-winning spa in malta" [level=2] [ref=e605]:
+                      - generic [ref=e606]: experience an
+                      - generic [ref=e607]: award-winning
+                      - generic [ref=e609]: spa in malta
+                    - link "World Luxury Spa Award Winner" [ref=e611] [cursor=pointer]:
+                      - /url: https://www.luxuryspaawards.com/
+                      - img "World Luxury Spa Award Winner" [ref=e612]
+              - generic [ref=e614]:
+                - generic:
+                  - generic:
+                    - paragraph [ref=e616]:
+                      - generic [ref=e619]:
+                        - text: become a part of
+                        - text: carisma spa family
+                    - heading "work with an award-winning wellness chain" [level=4] [ref=e620]:
+                      - generic [ref=e621]: work with an award-winning wellness chain
+                    - link "apply now" [ref=e623] [cursor=pointer]:
+                      - /url: https://www.carismaspa.com/careers-carisma
+                      - generic [ref=e625]: apply now
+              - img "Carisma Spa Careers" [ref=e628]
+              - paragraph [ref=e629]:
+                - generic [ref=e630]: contact us
+              - img [ref=e633]
+              - paragraph [ref=e636]:
+                - link "+356 27802062" [ref=e639] [cursor=pointer]:
+                  - /url: tel:+356 27802062
+              - img [ref=e642]
+              - paragraph [ref=e645]:
+                - link "wellness@carismaspa.com" [ref=e648] [cursor=pointer]:
+                  - /url: mailto:carismawellness@gmail.com
+              - img [ref=e651]
+              - paragraph [ref=e654]:
+                - link "@carismaspamalta" [ref=e657] [cursor=pointer]:
+                  - /url: https://www.instagram.com/carismaspamalta/
+              - img [ref=e660]
+              - paragraph [ref=e663]:
+                - link "Carisma spa & wellness" [ref=e666] [cursor=pointer]:
+                  - /url: https://www.facebook.com/carismaspa
+              - img [ref=e669]
+              - paragraph [ref=e673]:
+                - link "carisma spa locations" [ref=e676] [cursor=pointer]:
+                  - /url: https://www.carismaspa.com/carisma-spa-locations-in-malta
+              - iframe [ref=e678]:
+                - generic [active] [ref=f4e1]:
+                  - generic [ref=f4e3]:
+                    - heading "Follow us at @carismaspamalta" [level=2] [ref=f4e4]
+                    - generic [ref=f4e6]:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - img
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - img
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - img
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - img
+                    - text:  
+                    - generic [ref=f4e7] [cursor=pointer]: This is a free version of the Social Feed app
+                  - text: 
+              - search [ref=e685]:
+                - generic [ref=e686]:
+                  - img [ref=e689]
+                  - searchbox "Search" [ref=e695]
+              - navigation "Site" [ref=e698]:
+                - list [ref=e699]:
+                  - listitem [ref=e700] [cursor=pointer]:
+                    - link "HOME" [ref=e701]:
+                      - /url: https://www.carismaspa.com
+                      - paragraph [ref=e704]: HOME
+                  - listitem [ref=e705] [cursor=pointer]:
+                    - button "PACKAGES" [ref=e706]:
+                      - paragraph [ref=e709]: PACKAGES
+                    - button "More PACKAGES pages" [ref=e710]:
+                      - img [ref=e711]
+                  - listitem [ref=e713] [cursor=pointer]:
+                    - button "TREATMENTS" [ref=e714]:
+                      - paragraph [ref=e717]: TREATMENTS
+                    - button "More TREATMENTS pages" [ref=e718]:
+                      - img [ref=e719]
+                  - listitem [ref=e721] [cursor=pointer]:
+                    - link "MEMBERSHIP" [ref=e722]:
+                      - /url: https://www.carismaspa.com/join-the-spa-club
+                      - paragraph [ref=e725]: MEMBERSHIP
+                  - listitem [ref=e726] [cursor=pointer]:
+                    - link "GIFTS" [ref=e727]:
+                      - /url: https://www.carismaspa.com/gifts
+                      - paragraph [ref=e730]: GIFTS
+                  - listitem [ref=e731] [cursor=pointer]:
+                    - link "MED AESTHETICS" [ref=e732]:
+                      - /url: https://www.carismaaesthetics.com/
+                      - paragraph [ref=e735]: MED AESTHETICS
+                  - listitem [ref=e736] [cursor=pointer]:
+                    - link "ABOUT US" [ref=e737]:
+                      - /url: https://www.carismaspa.com/about-us
+                      - paragraph [ref=e740]: ABOUT US
+                  - listitem [ref=e741] [cursor=pointer]:
+                    - link "LOCATIONS" [ref=e742]:
+                      - /url: https://www.carismaspa.com/carisma-spa-locations-in-malta
+                      - paragraph [ref=e745]: LOCATIONS
+                  - listitem [ref=e746] [cursor=pointer]:
+                    - link "CONTACT" [ref=e747]:
+                      - /url: https://www.carismaspa.com/contact-us
+                      - paragraph [ref=e750]: CONTACT
+                  - listitem [ref=e751] [cursor=pointer]:
+                    - link "Blog" [ref=e752]:
+                      - /url: https://www.carismaspa.com/blog
+                      - paragraph [ref=e755]: Blog
+              - generic [ref=e760]:
+                - heading "© Carisma spa & wellness All Rights reserved." [level=4] [ref=e765]:
+                  - generic [ref=e766]: © Carisma spa & wellness All Rights reserved.
+                - generic [ref=e767]:
+                  - generic:
+                    - generic:
+                      - heading "privacy policy" [level=4] [ref=e771]:
+                        - link "privacy policy" [ref=e773] [cursor=pointer]:
+                          - /url: https://www.carismaspa.com/privacy-policy
+                      - heading "Terms & Conditions" [level=4] [ref=e774]:
+                        - link "Terms & Conditions" [ref=e776] [cursor=pointer]:
+                          - /url: https://www.carismaspa.com/terms-conditions
+    - region "bottom of page"
+  - generic [ref=e779] [cursor=pointer]:
+    - emphasis [ref=e780]:
+      - img "Gravatar" [ref=e781]
+    - generic [ref=e782]:
+      - generic "We're Offline" [ref=e783]
+      - paragraph [ref=e784]: Leave us a Message
+      - text: 
+    - text: 
+  - dialog "POPUP Form" [ref=e1592]:
+    - generic [ref=e1597]:
+      - button "Close dialog" [ref=e1598] [cursor=pointer]:
+        - img [ref=e1599]
+      - generic [ref=e1602]:
+        - img "spin" [ref=e1605]
+        - generic [ref=e1606]:
+          - img "carisma" [ref=e1611]
+          - 'img "Subscribe for a chance to win free treatments, UPGRADES, and more from Malta’s #1 Award-Winning Spa!" [ref=e1616]'
+          - img "Worth up to $400!" [ref=e1621]
+          - generic [ref=e1624]:
+            - generic [ref=e1625]: Email
+            - textbox "Email" [active] [ref=e1626]
+          - generic [ref=e1629]:
+            - generic [ref=e1630]: First Name
+            - textbox "First Name" [ref=e1631]
+          - button "SPIN TO WIN" [ref=e1634] [cursor=pointer]
+          - button "No thanks, I don't want a prize" [ref=e1637] [cursor=pointer]
+  - generic:
+    - generic:
+      - iframe
