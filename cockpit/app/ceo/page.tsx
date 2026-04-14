@@ -2,6 +2,8 @@
 
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
+import { CIChat } from "@/components/ci/CIChat";
+import { AlertFeed } from "@/components/dashboard/AlertFeed";
 import { Card } from "@/components/ui/card";
 import { chartColors, chartDefaults, formatCurrency } from "@/lib/charts/config";
 import {
@@ -80,6 +82,9 @@ export default function CEOPage() {
               </ResponsiveContainer>
             </Card>
           </div>
+
+          <AlertFeed />
+          <CIChat />
         </>
       )}
     </DashboardShell>
