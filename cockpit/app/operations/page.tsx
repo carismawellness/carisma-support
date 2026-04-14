@@ -3,7 +3,9 @@
 import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
+import { ExecutiveSummary } from "@/components/dashboard/ExecutiveSummary";
 import { DataTable } from "@/components/dashboard/DataTable";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { Card } from "@/components/ui/card";
 import { chartColors, chartDefaults } from "@/lib/charts/config";
 import {
@@ -60,14 +62,16 @@ const scorecardData = [
 export default function OperationsPage() {
   return (
     <DashboardShell>
-      {() => (
+      {({ dateFrom, dateTo, brandFilter }) => (
         <>
-          <h1 className="text-2xl font-bold text-gray-900">Operations Dashboard</h1>
+          <h1 className="text-2xl font-bold text-foreground">Operations Dashboard</h1>
           <KPICardRow kpis={kpis} />
+          <ExecutiveSummary department="operations" dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
 
+          <ErrorBoundary>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Google Reviews Trend</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">Google Reviews Trend</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={reviewsTrend} margin={chartDefaults.margin}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -84,7 +88,7 @@ export default function OperationsPage() {
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Consult Funnel</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">Consult Funnel</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={consultFunnel} margin={chartDefaults.margin}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -98,9 +102,10 @@ export default function OperationsPage() {
               </ResponsiveContainer>
             </Card>
           </div>
+          </ErrorBoundary>
 
           <Card className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Location Scorecard</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Location Scorecard</h2>
             <DataTable columns={scorecardColumns} data={scorecardData} />
           </Card>
           <CIChat />

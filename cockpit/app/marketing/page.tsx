@@ -3,7 +3,9 @@
 import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
+import { ExecutiveSummary } from "@/components/dashboard/ExecutiveSummary";
 import { DataTable } from "@/components/dashboard/DataTable";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { Card } from "@/components/ui/card";
 import { chartColors, chartDefaults, formatCurrency } from "@/lib/charts/config";
 import {
@@ -57,14 +59,16 @@ const campaignData = [
 export default function MarketingPage() {
   return (
     <DashboardShell>
-      {() => (
+      {({ dateFrom, dateTo, brandFilter }) => (
         <>
-          <h1 className="text-2xl font-bold text-gray-900">Marketing Dashboard</h1>
+          <h1 className="text-2xl font-bold text-foreground">Marketing Dashboard</h1>
           <KPICardRow kpis={kpis} />
+          <ExecutiveSummary department="marketing" dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
 
+          <ErrorBoundary>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Spend vs Revenue</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">Spend vs Revenue</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={spendRevenueData} margin={chartDefaults.margin}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -80,7 +84,7 @@ export default function MarketingPage() {
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">CPL by Brand</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">CPL by Brand</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={cplByBrandData} margin={chartDefaults.margin}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -94,9 +98,10 @@ export default function MarketingPage() {
               </ResponsiveContainer>
             </Card>
           </div>
+          </ErrorBoundary>
 
           <Card className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Campaign Performance</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Campaign Performance</h2>
             <DataTable columns={campaignColumns} data={campaignData} />
           </Card>
           <CIChat />

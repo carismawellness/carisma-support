@@ -66,7 +66,7 @@ export function AlertFeed() {
           return (
             <div
               key={alert.id}
-              className="flex items-start gap-3 p-3 rounded-lg border border-gray-100"
+              className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card"
             >
               <Icon className={cn("h-5 w-5 mt-0.5", alert.severity === "critical" ? "text-red-500" : alert.severity === "warning" ? "text-amber-500" : "text-blue-500")} />
               <div className="flex-1 min-w-0">
@@ -77,8 +77,8 @@ export function AlertFeed() {
                   <Badge variant="outline">{alert.department}</Badge>
                   <Badge variant="outline">{alert.status}</Badge>
                 </div>
-                <p className="text-sm font-medium text-gray-900 truncate">{alert.title}</p>
-                <p className="text-xs text-gray-500 mt-1">{alert.recommendation}</p>
+                <p className="text-sm font-medium text-foreground truncate">{alert.title}</p>
+                <p className="text-xs text-muted-foreground mt-1">{alert.recommendation}</p>
               </div>
               {(alert.status === "emailed" || alert.status === "pending") && (
                 <div className="flex gap-1">

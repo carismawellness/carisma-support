@@ -3,7 +3,9 @@
 import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
+import { ExecutiveSummary } from "@/components/dashboard/ExecutiveSummary";
 import { DataTable } from "@/components/dashboard/DataTable";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { Card } from "@/components/ui/card";
 import { chartColors, chartDefaults } from "@/lib/charts/config";
 import {
@@ -63,14 +65,16 @@ const repData = [
 export default function SalesPage() {
   return (
     <DashboardShell>
-      {() => (
+      {({ dateFrom, dateTo, brandFilter }) => (
         <>
-          <h1 className="text-2xl font-bold text-gray-900">Sales / CRM Dashboard</h1>
+          <h1 className="text-2xl font-bold text-foreground">Sales / CRM Dashboard</h1>
           <KPICardRow kpis={kpis} />
+          <ExecutiveSummary department="sales" dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
 
+          <ErrorBoundary>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Speed to Lead Distribution</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">Speed to Lead Distribution</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={stlDistribution} margin={chartDefaults.margin}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -83,7 +87,7 @@ export default function SalesPage() {
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Conversion Funnel</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">Conversion Funnel</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={funnelData} layout="vertical" margin={chartDefaults.margin}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -99,9 +103,10 @@ export default function SalesPage() {
               </ResponsiveContainer>
             </Card>
           </div>
+          </ErrorBoundary>
 
           <Card className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Rep Leaderboard</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Rep Leaderboard</h2>
             <DataTable columns={repColumns} data={repData} />
           </Card>
           <CIChat />

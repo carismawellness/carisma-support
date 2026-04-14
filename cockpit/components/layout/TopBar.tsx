@@ -34,8 +34,10 @@ export function TopBar({
   }
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 fixed top-0 left-60 right-0 z-30">
-      <DateRangePicker from={dateFrom} to={dateTo} onChange={onDateChange} />
+    <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-6 fixed top-0 left-0 md:left-60 right-0 z-30">
+      <div className="shrink min-w-0">
+        <DateRangePicker from={dateFrom} to={dateTo} onChange={onDateChange} />
+      </div>
       <div className="flex items-center gap-4">
         <BrandFilter selected={brandFilter} onChange={onBrandChange} />
         <Button variant="ghost" size="icon" className="relative">

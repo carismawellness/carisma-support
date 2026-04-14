@@ -19,7 +19,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
   const { brand, setBrand } = useBrandFilter();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Sidebar />
       <TopBar
         dateFrom={from}

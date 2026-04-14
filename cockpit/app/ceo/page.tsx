@@ -2,8 +2,10 @@
 
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
+import { ExecutiveSummary } from "@/components/dashboard/ExecutiveSummary";
 import { CIChat } from "@/components/ci/CIChat";
 import { AlertFeed } from "@/components/dashboard/AlertFeed";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { Card } from "@/components/ui/card";
 import { chartColors, chartDefaults, formatCurrency } from "@/lib/charts/config";
 import {
@@ -48,14 +50,16 @@ const deptHealthData = [
 export default function CEOPage() {
   return (
     <DashboardShell>
-      {() => (
+      {({ dateFrom, dateTo, brandFilter }) => (
         <>
-          <h1 className="text-2xl font-bold text-gray-900">CEO Dashboard</h1>
+          <h1 className="text-2xl font-bold text-foreground">CEO Dashboard</h1>
           <KPICardRow kpis={kpis} />
+          <ExecutiveSummary department="ceo" dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
 
+          <ErrorBoundary>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Brand</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">Revenue by Brand</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={revenueData} margin={chartDefaults.margin}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -71,7 +75,7 @@ export default function CEOPage() {
             </Card>
 
             <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Department Health</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-4">Department Health</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <RadarChart data={deptHealthData}>
                   <PolarGrid />
@@ -82,6 +86,7 @@ export default function CEOPage() {
               </ResponsiveContainer>
             </Card>
           </div>
+          </ErrorBoundary>
 
           <AlertFeed />
           <CIChat />
