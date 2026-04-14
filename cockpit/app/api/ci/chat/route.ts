@@ -3,13 +3,17 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@supabase/supabase-js";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
+function getAnthropicClient() {
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
+}
 
 // Service-role client for cross-brand query execution (bypasses RLS)
-const serviceSupabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getServiceSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 const SYSTEM_PROMPT = `You are Carisma Intelligence (CI), the AI analytics assistant for Carisma Wellness Group.
 You have access to the company's business data across three brands (Spa, Aesthetics, Slimming) and five departments (Marketing, Sales/CRM, Finance, HR, Operations).
@@ -58,13 +62,13 @@ export async function POST(request: NextRequest) {
     const { message } = await request.json();
 
     // Save the user's message to chat history
-    await serviceSupabase.from("ci_chat_history").insert({
+    await getServiceSupabase().from("ci_chat_history").insert({
       user_id: user.id,
       role: "user",
       message,
     });
 
-    const response = await anthropic.messages.create({
+    const response = await getAnthropicClient().messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 2048,
       system: SYSTEM_PROMPT,
@@ -83,7 +87,7 @@ export async function POST(request: NextRequest) {
     if (sqlMatch) {
       sqlQuery = sqlMatch[1].trim();
       try {
-        const { data, error } = await serviceSupabase.rpc(
+        const { data, error } = await getServiceSupabase().rpc(
           "execute_readonly_query",
           { query_text: sqlQuery }
         );
@@ -98,7 +102,7 @@ export async function POST(request: NextRequest) {
     let finalResponse = assistantText.replace(/<sql>[\s\S]*?<\/sql>/g, "").trim();
 
     if (queryResult) {
-      const interpretation = await anthropic.messages.create({
+      const interpretation = await getAnthropicClient().messages.create({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1024,
         system: SYSTEM_PROMPT,
@@ -122,7 +126,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Save the assistant's response to chat history
-    await serviceSupabase.from("ci_chat_history").insert({
+    await getServiceSupabase().from("ci_chat_history").insert({
       user_id: user.id,
       role: "assistant",
       message: finalResponse,
