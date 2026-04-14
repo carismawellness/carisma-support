@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { approveSchema } from "@/lib/validations";
 
 export async function POST(request: NextRequest) {
   const supabase = await createServerSupabaseClient();
-  const { alert_id, action } = await request.json();
 
-  if (!alert_id || !["approve", "dismiss"].includes(action)) {
+  const body = await request.json();
+  const parsed = approveSchema.safeParse(body);
+  if (!parsed.success) {
     return NextResponse.json(
-      { error: "alert_id and action (approve|dismiss) required" },
+      { error: "Invalid request", details: parsed.error.flatten() },
       { status: 400 }
     );
   }
+  const { alert_id, action } = parsed.data;
 
   const newStatus = action === "approve" ? "approved" : "dismissed";
   const updates: Record<string, unknown> = { status: newStatus };

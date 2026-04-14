@@ -1,52 +1,75 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { auditSchema } from "@/lib/validations";
 
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { action, page, details } = await request.json();
-
-    await supabase.from("audit_log").insert({
-      user_id: user.id,
-      action,
-      page,
-      details: details || {},
-    });
-
-    return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "Failed to log" }, { status: 500 });
-  }
-}
+const serviceSupabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function GET(request: NextRequest) {
-  try {
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
+  const authSupabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await authSupabase.auth.getUser();
 
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const url = new URL(request.url);
-    const limit = parseInt(url.searchParams.get("limit") || "50");
-
-    const { data, error } = await supabase
-      .from("audit_log")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(limit);
-
-    if (error) throw error;
-
-    return NextResponse.json({ logs: data });
-  } catch {
-    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
+  if (authError || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const { searchParams } = new URL(request.url);
+  const limit = parseInt(searchParams.get("limit") || "50");
+  const page = searchParams.get("page");
+
+  let query = serviceSupabase
+    .from("ci_audit_log")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (page) query = query.eq("page", page);
+
+  const { data, error } = await query;
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ entries: data });
+}
+
+export async function POST(request: NextRequest) {
+  const authSupabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await authSupabase.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const parsed = auditSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid request", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+  const { action, page, details } = parsed.data;
+
+  const { data, error } = await serviceSupabase
+    .from("ci_audit_log")
+    .insert({ user_id: user.id, action, page: page ?? null, details: details ?? null })
+    .select()
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ entry: data });
 }
