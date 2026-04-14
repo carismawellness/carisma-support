@@ -9,10 +9,3 @@ export const colors = {
   red: "#EF4444",
   amber: "#F59E0B",
 } as const;
-
-export const chartColors = {
-  spa: "#1B3A4B",
-  aesthetics: "#B8943E",
-  slimming: "#10B981",
-  target: "#EF4444",
-} as const;
