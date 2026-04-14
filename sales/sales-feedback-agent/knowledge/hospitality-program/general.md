@@ -108,3 +108,55 @@ Define the ideal candidate and invite the next step.
 7. **Clinic/Provider Hero's Story Short Form Example** (.docx) — Example of a provider's story in short-form hero's journey format
 
 > Note: Converting these .docx files to Google Docs format would allow full extraction of their content.
+
+---
+
+## Consolidated Known Gaps: Unextractable .docx Files
+
+The following .docx files across all hospitality program folders could not be read programmatically during knowledge extraction. Their content is missing from the Sales Feedback Agent's knowledge base.
+
+### Reception Folder (8 files)
+1. Inbound Call Flow
+2. Outbound Call Flow
+3. Example Receptionist Questions
+4. BLANK PHONE AUDIT
+5. Copy of BLANK PHONE AUDIT
+6. Daily Prospecting Tracker
+7. Weekly Reception KPI Log
+8. Daily Reception KPI Log
+
+### Consultation Folder (9 files)
+1. Objection Handling Examples (x2 copies)
+2. Fallacy vs Truth in Sales
+3. Consultation Visual Diagram
+4. Discovery/Qualifying/Consequence Questions
+5. Actions for Increasing Status
+6. Focused Questions
+7. Example Patient Consultation Worksheet
+8. Building Unwavering Confidence
+9. Objections in Consultation Story Framework
+
+### General/Marketing Folder (4 files)
+1. Consult Short Form Hero's Journey
+2. Patient Journey Checklist
+3. Dopamine Boosting Worksheet
+4. Patient Testimonial Emsculpt NEO Hero's Journey
+
+### Additional Marketing .docx Files (3 files)
+5. Pareto Principle -- Business and Marketing
+6. Brand Identity Questions (multiple copies)
+7. Clinic/Provider Hero's Story Short Form Example
+
+### Retention Folder (1 file)
+1. Team Member Goals and Growth
+
+**Total: 25 .docx files not extracted.**
+
+**Impact:** The missing files likely contain detailed call scripts, objection handling frameworks, phone audit scoring criteria, KPI benchmarks, discovery question banks, and patient journey checklists that would significantly enrich the scoring knowledge base.
+
+**Recommendation:** Convert all .docx files to Google Docs format to enable future extraction. Priority order:
+1. **Objection Handling Examples** and **Objections in Consultation Story Framework** (directly relevant to scoring Dimension 4)
+2. **Discovery/Qualifying/Consequence Questions** and **Focused Questions** (directly relevant to scoring Dimension 3)
+3. **Inbound/Outbound Call Flow** (directly relevant to script compliance scoring)
+4. **BLANK PHONE AUDIT** (may contain scoring criteria that could refine the rubric)
+5. All remaining files (training enrichment)

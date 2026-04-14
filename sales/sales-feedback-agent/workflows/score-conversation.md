@@ -102,10 +102,10 @@ Dispatch all 4 scoring agents simultaneously. They are independent and do not de
 - All four hospitality program files (reception, consultation, retention, general)
 
 **Expected output structure:**
-- Discovery Quality Score (1-10)
-- Objection Handling Score (1-10 or N/A)
-- Close Execution Score (1-10)
-- Follow-Up Appropriateness Score (1-10 or N/A)
+- Discovery & Needs Assessment Score (1-10)
+- Objection Handling & Persuasion Score (1-10 or N/A)
+- Close & Next Steps Score (1-10)
+- Follow-Up & Re-engagement Score (1-10 or N/A)
 - Strongest Moment (with quote and analysis)
 - Weakest Moment (with quote and analysis)
 - Coaching for Weakest Area (with suggested script)
@@ -139,9 +139,9 @@ Wait for all 4 agents to complete. If any agent fails:
 ### Validation Checks
 
 Before passing to Agent 5, verify each output:
-1. **Agent 1:** Has a Brand Voice score (number 1-10) and a compliance verdict (PASS/FAIL).
+1. **Agent 1:** Has a Brand Voice & Positioning score (number 1-10) and a compliance verdict (PASS/FAIL).
 2. **Agent 2:** Has a Script Compliance score (number 1-10) and a hit rate.
-3. **Agent 3:** Has at least Discovery and Close scores (numbers 1-10). Objection Handling and Follow-Up may be N/A.
+3. **Agent 3:** Has at least Discovery & Needs Assessment and Close & Next Steps scores (numbers 1-10). Objection Handling & Persuasion and Follow-Up & Re-engagement may be N/A.
 4. **Agent 4:** Has a Factual Accuracy verdict (PASS/FAIL).
 
 If an output is present but missing its score, flag it and ask the agent to re-evaluate that specific section only.

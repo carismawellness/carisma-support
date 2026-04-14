@@ -324,6 +324,9 @@ Match communication style to the patient's awareness level:
 - **Most aware:** Lead with offer and urgency
 
 ### Scoring Weight Guide
+
+> **NOTE: These importance levels are for training reference only. Actual scoring weights are defined in rubric/scoring-rubric.md and rubric/brand-criteria.md. Do not use these weights for scoring.**
+
 When evaluating a sales interaction, weight these areas based on their impact:
 1. **Discovery** (25%) — The foundation; poor discovery leads to mismatched recommendations
 2. **Consultation/Presentation** (20%) — Where value is established and belief is built

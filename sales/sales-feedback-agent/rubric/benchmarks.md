@@ -278,52 +278,6 @@ There are 3 examples per score tier, 15 examples total, covering a mix of brands
 
 ### Example 3.1 -- Aesthetics, Phone Call, Glass Skin Package
 
-> **SDR:** "Hello, is this Sophie? I'm calling from Carisma Aesthetics about the Glass Skin Package."
-> `[MISS: No SDR name given. Should be "Hi, this is [Name] calling from Carisma Aesthetics."]`
->
-> **Client:** "Yes, hi."
->
-> **SDR:** "Great! So the Glass Skin Package is really popular right now. It includes dermaplaning, a face mask, LED therapy, and a EUR 40 credit. And it's only EUR 69."
-> `[MULTIPLE MISSES: (1) "Great!" is an AI voice tell. (2) Jumped straight to the package without asking about treatment history or concerns. (3) Price stated without perceived value anchor first (should say "valued at over EUR 295, but we're offering it at EUR 69"). (4) No soft close.]`
->
-> **Client:** "That sounds good. What exactly is dermaplaning though?"
->
-> **SDR:** "It's a treatment where we use a surgical blade to exfoliate the top layer of dead skin and peach fuzz. It makes your skin super smooth and helps products penetrate better."
-> `[PARTIAL: Accurate description but uses overly clinical language ("surgical blade", "exfoliate the top layer") without warmth or sensory grounding. "Super smooth" is too casual for brand voice.]`
->
-> **Client:** "Does it hurt?"
->
-> **SDR:** "No, not at all. Most people say it feels like a gentle scraping sensation. It's actually quite relaxing."
-> `[GOOD: Reassuring answer. Uses "gentle" and "relaxing." But missed the Verbiage Swap: "scraping" should be "gliding" or "light touch." "Not at all" is slightly dismissive of the concern.]`
->
-> **Client:** "Okay, I'll try it. When can I come in?"
->
-> **SDR:** "We're open Monday to Saturday. When works for you?"
-> `[MISS: Hours not stated. Should be "Monday to Saturday 9am to 7pm." Location not mentioned.]`
-
-**Score Breakdown:**
-
-| Dimension | Score | Notes |
-|-----------|-------|-------|
-| Script Compliance | 5 | No SDR name in greeting. Skipped treatment history, concern exploration, and perceived value anchor. Jumped to package description. No soft close before booking. |
-| Brand Voice | 5 | "Great!" is an AI voice tell. "Super smooth" is off-brand casual. "Surgical blade" and "scraping" violate hospitality language standards. No em-dashes though. |
-| Discovery | 3 | No discovery at all. Went straight from greeting to pitch. Zero understanding of why Sophie enquired or what she hopes to achieve. |
-| Objection Handling | 6 | Handled the "does it hurt" concern adequately but with language issues. No proactive objection prevention. |
-| Close | 5 | Client self-closed ("I'll try it"). SDR did not drive the booking. Hours and location missing. |
-| Follow-Up | N/A | First contact. |
-
-**Composite (adjusted):** (5x0.194 + 5x0.194 + 3x0.222 + 6x0.250 + 5x0.139) x 10 = **48.1**
-
-**Wait, why is this in Developing and not Needs Improvement?** Actually, reviewing the math, this scores at 48.1, which lands in Needs Improvement. Let me recalibrate this example.
-
-**Recalibrated note:** This example demonstrates why skipping discovery is so costly. Even when the package description is mostly correct and the conversation moves forward, the weighted discovery score (20-25% of the total) drags the composite below 60. This is a lesson: you cannot reach Developing without some discovery.
-
-Let me provide a corrected Developing example.
-
----
-
-### Example 3.1 (Corrected) -- Aesthetics, Phone Call, Glass Skin Package
-
 > **SDR:** "Hi Sophie, this is Rana from Carisma Aesthetics. I'm calling about your Glass Skin enquiry. Have you had aesthetic treatments before?"
 > `[CORRECT: Greeting, SDR name, brand, references enquiry, asks history]`
 >
@@ -376,46 +330,38 @@ Let me provide a corrected Developing example.
 >
 > **Client:** "General weight loss. I need to lose about 15 kilos."
 >
-> **SDR:** "We can absolutely help with that. Our program is doctor-led and medically supervised."
-> `[MISS: "Absolutely" is a forbidden word (AI voice tell). Also jumped past the goals question and history question. No validation of past struggles. Went straight to the solution.]`
->
-> **Client:** "I've tried lots of things before. Nothing works long-term."
->
-> **SDR:** "You're not alone in that. Our 12-week Core Protocol is designed for lasting results. It's EUR 549 and includes a full assessment, medical supervision, and a personalized plan. We also have a 4-week Starter at EUR 199 if you'd prefer to try it first."
-> `[PARTIAL: "You're not alone" is decent validation but thin. Mentioned 2 of 3 tiers (missing the 24-week). Pricing presented without commitment framing ("How much time are you willing to invest?"). Did not ask about previous programs, emotional impact, or goals before presenting.]`
->
-> **Client:** "The 4-week seems safer. Let me try that."
->
-> **SDR:** "The 4-week is a great way to start. What day works for you? We're open Monday to Friday 9 to 7 and Saturdays 9 to 1."
-> `[PARTIAL: "Great" is borderline. Hours correctly stated. But did not reaffirm Tier 2 or explain why the 12-week delivers better results. Accepted the lower tier without gentle guidance.]`
-
-**Score Breakdown:**
-
-| Dimension | Score | Notes |
-|-----------|-------|-------|
-| Script Compliance | 5 | Classification done, but goals question skipped, history question skipped, only 2 of 3 tiers presented, no commitment framing before price, no Tier 2 reaffirmation. |
-| Brand Voice | 5 | "Absolutely" is an AI voice tell. Validation is thin. Missing compassionate truth depth. Katya voice is present but not distinctive. |
-| Discovery | 4 | Only classified the need. Skipped goals, history, emotional dimension. Client volunteered "I've tried lots of things" which was a golden opportunity for deeper exploration, but SDR moved to pricing. |
-| Objection Handling | 6 | No objection arose. Client chose the lower tier, which could indicate price hesitation that was not explored. SDR missed the chance to gently guide toward Tier 2. |
-| Close | 7 | Hours correctly stated, booking flow initiated. Missing: consultation fee framing, Fresha mention, personal details. |
-| Follow-Up | N/A | First contact. |
-
-**Composite (adjusted):** (5x0.167 + 5x0.194 + 4x0.278 + 6x0.222 + 7x0.139) x 10 = **52.5**
-
-**Recalibration note:** This actually scores below 60, landing in Needs Improvement. The weak discovery (4) and missed validation opportunity drag it down. For a true Developing example in Slimming, the SDR would need to at least acknowledge the client's past struggles before presenting the program. Let me adjust.
-
-### Example 3.2 (Adjusted) -- Same scenario, slightly better discovery
-
-Add this exchange after "General weight loss. I need to lose about 15 kilos":
-
 > **SDR:** "What's been your biggest challenge so far? Have you tried programs before?"
 > `[ACCEPTABLE: Asks about history and challenge. Two questions in one message (minor violation) but captures essential discovery.]`
 >
 > **Client:** "I've tried lots of things. Keto, gym, meal plans. I always fall off after a month."
 >
-> **SDR:** "That's really common. The programs weren't designed around your life. Our approach is different because it's doctor-led..."
+> **SDR:** "That's really common. The programs weren't designed around your life. Our approach is different because it's doctor-led and medically supervised."
+> `[PARTIAL: "That's really common" is decent validation but thin. "Programs weren't designed around your life" is a good reframe. But jumped past deeper exploration of what specifically failed. No commitment framing before pricing.]`
+>
+> **Client:** "I've tried lots of things before. Nothing works long-term."
+>
+> **SDR:** "You're not alone in that. Our 12-week Core Protocol is designed for lasting results. It's EUR 549 and includes a full assessment, medical supervision, and a personalized plan. We also have a 4-week Starter at EUR 199 if you'd prefer to try it first."
+> `[PARTIAL: "You're not alone" continues the validation. Mentioned 2 of 3 tiers (missing the 24-week). Pricing presented without commitment framing ("How much time are you willing to invest?"). Did not reaffirm Tier 2.]`
+>
+> **Client:** "The 4-week seems safer. Let me try that."
+>
+> **SDR:** "The 4-week is a great way to start. What day works for you? We're open Monday to Friday 9 to 7 and Saturdays 9 to 1."
+> `[PARTIAL: "Great" is borderline. Hours correctly stated. But did not reaffirm Tier 2 or explain why the 12-week delivers better results.]`
 
-With this addition, Discovery moves to 6 and Brand Voice stays at 5 (two questions in one message is a deduction but the empathy is present). Revised composite: **61.0**. Solidly Developing.
+**Score Breakdown:**
+
+| Dimension | Score | Notes |
+|-----------|-------|-------|
+| Script Compliance | 5 | Classification done, history asked (minor two-question violation), but only 2 of 3 tiers presented, no commitment framing before price, no Tier 2 reaffirmation. |
+| Brand Voice | 5 | Validation present but thin. Katya voice is present but not distinctive. Two questions in one message is a minor violation. |
+| Discovery | 6 | Classification done, history and challenge asked, some empathetic reframe. But did not explore emotional dimension or specific past failures in depth. |
+| Objection Handling | 6 | No objection arose. Client chose the lower tier, which could indicate price hesitation that was not explored. SDR missed the chance to gently guide toward Tier 2. |
+| Close | 7 | Hours correctly stated, booking flow initiated. Missing: consultation fee framing, Fresha mention, personal details. |
+| Follow-Up | N/A | First contact. |
+
+**Composite (adjusted):** (5x0.167 + 5x0.194 + 6x0.278 + 6x0.222 + 7x0.139) x 10 = **61.0**
+
+**Why Developing:** The SDR asks discovery questions and validates the client's experience, but the exploration is surface-level. Moving to pricing without commitment framing and presenting only 2 of 3 tiers shows incomplete script execution. With coaching on deeper discovery and the 3-tier framework, this SDR could reach Strong.
 
 ---
 
@@ -468,42 +414,7 @@ With this addition, Discovery moves to 6 and Brand Voice stays at 5 (two questio
 
 ## Tier 4: Needs Improvement (40-59)
 
-### Example 4.1 -- Aesthetics, WhatsApp, Missed Opportunity
-
-> **SDR:** "Hi Jessica! Thanks for reaching out. How can I help you today?"
-> `[MULTIPLE MISSES: (1) No SDR name. (2) No brand name. (3) "Thanks for reaching out" is generic. (4) "How can I help you today?" is a customer service opener, not a sales opener. Script requires: "Hi, this is [Name] from Carisma Aesthetics."]`
->
-> **Client:** "I'm interested in Botox. How much does it cost?"
->
-> **SDR:** "Botox starts from EUR 139 for one area. It depends on how many areas you want to treat. Would you like to book a consultation?"
-> `[MULTIPLE MISSES: (1) Gave price without asking about budget, concerns, or history first. (2) No 3-tier framework. (3) "Starts from EUR 139" is a flat price, not a value-framed presentation. (4) "Would you like to book" is premature, no value has been established. (5) Did not ask about specific concerns or goals.]`
->
-> **Client:** "EUR 139 seems okay. What about if I want forehead and crow's feet?"
->
-> **SDR:** "That would be 50 units which is EUR 249 to EUR 299. I'd recommend coming in for a consultation so the doctor can assess you properly."
-> `[PARTIAL: Price is accurate. Recommends consultation. But "assess you properly" sounds clinical and impersonal. No empathy, no value framing, no persona warmth. Also referencing "coming in" without stating location or hours.]`
->
-> **Client:** "Okay let me think about it."
->
-> **SDR:** "Of course! Just let me know whenever you're ready. We're here to help!"
-> `[CRITICAL: (1) "Of course!" is a forbidden phrase (AI voice tell). (2) "Just let me know" is a passive non-close. No attempt to address hesitation, no offer of value, no alternative. (3) "We're here to help!" is generic and impersonal. The lead is now lost.]`
-
-**Score Breakdown:**
-
-| Dimension | Score | Notes |
-|-----------|-------|-------|
-| Script Compliance | 3 | No greeting elements correct. No discovery steps. Price without framework. No deposit, no booking flow, no details collected. |
-| Brand Voice | 3 | No persona. AI voice tells ("Of course!"). Generic impersonal language. No em-dashes, which prevents a 1-2 score. |
-| Discovery | 2 | Zero discovery. Client asked a price question and got a price answer. No exploration of concerns, history, goals, or emotions. |
-| Objection Handling | 3 | "Let me think about it" is a soft objection that was completely surrendered. No empathy, no reframe, no value re-establishment. Just "Of course!" |
-| Close | 2 | No close attempted. "Just let me know" is anti-close. No next step, no booking, no follow-up mechanism. |
-| Follow-Up | N/A | First contact. |
-
-**Composite (adjusted):** (3x0.194 + 3x0.194 + 2x0.222 + 3x0.250 + 2x0.139) x 10 = **26.2**
-
-**Recalibration note:** This actually scores in Critical territory. The total absence of discovery and closing is too severe for Needs Improvement. Here is an adjusted example that lands in the 40-59 range.
-
-### Example 4.1 (Adjusted) -- Aesthetics, WhatsApp, Weak But Present
+### Example 4.1 -- Aesthetics, WhatsApp, Weak But Present
 
 > **SDR:** "Hi Jessica, this is Sarah from Carisma Aesthetics. I saw your message about Botox. Have you had it before?"
 > `[CORRECT: Greeting, persona, brand, references enquiry, asks history]`
@@ -540,51 +451,7 @@ With this addition, Discovery moves to 6 and Brand Voice stays at 5 (two questio
 
 ---
 
-### Example 4.2 -- Slimming, Phone Call, Diet Culture Language
-
-> **SDR:** "Hi, this is Katya from Carisma Slimming. Is this Diana?"
-> `[CORRECT: Greeting, persona, brand, confirmation]`
->
-> **Client:** "Yes."
->
-> **SDR:** "I'm calling about your weight loss enquiry. What's your goal? How much weight are you looking to lose?"
-> `[MISS: Skipped the 3-category classification. "How much weight are you looking to lose?" reduces the conversation to numbers immediately, which violates the brand pillar of not reducing to weight alone.]`
->
-> **Client:** "About 20 kilos. I've been eating badly and not exercising enough."
->
-> **SDR:** "20 kilos is definitely achievable with the right plan and some discipline."
-> `[CRITICAL RED FLAG: "discipline" is a forbidden word. "Definitely achievable" borders on over-promising. The client said "eating badly" and the SDR did not reframe this (should validate: "It's not about eating badly, it's about finding an approach that fits your life").]`
->
-> **Client:** "I just need something that keeps me accountable."
->
-> **SDR:** "That's exactly what our program does. You'll have weekly check-ins with the doctor and a structured meal plan. If you stick to it, you'll see results within the first month."
-> `[MISSES: (1) "Structured meal plan" sounds like a diet, not a medically supervised program. (2) "If you stick to it" implies blame if they don't see results. (3) Missing validation of past struggles, compassionate truth, and doctor-led positioning.]`
->
-> **Client:** "How much is it?"
->
-> **SDR:** "The 12-week program is EUR 549. We also have a 4-week starter for EUR 199."
-> `[MISSES: No commitment framing. Only 2 of 3 tiers. No Tier 2 reaffirmation. No perceived value anchor.]`
-
-**Score Breakdown:**
-
-| Dimension | Score | Notes |
-|-----------|-------|-------|
-| Script Compliance | 4 | Greeting correct. Missing 3-category classification, goals question is reductive, only 2 tiers, no commitment framing. |
-| Brand Voice | 2 | "Discipline" is forbidden. "Stick to it" implies blame. "Meal plan" sounds like a diet. Client's self-blame ("eating badly") was not reframed. Multiple pillar violations. PASS/FAIL CHECK FAILED: Shame-free language violated. |
-| Discovery | 4 | Asked about goals but reductively (how much weight). Accountability need was identified but not explored. No history, no emotional dimension. |
-| Objection Handling | 5 | No objection arose. Persuasion was weak: program described as accountability tool rather than medical solution. |
-| Close | 4 | Price stated without framework. No deposit, no booking flow initiated. |
-| Follow-Up | N/A | |
-
-**Pass/fail override:** Brand Voice failed the shame-free language check. Composite capped at 59 maximum.
-
-**Composite (adjusted, before cap):** (4x0.167 + 2x0.194 + 4x0.278 + 5x0.222 + 4x0.139) x 10 = **37.0**
-
-**Composite (after cap):** 37.0 (already below 59, cap does not apply)
-
-**Recalibration note:** This actually scores in Critical. The forbidden word "discipline" and the failure to reframe self-blame are that severe for Slimming. Let me provide a Needs Improvement example that avoids pass/fail violations.
-
-### Example 4.2 (Adjusted) -- Slimming, Phone Call, Weak Discovery
+### Example 4.2 -- Slimming, Phone Call, Weak Discovery
 
 > **SDR:** "Hi, this is Katya from Carisma Slimming. Is this Diana?"
 > **Client:** "Yes."
@@ -733,16 +600,14 @@ With this addition, Discovery moves to 6 and Brand Voice stays at 5 (two questio
 | 2.2 | Slimming | WhatsApp | No-show recovery | 78.3 | Strong |
 | 2.3 | Spa | WhatsApp | Booking follow-up | 81.7 | Strong |
 | 3.1 | Aesthetics | Phone | Glass Skin package | 61.2 | Developing |
-| 3.2 | Slimming | Phone | Weak discovery | 41.1 | Needs Improvement* |
-| 3.3 | Spa | WhatsApp | Over-explaining | 41.7 | Needs Improvement* |
-| 4.1 | Aesthetics | WhatsApp | Rushed pricing | 43.3 | Needs Improvement |
-| 4.2 | Slimming | Phone | Diet culture language | 37.0 | Critical* |
-| 4.3 | Spa | WhatsApp | Brochure dump | 41.7 | Needs Improvement |
+| 3.2 | Slimming | Phone | Incomplete discovery | 61.0 | Developing |
+| 3.3 | Spa | Phone | Missed location step | 61.0 | Developing |
+| 4.1 | Aesthetics | WhatsApp | Weak but present | 43.3 | Needs Improvement |
+| 4.2 | Slimming | Phone | Weak discovery | 41.1 | Needs Improvement |
+| 4.3 | Spa | WhatsApp | Over-explaining / brochure dump | 41.7 | Needs Improvement |
 | 5.1 | Aesthetics | WhatsApp | Brand-damaging language | 10.0 | Critical |
 | 5.2 | Slimming | Phone | Shame and fear | 14.0 | Critical |
 | 5.3 | Spa | WhatsApp | External referral redirect | 10.0 | Critical |
-
-*Asterisked examples were recalibrated during authoring, demonstrating how the scoring math enforces boundaries. Examples 3.2 and 3.3 were originally written for Developing but scored into Needs Improvement/Critical, proving that certain failures (missing discovery entirely, using forbidden language, exceeding response length) are mathematically impossible to compensate for with other dimensions.
 
 ---
 

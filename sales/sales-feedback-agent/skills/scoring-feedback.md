@@ -37,9 +37,9 @@ Additionally, reference the scripts knowledge base for coaching snippets:
 
 ### Step 2: Map Assessments to Rubric Dimensions
 - Extract scores from each agent output:
-  - Brand Intelligence: Brand Voice score (1-10)
+  - Brand Intelligence: Brand Voice & Positioning score (1-10)
   - Script Compliance: Script Compliance score (1-10)
-  - Sales Excellence: Discovery (1-10), Objection Handling (1-10), Close Execution (1-10), Follow-Up (1-10)
+  - Sales Excellence: Discovery & Needs Assessment (1-10), Objection Handling & Persuasion (1-10), Close & Next Steps (1-10), Follow-Up & Re-engagement (1-10)
   - Domain Knowledge: Factual Accuracy (PASS/FAIL)
 - Map N/A scores appropriately (redistribute weight to other dimensions per rubric rules).
 
@@ -88,15 +88,15 @@ Additionally, reference the scripts knowledge base for coaching snippets:
 
 ---
 
-### Composite Score: [X.X]/10 — [Grade Label]
+### Composite Score: [X.X]/100 — [Score Label]
 
-| Grade | Range | Label |
-|-------|-------|-------|
-| A | 8.5-10.0 | Exceptional |
-| B | 7.0-8.4 | Strong |
-| C | 5.5-6.9 | Developing |
-| D | 4.0-5.4 | Needs Improvement |
-| F | Below 4.0 | Critical |
+| Range | Label |
+|-------|-------|
+| 90-100 | Elite |
+| 75-89 | Strong |
+| 60-74 | Developing |
+| 40-59 | Needs Improvement |
+| 0-39 | Critical |
 
 ---
 
@@ -104,12 +104,12 @@ Additionally, reference the scripts knowledge base for coaching snippets:
 
 | Dimension | Score | Weight | Weighted |
 |-----------|-------|--------|----------|
-| Brand Voice | [X]/10 | [X]% | [X.XX] |
 | Script Compliance | [X]/10 | [X]% | [X.XX] |
-| Discovery Quality | [X]/10 | [X]% | [X.XX] |
-| Objection Handling | [X]/10 or N/A | [X]% | [X.XX] |
-| Close Execution | [X]/10 | [X]% | [X.XX] |
-| Follow-Up | [X]/10 or N/A | [X]% | [X.XX] |
+| Brand Voice & Positioning | [X]/10 | [X]% | [X.XX] |
+| Discovery & Needs Assessment | [X]/10 | [X]% | [X.XX] |
+| Objection Handling & Persuasion | [X]/10 or N/A | [X]% | [X.XX] |
+| Close & Next Steps | [X]/10 | [X]% | [X.XX] |
+| Follow-Up & Re-engagement | [X]/10 or N/A | [X]% | [X.XX] |
 | Factual Accuracy | PASS/FAIL | — | [Modifier: 0 or -1.0 if FAIL] |
 
 **Brand-Specific Adjustments:** [Description of any adjustments applied, or "None"]

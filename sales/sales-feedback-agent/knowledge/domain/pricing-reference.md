@@ -284,6 +284,60 @@ The following is internal cost data. **Never share cost/margin information with 
 
 ---
 
+## Carisma Slimming -- Treatment & Program Pricing
+
+All prices in EUR. Source: slimming-sops.md, CRM-SLIM knowledge files.
+
+### Treatment Starter Packs (All EUR 199)
+
+| Package | Sessions | Total Value | Starter Price | Per Session (standalone) |
+|---------|----------|-------------|---------------|--------------------------|
+| Fat Freezing (CoolSculpting) | 3 | EUR 550 | EUR 199 | EUR 100 |
+| Fat Dissolving (Lemon Bottle) | 3 | EUR 650 | EUR 199 | EUR 100 |
+| Muscle Stimulation (EMSculpt NEO) | 4 | EUR 625 | EUR 199 | EUR 100 |
+| Skin Tightening (VelaShape III) | 4 | EUR 625 | EUR 199 | EUR 100 |
+
+**All starter packs include:** Tanita Body Composition Analysis (EUR 60 value), spa and fitness facility access, EUR 25 Carisma Aesthetics credit, complimentary parking.
+
+### Program Pricing (3-Tier Framework)
+
+| Tier | Duration | Price | Positioning |
+|------|----------|-------|-------------|
+| Tier 1: Starter | 4 weeks | EUR 199 | Entry point, proves program works |
+| Tier 2: Core Protocol (RECOMMENDED) | 12 weeks | EUR 549 | Best success rate, sustainable change |
+| Tier 3: Complete Reset | 24 weeks | EUR 999 | Transformation level, intensive support |
+
+**Payment plan available:** EUR 199 now, then EUR 117/month for Tier 2.
+
+**Pricing presentation rules:**
+1. Ask commitment first ("How much time are you willing to invest?") before presenting tiers
+2. Present all 3 tiers
+3. Always reaffirm Tier 2: "For sustainable change, the 12-week Core is where real transformation happens"
+4. Never apologize for pricing. Frame as investment in sustainable change
+5. Never offer unsolicited discounts
+
+### Standalone Services
+
+| Service | Price |
+|---------|-------|
+| Free Consultation | Complimentary |
+| GLP-1 Medical Consultation | Free (linked to Fresha) |
+| Body Composition Analysis (Tanita) | EUR 60 standalone / Free with any package |
+
+### Weight Loss and GLP-1 Programs
+
+- Not publicly listed. Pricing discussed in consultation.
+- "You will always receive a clear plan and pricing in your consultation before starting."
+
+### Slimming Pricing Notes
+
+- Slimming operates from a single location (same as Aesthetics: InterContinental, St Julian's)
+- Operating hours: Monday-Friday 9am-7pm, Saturday 9am-1pm
+- Medical consultation fee: EUR 70 to secure appointment via Fresha
+- All programs are doctor-led (Dr. Zaid Teebi)
+
+---
+
 ## Pricing Verification Checklist (For Scoring)
 
 When reviewing a conversation for pricing accuracy, check:
@@ -302,5 +356,5 @@ When reviewing a conversation for pricing accuracy, check:
 ---
 
 *Unified Pricing Reference -- Sales Feedback Agent*
-*Source: CRM Master Google Sheet, CRM-SPA system prompt, CRM-AES system prompt*
+*Source: CRM Master Google Sheet, CRM-SPA system prompt, CRM-AES system prompt, CRM-SLIM knowledge files*
 *Review schedule: Every 14 days or when pricing changes in CRM Master*

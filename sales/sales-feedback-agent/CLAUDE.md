@@ -73,7 +73,7 @@ This is the master sequence. Follow it step by step for every conversation.
 - **Skill file:** `skills/brand-intelligence.md`
 - **Input:** transcript, brand, channel
 - **Knowledge to provide:** `knowledge/brand-intelligence/{brand}.md` (primary), other two brand files (for cross-brand awareness)
-- **Output:** Brand Voice score (1-10), compliance pass/fail, on-brand moments, off-brand moments, tone consistency, persona fidelity, sign-off check, forbidden phrase check
+- **Output:** Brand Voice & Positioning score (1-10), compliance pass/fail, on-brand moments, off-brand moments, tone consistency, persona fidelity, sign-off check, forbidden phrase check
 
 ### Agent 2: Script Compliance
 - **Skill file:** `skills/script-compliance.md`
@@ -85,7 +85,7 @@ This is the master sequence. Follow it step by step for every conversation.
 - **Skill file:** `skills/sales-excellence.md`
 - **Input:** transcript, brand, conversation outcome (if known)
 - **Knowledge to provide:** `knowledge/sales-excellence/methodology.md`, `knowledge/hospitality-program/reception.md`, `knowledge/hospitality-program/consultation.md`, `knowledge/hospitality-program/retention.md`, `knowledge/hospitality-program/general.md`
-- **Output:** Discovery Quality score (1-10), Objection Handling score (1-10 or N/A), Close Execution score (1-10), Follow-Up score (1-10 or N/A), strongest moment, weakest moment, coaching for weakest area
+- **Output:** Discovery & Needs Assessment score (1-10), Objection Handling & Persuasion score (1-10 or N/A), Close & Next Steps score (1-10), Follow-Up & Re-engagement score (1-10 or N/A), strongest moment, weakest moment, coaching for weakest area
 
 ### Agent 4: Domain Knowledge
 - **Skill file:** `skills/domain-knowledge.md`

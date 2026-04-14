@@ -101,3 +101,18 @@ What works better for you [insert their name]?"
 - [ ] Offered further assistance
 - [ ] Closed warmly
 - [ ] Added call notes in CRM
+
+---
+
+## Known Gap: No Spa WhatsApp/Text Scripts
+
+**Status:** WhatsApp/text scripts for Carisma Spa have not been developed. The CRM Master Google Sheet (Spa tab) does not contain WhatsApp dial scripts.
+
+**Impact on Scoring:** The Script Compliance Agent has no WhatsApp-specific reference material for Spa conversations.
+
+**Scoring Guidance for the Script Compliance Agent:**
+
+1. When scoring a Spa WhatsApp conversation, use the **call script structure above as a guide**. The principles (greeting with brand name, treatment history check, "why" question, value walkthrough, 3-tier pricing, location question, deposit with two payment options, confirmation) apply to WhatsApp as well, adapted for the written channel (shorter messages, one question per message, under 80 words per response).
+2. Score against the call script principles, not the exact call script wording. WhatsApp interactions are naturally shorter and more conversational.
+3. **Flag this gap in every Spa WhatsApp feedback report** with the note: "No Spa WhatsApp script exists -- scored against call script principles. WhatsApp-specific scripts should be developed following the Aesthetics WhatsApp script structure, adapted for the Spa brand voice (persona: Sarah Caballeri, tone: peaceful, soothing, elegant)."
+4. Do not penalize a Spa SDR for not following a WhatsApp script that does not exist. Score on whether they applied the underlying sales methodology effectively in the WhatsApp channel.

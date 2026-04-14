@@ -33,10 +33,10 @@ Use the WhatsApp Version template from `templates/per-conversation-report.md`.
 ### Encouragement Line
 Select the `{encouragement_line}` based on the score tier:
 - Elite (90-100): "setting the standard for the team"
-- Strong (70-89): "building great habits"
-- Developing (50-69): "improving every conversation"
-- Needs Improvement (40-49): "on the right track -- keep practicing"
-- Critical (below 40): "working through a tough stretch -- your next conversation is a fresh start"
+- Strong (75-89): "building great habits"
+- Developing (60-74): "improving every conversation"
+- Needs Improvement (40-59): "on the right track -- keep practicing"
+- Critical (0-39): "working through a tough stretch -- your next conversation is a fresh start"
 
 ---
 
@@ -116,11 +116,11 @@ Append one row with these columns in order:
 | F: Composite Score | `{overall_score}` (number, out of 100) |
 | G: Grade | `{score_label}` |
 | H: Script Compliance | `{dim1_score}` (1-10) |
-| I: Brand Voice | `{dim2_score}` (1-10) |
-| J: Discovery | `{dim3_score}` (1-10) |
-| K: Objection Handling | `{dim4_score}` (1-10 or "N/A") |
-| L: Close | `{dim5_score}` (1-10) |
-| M: Follow-Up | `{dim6_score}` (1-10 or "N/A") |
+| I: Brand Voice & Positioning | `{dim2_score}` (1-10) |
+| J: Discovery & Needs Assessment | `{dim3_score}` (1-10) |
+| K: Objection Handling & Persuasion | `{dim4_score}` (1-10 or "N/A") |
+| L: Close & Next Steps | `{dim5_score}` (1-10) |
+| M: Follow-Up & Re-engagement | `{dim6_score}` (1-10 or "N/A") |
 | N: Domain Accuracy | `{factual_accuracy}` ("PASS" or "FAIL") |
 | O: Brand Compliance | `{brand_compliance}` ("PASS" or "FAIL") |
 | P: Top Improvement Area | `{top_improvement_area}` (dimension name) |

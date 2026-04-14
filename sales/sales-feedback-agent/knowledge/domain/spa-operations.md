@@ -156,7 +156,7 @@ These facts, if stated incorrectly, represent a scoring penalty:
 
 ### Critical Facts (Incorrect = Major Penalty)
 
-1. **Opening hours:** 9am-8pm, Monday-Sunday. NOT 9am-9pm (some agent prompts say 9pm but KB says 8pm -- verify current hours)
+1. **Opening hours:** VERIFY: Opening hours should be confirmed with operations. Currently listed as 9am-8pm Monday-Sunday in the knowledge base (kb-spa.json), but the CRM-SPA agent system prompt (CLAUDE.md and cloud.md) says 9am-9pm. Until confirmed, score against 9am-8pm (the KB source) but do not penalize a rep who says 9pm, as this is an unresolved discrepancy in the source data.
 2. **Cancellation window:** 24 hours free. Under 24 hours = fee equal to treatment price
 3. **No-show fee:** 50% of treatment price (not 100%)
 4. **Grace period:** 15 minutes (not 10, not 20)

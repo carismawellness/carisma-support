@@ -76,10 +76,10 @@ Keep going -- you're {encouragement_line}
 | Score Range | Label | Emoji |
 |-------------|-------|-------|
 | 90-100 | Elite | star |
-| 70-89 | Strong | green circle |
-| 50-69 | Developing | yellow circle |
-| 30-49 | Needs Improvement | orange circle |
-| 1-29 | Critical | red circle |
+| 75-89 | Strong | green circle |
+| 60-74 | Developing | yellow circle |
+| 40-59 | Needs Improvement | orange circle |
+| 0-39 | Critical | red circle |
 
 **Per-dimension scores:**
 
@@ -173,8 +173,6 @@ What to do instead:
 Suggested script:
 > "{improvement_1_script}"
 
-Rubric reference: {improvement_1_rubric_ref}
-
 ---
 
 IMPROVEMENT AREA #2: {improvement_2_title}
@@ -190,8 +188,6 @@ What to do instead:
 
 Suggested script:
 > "{improvement_2_script}"
-
-Rubric reference: {improvement_2_rubric_ref}
 
 ---
 
@@ -236,7 +232,6 @@ Questions? Reply to this message or speak with your manager.
 | `{top_strength_impact}` | Why this behavior matters for outcomes | Patients who feel personally expected are 3x more likely to complete a booking in the same call. |
 | `{improvement_1_impact}` | Business impact of the gap | Closed-ended questions skip discovery and lead to mismatched recommendations. Patients feel "sold to" rather than understood. |
 | `{improvement_1_coaching}` | Expanded coaching guidance (2-3 sentences) | Start with an open question about their concern before mentioning any treatment. Let them describe their situation in their own words -- this builds trust and gives you the language to use when presenting the solution. |
-| `{improvement_1_rubric_ref}` | Which rubric criterion this maps to | Discovery dimension, criterion: "Asked at least 2-3 open-ended discovery questions" |
 | `{domain_details}` | Expanded domain accuracy notes | All treatment claims were accurate. Pricing quoted matched current menu. Session counts aligned with protocol. |
 | `{brand_details}` | Expanded brand compliance notes | Tone was warm and on-brand throughout. Used "investment" framing correctly. One instance of "cheap" should be replaced with "accessible." |
 | `{script_checklist}` | Which script points were hit/missed | Hit: brand ID, name confirmation, opening warmth. Missed: refreshment offer, closing "Is there anything else?" |
@@ -272,7 +267,7 @@ All feedback must follow these principles:
 
 1. **WhatsApp version** is always sent first via WhatsApp MCP. It is the primary feedback channel.
 2. **Email version** is sent simultaneously via Gmail MCP, with the rep's manager CC'd.
-3. If the overall score is **Critical (1-29)**, the manager also receives a separate WhatsApp alert.
+3. If the overall score is **Critical (0-39)**, the manager also receives a separate WhatsApp alert.
 4. If the overall score is **Elite (90-100)**, the feedback includes a congratulatory note and the conversation is flagged as a training example.
 5. The WhatsApp version must never exceed 2000 characters. If content overflows, prioritize: score > strength > improvement #1 > improvement #2 > domain/brand checks.
 6. All quotes must be exact excerpts from the conversation transcript. Never paraphrase or fabricate quotes.

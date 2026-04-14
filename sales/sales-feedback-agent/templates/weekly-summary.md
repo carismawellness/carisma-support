@@ -43,12 +43,12 @@ Change:        {overall_delta} points
 DIMENSION AVERAGES
 
                               This Wk  Prev Wk  Trend
-Script Compliance (20%):      {d1_avg}    {d1_prev}    {d1_arrow}
-Brand Voice (15%):            {d2_avg}    {d2_prev}    {d2_arrow}
-Discovery (20%):              {d3_avg}    {d3_prev}    {d3_arrow}
-Objection Handling (20%):     {d4_avg}    {d4_prev}    {d4_arrow}
-Close & Next Steps (15%):     {d5_avg}    {d5_prev}    {d5_arrow}
-Follow-Up (10%):              {d6_avg}    {d6_prev}    {d6_arrow}
+Script Compliance (20%):            {d1_avg}    {d1_prev}    {d1_arrow}
+Brand Voice & Positioning (15%):    {d2_avg}    {d2_prev}    {d2_arrow}
+Discovery & Needs Assessment (20%): {d3_avg}    {d3_prev}    {d3_arrow}
+Objection Handling & Persuasion (20%): {d4_avg}    {d4_prev}    {d4_arrow}
+Close & Next Steps (15%):           {d5_avg}    {d5_prev}    {d5_arrow}
+Follow-Up & Re-engagement (10%):    {d6_avg}    {d6_prev}    {d6_arrow}
 
 Strongest dimension:  {strongest_dimension} ({strongest_dim_avg}/10)
 Weakest dimension:    {weakest_dimension} ({weakest_dim_avg}/10)
