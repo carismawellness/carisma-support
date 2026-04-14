@@ -227,7 +227,7 @@ For cross-brand awareness (Agent 1 only), also load the other two brand intellig
 - Use Gmail MCP `gmail_send_email` to deliver the full email version.
 - Template: `templates/per-conversation-report.md` (Email Version section).
 - CC the SDR's manager on every email.
-- If the overall score is Critical (below 40), also send the manager a separate WhatsApp alert.
+- If the overall score is Critical (below 30), also send the manager a separate WhatsApp alert.
 
 ### Logging: Google Sheet
 - Use Sheets MCP `sheets_append_values` to log every scored conversation.

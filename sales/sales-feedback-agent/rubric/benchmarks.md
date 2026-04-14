@@ -18,7 +18,7 @@ There are 3 examples per score tier, 15 examples total, covering a mix of brands
 
 ---
 
-## Tier 1: Elite (90-100)
+## Tier 1: Elite (80-100)
 
 ### Example 1.1 -- Spa, Phone Call, New Lead (Package Enquiry)
 
@@ -156,7 +156,7 @@ There are 3 examples per score tier, 15 examples total, covering a mix of brands
 
 ---
 
-## Tier 2: Strong (75-89)
+## Tier 2: Strong (65-79)
 
 ### Example 2.1 -- Aesthetics, Phone Call, New Lead (Hydrafacial Enquiry)
 
@@ -274,7 +274,7 @@ There are 3 examples per score tier, 15 examples total, covering a mix of brands
 
 ---
 
-## Tier 3: Developing (60-74)
+## Tier 3: Developing (50-64)
 
 ### Example 3.1 -- Aesthetics, Phone Call, Glass Skin Package
 
@@ -412,7 +412,7 @@ There are 3 examples per score tier, 15 examples total, covering a mix of brands
 
 ---
 
-## Tier 4: Needs Improvement (40-59)
+## Tier 4: Needs Improvement (30-49)
 
 ### Example 4.1 -- Aesthetics, WhatsApp, Weak But Present
 
@@ -506,7 +506,7 @@ There are 3 examples per score tier, 15 examples total, covering a mix of brands
 
 ---
 
-## Tier 5: Critical (0-39)
+## Tier 5: Critical (0-29)
 
 ### Example 5.1 -- Aesthetics, WhatsApp, Brand-Damaging Language
 

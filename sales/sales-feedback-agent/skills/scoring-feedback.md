@@ -92,11 +92,11 @@ Additionally, reference the scripts knowledge base for coaching snippets:
 
 | Range | Label |
 |-------|-------|
-| 90-100 | Elite |
-| 75-89 | Strong |
-| 60-74 | Developing |
-| 40-59 | Needs Improvement |
-| 0-39 | Critical |
+| 80-100 | Elite |
+| 65-79 | Strong |
+| 50-64 | Developing |
+| 30-49 | Needs Improvement |
+| 0-29 | Critical |
 
 ---
 

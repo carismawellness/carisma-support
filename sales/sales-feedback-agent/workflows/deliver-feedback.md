@@ -32,11 +32,11 @@ Use the WhatsApp Version template from `templates/per-conversation-report.md`.
 
 ### Encouragement Line
 Select the `{encouragement_line}` based on the score tier:
-- Elite (90-100): "setting the standard for the team"
-- Strong (75-89): "building great habits"
-- Developing (60-74): "improving every conversation"
-- Needs Improvement (40-59): "on the right track -- keep practicing"
-- Critical (0-39): "working through a tough stretch -- your next conversation is a fresh start"
+- Elite (80-100): "setting the standard for the team"
+- Strong (65-79): "building great habits"
+- Developing (50-64): "improving every conversation"
+- Needs Improvement (30-49): "on the right track -- keep practicing"
+- Critical (0-29): "working through a tough stretch -- your next conversation is a fresh start"
 
 ---
 
@@ -76,15 +76,15 @@ After sending, verify the message was delivered (no error returned from MCP). If
 
 | Condition | Manager CC | Separate Manager Alert |
 |-----------|-----------|----------------------|
-| Score 60-100 | Yes (on the standard email) | No |
-| Score 40-59 (Needs Improvement) | Yes (on the standard email) | No, but flagged in weekly summary |
-| Score below 40 (Critical) | Yes (on the standard email) | Yes -- separate WhatsApp alert to manager |
+| Score 50-100 | Yes (on the standard email) | No |
+| Score 30-49 (Needs Improvement) | Yes (on the standard email) | No, but flagged in weekly summary |
+| Score below 30 (Critical) | Yes (on the standard email) | Yes -- separate WhatsApp alert to manager |
 | Brand compliance FAIL | Yes (on the standard email) | Yes -- note in email subject: "[BRAND ALERT]" prefix |
 | Domain accuracy FAIL | Yes (on the standard email) | Yes -- note in email subject: "[ACCURACY ALERT]" prefix |
 
 ### Subject Line Prefixes
 Apply in this priority order (use only the highest-priority prefix):
-1. `[CRITICAL]` -- composite score below 40
+1. `[CRITICAL]` -- composite score below 30
 2. `[ACCURACY ALERT]` -- domain accuracy FAIL
 3. `[BRAND ALERT]` -- brand compliance FAIL
 4. No prefix -- all other cases
@@ -158,9 +158,9 @@ Check these conditions after all delivery steps complete. Alerts are additional 
   Full report sent via email. Recommend scheduling a 1-on-1 coaching session.
   ```
 
-### Needs Improvement Flag (Composite 40-59)
+### Needs Improvement Flag (Composite 30-49)
 - **Action:** No immediate alert. Flag the conversation for inclusion in the weekly summary under "Reps Needing Attention."
-- **How:** The Google Sheet log entry is sufficient. The weekly report generator will query scores below 60.
+- **How:** The Google Sheet log entry is sufficient. The weekly report generator will query scores below 50.
 
 ### Brand Compliance Failure
 - **Action:** Regardless of composite score, ensure the email subject includes "[BRAND ALERT]" and the coaching feedback emphasizes the brand violation.
@@ -177,7 +177,7 @@ Check these conditions after all delivery steps complete. Alerts are additional 
 - **Action:** Ensure the email subject includes "[ACCURACY ALERT]" and the priority corrections from Agent 4 are prominently listed.
 - **Additional:** Domain accuracy failures always warrant a check -- is the pricing reference up to date? If the SDR quoted a price not in the reference, flag for knowledge base review rather than penalizing the SDR.
 
-### Elite Score Recognition (Composite 90+)
+### Elite Score Recognition (Composite 80+)
 - **Action:** Add a congratulatory note to the WhatsApp and email feedback.
 - **WhatsApp addition:** Append to the message: "This conversation is being flagged as a training example. Outstanding work."
 - **Email addition:** Include in the summary section: "This conversation scored in the Elite range and has been flagged as a potential training example for the team."

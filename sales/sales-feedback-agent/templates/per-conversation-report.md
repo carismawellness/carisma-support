@@ -75,11 +75,11 @@ Keep going -- you're {encouragement_line}
 
 | Score Range | Label | Emoji |
 |-------------|-------|-------|
-| 90-100 | Elite | star |
-| 75-89 | Strong | green circle |
-| 60-74 | Developing | yellow circle |
-| 40-59 | Needs Improvement | orange circle |
-| 0-39 | Critical | red circle |
+| 80-100 | Elite | star |
+| 65-79 | Strong | green circle |
+| 50-64 | Developing | yellow circle |
+| 30-49 | Needs Improvement | orange circle |
+| 0-29 | Critical | red circle |
 
 **Per-dimension scores:**
 

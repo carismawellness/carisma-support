@@ -1,6 +1,6 @@
 # Sales Feedback Agent -- Scoring Rubric
 
-**Version:** 1.0
+**Version:** 1.1
 **Last Updated:** 2026-04-14
 **Applies to:** All SDR conversations across Spa, Aesthetics, and Slimming brands
 **Scored by:** AI sub-agents in the Sales Feedback Agent system
@@ -401,11 +401,11 @@ Composite = (D1 x 0.222 + D2 x 0.167 + D3 x 0.222 + D4 x 0.222 + D5 x 0.167) x 1
 
 | Score Range | Label | Description | Recommended Action |
 |-------------|-------|-------------|--------------------|
-| 90-100 | Elite | Textbook execution. This conversation is training material. | Share as a best-practice example. Recognize the SDR publicly. Use in onboarding. |
-| 75-89 | Strong | Solid performance with minor improvements available. | Deliver 1-2 specific coaching tips. No urgent intervention needed. Track trends. |
-| 60-74 | Developing | Missed key elements. Coaching opportunities present. | Schedule a 1:1 coaching session. Assign targeted practice scenarios. Review script steps. |
-| 40-59 | Needs Improvement | Significant gaps. Likely lost the sale or damaged the lead. | Mandatory retraining. Shadow a top performer. Review fundamentals. Flag for manager. |
-| 0-39 | Critical | Off-brand, off-script, or brand-damaging. | Immediate manager intervention. Remove from live conversations until retrained. Document incident. |
+| 80-100 | Elite | Textbook execution. This conversation is training material. | Share as a best-practice example. Recognize the SDR publicly. Use in onboarding. |
+| 65-79 | Strong | Solid performance with minor improvements available. | Deliver 1-2 specific coaching tips. No urgent intervention needed. Track trends. |
+| 50-64 | Developing | Missed key elements. Coaching opportunities present. | Schedule a 1:1 coaching session. Assign targeted practice scenarios. Review script steps. |
+| 30-49 | Needs Improvement | Significant gaps. Likely lost the sale or damaged the lead. | Mandatory retraining. Shadow a top performer. Review fundamentals. Flag for manager. |
+| 0-29 | Critical | Off-brand, off-script, or brand-damaging. | Immediate manager intervention. Remove from live conversations until retrained. Document incident. |
 
 ---
 
