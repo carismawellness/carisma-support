@@ -53,6 +53,7 @@ export function DataTable({ columns, data, pageSize = 10 }: DataTableProps) {
 
   return (
     <div className="rounded-xl border border-warm-border overflow-hidden">
+      <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow className="bg-warm-white hover:bg-warm-white">
@@ -87,6 +88,7 @@ export function DataTable({ columns, data, pageSize = 10 }: DataTableProps) {
           ))}
         </TableBody>
       </Table>
+      </div>
       {totalPages > 1 && (
         <div className="flex items-center justify-between py-3 px-4 border-t border-warm-border">
           <span className="text-sm text-text-secondary">

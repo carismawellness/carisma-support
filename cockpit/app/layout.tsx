@@ -10,6 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Carisma Cockpit",
   description: "CEO Business Intelligence Dashboard",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

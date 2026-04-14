@@ -1,12 +1,15 @@
 "use client";
 
-import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { ExecutiveSummary } from "@/components/dashboard/ExecutiveSummary";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
+import { FreshnessIndicator } from "@/components/dashboard/FreshnessIndicator";
 import { DataTable } from "@/components/dashboard/DataTable";
+import { RevenueForecast } from "@/components/dashboard/RevenueForecast";
 import { Card } from "@/components/ui/card";
 import { chartColors, chartDefaults, formatCurrency, formatPercent } from "@/lib/charts/config";
 import { useKPIData } from "@/lib/hooks/useKPIData";
+import { ExportMenu } from "@/components/dashboard/ExportMenu";
 import {
   LineChart,
   Line,
@@ -23,11 +26,11 @@ import {
 /* ── Mock fallbacks ────────────────────────────────────────── */
 
 const mockKpis: KPIData[] = [
-  { label: "EBITDA", value: "€18,200", trend: 6 },
-  { label: "Rev vs Budget", value: "+4.2%", trend: 4 },
-  { label: "Company HC%", value: "38.2%", trend: -1, target: "40%", targetValue: 40, currentValue: 38.2 },
-  { label: "Marketing ROI", value: "5.2x", trend: 3 },
-  { label: "Budget Variance", value: "-2.1%", trend: 2 },
+  { label: "EBITDA", value: "€18,200", trend: 6, trendMoM: 10, sparkline: [15400, 16200, 17500, 18200] },
+  { label: "Rev vs Budget", value: "+4.2%", trend: 4, sparkline: [1.8, 2.5, 3.6, 4.2] },
+  { label: "Company HC%", value: "38.2%", trend: -1, trendMoM: -3, target: "40%", targetValue: 40, currentValue: 38.2, sparkline: [41.0, 39.8, 38.9, 38.2], lowerIsBetter: true },
+  { label: "Marketing ROI", value: "5.2x", trend: 3, sparkline: [4.6, 4.9, 5.0, 5.2] },
+  { label: "Budget Variance", value: "-2.1%", trend: 2, trendMoM: 5, sparkline: [-4.5, -3.8, -2.9, -2.1], lowerIsBetter: true },
 ];
 
 const mockEbitdaData = [
@@ -68,7 +71,7 @@ export default function FinancePage() {
   return (
     <DashboardShell>
       {({ dateFrom, dateTo, brandFilter }) => {
-        const { data: ebitdaData, loading: ebitdaLoading } = useKPIData<{
+        const { data: ebitdaData, loading: ebitdaLoading, lastUpdated: ebitdaLastUpdated } = useKPIData<{
           month: string;
           revenue: number;
           ebitda: number;
@@ -161,12 +164,26 @@ export default function FinancePage() {
 
         return (
           <>
-            <h1 className="text-2xl font-bold text-charcoal">Finance Dashboard</h1>
-            <KPICardRow kpis={computedKpis} />
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold text-charcoal">Finance Dashboard</h1>
+              <ExportMenu pageTitle="Finance" kpiData={computedKpis as unknown as Record<string, unknown>[]} />
+            </div>
+            <ExecutiveSummary
+              page="Finance"
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+              brandFilter={brandFilter}
+              kpiSnapshot={computedKpis}
+              isDataLoading={isLoading}
+            />
+            <KPICardRow kpis={computedKpis} lastUpdated={ebitdaLastUpdated} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-                <h2 className="text-lg font-semibold text-charcoal mb-4">EBITDA Trend</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-charcoal">EBITDA Trend</h2>
+                  <FreshnessIndicator lastUpdated={ebitdaLoading ? null : (ebitdaData.length > 0 ? new Date(ebitdaData[ebitdaData.length - 1].month) : null)} />
+                </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={ebitdaChart} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -182,7 +199,10 @@ export default function FinancePage() {
               </Card>
 
               <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-                <h2 className="text-lg font-semibold text-charcoal mb-4">Budget vs Actual</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-charcoal">Budget vs Actual</h2>
+                  <FreshnessIndicator lastUpdated={budgetLoading ? null : (budgetData.length > 0 ? new Date(budgetData[budgetData.length - 1].month) : null)} />
+                </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={budgetChart} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -197,11 +217,18 @@ export default function FinancePage() {
               </Card>
             </div>
 
+            <RevenueForecast
+              salesData={salesData}
+              loading={salesLoading}
+            />
+
             <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-              <h2 className="text-lg font-semibold text-charcoal mb-4">Revenue by Location</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-charcoal">Revenue by Location</h2>
+                <FreshnessIndicator lastUpdated={salesLoading ? null : (salesData.length > 0 ? new Date(salesData[salesData.length - 1].week_start) : null)} />
+              </div>
               <DataTable columns={locationColumns} data={locationTable} />
             </Card>
-            <CIChat />
           </>
         );
       }}

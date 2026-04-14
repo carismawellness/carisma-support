@@ -12,7 +12,11 @@ interface Message {
   sql_query?: string;
 }
 
-export function CIChat() {
+interface CIChatProps {
+  embedded?: boolean;
+}
+
+export function CIChat({ embedded }: CIChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -43,6 +47,18 @@ export function CIChat() {
     } finally {
       setLoading(false);
     }
+  }
+
+  // When embedded in the floating panel, render without Card wrapper
+  if (embedded) {
+    return (
+      <div className="flex flex-col h-full">
+        <div className="flex-1 overflow-hidden">
+          <MessageList messages={messages} />
+        </div>
+        <MessageInput onSend={handleSend} disabled={loading} />
+      </div>
+    );
   }
 
   return (

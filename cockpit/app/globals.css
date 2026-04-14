@@ -100,37 +100,46 @@
 }
 
 .dark {
-  --background: #FFFFFF;
-  --foreground: #1A1A1A;
-  --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1A1A;
+  --background: #0F1923;
+  --foreground: #F3F4F6;
+  --card: #162535;
+  --card-foreground: #E5E7EB;
+  --popover: #162535;
+  --popover-foreground: #E5E7EB;
   --primary: #B8943E;
   --primary-foreground: #FFFFFF;
-  --secondary: #F5F3EE;
-  --secondary-foreground: #1A1A1A;
-  --muted: #F5F3EE;
-  --muted-foreground: #6B7280;
-  --accent: #FBF7EF;
-  --accent-foreground: #1A1A1A;
-  --destructive: #DC2626;
-  --border: #F0EDE8;
-  --input: #F0EDE8;
+  --secondary: #1E2D3D;
+  --secondary-foreground: #D1D5DB;
+  --muted: #1A2836;
+  --muted-foreground: #9CA3AF;
+  --accent: #1E2D3D;
+  --accent-foreground: #F3F4F6;
+  --destructive: #EF4444;
+  --border: #253545;
+  --input: #253545;
   --ring: #B8943E;
   --chart-1: #B8943E;
   --chart-2: #2A8A7A;
   --chart-3: #6B9080;
   --chart-4: #E07A5F;
   --chart-5: #9CA3AF;
-  --sidebar: #FAFAF8;
-  --sidebar-foreground: #1A1A1A;
+  --sidebar: #0F1923;
+  --sidebar-foreground: #E5E7EB;
   --sidebar-primary: #B8943E;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #FBF7EF;
+  --sidebar-accent: #1E2D3D;
   --sidebar-accent-foreground: #B8943E;
-  --sidebar-border: #F0EDE8;
+  --sidebar-border: #253545;
   --sidebar-ring: #B8943E;
+
+  /* Carisma token overrides for dark mode */
+  --color-warm-white: #0F1923;
+  --color-warm-gray: #1A2836;
+  --color-warm-border: #253545;
+  --color-charcoal: #F3F4F6;
+  --color-text-secondary: #9CA3AF;
+  --color-gold-bg: #1E2818;
+  --color-gold-bg-hover: #2A3520;
 }
 
 @layer base {
@@ -142,5 +151,25 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+@media print {
+  /* Hide non-essential elements when printing */
+  aside, header, .ci-chat-float, button, [data-no-print] {
+    display: none !important;
+  }
+  main {
+    margin-left: 0 !important;
+    padding-top: 0 !important;
+  }
+  /* Add page title */
+  body::before {
+    content: "Carisma Cockpit Report";
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    color: #B8943E;
+    margin-bottom: 16px;
   }
 }

@@ -1,12 +1,14 @@
 "use client";
 
-import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { ExecutiveSummary } from "@/components/dashboard/ExecutiveSummary";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
+import { FreshnessIndicator } from "@/components/dashboard/FreshnessIndicator";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { Card } from "@/components/ui/card";
 import { chartColors, chartDefaults, formatCurrency } from "@/lib/charts/config";
 import { useKPIData } from "@/lib/hooks/useKPIData";
+import { ExportMenu } from "@/components/dashboard/ExportMenu";
 import { getISOWeek } from "date-fns";
 import {
   LineChart,
@@ -24,11 +26,11 @@ import {
 /* ── Mock fallbacks ────────────────────────────────────────── */
 
 const mockKpis: KPIData[] = [
-  { label: "Total Spend", value: "€4,820", trend: 12 },
-  { label: "Blended CPL", value: "€9.40", trend: -5 },
-  { label: "Blended ROAS", value: "5.2x", trend: 3, target: "5.0x", targetValue: 5, currentValue: 5.2 },
-  { label: "Email Revenue %", value: "32%", trend: -3, target: "35%", targetValue: 35, currentValue: 32 },
-  { label: "Total Leads", value: "513", trend: 8 },
+  { label: "Total Spend", value: "€4,820", trend: 12, sparkline: [4200, 4500, 4680, 4820] },
+  { label: "Blended CPL", value: "€9.40", trend: -5, trendMoM: -8, sparkline: [11.2, 10.5, 9.8, 9.4], lowerIsBetter: true },
+  { label: "Blended ROAS", value: "5.2x", trend: 3, trendMoM: 6, target: "5.0x", targetValue: 5, currentValue: 5.2, sparkline: [4.6, 4.9, 5.0, 5.2] },
+  { label: "Email Revenue %", value: "32%", trend: -3, target: "35%", targetValue: 35, currentValue: 32, sparkline: [34, 33, 31, 32] },
+  { label: "Total Leads", value: "513", trend: 8, sparkline: [420, 465, 490, 513] },
 ];
 
 const mockSpendRevenueData = [
@@ -66,7 +68,7 @@ export default function MarketingPage() {
   return (
     <DashboardShell>
       {({ dateFrom, dateTo, brandFilter }) => {
-        const { data: mktData, loading: mktLoading } = useKPIData<{
+        const { data: mktData, loading: mktLoading, lastUpdated: mktLastUpdated } = useKPIData<{
           date: string;
           spend: number;
           leads: number;
@@ -147,12 +149,26 @@ export default function MarketingPage() {
 
         return (
           <>
-            <h1 className="text-2xl font-bold text-charcoal">Marketing Dashboard</h1>
-            <KPICardRow kpis={computedKpis} />
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold text-charcoal">Marketing Dashboard</h1>
+              <ExportMenu pageTitle="Marketing" kpiData={computedKpis as unknown as Record<string, unknown>[]} />
+            </div>
+            <ExecutiveSummary
+              page="Marketing"
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+              brandFilter={brandFilter}
+              kpiSnapshot={computedKpis}
+              isDataLoading={isLoading}
+            />
+            <KPICardRow kpis={computedKpis} lastUpdated={mktLastUpdated} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-                <h2 className="text-lg font-semibold text-charcoal mb-4">Spend vs Revenue</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-charcoal">Spend vs Revenue</h2>
+                  <FreshnessIndicator lastUpdated={mktLoading ? null : (mktData.length > 0 ? new Date(mktData[mktData.length - 1].date) : null)} />
+                </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={spendRevenueChart} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -168,7 +184,10 @@ export default function MarketingPage() {
               </Card>
 
               <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-                <h2 className="text-lg font-semibold text-charcoal mb-4">CPL by Brand</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-charcoal">CPL by Brand</h2>
+                  <FreshnessIndicator lastUpdated={mktLoading ? null : (mktData.length > 0 ? new Date(mktData[mktData.length - 1].date) : null)} />
+                </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={cplByBrandChart} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -184,10 +203,12 @@ export default function MarketingPage() {
             </div>
 
             <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-              <h2 className="text-lg font-semibold text-charcoal mb-4">Campaign Performance</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-charcoal">Campaign Performance</h2>
+                <FreshnessIndicator lastUpdated={null} />
+              </div>
               <DataTable columns={campaignColumns} data={mockCampaignData} />
             </Card>
-            <CIChat />
           </>
         );
       }}

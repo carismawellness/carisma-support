@@ -1,12 +1,14 @@
 "use client";
 
-import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { ExecutiveSummary } from "@/components/dashboard/ExecutiveSummary";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
+import { FreshnessIndicator } from "@/components/dashboard/FreshnessIndicator";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { Card } from "@/components/ui/card";
 import { chartColors, chartDefaults, formatPercent } from "@/lib/charts/config";
 import { useKPIData } from "@/lib/hooks/useKPIData";
+import { ExportMenu } from "@/components/dashboard/ExportMenu";
 import {
   BarChart,
   Bar,
@@ -24,11 +26,11 @@ import {
 /* ── Mock fallbacks ────────────────────────────────────────── */
 
 const mockKpis: KPIData[] = [
-  { label: "Avg HC%", value: "38.2%", trend: -1, target: "40%", targetValue: 40, currentValue: 38.2 },
-  { label: "Avg Utilization", value: "76.5%", trend: 3, target: "75%", targetValue: 75, currentValue: 76.5 },
-  { label: "Headcount", value: "47", trend: 2 },
-  { label: "Avg Productivity", value: "72%", trend: 1 },
-  { label: "Slim Bookings/Therapist", value: "48", trend: 5, target: "45", targetValue: 45, currentValue: 48 },
+  { label: "Avg HC%", value: "38.2%", trend: -1, trendMoM: -3, target: "40%", targetValue: 40, currentValue: 38.2, sparkline: [41.0, 39.8, 38.9, 38.2], lowerIsBetter: true },
+  { label: "Avg Utilization", value: "76.5%", trend: 3, trendMoM: 5, target: "75%", targetValue: 75, currentValue: 76.5, sparkline: [70.2, 72.8, 74.6, 76.5] },
+  { label: "Headcount", value: "47", trend: 2, sparkline: [44, 45, 46, 47] },
+  { label: "Avg Productivity", value: "72%", trend: 1, sparkline: [68, 69, 71, 72] },
+  { label: "Slim Bookings/Therapist", value: "48", trend: 5, target: "45", targetValue: 45, currentValue: 48, sparkline: [42, 44, 46, 48] },
 ];
 
 const mockHcByLocation = [
@@ -73,7 +75,7 @@ export default function HRPage() {
   return (
     <DashboardShell>
       {({ dateFrom, dateTo, brandFilter }) => {
-        const { data: hrData, loading: hrLoading } = useKPIData<{
+        const { data: hrData, loading: hrLoading, lastUpdated: hrLastUpdated } = useKPIData<{
           week_start: string;
           hc_pct: number;
           utilization_pct: number;
@@ -178,12 +180,26 @@ export default function HRPage() {
 
         return (
           <>
-            <h1 className="text-2xl font-bold text-charcoal">HR Dashboard</h1>
-            <KPICardRow kpis={computedKpis} />
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold text-charcoal">HR Dashboard</h1>
+              <ExportMenu pageTitle="HR" kpiData={computedKpis as unknown as Record<string, unknown>[]} />
+            </div>
+            <ExecutiveSummary
+              page="HR"
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+              brandFilter={brandFilter}
+              kpiSnapshot={computedKpis}
+              isDataLoading={isLoading}
+            />
+            <KPICardRow kpis={computedKpis} lastUpdated={hrLastUpdated} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-                <h2 className="text-lg font-semibold text-charcoal mb-4">HC% by Location</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-charcoal">HC% by Location</h2>
+                  <FreshnessIndicator lastUpdated={hrLoading ? null : (hrData.length > 0 ? new Date(hrData[hrData.length - 1].week_start) : null)} />
+                </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={hcByLocationChart} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -197,7 +213,10 @@ export default function HRPage() {
               </Card>
 
               <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-                <h2 className="text-lg font-semibold text-charcoal mb-4">Utilization Trend</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-charcoal">Utilization Trend</h2>
+                  <FreshnessIndicator lastUpdated={hrLoading ? null : (hrData.length > 0 ? new Date(hrData[hrData.length - 1].week_start) : null)} />
+                </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={utilizationChart} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -222,10 +241,12 @@ export default function HRPage() {
             </div>
 
             <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-              <h2 className="text-lg font-semibold text-charcoal mb-4">Employee Productivity (We360)</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-charcoal">Employee Productivity (We360)</h2>
+                <FreshnessIndicator lastUpdated={we360Loading ? null : (we360Data.length > 0 ? new Date(we360Data[we360Data.length - 1].date) : null)} />
+              </div>
               <DataTable columns={productivityColumns} data={productivityTable} />
             </Card>
-            <CIChat />
           </>
         );
       }}

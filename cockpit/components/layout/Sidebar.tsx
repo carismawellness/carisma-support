@@ -4,17 +4,59 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { departments } from "@/lib/constants/departments";
 import { cn } from "@/lib/utils";
+import { ChevronsLeft, ChevronsRight, X } from "lucide-react";
 
-export function Sidebar() {
+interface SidebarProps {
+  collapsed: boolean;
+  onToggle: () => void;
+  mobileOpen: boolean;
+  onMobileClose: () => void;
+}
+
+export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
 
-  return (
-    <aside className="w-60 h-screen bg-warm-white flex flex-col fixed left-0 top-0 z-40 border-r border-warm-border">
-      <div className="p-6 border-b border-warm-border">
-        <h1 className="text-gold font-bold text-xl tracking-wide">Carisma</h1>
-        <p className="text-[10px] font-medium tracking-[0.25em] uppercase text-text-secondary mt-0.5">Cockpit</p>
+  const sidebarContent = (
+    <aside
+      className={cn(
+        "h-screen bg-warm-white flex flex-col fixed left-0 top-0 z-40 border-r border-warm-border transition-all duration-200",
+        collapsed ? "w-[4.5rem]" : "w-60"
+      )}
+    >
+      {/* Logo */}
+      <div className={cn("border-b border-warm-border flex items-center", collapsed ? "p-3 justify-center" : "p-6 justify-between")}>
+        <div className={collapsed ? "text-center" : ""}>
+          <h1 className={cn("text-gold font-bold tracking-wide", collapsed ? "text-base" : "text-xl")}>
+            {collapsed ? "C" : "Carisma"}
+          </h1>
+          {!collapsed && (
+            <p className="text-[10px] font-medium tracking-[0.25em] uppercase text-text-secondary mt-0.5">
+              Cockpit
+            </p>
+          )}
+        </div>
+        {/* Close button on mobile, collapse toggle on desktop */}
+        <button
+          onClick={onMobileClose}
+          className="lg:hidden h-7 w-7 rounded-lg flex items-center justify-center text-text-secondary hover:bg-warm-gray hover:text-charcoal transition-colors"
+          aria-label="Close sidebar"
+        >
+          <X className="h-4 w-4" />
+        </button>
+        <button
+          onClick={onToggle}
+          className={cn(
+            "hidden lg:flex h-7 w-7 rounded-lg items-center justify-center text-text-secondary hover:bg-warm-gray hover:text-charcoal transition-colors",
+            collapsed && "mt-1"
+          )}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
+        </button>
       </div>
-      <nav className="flex-1 p-3 space-y-0.5">
+
+      {/* Navigation */}
+      <nav className="flex-1 p-2 space-y-0.5">
         {departments.map((dept) => {
           const isActive = pathname === dept.path;
           const Icon = dept.icon;
@@ -22,30 +64,116 @@ export function Sidebar() {
             <Link
               key={dept.slug}
               href={dept.path}
+              title={collapsed ? dept.label : undefined}
+              onClick={onMobileClose}
               className={cn(
-                "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all",
+                "flex items-center rounded-lg text-sm font-medium transition-all",
+                collapsed ? "justify-center px-0 py-2.5" : "gap-3 px-4 py-2.5",
                 isActive
                   ? "border-l-[3px] border-gold bg-gold-bg text-gold"
                   : "text-text-secondary hover:bg-warm-gray hover:text-charcoal"
               )}
             >
-              <Icon className={cn("h-[18px] w-[18px]", isActive ? "text-gold" : "text-text-secondary")} />
-              {dept.label}
+              <Icon className={cn("h-[18px] w-[18px] shrink-0", isActive ? "text-gold" : "text-text-secondary")} />
+              {!collapsed && dept.label}
             </Link>
           );
         })}
       </nav>
-      <div className="p-4 border-t border-warm-border">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center text-gold text-xs font-semibold">
+
+      {/* User section */}
+      <div className={cn("border-t border-warm-border", collapsed ? "p-2" : "p-4")}>
+        <div className={cn("flex items-center", collapsed ? "justify-center" : "gap-3")}>
+          <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center text-gold text-xs font-semibold shrink-0">
             MG
           </div>
-          <div className="text-xs">
-            <p className="font-medium text-charcoal">Mert Gulen</p>
-            <p className="text-text-secondary">CEO</p>
-          </div>
+          {!collapsed && (
+            <div className="text-xs">
+              <p className="font-medium text-charcoal">Mert Gulen</p>
+              <p className="text-text-secondary">CEO</p>
+            </div>
+          )}
         </div>
       </div>
     </aside>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <div className="hidden lg:block">
+        {sidebarContent}
+      </div>
+
+      {/* Mobile drawer overlay */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={onMobileClose}
+            aria-label="Close sidebar"
+          />
+          {/* Sidebar drawer (always full-width, not collapsed on mobile) */}
+          <aside
+            className="relative h-screen w-60 bg-warm-white flex flex-col border-r border-warm-border z-50"
+          >
+            {/* Logo */}
+            <div className="border-b border-warm-border flex items-center p-6 justify-between">
+              <div>
+                <h1 className="text-gold font-bold tracking-wide text-xl">Carisma</h1>
+                <p className="text-[10px] font-medium tracking-[0.25em] uppercase text-text-secondary mt-0.5">
+                  Cockpit
+                </p>
+              </div>
+              <button
+                onClick={onMobileClose}
+                className="h-7 w-7 rounded-lg flex items-center justify-center text-text-secondary hover:bg-warm-gray hover:text-charcoal transition-colors"
+                aria-label="Close sidebar"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex-1 p-2 space-y-0.5">
+              {departments.map((dept) => {
+                const isActive = pathname === dept.path;
+                const Icon = dept.icon;
+                return (
+                  <Link
+                    key={dept.slug}
+                    href={dept.path}
+                    onClick={onMobileClose}
+                    className={cn(
+                      "flex items-center rounded-lg text-sm font-medium transition-all gap-3 px-4 py-2.5",
+                      isActive
+                        ? "border-l-[3px] border-gold bg-gold-bg text-gold"
+                        : "text-text-secondary hover:bg-warm-gray hover:text-charcoal"
+                    )}
+                  >
+                    <Icon className={cn("h-[18px] w-[18px] shrink-0", isActive ? "text-gold" : "text-text-secondary")} />
+                    {dept.label}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* User section */}
+            <div className="border-t border-warm-border p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-gold/10 flex items-center justify-center text-gold text-xs font-semibold shrink-0">
+                  MG
+                </div>
+                <div className="text-xs">
+                  <p className="font-medium text-charcoal">Mert Gulen</p>
+                  <p className="text-text-secondary">CEO</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      )}
+    </>
   );
 }

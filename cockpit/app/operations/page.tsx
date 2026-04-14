@@ -1,12 +1,14 @@
 "use client";
 
-import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { ExecutiveSummary } from "@/components/dashboard/ExecutiveSummary";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
+import { FreshnessIndicator } from "@/components/dashboard/FreshnessIndicator";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { Card } from "@/components/ui/card";
 import { chartColors, chartDefaults, formatCurrency, formatPercent } from "@/lib/charts/config";
 import { useKPIData } from "@/lib/hooks/useKPIData";
+import { ExportMenu } from "@/components/dashboard/ExportMenu";
 import {
   LineChart,
   Line,
@@ -23,11 +25,11 @@ import {
 /* ── Mock fallbacks ────────────────────────────────────────── */
 
 const mockKpis: KPIData[] = [
-  { label: "Avg Google Rating", value: "4.6", trend: 1 },
-  { label: "Complaints", value: "3", trend: -25 },
-  { label: "Consult Conv Aes", value: "52%", trend: 4, target: "50%", targetValue: 50, currentValue: 52 },
-  { label: "Show-up Slim", value: "83%", trend: -2, target: "85%", targetValue: 85, currentValue: 83 },
-  { label: "AOV Aes", value: "€258", trend: 5, target: "€245", targetValue: 245, currentValue: 258 },
+  { label: "Avg Google Rating", value: "4.6", trend: 1, sparkline: [4.4, 4.5, 4.5, 4.6] },
+  { label: "Complaints", value: "3", trend: -25, sparkline: [6, 5, 4, 3], lowerIsBetter: true },
+  { label: "Consult Conv Aes", value: "52%", trend: 4, target: "50%", targetValue: 50, currentValue: 52, sparkline: [46, 48, 50, 52] },
+  { label: "Show-up Slim", value: "83%", trend: -2, target: "85%", targetValue: 85, currentValue: 83, sparkline: [86, 85, 84, 83] },
+  { label: "AOV Aes", value: "€258", trend: 5, target: "€245", targetValue: 245, currentValue: 258, sparkline: [235, 242, 250, 258] },
 ];
 
 const mockReviewsTrend = [
@@ -64,7 +66,7 @@ export default function OperationsPage() {
   return (
     <DashboardShell>
       {({ dateFrom, dateTo, brandFilter }) => {
-        const { data: opsData, loading: opsLoading } = useKPIData<{
+        const { data: opsData, loading: opsLoading, lastUpdated: opsLastUpdated } = useKPIData<{
           week_start: string;
           google_reviews_avg: number;
           google_reviews_count: number;
@@ -168,12 +170,26 @@ export default function OperationsPage() {
 
         return (
           <>
-            <h1 className="text-2xl font-bold text-charcoal">Operations Dashboard</h1>
-            <KPICardRow kpis={computedKpis} />
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold text-charcoal">Operations Dashboard</h1>
+              <ExportMenu pageTitle="Operations" kpiData={computedKpis as unknown as Record<string, unknown>[]} />
+            </div>
+            <ExecutiveSummary
+              page="Operations"
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+              brandFilter={brandFilter}
+              kpiSnapshot={computedKpis}
+              isDataLoading={isLoading}
+            />
+            <KPICardRow kpis={computedKpis} lastUpdated={opsLastUpdated} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-                <h2 className="text-lg font-semibold text-charcoal mb-4">Google Reviews Trend</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-charcoal">Google Reviews Trend</h2>
+                  <FreshnessIndicator lastUpdated={opsLoading ? null : (opsData.length > 0 ? new Date(opsData[opsData.length - 1].week_start) : null)} />
+                </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={reviewsChart} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -197,7 +213,10 @@ export default function OperationsPage() {
               </Card>
 
               <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-                <h2 className="text-lg font-semibold text-charcoal mb-4">Consult Funnel</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-charcoal">Consult Funnel</h2>
+                  <FreshnessIndicator lastUpdated={consultLoading ? null : (consultData.length > 0 ? new Date(consultData[consultData.length - 1].week_start) : null)} />
+                </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={consultChart} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -213,10 +232,12 @@ export default function OperationsPage() {
             </div>
 
             <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
-              <h2 className="text-lg font-semibold text-charcoal mb-4">Location Scorecard</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-charcoal">Location Scorecard</h2>
+                <FreshnessIndicator lastUpdated={opsLoading ? null : (opsData.length > 0 ? new Date(opsData[opsData.length - 1].week_start) : null)} />
+              </div>
               <DataTable columns={scorecardColumns} data={scorecardTable} />
             </Card>
-            <CIChat />
           </>
         );
       }}

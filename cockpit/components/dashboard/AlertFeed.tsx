@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, CheckCircle, XCircle, Bell } from "lucide-react";
+import { AlertTriangle, CheckCircle, XCircle, Bell, RefreshCw, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MorningBriefButton } from "./MorningBriefButton";
 
 interface Alert {
   id: number;
@@ -19,13 +20,30 @@ interface Alert {
 
 export function AlertFeed() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [analyzing, setAnalyzing] = useState(false);
 
-  useEffect(() => {
+  const fetchAlerts = useCallback(() => {
     fetch("/api/ci/alerts?limit=10")
       .then((r) => r.json())
       .then((d) => setAlerts(d.alerts || []))
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    fetchAlerts();
+  }, [fetchAlerts]);
+
+  async function runAnalysis() {
+    setAnalyzing(true);
+    try {
+      await fetch("/api/ci/analyze", { method: "POST" });
+      fetchAlerts();
+    } catch {
+      // Silent fail
+    } finally {
+      setAnalyzing(false);
+    }
+  }
 
   async function handleAction(alertId: number, action: "approve" | "dismiss") {
     await fetch("/api/ci/approve", {
@@ -51,10 +69,29 @@ export function AlertFeed() {
   return (
     <Card className="rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2 text-charcoal">
-          <Bell className="h-5 w-5 text-gold" />
-          CI Alerts
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg flex items-center gap-2 text-charcoal">
+            <Bell className="h-5 w-5 text-gold" />
+            CI Alerts
+          </CardTitle>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={runAnalysis}
+              disabled={analyzing}
+              className="text-xs text-text-secondary hover:text-gold gap-1"
+            >
+              {analyzing ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <RefreshCw className="h-3 w-3" />
+              )}
+              Run Analysis
+            </Button>
+            <MorningBriefButton />
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-3">
         {alerts.length === 0 && (

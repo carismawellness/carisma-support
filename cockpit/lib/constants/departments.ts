@@ -5,6 +5,7 @@ import {
   PiggyBank,
   Users,
   Settings,
+  Database,
   type LucideIcon,
 } from "lucide-react";
 
@@ -22,4 +23,5 @@ export const departments: Department[] = [
   { slug: "finance", label: "Finance", icon: PiggyBank, path: "/finance" },
   { slug: "hr", label: "HR", icon: Users, path: "/hr" },
   { slug: "operations", label: "Operations", icon: Settings, path: "/operations" },
+  { slug: "data", label: "Data", icon: Database, path: "/data" },
 ];

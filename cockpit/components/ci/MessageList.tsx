@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -11,8 +12,20 @@ interface MessageListProps {
 }
 
 export function MessageList({ messages }: MessageListProps) {
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <div className="space-y-4 max-h-64 overflow-y-auto p-4">
+    <div className="flex-1 space-y-4 overflow-y-auto p-4">
+      {messages.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-12 text-text-secondary">
+          <p className="text-sm">Ask me anything about your business data.</p>
+          <p className="text-xs mt-1 opacity-60">Revenue, KPIs, trends, comparisons...</p>
+        </div>
+      )}
       {messages.map((msg, i) => (
         <div
           key={i}
@@ -43,6 +56,7 @@ export function MessageList({ messages }: MessageListProps) {
           </div>
         </div>
       ))}
+      <div ref={bottomRef} />
     </div>
   );
 }
