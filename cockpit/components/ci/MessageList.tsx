@@ -9,53 +9,66 @@ interface Message {
 
 interface MessageListProps {
   messages: Message[];
+  loading?: boolean;
 }
 
-export function MessageList({ messages }: MessageListProps) {
+export function MessageList({ messages, loading }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // Auto-scroll to bottom when messages change (including streaming updates)
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
-    <div className="flex-1 space-y-4 overflow-y-auto p-4">
-      {messages.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-12 text-text-secondary">
-          <p className="text-sm">Ask me anything about your business data.</p>
-          <p className="text-xs mt-1 opacity-60">Revenue, KPIs, trends, comparisons...</p>
-        </div>
-      )}
-      {messages.map((msg, i) => (
-        <div
-          key={i}
-          className={cn(
-            "flex",
-            msg.role === "user" ? "justify-end" : "justify-start"
-          )}
-        >
+    <div className="space-y-4 max-h-64 overflow-y-auto p-4">
+      {messages.map((msg, i) => {
+        const isStreaming =
+          loading &&
+          msg.role === "assistant" &&
+          i === messages.length - 1 &&
+          msg.content.length > 0;
+
+        return (
           <div
+            key={i}
             className={cn(
-              "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm",
-              msg.role === "user"
-                ? "bg-gold text-white"
-                : "bg-warm-gray text-charcoal"
+              "flex",
+              msg.role === "user" ? "justify-end" : "justify-start"
             )}
           >
-            <p className="whitespace-pre-wrap">{msg.content}</p>
-            {msg.sql_query && (
-              <details className="mt-2">
-                <summary className="text-xs opacity-70 cursor-pointer">
-                  View SQL query
-                </summary>
-                <pre className="mt-1 text-xs bg-white/20 rounded-lg p-2 overflow-x-auto">
-                  {msg.sql_query}
-                </pre>
-              </details>
-            )}
+            <div
+              className={cn(
+                "max-w-[80%] rounded-lg px-4 py-2 text-sm",
+                msg.role === "user"
+                  ? "bg-navy text-white"
+                  : "bg-gray-100 text-gray-900"
+              )}
+            >
+              {msg.content ? (
+                <p className="whitespace-pre-wrap">
+                  {msg.content}
+                  {isStreaming && (
+                    <span className="inline-block w-1.5 h-4 bg-gray-400 ml-0.5 animate-pulse align-text-bottom" />
+                  )}
+                </p>
+              ) : msg.role === "assistant" && loading ? (
+                <p className="text-gray-400 italic">Thinking...</p>
+              ) : null}
+              {msg.sql_query && (
+                <details className="mt-2">
+                  <summary className="text-xs text-gray-400 cursor-pointer">
+                    View SQL query
+                  </summary>
+                  <pre className="mt-1 text-xs bg-gray-200 rounded p-2 overflow-x-auto">
+                    {msg.sql_query}
+                  </pre>
+                </details>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       <div ref={bottomRef} />
     </div>
   );

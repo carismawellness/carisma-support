@@ -40,6 +40,28 @@ KPI Targets: Spa CPL <EUR8, Aes CPL <EUR12, Slim CPL <USD10, ROAS >5.0, Conversi
 Always be specific with numbers. Reference targets when relevant. Be concise but thorough.
 When you generate SQL, wrap it in <sql> tags so it can be extracted and executed.`;
 
+type ChatMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+async function loadChatHistory(userId: string): Promise<ChatMessage[]> {
+  const { data } = await serviceSupabase
+    .from("ci_chat_history")
+    .select("role, message")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  if (!data || data.length === 0) return [];
+
+  // Reverse to chronological order
+  return data.reverse().map((row) => ({
+    role: row.role as "user" | "assistant",
+    content: row.message,
+  }));
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Authenticate the user via session cookie
@@ -50,10 +72,7 @@ export async function POST(request: NextRequest) {
     } = await authSupabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Rate limit: 20 requests per hour
@@ -81,21 +100,31 @@ export async function POST(request: NextRequest) {
       message,
     });
 
-    const response = await anthropic.messages.create({
+    // Load last 20 messages for conversation context
+    const history = await loadChatHistory(user.id);
+
+    // Build messages array: history already includes the just-saved user message
+    const conversationMessages: Anthropic.MessageParam[] = history.map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
+
+    // First call: may produce SQL or direct answer
+    const firstResponse = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 2048,
       system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: message }],
+      messages: conversationMessages,
     });
 
-    const assistantText = response.content
+    const firstText = firstResponse.content
       .filter((c): c is Anthropic.TextBlock => c.type === "text")
       .map((c) => c.text)
       .join("");
 
-    const sqlMatch = assistantText.match(/<sql>([\s\S]*?)<\/sql>/);
-    let queryResult = null;
-    let sqlQuery = null;
+    const sqlMatch = firstText.match(/<sql>([\s\S]*?)<\/sql>/);
+    let queryResult: unknown = null;
+    let sqlQuery: string | null = null;
 
     if (sqlMatch) {
       sqlQuery = sqlMatch[1].trim();
@@ -112,50 +141,112 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    let finalResponse = assistantText.replace(/<sql>[\s\S]*?<\/sql>/g, "").trim();
-
+    // If we have query results, stream the interpretation response
+    // If no SQL was needed, stream the original response
     if (queryResult) {
-      const interpretation = await anthropic.messages.create({
+      // Build interpretation messages (non-streamed tool loop already done)
+      const interpretMessages: Anthropic.MessageParam[] = [
+        ...conversationMessages,
+        {
+          role: "assistant",
+          content: `I queried the database and got: ${JSON.stringify(queryResult)}`,
+        },
+        {
+          role: "user",
+          content: "Now interpret these results specifically and concisely.",
+        },
+      ];
+
+      const stream = anthropic.messages.stream({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1024,
         system: SYSTEM_PROMPT,
-        messages: [
-          { role: "user", content: message },
-          {
-            role: "assistant",
-            content: `I queried the database and got: ${JSON.stringify(queryResult)}`,
-          },
-          {
-            role: "user",
-            content: "Now interpret these results specifically and concisely.",
-          },
-        ],
+        messages: interpretMessages,
       });
 
-      finalResponse = interpretation.content
-        .filter((c): c is Anthropic.TextBlock => c.type === "text")
-        .map((c) => c.text)
-        .join("");
+      return createStreamResponse(stream, user.id, sqlQuery, queryResult);
     }
 
-    // Save the assistant's response to chat history
-    await serviceSupabase.from("ci_chat_history").insert({
-      user_id: user.id,
-      role: "assistant",
-      message: finalResponse,
-      sql_query: sqlQuery,
-      context: queryResult ? { data: queryResult } : null,
+    // No SQL needed — check if we can stream the first response directly
+    // Since we already have the full first response, just stream it as-is
+    // (Re-request with streaming for a true streaming experience)
+    const stream = anthropic.messages.stream({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 2048,
+      system: SYSTEM_PROMPT,
+      messages: conversationMessages,
     });
 
-    return NextResponse.json({
-      message: finalResponse,
-      sql_query: sqlQuery,
-      data: queryResult,
-    });
+    return createStreamResponse(stream, user.id, sqlQuery, queryResult);
   } catch {
-    return NextResponse.json(
-      { error: "CI Chat failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "CI Chat failed" }, { status: 500 });
   }
+}
+
+function createStreamResponse(
+  stream: ReturnType<typeof anthropic.messages.stream>,
+  userId: string,
+  sqlQuery: string | null,
+  queryResult: unknown
+): Response {
+  const encoder = new TextEncoder();
+
+  const readable = new ReadableStream({
+    async start(controller) {
+      try {
+        let fullText = "";
+
+        // Send sql_query metadata upfront if available
+        if (sqlQuery) {
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ sql_query: sqlQuery })}\n\n`
+            )
+          );
+        }
+
+        for await (const event of stream) {
+          if (
+            event.type === "content_block_delta" &&
+            event.delta.type === "text_delta"
+          ) {
+            const text = event.delta.text;
+            fullText += text;
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ text })}\n\n`)
+            );
+          }
+        }
+
+        // Save assistant response to chat history
+        await serviceSupabase.from("ci_chat_history").insert({
+          user_id: userId,
+          role: "assistant",
+          message: fullText,
+          sql_query: sqlQuery,
+          context: queryResult ? { data: queryResult } : null,
+        });
+
+        controller.enqueue(
+          encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`)
+        );
+        controller.close();
+      } catch {
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({ error: "Stream failed" })}\n\n`
+          )
+        );
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(readable, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    },
+  });
 }
