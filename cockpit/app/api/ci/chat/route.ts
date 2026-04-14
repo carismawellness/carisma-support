@@ -1,0 +1,105 @@
+import { NextRequest, NextResponse } from "next/server";
+import Anthropic from "@anthropic-ai/sdk";
+import { createClient } from "@supabase/supabase-js";
+
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+const SYSTEM_PROMPT = `You are Carisma Intelligence (CI), the AI analytics assistant for Carisma Wellness Group.
+You have access to the company's business data across three brands (Spa, Aesthetics, Slimming) and five departments (Marketing, Sales/CRM, Finance, HR, Operations).
+
+When asked about data, generate a SQL query to answer the question. The database has these tables:
+- sales_weekly (week_start, location_id, brand_id, revenue_ex_vat, retail_pct, addon_pct, hotel_capture_pct)
+- sales_by_rep (date, staff_id, brand_id, revenue, bookings_count, deposit_pct)
+- crm_daily (date, brand_id, total_leads, leads_meta, leads_crm, speed_to_lead_median_min, conversion_rate_pct, total_calls, outbound_calls, appointments_booked)
+- crm_by_rep (date, staff_id, brand_id, calls_made, appointments_booked, conversions, conversion_rate_pct)
+- marketing_daily (date, brand_id, platform, spend, leads, cpl, roas, ctr_pct)
+- ga4_daily (date, brand_id, sessions, total_users, bounce_rate_pct, conversions)
+- gsc_daily (date, brand_id, clicks, impressions, avg_position)
+- klaviyo_campaigns (date, brand_id, campaign_name, sends, opens, revenue)
+- ebitda_monthly (month, brand_id, revenue, ebitda, ebitda_margin_pct)
+- budget_vs_actual (month, brand_id, department, budgeted, actual, variance_pct)
+- hr_weekly (week_start, location_id, brand_id, hc_pct, utilization_pct, headcount)
+- we360_daily (date, staff_id, productivity_pct)
+- therapist_utilization (week_start, staff_id, location_id, utilization_pct, bookings_count)
+- operations_weekly (week_start, location_id, brand_id, google_reviews_avg, complaints_count)
+- consult_funnel (week_start, brand_id, consults_booked, consults_attended, showup_pct, conversion_pct, aov)
+- brands (id, slug, name)
+- locations (id, brand_id, slug, name)
+- staff (id, name, role, brand_id)
+
+KPI Targets: Spa CPL <EUR8, Aes CPL <EUR12, Slim CPL <USD10, ROAS >5.0, Conversion >25%, HC% <40%, Utilization >75%, Speed to Lead <5min.
+
+Always be specific with numbers. Reference targets when relevant. Be concise but thorough.
+When you generate SQL, wrap it in <sql> tags so it can be extracted and executed.`;
+
+export async function POST(request: NextRequest) {
+  try {
+    const { message } = await request.json();
+
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 2048,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: message }],
+    });
+
+    const assistantText = response.content
+      .filter((c): c is Anthropic.TextBlock => c.type === "text")
+      .map((c) => c.text)
+      .join("");
+
+    const sqlMatch = assistantText.match(/<sql>([\s\S]*?)<\/sql>/);
+    let queryResult = null;
+    let sqlQuery = null;
+
+    if (sqlMatch) {
+      sqlQuery = sqlMatch[1].trim();
+      try {
+        const { data, error } = await supabase.rpc("execute_readonly_query", {
+          query_text: sqlQuery,
+        });
+        if (!error) {
+          queryResult = data;
+        }
+      } catch {
+        // SQL execution failed
+      }
+    }
+
+    let finalResponse = assistantText.replace(/<sql>[\s\S]*?<\/sql>/g, "").trim();
+
+    if (queryResult) {
+      const interpretation = await anthropic.messages.create({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1024,
+        system: SYSTEM_PROMPT,
+        messages: [
+          { role: "user", content: message },
+          { role: "assistant", content: `I queried the database and got: ${JSON.stringify(queryResult)}` },
+          { role: "user", content: "Now interpret these results specifically and concisely." },
+        ],
+      });
+
+      finalResponse = interpretation.content
+        .filter((c): c is Anthropic.TextBlock => c.type === "text")
+        .map((c) => c.text)
+        .join("");
+    }
+
+    return NextResponse.json({
+      message: finalResponse,
+      sql_query: sqlQuery,
+      data: queryResult,
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "CI Chat failed" },
+      { status: 500 }
+    );
+  }
+}
