@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@supabase/supabase-js";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
-const supabase = createClient(
+// Service-role client for cross-brand query execution (bypasses RLS)
+const serviceSupabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
@@ -39,7 +41,28 @@ When you generate SQL, wrap it in <sql> tags so it can be extracted and executed
 
 export async function POST(request: NextRequest) {
   try {
+    // Authenticate the user via session cookie
+    const authSupabase = await createServerSupabaseClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await authSupabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const { message } = await request.json();
+
+    // Save the user's message to chat history
+    await serviceSupabase.from("ci_chat_history").insert({
+      user_id: user.id,
+      role: "user",
+      message,
+    });
 
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
@@ -60,9 +83,10 @@ export async function POST(request: NextRequest) {
     if (sqlMatch) {
       sqlQuery = sqlMatch[1].trim();
       try {
-        const { data, error } = await supabase.rpc("execute_readonly_query", {
-          query_text: sqlQuery,
-        });
+        const { data, error } = await serviceSupabase.rpc(
+          "execute_readonly_query",
+          { query_text: sqlQuery }
+        );
         if (!error) {
           queryResult = data;
         }
@@ -80,8 +104,14 @@ export async function POST(request: NextRequest) {
         system: SYSTEM_PROMPT,
         messages: [
           { role: "user", content: message },
-          { role: "assistant", content: `I queried the database and got: ${JSON.stringify(queryResult)}` },
-          { role: "user", content: "Now interpret these results specifically and concisely." },
+          {
+            role: "assistant",
+            content: `I queried the database and got: ${JSON.stringify(queryResult)}`,
+          },
+          {
+            role: "user",
+            content: "Now interpret these results specifically and concisely.",
+          },
         ],
       });
 
@@ -90,6 +120,15 @@ export async function POST(request: NextRequest) {
         .map((c) => c.text)
         .join("");
     }
+
+    // Save the assistant's response to chat history
+    await serviceSupabase.from("ci_chat_history").insert({
+      user_id: user.id,
+      role: "assistant",
+      message: finalResponse,
+      sql_query: sqlQuery,
+      context: queryResult ? { data: queryResult } : null,
+    });
 
     return NextResponse.json({
       message: finalResponse,

@@ -46,7 +46,37 @@ def run_analysis() -> list[dict]:
     return alerts
 
 def _evaluate_rule(client, rule: dict) -> list[dict]:
-    return []
+    # Execute the rule's SQL query via the read-only RPC
+    result = client.rpc(
+        'execute_readonly_query',
+        {'query_text': rule['query'].strip()},
+    ).execute()
+    rows = result.data if result.data else []
+
+    # If the rule has a targets_query, fetch target values keyed by brand_id
+    targets_by_brand: dict[int, float] = {}
+    if rule.get('targets_query'):
+        target_result = client.rpc(
+            'execute_readonly_query',
+            {'query_text': rule['targets_query'].strip()},
+        ).execute()
+        for t in (target_result.data or []):
+            targets_by_brand[t['brand_id']] = t['target_value']
+
+    # Apply the condition lambda to each row and collect breaches
+    breaches = []
+    for row in rows:
+        brand_id = row.get('brand_id')
+        target = targets_by_brand.get(brand_id, 0) if targets_by_brand else None
+        try:
+            if rule['condition'](row, target):
+                if target is not None:
+                    row['target'] = target
+                breaches.append(row)
+        except (TypeError, KeyError, ZeroDivisionError):
+            continue
+
+    return breaches
 
 def _format_title(rule: dict, breach: dict) -> str:
     data = {**breach}
