@@ -1,11 +1,13 @@
 "use client";
 
+import { useMemo } from "react";
 import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { Card } from "@/components/ui/card";
-import { chartColors, chartDefaults } from "@/lib/charts/config";
+import { useKPIData } from "@/lib/hooks/useKPIData";
+import { chartColors, chartDefaults, formatCurrency } from "@/lib/charts/config";
 import {
   LineChart,
   Line,
@@ -19,92 +21,266 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const kpis: KPIData[] = [
-  { label: "Avg Google Rating", value: "4.6", trend: 1 },
-  { label: "Complaints", value: "3", trend: -25 },
-  { label: "Consult Conv Aes", value: "52%", trend: 4, target: "50%", targetValue: 50, currentValue: 52 },
-  { label: "Show-up Slim", value: "83%", trend: -2, target: "85%", targetValue: 85, currentValue: 83 },
-  { label: "AOV Aes", value: "€258", trend: 5, target: "€245", targetValue: 245, currentValue: 258 },
-];
+/* ---------- types ---------- */
 
-const reviewsTrend = [
-  { week: "Week 1", sliema: 4.7, stjulians: 4.5, valletta: 4.6, mosta: 4.4 },
-  { week: "Week 2", sliema: 4.6, stjulians: 4.6, valletta: 4.5, mosta: 4.5 },
-  { week: "Week 3", sliema: 4.7, stjulians: 4.5, valletta: 4.7, mosta: 4.4 },
-  { week: "Week 4", sliema: 4.8, stjulians: 4.6, valletta: 4.6, mosta: 4.5 },
-];
+interface OpsRow {
+  week_start: string;
+  location_id: number;
+  brand_id: number;
+  google_reviews_count: number;
+  google_reviews_avg: number;
+  complaints_count: number;
+}
 
-const consultFunnel = [
-  { stage: "Booked", aesthetics: 120, slimming: 95 },
-  { stage: "Attended", aesthetics: 98, slimming: 79 },
-  { stage: "Converted", aesthetics: 62, slimming: 48 },
-];
+interface ConsultRow {
+  week_start: string;
+  brand_id: number;
+  consults_booked: number;
+  consults_attended: number;
+  showup_pct: number;
+  conversions: number;
+  conversion_pct: number;
+  aov: number;
+  course_conversions: number;
+  course_conversion_pct: number;
+}
 
-const scorecardColumns = [
-  { key: "location", label: "Location" },
-  { key: "rating", label: "Rating", align: "right" as const, sortable: true },
-  { key: "reviews", label: "Reviews", align: "right" as const, sortable: true },
-  { key: "complaints", label: "Complaints", align: "right" as const, sortable: true },
-  { key: "notes", label: "Notes" },
-];
+/* ---------- helpers ---------- */
 
-const scorecardData = [
-  { location: "Sliema", rating: 4.8, reviews: 42, complaints: 0, notes: "Top performer" },
-  { location: "St Julian's", rating: 4.6, reviews: 38, complaints: 1, notes: "Wait time feedback" },
-  { location: "Valletta", rating: 4.6, reviews: 35, complaints: 0, notes: "Steady" },
-  { location: "Mosta", rating: 4.5, reviews: 28, complaints: 1, notes: "Parking mentioned" },
-  { location: "Qormi", rating: 4.4, reviews: 22, complaints: 1, notes: "Staff courtesy flag" },
-  { location: "Fgura", rating: 4.3, reviews: 18, complaints: 0, notes: "New location ramp-up" },
-];
+function sum(arr: number[]): number {
+  return arr.reduce((a, b) => a + (Number(b) || 0), 0);
+}
 
-export default function OperationsPage() {
+function avg(arr: number[]): number {
+  const valid = arr.filter((v) => v != null && !isNaN(Number(v)));
+  return valid.length ? sum(valid) / valid.length : 0;
+}
+
+const BRAND_NAMES: Record<number, string> = { 1: "Spa", 2: "Aesthetics", 3: "Slimming" };
+
+/* ---------- page content ---------- */
+
+function OperationsContent({
+  dateFrom,
+  dateTo,
+  brandFilter,
+}: {
+  dateFrom: Date;
+  dateTo: Date;
+  brandFilter: string | null;
+}) {
+  const { data: opsData, loading: opsLoading } = useKPIData<OpsRow>({
+    table: "operations_weekly",
+    dateFrom,
+    dateTo,
+    brandFilter,
+    dateColumn: "week_start",
+  });
+
+  const { data: consultData, loading: consultLoading } = useKPIData<ConsultRow>({
+    table: "consult_funnel",
+    dateFrom,
+    dateTo,
+    brandFilter,
+    dateColumn: "week_start",
+  });
+
+  const loading = opsLoading || consultLoading;
+
+  /* KPIs */
+  const kpis = useMemo<KPIData[]>(() => {
+    const avgRating = avg(opsData.map((r) => Number(r.google_reviews_avg)));
+    const complaints = sum(opsData.map((r) => Number(r.complaints_count)));
+
+    const aesRows = consultData.filter((r) => r.brand_id === 2);
+    const slimRows = consultData.filter((r) => r.brand_id === 3);
+
+    const consultConvAes = avg(aesRows.map((r) => Number(r.conversion_pct)));
+    const showupSlim = avg(slimRows.map((r) => Number(r.showup_pct)));
+    const aovAes = avg(aesRows.map((r) => Number(r.aov)));
+    const showupAes = avg(aesRows.map((r) => Number(r.showup_pct)));
+
+    return [
+      { label: "Avg Google Rating", value: avgRating > 0 ? avgRating.toFixed(1) : "—" },
+      { label: "Complaints", value: String(complaints) },
+      { label: "Consult Conv Aes", value: `${consultConvAes.toFixed(0)}%`, target: "50%", targetValue: 50, currentValue: consultConvAes },
+      { label: "Show-up Slim", value: `${showupSlim.toFixed(0)}%`, target: "85%", targetValue: 85, currentValue: showupSlim },
+      { label: "AOV Aes", value: aovAes > 0 ? formatCurrency(aovAes) : "—", target: "€245", targetValue: 245, currentValue: aovAes },
+      { label: "Show-up Aes", value: `${showupAes.toFixed(0)}%`, target: "85%", targetValue: 85, currentValue: showupAes },
+    ];
+  }, [opsData, consultData]);
+
+  /* Reviews trend by week (grouped by location placeholder) */
+  const reviewsTrend = useMemo(() => {
+    const byWeek = new Map<string, OpsRow[]>();
+    for (const r of opsData) {
+      if (!byWeek.has(r.week_start)) byWeek.set(r.week_start, []);
+      byWeek.get(r.week_start)!.push(r);
+    }
+    return Array.from(byWeek.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([week, rows]) => ({
+        week,
+        avgRating: avg(rows.map((r) => Number(r.google_reviews_avg))),
+        totalReviews: sum(rows.map((r) => Number(r.google_reviews_count))),
+      }));
+  }, [opsData]);
+
+  /* Consult Funnel chart data (with course conversions) */
+  const funnelChart = useMemo(() => {
+    const brands = [2, 3]; // Aesthetics & Slimming
+    const stages = ["Booked", "Attended", "Converted", "Course Conv."];
+    return stages.map((stage) => {
+      const row: Record<string, string | number> = { stage };
+      for (const bid of brands) {
+        const rows = consultData.filter((r) => r.brand_id === bid);
+        const name = BRAND_NAMES[bid];
+        if (stage === "Booked") row[name] = sum(rows.map((r) => Number(r.consults_booked)));
+        else if (stage === "Attended") row[name] = sum(rows.map((r) => Number(r.consults_attended)));
+        else if (stage === "Converted") row[name] = sum(rows.map((r) => Number(r.conversions)));
+        else if (stage === "Course Conv.") row[name] = sum(rows.map((r) => Number(r.course_conversions)));
+      }
+      return row;
+    });
+  }, [consultData]);
+
+  /* Course conversion rates */
+  const courseConvRates = useMemo(() => {
+    return [2, 3].map((bid) => {
+      const rows = consultData.filter((r) => r.brand_id === bid);
+      return {
+        brand: BRAND_NAMES[bid],
+        courseConversions: sum(rows.map((r) => Number(r.course_conversions))),
+        courseConvPct: avg(rows.map((r) => Number(r.course_conversion_pct))),
+      };
+    });
+  }, [consultData]);
+
+  /* Location scorecard */
+  const scorecardColumns = [
+    { key: "location_id", label: "Location ID" },
+    { key: "rating", label: "Rating", align: "right" as const, sortable: true },
+    { key: "reviews", label: "Reviews", align: "right" as const, sortable: true },
+    { key: "complaints", label: "Complaints", align: "right" as const, sortable: true },
+  ];
+
+  const scorecardData = useMemo(() => {
+    const byLoc = new Map<number, OpsRow[]>();
+    for (const r of opsData) {
+      if (!byLoc.has(r.location_id)) byLoc.set(r.location_id, []);
+      byLoc.get(r.location_id)!.push(r);
+    }
+    return Array.from(byLoc.entries()).map(([locId, rows]) => ({
+      location_id: locId,
+      rating: Number(avg(rows.map((r) => Number(r.google_reviews_avg))).toFixed(1)),
+      reviews: sum(rows.map((r) => Number(r.google_reviews_count))),
+      complaints: sum(rows.map((r) => Number(r.complaints_count))),
+    }));
+  }, [opsData]);
+
+  if (loading) {
+    return (
+      <>
+        <h1 className="text-2xl font-bold text-gray-900">Operations Dashboard</h1>
+        <p className="text-gray-500">Loading...</p>
+      </>
+    );
+  }
+
   return (
-    <DashboardShell>
-      {() => (
-        <>
-          <h1 className="text-2xl font-bold text-gray-900">Operations Dashboard</h1>
-          <KPICardRow kpis={kpis} />
+    <>
+      <h1 className="text-2xl font-bold text-gray-900">Operations Dashboard</h1>
+      <KPICardRow kpis={kpis} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Google Reviews Trend</h2>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={reviewsTrend} margin={chartDefaults.margin}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="week" />
-                  <YAxis domain={[4.0, 5.0]} />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="sliema" name="Sliema" stroke={chartColors.spa} strokeWidth={chartDefaults.strokeWidth} dot={{ r: chartDefaults.dotRadius }} />
-                  <Line type="monotone" dataKey="stjulians" name="St Julian's" stroke={chartColors.aesthetics} strokeWidth={chartDefaults.strokeWidth} dot={{ r: chartDefaults.dotRadius }} />
-                  <Line type="monotone" dataKey="valletta" name="Valletta" stroke={chartColors.slimming} strokeWidth={chartDefaults.strokeWidth} dot={{ r: chartDefaults.dotRadius }} />
-                  <Line type="monotone" dataKey="mosta" name="Mosta" stroke="#8B5CF6" strokeWidth={chartDefaults.strokeWidth} dot={{ r: chartDefaults.dotRadius }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Reviews Trend */}
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Google Reviews Trend</h2>
+          {reviewsTrend.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={reviewsTrend} margin={chartDefaults.margin}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="week" />
+                <YAxis domain={[4.0, 5.0]} />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="avgRating"
+                  name="Avg Rating"
+                  stroke={chartColors.spa}
+                  strokeWidth={chartDefaults.strokeWidth}
+                  dot={{ r: chartDefaults.dotRadius }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-sm text-gray-500">No reviews data for this period.</p>
+          )}
+        </Card>
 
-            <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Consult Funnel</h2>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={consultFunnel} margin={chartDefaults.margin}>
+        {/* Consult Funnel with Course Conversions */}
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Consult Funnel</h2>
+          {funnelChart.length > 0 ? (
+            <>
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={funnelChart} margin={chartDefaults.margin}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="stage" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="aesthetics" name="Aesthetics" fill={chartColors.aesthetics} />
-                  <Bar dataKey="slimming" name="Slimming" fill={chartColors.slimming} />
+                  <Bar dataKey="Aesthetics" fill={chartColors.aesthetics} />
+                  <Bar dataKey="Slimming" fill={chartColors.slimming} />
                 </BarChart>
               </ResponsiveContainer>
-            </Card>
-          </div>
+              {/* Course conversion summary */}
+              <div className="mt-4 grid grid-cols-2 gap-4 border-t pt-4">
+                {courseConvRates.map((c) => (
+                  <div key={c.brand} className="text-center">
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">
+                      {c.brand} Course Conv.
+                    </p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {c.courseConversions}
+                      <span className="text-sm text-gray-500 ml-1">
+                        ({c.courseConvPct.toFixed(1)}%)
+                      </span>
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p className="text-sm text-gray-500">No consult funnel data for this period.</p>
+          )}
+        </Card>
+      </div>
 
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Location Scorecard</h2>
-            <DataTable columns={scorecardColumns} data={scorecardData} />
-          </Card>
-          <CIChat />
-        </>
+      {/* Location Scorecard */}
+      <Card className="p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Location Scorecard</h2>
+        {scorecardData.length > 0 ? (
+          <DataTable columns={scorecardColumns} data={scorecardData} />
+        ) : (
+          <p className="text-sm text-gray-500">No location data for this period.</p>
+        )}
+      </Card>
+      <CIChat />
+    </>
+  );
+}
+
+export default function OperationsPage() {
+  return (
+    <DashboardShell>
+      {({ dateFrom, dateTo, brandFilter }) => (
+        <OperationsContent
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          brandFilter={brandFilter}
+        />
       )}
     </DashboardShell>
   );
