@@ -14,7 +14,8 @@ interface UseKPIDataOptions {
   brandColumn?: string;
 }
 
-export function useKPIData<T extends Record<string, unknown> = Record<string, unknown>>({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useKPIData<T = Record<string, any>>({
   table,
   dateFrom,
   dateTo,
@@ -56,7 +57,7 @@ export function useKPIData<T extends Record<string, unknown> = Record<string, un
   const lastUpdated = queryResult.data?.length
     ? (() => {
         const dates = queryResult.data
-          .map((row: Record<string, unknown>) => row[dateColumn] as string)
+          .map((row: any) => row[dateColumn] as string)
           .filter(Boolean)
           .sort()
           .reverse();
