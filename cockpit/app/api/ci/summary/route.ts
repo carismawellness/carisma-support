@@ -1,54 +1,97 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
+import { loadTargets, formatTargetsForPrompt } from "@/lib/utils/lookups";
 
-function getAnthropicClient() {
-  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
-}
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
-const SUMMARY_PROMPT = `You are the AI analyst for Carisma Wellness Group's CEO dashboard. Given the following KPI data snapshot, write a 3-5 sentence executive summary.
+const serviceSupabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+);
 
-Rules:
-- Lead with the most important insight (good or bad)
-- Reference specific numbers and % changes
-- Compare against targets where available (Spa CPL <€8, Aes CPL <€12, Slim CPL <$10, ROAS >5.0, Conversion >25%, HC% <40%, Utilization >75%, Speed to Lead <5min)
-- Flag any metric that's significantly off-target (>10% deviation)
-- End with one actionable recommendation
-- Be concise, authoritative, and specific
-- Do NOT use bullet points — write flowing prose
-- Format numbers with € for currency`;
+/* ------------------------------------------------------------------ */
+/* POST /api/ci/summary                                                */
+/* Generates a weekly executive summary using LLM + dynamic targets.   */
+/* ------------------------------------------------------------------ */
 
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json(
-        { error: "API key not configured" },
-        { status: 503 }
-      );
-    }
+    // ---- Auth --------------------------------------------------------
+    const cronSecret = request.headers.get("x-cron-secret");
+    const expectedSecret =
+      process.env.CRON_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    const authSupabase = await createServerSupabaseClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await authSupabase.auth.getUser();
-    if (authError || !user) {
+    if (!cronSecret || cronSecret !== expectedSecret) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { page, dateFrom, dateTo, brandFilter, kpiSnapshot } =
-      await request.json();
+    // ---- Dynamic targets --------------------------------------------
+    const targets = await loadTargets();
+    const targetsBlock = formatTargetsForPrompt(targets);
 
-    const response = await getAnthropicClient().messages.create({
+    // ---- Pull recent alerts -----------------------------------------
+    const { data: alerts } = await serviceSupabase
+      .from("ci_alerts")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    // ---- Pull last 7 days of key metrics ----------------------------
+    const now = new Date();
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const dateFrom = sevenDaysAgo.toISOString().split("T")[0];
+    const dateTo = now.toISOString().split("T")[0];
+
+    const [marketingRes, crmRes, salesRes] = await Promise.all([
+      serviceSupabase
+        .from("marketing_daily")
+        .select("*")
+        .gte("date", dateFrom)
+        .lte("date", dateTo),
+      serviceSupabase
+        .from("crm_daily")
+        .select("*")
+        .gte("date", dateFrom)
+        .lte("date", dateTo),
+      serviceSupabase
+        .from("sales_weekly")
+        .select("*")
+        .gte("week_start", dateFrom)
+        .lte("week_start", dateTo),
+    ]);
+
+    const SUMMARY_PROMPT = `You are Carisma Intelligence (CI), the AI executive assistant for Carisma Wellness Group.
+Generate a concise weekly executive summary for the CEO.
+
+Compare against targets:
+${targetsBlock}
+
+Recent alerts (last 50):
+${JSON.stringify(alerts || [], null, 2)}
+
+Marketing data (last 7 days):
+${JSON.stringify(marketingRes.data || [], null, 2)}
+
+CRM data (last 7 days):
+${JSON.stringify(crmRes.data || [], null, 2)}
+
+Sales data (last week):
+${JSON.stringify(salesRes.data || [], null, 2)}
+
+Structure:
+1. **Top-line**: Revenue, leads, conversions (1-2 sentences)
+2. **Wins**: What exceeded targets
+3. **Risks**: What missed targets or trending poorly
+4. **Actions**: 3-5 recommended next steps
+
+Be specific with numbers. Keep it under 500 words.`;
+
+    const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
-      max_tokens: 512,
-      system: SUMMARY_PROMPT,
-      messages: [
-        {
-          role: "user",
-          content: `Dashboard: ${page}\nDate range: ${dateFrom} to ${dateTo}\nBrand filter: ${brandFilter || "All brands"}\n\nKPI Data:\n${JSON.stringify(kpiSnapshot, null, 2)}`,
-        },
-      ],
+      max_tokens: 1024,
+      messages: [{ role: "user", content: SUMMARY_PROMPT }],
     });
 
     const summary = response.content
@@ -56,11 +99,19 @@ export async function POST(request: NextRequest) {
       .map((c) => c.text)
       .join("");
 
-    return NextResponse.json({ summary });
-  } catch {
+    // Persist summary
+    await serviceSupabase.from("ci_summaries").insert({
+      summary,
+      period_from: dateFrom,
+      period_to: dateTo,
+    });
+
+    return NextResponse.json({ ok: true, summary });
+  } catch (err) {
+    console.error("[ci/summary] error:", err);
     return NextResponse.json(
       { error: "Summary generation failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

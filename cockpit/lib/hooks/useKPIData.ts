@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { format } from "date-fns";
+import { useLookups } from "./useLookups";
 
 interface UseKPIDataOptions {
   table: string;
@@ -13,7 +14,7 @@ interface UseKPIDataOptions {
   brandColumn?: string;
 }
 
-export function useKPIData<T = Record<string, unknown>>({
+export function useKPIData<T extends Record<string, unknown> = Record<string, unknown>>({
   table,
   dateFrom,
   dateTo,
@@ -21,16 +22,18 @@ export function useKPIData<T = Record<string, unknown>>({
   dateColumn = "date",
   brandColumn = "brand_id",
 }: UseKPIDataOptions) {
-  const [data, setData] = useState<T[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const { brandMap } = useLookups();
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      setError(null);
-
+  const queryResult = useQuery({
+    queryKey: [
+      table,
+      format(dateFrom, "yyyy-MM-dd"),
+      format(dateTo, "yyyy-MM-dd"),
+      brandFilter,
+      dateColumn,
+      brandColumn,
+    ],
+    queryFn: async () => {
       const supabase = createClient();
       let query = supabase
         .from(table)
@@ -39,43 +42,32 @@ export function useKPIData<T = Record<string, unknown>>({
         .lte(dateColumn, format(dateTo, "yyyy-MM-dd"))
         .order(dateColumn, { ascending: true });
 
-      if (brandFilter) {
-        const brandIds: Record<string, number> = {
-          spa: 1,
-          aesthetics: 2,
-          slimming: 3,
-        };
-        const brandId = brandIds[brandFilter];
-        if (brandId) {
-          query = query.eq(brandColumn, brandId);
-        }
+      if (brandFilter && brandMap[brandFilter]) {
+        query = query.eq(brandColumn, brandMap[brandFilter]);
       }
 
-      const { data: result, error: err } = await query;
+      const { data, error } = await query;
+      if (error) throw new Error(error.message);
+      return (data as T[]) || [];
+    },
+  });
 
-      if (err) {
-        setError(err.message);
-        setData([]);
-        setLastUpdated(null);
-      } else {
-        setData((result as T[]) || []);
-        if (result && result.length > 0) {
-          const dates = result
-            .map((row: Record<string, unknown>) => row[dateColumn] as string)
-            .filter(Boolean)
-            .sort()
-            .reverse();
-          if (dates.length > 0) {
-            setLastUpdated(new Date(dates[0]));
-          }
-        }
-      }
+  // Compute lastUpdated from data
+  const lastUpdated = queryResult.data?.length
+    ? (() => {
+        const dates = queryResult.data
+          .map((row: Record<string, unknown>) => row[dateColumn] as string)
+          .filter(Boolean)
+          .sort()
+          .reverse();
+        return dates.length > 0 ? new Date(dates[0]) : null;
+      })()
+    : null;
 
-      setLoading(false);
-    }
-
-    fetchData();
-  }, [table, dateFrom, dateTo, brandFilter, dateColumn, brandColumn]);
-
-  return { data, loading, error, lastUpdated };
+  return {
+    data: queryResult.data || [],
+    loading: queryResult.isLoading,
+    error: queryResult.error?.message || null,
+    lastUpdated,
+  };
 }
