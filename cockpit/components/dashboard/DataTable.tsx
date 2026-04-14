@@ -52,21 +52,21 @@ export function DataTable({ columns, data, pageSize = 10 }: DataTableProps) {
   const totalPages = Math.ceil(data.length / pageSize);
 
   return (
-    <div>
+    <div className="rounded-xl border border-warm-border overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow>
+          <TableRow className="bg-warm-white hover:bg-warm-white">
             {columns.map((col) => (
-              <TableHead key={col.key} className={col.align === "right" ? "text-right" : ""}>
+              <TableHead key={col.key} className={`text-xs font-semibold uppercase tracking-wider text-text-secondary ${col.align === "right" ? "text-right" : ""}`}>
                 {col.sortable ? (
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="-ml-3 h-8"
+                    className="-ml-3 h-8 text-xs uppercase tracking-wider text-text-secondary hover:text-gold"
                     onClick={() => handleSort(col.key)}
                   >
                     {col.label}
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ArrowUpDown className="ml-2 h-3.5 w-3.5 text-gold/60" />
                   </Button>
                 ) : (
                   col.label
@@ -77,9 +77,9 @@ export function DataTable({ columns, data, pageSize = 10 }: DataTableProps) {
         </TableHeader>
         <TableBody>
           {paged.map((row, i) => (
-            <TableRow key={i}>
+            <TableRow key={i} className="hover:bg-gold-bg/50 transition-colors">
               {columns.map((col) => (
-                <TableCell key={col.key} className={col.align === "right" ? "text-right" : ""}>
+                <TableCell key={col.key} className={`text-charcoal ${col.align === "right" ? "text-right" : ""}`}>
                   {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? "")}
                 </TableCell>
               ))}
@@ -88,8 +88,8 @@ export function DataTable({ columns, data, pageSize = 10 }: DataTableProps) {
         </TableBody>
       </Table>
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 px-2">
-          <span className="text-sm text-gray-500">
+        <div className="flex items-center justify-between py-3 px-4 border-t border-warm-border">
+          <span className="text-sm text-text-secondary">
             Page {page + 1} of {totalPages}
           </span>
           <div className="flex gap-2">
@@ -98,6 +98,7 @@ export function DataTable({ columns, data, pageSize = 10 }: DataTableProps) {
               size="sm"
               disabled={page === 0}
               onClick={() => setPage(page - 1)}
+              className="border-warm-border text-text-secondary hover:text-gold hover:border-gold/30"
             >
               Previous
             </Button>
@@ -106,6 +107,7 @@ export function DataTable({ columns, data, pageSize = 10 }: DataTableProps) {
               size="sm"
               disabled={page >= totalPages - 1}
               onClick={() => setPage(page + 1)}
+              className="border-warm-border text-text-secondary hover:text-gold hover:border-gold/30"
             >
               Next
             </Button>

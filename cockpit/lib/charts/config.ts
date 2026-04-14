@@ -1,9 +1,9 @@
 export const chartColors = {
-  spa: "#1B3A4B",
-  aesthetics: "#B8943E",
-  slimming: "#10B981",
-  target: "#EF4444",
-  budget: "#6B7280",
+  spa: "#B8943E",
+  aesthetics: "#2A8A7A",
+  slimming: "#6B9080",
+  target: "#E07A5F",
+  budget: "#9CA3AF",
 } as const;
 
 export const chartDefaults = {

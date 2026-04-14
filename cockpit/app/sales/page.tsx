@@ -141,12 +141,12 @@ export default function SalesPage() {
 
         return (
           <>
-            <h1 className="text-2xl font-bold text-gray-900">Sales / CRM Dashboard</h1>
+            <h1 className="text-2xl font-bold text-charcoal">Sales / CRM Dashboard</h1>
             <KPICardRow kpis={computedKpis} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Speed to Lead Distribution</h2>
+              <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
+                <h2 className="text-lg font-semibold text-charcoal mb-4">Speed to Lead Distribution</h2>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={stlChart} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -158,8 +158,8 @@ export default function SalesPage() {
                 </ResponsiveContainer>
               </Card>
 
-              <Card className="p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Conversion Funnel</h2>
+              <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
+                <h2 className="text-lg font-semibold text-charcoal mb-4">Conversion Funnel</h2>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={funnelChart} layout="vertical" margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -176,8 +176,8 @@ export default function SalesPage() {
               </Card>
             </div>
 
-            <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Rep Leaderboard</h2>
+            <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
+              <h2 className="text-lg font-semibold text-charcoal mb-4">Rep Leaderboard</h2>
               <DataTable columns={repColumns} data={repTableData} />
             </Card>
             <CIChat />

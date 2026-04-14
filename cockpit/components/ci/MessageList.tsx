@@ -23,19 +23,19 @@ export function MessageList({ messages }: MessageListProps) {
         >
           <div
             className={cn(
-              "max-w-[80%] rounded-lg px-4 py-2 text-sm",
+              "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm",
               msg.role === "user"
-                ? "bg-navy text-white"
-                : "bg-gray-100 text-gray-900"
+                ? "bg-gold text-white"
+                : "bg-warm-gray text-charcoal"
             )}
           >
             <p className="whitespace-pre-wrap">{msg.content}</p>
             {msg.sql_query && (
               <details className="mt-2">
-                <summary className="text-xs text-gray-400 cursor-pointer">
+                <summary className="text-xs opacity-70 cursor-pointer">
                   View SQL query
                 </summary>
-                <pre className="mt-1 text-xs bg-gray-200 rounded p-2 overflow-x-auto">
+                <pre className="mt-1 text-xs bg-white/20 rounded-lg p-2 overflow-x-auto">
                   {msg.sql_query}
                 </pre>
               </details>

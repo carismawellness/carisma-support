@@ -25,13 +25,13 @@ export function DateRangePicker({ from, to, onChange }: DateRangePickerProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1">
       {presets.map((preset) => (
         <Button
           key={preset.label}
           variant="ghost"
           size="sm"
-          className="text-xs text-gray-500 hover:text-navy"
+          className="text-xs text-text-secondary hover:text-gold hover:bg-gold-bg"
           onClick={() => {
             const range = preset.fn();
             onChange(range.from, range.to);
@@ -43,10 +43,10 @@ export function DateRangePicker({ from, to, onChange }: DateRangePickerProps) {
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
           className={cn(
-            "inline-flex items-center justify-start gap-2 rounded-md border border-input bg-background px-3 py-1.5 text-left text-sm font-normal shadow-xs hover:bg-accent hover:text-accent-foreground"
+            "inline-flex items-center justify-start gap-2 rounded-lg border border-warm-border bg-white px-3 py-1.5 text-left text-sm font-normal text-charcoal hover:border-gold/30 transition-colors"
           )}
         >
-          <CalendarIcon className="h-4 w-4" />
+          <CalendarIcon className="h-4 w-4 text-gold" />
           {format(from, "MMM d")} - {format(to, "MMM d, yyyy")}
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">

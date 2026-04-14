@@ -19,7 +19,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
   const { brand, setBrand } = useBrandFilter();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-warm-white">
       <Sidebar />
       <TopBar
         dateFrom={from}
@@ -28,7 +28,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
         brandFilter={brand}
         onBrandChange={setBrand}
       />
-      <main className="ml-60 pt-16 p-6 space-y-6">
+      <main className="ml-60 pt-16 p-8 space-y-6">
         {children({ dateFrom: from, dateTo: to, brandFilter: brand })}
       </main>
     </div>

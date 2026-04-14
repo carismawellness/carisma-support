@@ -34,20 +34,23 @@ export function TopBar({
   }
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 fixed top-0 left-60 right-0 z-30">
-      <DateRangePicker from={dateFrom} to={dateTo} onChange={onDateChange} />
+    <header className="h-16 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center justify-between px-6 fixed top-0 left-60 right-0 z-30">
       <div className="flex items-center gap-4">
+        <span className="text-xs font-medium text-text-secondary tracking-wide hidden lg:inline">Carisma Intelligence</span>
+        <DateRangePicker from={dateFrom} to={dateTo} onChange={onDateChange} />
+      </div>
+      <div className="flex items-center gap-3">
         <BrandFilter selected={brandFilter} onChange={onBrandChange} />
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5 text-gray-500" />
+        <Button variant="ghost" size="icon" className="relative text-text-secondary hover:text-charcoal">
+          <Bell className="h-5 w-5" />
           {alertCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            <span className="absolute -top-0.5 -right-0.5 bg-gold text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-medium">
               {alertCount}
             </span>
           )}
         </Button>
-        <Button variant="ghost" size="icon" onClick={handleLogout}>
-          <LogOut className="h-5 w-5 text-gray-500" />
+        <Button variant="ghost" size="icon" onClick={handleLogout} className="text-text-secondary hover:text-charcoal">
+          <LogOut className="h-5 w-5" />
         </Button>
       </div>
     </header>

@@ -168,12 +168,12 @@ export default function OperationsPage() {
 
         return (
           <>
-            <h1 className="text-2xl font-bold text-gray-900">Operations Dashboard</h1>
+            <h1 className="text-2xl font-bold text-charcoal">Operations Dashboard</h1>
             <KPICardRow kpis={computedKpis} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Google Reviews Trend</h2>
+              <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
+                <h2 className="text-lg font-semibold text-charcoal mb-4">Google Reviews Trend</h2>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={reviewsChart} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -196,8 +196,8 @@ export default function OperationsPage() {
                 </ResponsiveContainer>
               </Card>
 
-              <Card className="p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Consult Funnel</h2>
+              <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
+                <h2 className="text-lg font-semibold text-charcoal mb-4">Consult Funnel</h2>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={consultChart} margin={chartDefaults.margin}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -212,8 +212,8 @@ export default function OperationsPage() {
               </Card>
             </div>
 
-            <Card className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Location Scorecard</h2>
+            <Card className="p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
+              <h2 className="text-lg font-semibold text-charcoal mb-4">Location Scorecard</h2>
               <DataTable columns={scorecardColumns} data={scorecardTable} />
             </Card>
             <CIChat />

@@ -15,7 +15,7 @@ interface KPICardRowProps {
 
 export function KPICardRow({ kpis }: KPICardRowProps) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
       {kpis.map((kpi) => (
         <KPICard key={kpi.label} {...kpi} />
       ))}

@@ -28,20 +28,20 @@ export function MessageInput({ onSend, disabled }: MessageInputProps) {
   }
 
   return (
-    <div className="flex items-center gap-2 p-4 border-t border-gray-200">
+    <div className="flex items-center gap-2 p-4 border-t border-warm-border">
       <Input
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Ask Carisma Intelligence..."
         disabled={disabled}
-        className="flex-1"
+        className="flex-1 border-warm-border focus-visible:ring-gold/30"
       />
       <Button
         onClick={handleSend}
         disabled={disabled || !input.trim()}
         size="icon"
-        className="bg-navy hover:bg-navy-light"
+        className="bg-gold hover:bg-gold-dark text-white rounded-lg"
       >
         <Send className="h-4 w-4" />
       </Button>

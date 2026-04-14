@@ -10,14 +10,14 @@ interface BrandFilterProps {
 
 export function BrandFilter({ selected, onChange }: BrandFilterProps) {
   return (
-    <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+    <div className="flex items-center gap-1 bg-warm-gray rounded-lg p-1">
       <button
         onClick={() => onChange(null)}
         className={cn(
-          "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+          "px-3 py-1.5 rounded-md text-sm font-medium transition-all",
           selected === null
-            ? "bg-white text-navy shadow-sm"
-            : "text-gray-500 hover:text-gray-700"
+            ? "bg-gold text-white shadow-sm"
+            : "text-text-secondary hover:text-charcoal"
         )}
       >
         All
@@ -27,10 +27,10 @@ export function BrandFilter({ selected, onChange }: BrandFilterProps) {
           key={brand.slug}
           onClick={() => onChange(brand.slug)}
           className={cn(
-            "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+            "px-3 py-1.5 rounded-md text-sm font-medium transition-all",
             selected === brand.slug
-              ? "bg-white text-navy shadow-sm"
-              : "text-gray-500 hover:text-gray-700"
+              ? "bg-gold text-white shadow-sm"
+              : "text-text-secondary hover:text-charcoal"
           )}
         >
           {brand.label}

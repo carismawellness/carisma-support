@@ -46,10 +46,12 @@ export function CIChat() {
   }
 
   return (
-    <Card>
+    <Card className="rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Bot className="h-5 w-5 text-gold" />
+        <CardTitle className="text-lg flex items-center gap-2 text-charcoal">
+          <div className="h-7 w-7 rounded-lg bg-gold/10 flex items-center justify-center">
+            <Bot className="h-4 w-4 text-gold" />
+          </div>
           Carisma Intelligence
         </CardTitle>
       </CardHeader>

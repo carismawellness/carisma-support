@@ -43,22 +43,22 @@ export function AlertFeed() {
   }
 
   const severityConfig = {
-    critical: { color: "bg-red-100 text-red-700", icon: AlertTriangle },
-    warning: { color: "bg-amber-100 text-amber-700", icon: Bell },
-    info: { color: "bg-blue-100 text-blue-700", icon: Bell },
+    critical: { color: "bg-red-50 text-red-600 border-red-200", stripe: "bg-red-500", icon: AlertTriangle },
+    warning: { color: "bg-amber-50 text-amber-600 border-amber-200", stripe: "bg-gold", icon: Bell },
+    info: { color: "bg-blue-50 text-blue-600 border-blue-200", stripe: "bg-blue-400", icon: Bell },
   };
 
   return (
-    <Card>
+    <Card className="rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-warm-border">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
+        <CardTitle className="text-lg flex items-center gap-2 text-charcoal">
           <Bell className="h-5 w-5 text-gold" />
           CI Alerts
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {alerts.length === 0 && (
-          <p className="text-sm text-gray-400">No alerts</p>
+          <p className="text-sm text-text-secondary">No alerts</p>
         )}
         {alerts.map((alert) => {
           const config = severityConfig[alert.severity];
@@ -66,26 +66,27 @@ export function AlertFeed() {
           return (
             <div
               key={alert.id}
-              className="flex items-start gap-3 p-3 rounded-lg border border-gray-100"
+              className="flex items-start gap-3 p-3 rounded-lg border border-warm-border bg-white relative overflow-hidden"
             >
-              <Icon className={cn("h-5 w-5 mt-0.5", alert.severity === "critical" ? "text-red-500" : alert.severity === "warning" ? "text-amber-500" : "text-blue-500")} />
+              <div className={cn("absolute left-0 top-0 bottom-0 w-1 rounded-l-lg", config.stripe)} />
+              <Icon className={cn("h-5 w-5 mt-0.5 ml-2", alert.severity === "critical" ? "text-red-500" : alert.severity === "warning" ? "text-gold" : "text-blue-400")} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <Badge variant="outline" className={config.color}>
+                  <Badge variant="outline" className={cn("text-[11px] rounded-full border", config.color)}>
                     {alert.severity}
                   </Badge>
-                  <Badge variant="outline">{alert.department}</Badge>
-                  <Badge variant="outline">{alert.status}</Badge>
+                  <Badge variant="outline" className="text-[11px] rounded-full border-warm-border text-text-secondary">{alert.department}</Badge>
+                  <Badge variant="outline" className="text-[11px] rounded-full border-warm-border text-text-secondary">{alert.status}</Badge>
                 </div>
-                <p className="text-sm font-medium text-gray-900 truncate">{alert.title}</p>
-                <p className="text-xs text-gray-500 mt-1">{alert.recommendation}</p>
+                <p className="text-sm font-medium text-charcoal truncate">{alert.title}</p>
+                <p className="text-xs text-text-secondary mt-1">{alert.recommendation}</p>
               </div>
               {(alert.status === "emailed" || alert.status === "pending") && (
                 <div className="flex gap-1">
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="text-green-600 hover:text-green-700"
+                    className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
                     onClick={() => handleAction(alert.id, "approve")}
                   >
                     <CheckCircle className="h-4 w-4" />
@@ -93,7 +94,7 @@ export function AlertFeed() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="text-gray-400 hover:text-gray-500"
+                    className="text-text-secondary hover:text-charcoal hover:bg-warm-gray"
                     onClick={() => handleAction(alert.id, "dismiss")}
                   >
                     <XCircle className="h-4 w-4" />
