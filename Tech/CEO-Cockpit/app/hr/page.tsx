@@ -12,9 +12,11 @@ import {
   useTalexioEmployees,
   useTalexioTimeLogs,
   useTalexioLeave,
+  useTalexioPayslips,
   TalexioEmployee,
   TalexioEmployeeWithTimeLogs,
   TalexioEmployeeWithLeave,
+  TalexioEmployeeWithPayslips,
 } from "@/lib/hooks/useTalexio";
 import {
   BarChart,
@@ -240,6 +242,103 @@ function processLeave(employees: TalexioEmployeeWithLeave[], currentYear: number
 }
 
 // ============================================================
+// PAYROLL PROCESSOR
+// ============================================================
+
+function processPayroll(employees: TalexioEmployeeWithPayslips[]) {
+  // Get the last 6 months of payroll data
+  const now = new Date();
+  const months: string[] = [];
+  for (let i = 0; i < 6; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push(d.toISOString().slice(0, 7)); // "2026-03"
+  }
+  months.reverse();
+
+  // Current month (most recent with data)
+  const monthlyTotals: Record<string, { gross: number; net: number; tax: number; headcount: number }> = {};
+  const byLocation: Record<string, { gross: number; net: number; headcount: number }> = {};
+  const topEarners: { name: string; position: string; location: string; gross: number }[] = [];
+
+  // Find the most recent complete month
+  let latestMonth = "";
+
+  for (const emp of employees) {
+    if (!emp.payslips) continue;
+    for (const slip of emp.payslips) {
+      const month = slip.periodFrom.slice(0, 7);
+      if (!monthlyTotals[month]) {
+        monthlyTotals[month] = { gross: 0, net: 0, tax: 0, headcount: 0 };
+      }
+      monthlyTotals[month].gross += slip.gross || 0;
+      monthlyTotals[month].net += slip.net || 0;
+      monthlyTotals[month].tax += slip.tax || 0;
+      monthlyTotals[month].headcount++;
+
+      if (month > latestMonth) latestMonth = month;
+    }
+  }
+
+  // Build by-location and top-earners for the latest month
+  for (const emp of employees) {
+    if (!emp.payslips) continue;
+    for (const slip of emp.payslips) {
+      if (slip.periodFrom.slice(0, 7) !== latestMonth) continue;
+
+      const loc = emp.currentPositionSimple?.organisationUnit?.name || "Unknown";
+      if (!byLocation[loc]) byLocation[loc] = { gross: 0, net: 0, headcount: 0 };
+      byLocation[loc].gross += slip.gross || 0;
+      byLocation[loc].net += slip.net || 0;
+      byLocation[loc].headcount++;
+
+      topEarners.push({
+        name: emp.fullName,
+        position: emp.currentPositionSimple?.position?.name || "N/A",
+        location: loc,
+        gross: slip.gross || 0,
+      });
+    }
+  }
+
+  topEarners.sort((a, b) => b.gross - a.gross);
+
+  // Trend data (last 6 months)
+  const trendData = months
+    .filter((m) => monthlyTotals[m])
+    .map((m) => ({
+      month: new Date(m + "-01").toLocaleDateString("en-MT", { month: "short", year: "2-digit" }),
+      gross: Math.round(monthlyTotals[m].gross),
+      net: Math.round(monthlyTotals[m].net),
+      tax: Math.round(monthlyTotals[m].tax),
+      headcount: monthlyTotals[m].headcount,
+    }));
+
+  const latestData = monthlyTotals[latestMonth] || { gross: 0, net: 0, tax: 0, headcount: 0 };
+
+  // By location chart data
+  const locationData = Object.entries(byLocation)
+    .sort((a, b) => b[1].gross - a[1].gross)
+    .map(([name, data]) => ({
+      name,
+      gross: Math.round(data.gross),
+      headcount: data.headcount,
+      avgCost: Math.round(data.gross / data.headcount),
+    }));
+
+  return {
+    latestMonth,
+    latestGross: latestData.gross,
+    latestNet: latestData.net,
+    latestTax: latestData.tax,
+    latestHeadcount: latestData.headcount,
+    avgCostPerEmployee: latestData.headcount > 0 ? Math.round(latestData.gross / latestData.headcount) : 0,
+    trendData,
+    locationData,
+    topEarners: topEarners.slice(0, 10),
+  };
+}
+
+// ============================================================
 // TABLE COLUMNS
 // ============================================================
 
@@ -287,6 +386,19 @@ const sickLeaveColumns = [
   },
 ];
 
+const topEarnersColumns = [
+  { key: "name", label: "Employee" },
+  { key: "position", label: "Position" },
+  { key: "location", label: "Location" },
+  {
+    key: "gross",
+    label: "Gross Pay",
+    align: "right" as const,
+    sortable: true,
+    render: (v: unknown) => formatCurrency(Number(v)),
+  },
+];
+
 // ============================================================
 // MAIN CONTENT
 // ============================================================
@@ -323,6 +435,7 @@ function HRContent({
   const { data: employeesData, isLoading: empLoading } = useTalexioEmployees();
   const { data: timeLogsData, isLoading: tlLoading } = useTalexioTimeLogs();
   const { data: leaveData, isLoading: leaveLoading } = useTalexioLeave();
+  const { data: payslipsData, isLoading: payLoading } = useTalexioPayslips();
 
   // Process Talexio data
   const headcount = useMemo(() => {
@@ -339,6 +452,11 @@ function HRContent({
     if (!leaveData?.employees) return null;
     return processLeave(leaveData.employees, new Date().getFullYear());
   }, [leaveData]);
+
+  const payroll = useMemo(() => {
+    if (!payslipsData?.employees) return null;
+    return processPayroll(payslipsData.employees);
+  }, [payslipsData]);
 
   // RevPAH calculation (existing)
   const revpahByLocation = useMemo(() => {
@@ -373,7 +491,7 @@ function HRContent({
   }, [revpahByLocation]);
 
   const revpahLoading = utilizationLoading || salesLoading;
-  const talexioLoading = empLoading || tlLoading || leaveLoading;
+  const talexioLoading = empLoading || tlLoading || leaveLoading || payLoading;
 
   // Build KPI cards
   const kpis: KPIData[] = [
@@ -606,7 +724,106 @@ function HRContent({
         </Card>
       </div>
 
-      {/* Section 4: RevPAH by Location (existing) */}
+      {/* Section 4: Payroll Overview */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <Card className="p-4">
+          <p className="text-sm text-gray-500">Monthly Gross</p>
+          <p className="text-2xl font-bold text-gray-900">
+            {payLoading ? "..." : formatCurrency(payroll?.latestGross || 0)}
+          </p>
+          {payroll?.latestMonth && (
+            <p className="text-xs text-gray-400 mt-1">
+              {new Date(payroll.latestMonth + "-01").toLocaleDateString("en-MT", { month: "long", year: "numeric" })}
+            </p>
+          )}
+        </Card>
+        <Card className="p-4">
+          <p className="text-sm text-gray-500">Monthly Net</p>
+          <p className="text-2xl font-bold text-gray-900">
+            {payLoading ? "..." : formatCurrency(payroll?.latestNet || 0)}
+          </p>
+        </Card>
+        <Card className="p-4">
+          <p className="text-sm text-gray-500">Tax Deductions</p>
+          <p className="text-2xl font-bold text-gray-900">
+            {payLoading ? "..." : formatCurrency(payroll?.latestTax || 0)}
+          </p>
+        </Card>
+        <Card className="p-4">
+          <p className="text-sm text-gray-500">Avg Cost / Employee</p>
+          <p className="text-2xl font-bold text-gray-900">
+            {payLoading ? "..." : formatCurrency(payroll?.avgCostPerEmployee || 0)}
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            {payLoading ? "" : `${payroll?.latestHeadcount || 0} employees paid`}
+          </p>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Payroll Trend (6 Months)</h2>
+          {payLoading ? (
+            <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={payroll?.trendData || []} margin={chartDefaults.margin}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                <YAxis tickFormatter={(v: number) => `€${(v / 1000).toFixed(0)}k`} />
+                <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+                <Legend />
+                <Bar dataKey="gross" name="Gross" fill={chartColors.spa} />
+                <Bar dataKey="net" name="Net" fill={chartColors.aesthetics} />
+                <Bar dataKey="tax" name="Tax" fill={chartColors.slimming} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Payroll by Location</h2>
+          {payLoading ? (
+            <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={payroll?.locationData || []}
+                layout="vertical"
+                margin={{ ...chartDefaults.margin, left: 100 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" tickFormatter={(v: number) => `€${(v / 1000).toFixed(0)}k`} />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} width={95} />
+                <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+                <Bar dataKey="gross" name="Gross Pay" fill={chartColors.spa} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </Card>
+      </div>
+
+      <Card className="p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Top Earners
+          {payroll?.latestMonth && (
+            <span className="ml-2 text-sm font-normal text-gray-500">
+              ({new Date(payroll.latestMonth + "-01").toLocaleDateString("en-MT", { month: "long", year: "numeric" })})
+            </span>
+          )}
+        </h2>
+        {payLoading ? (
+          <div className="flex items-center justify-center h-[200px] text-gray-500">Loading...</div>
+        ) : (
+          <DataTable
+            columns={topEarnersColumns}
+            data={(payroll?.topEarners || []) as unknown as Record<string, unknown>[]}
+            pageSize={10}
+          />
+        )}
+      </Card>
+
+      {/* Section 5: RevPAH by Location (existing) */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">RevPAH by Location</h2>
         {revpahLoading ? (

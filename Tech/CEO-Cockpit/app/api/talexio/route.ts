@@ -106,6 +106,22 @@ const QUERIES: Record<string, { query: string; variables?: (params: URLSearchPar
       year: parseInt(params.get("year") || "2026"),
     }),
   },
+  payslips: {
+    query: `query {
+      employees {
+        id fullName isTerminated
+        currentPositionSimple {
+          position { name }
+          organisationUnit { name }
+        }
+        payslips {
+          ... on PayrollPayslip {
+            id gross net tax periodFrom periodTo
+          }
+        }
+      }
+    }`,
+  },
 };
 
 export async function GET(request: NextRequest) {

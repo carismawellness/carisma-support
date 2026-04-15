@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-type TalexioAction = "employees" | "headcount" | "timelogs" | "leave" | "shifts" | "payrolls";
+type TalexioAction = "employees" | "headcount" | "timelogs" | "leave" | "shifts" | "payrolls" | "payslips";
 
 interface UseTalexioOptions {
   action: TalexioAction;
@@ -95,4 +95,30 @@ export function useTalexioLeave() {
 
 export function useTalexioHeadcount() {
   return useTalexio<{ employees: TalexioEmployee[] }>({ action: "headcount" });
+}
+
+// ---- Payslip types ----
+
+export interface TalexioPayslip {
+  id: string;
+  gross: number;
+  net: number;
+  tax: number;
+  periodFrom: string;
+  periodTo: string;
+}
+
+export interface TalexioEmployeeWithPayslips {
+  id: string;
+  fullName: string;
+  isTerminated: boolean;
+  currentPositionSimple: {
+    position: { name: string } | null;
+    organisationUnit: { name: string } | null;
+  } | null;
+  payslips: TalexioPayslip[];
+}
+
+export function useTalexioPayslips() {
+  return useTalexio<{ employees: TalexioEmployeeWithPayslips[] }>({ action: "payslips" });
 }
