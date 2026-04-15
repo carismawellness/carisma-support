@@ -5,7 +5,7 @@ You're working inside the **WAT framework** (Workflows, Agents, Tools). This arc
 ## The WAT Architecture
 
 **Layer 1: Workflows (The Instructions)**
-- Markdown SOPs stored in `workflows/`
+- Markdown SOPs stored in `09-Miscellaneous/Workflows/`
 - Each workflow defines the objective, required inputs, which tools to use, expected outputs, and how to handle edge cases
 - Written in plain language, the same way you'd brief someone on your team
 
@@ -13,10 +13,10 @@ You're working inside the **WAT framework** (Workflows, Agents, Tools). This arc
 - This is your role. You're responsible for intelligent coordination.
 - Read the relevant workflow, run tools in the correct sequence, handle failures gracefully, and ask clarifying questions when needed
 - You connect intent to execution without trying to do everything yourself
-- Example: If you need to pull data from a website, don't attempt it directly. Read `workflows/scrape_website.md`, figure out the required inputs, then execute `tools/scrape_single_site.py`
+- Example: If you need to pull data from a website, don't attempt it directly. Read `09-Miscellaneous/Workflows/scrape_website.md`, figure out the required inputs, then execute `Tools/scrape_single_site.py`
 
 **Layer 3: Tools (The Execution)**
-- Python scripts in `tools/` that do the actual work
+- Python scripts in `Tools/` that do the actual work
 - API calls, data transformations, file operations, database queries
 - Credentials and API keys are stored in `.env`
 - These scripts are consistent, testable, and fast
@@ -26,7 +26,7 @@ You're working inside the **WAT framework** (Workflows, Agents, Tools). This arc
 ## How to Operate
 
 **1. Look for existing tools first**
-Before building anything new, check `tools/` based on what your workflow requires. Only create new scripts when nothing exists for that task.
+Before building anything new, check `Tools/` based on what your workflow requires. Only create new scripts when nothing exists for that task.
 
 **2. Learn and adapt when things fail**
 When you hit an error:
@@ -51,7 +51,7 @@ Every failure makes the system permanently smarter. This is not optional — it'
 2. **Fix** — Correct the tool, script, response, or approach
 3. **Verify** — Confirm the fix actually works (run the script, re-execute the workflow, check output)
 4. **Document** — Add an ALWAYS/NEVER directive to the relevant CLAUDE.md file's `### Active Rules` section
-5. **Log** — Record full context in `miscellaneous/learnings/LEARNINGS.md` with date, what happened, root cause, and the rule
+5. **Log** — Record full context in `09-Miscellaneous/learnings/LEARNINGS.md` with date, what happened, root cause, and the rule
 
 ### Rule Format
 
@@ -73,7 +73,7 @@ NEVER claim a task is done without verification:
 ### Learning Flow
 
 Learnings flow through a centralized + brand-specific architecture:
-- **`miscellaneous/learnings/LEARNINGS.md`** — Master log. All learnings recorded here first.
+- **`09-Miscellaneous/learnings/LEARNINGS.md`** — Master log. All learnings recorded here first.
 - **Root CLAUDE.md** (this file) — Universal rules that apply to all agents
 - **Brand CLAUDE.md files** — Brand-specific rules (CRM-SPA, CRM-AES, CRM-SLIM)
 - **Workflow footers** — Execution-specific learnings (API quirks, timing, tool failures)
@@ -83,7 +83,7 @@ Cross-pollination: If a brand-specific learning applies universally, promote it 
 
 ### Active Rules
 
-<!-- Universal rules distilled from miscellaneous/learnings/LEARNINGS.md go here -->
+<!-- Universal rules distilled from 09-Miscellaneous/learnings/LEARNINGS.md go here -->
 <!-- This section grows over time as the system learns -->
 <!-- Format: ALWAYS/NEVER [directive] — [rationale] -->
 
@@ -97,30 +97,26 @@ _No active rules yet. The system will learn as it operates._
 
 **Directory layout:**
 ```
-config/              # Brand definitions, offers, KPIs, naming conventions, templates
-  brands.json        # Ad account IDs, page IDs, targeting, brand voice per brand
-  offers.json        # Active offers with pricing, angles, CTAs, lead form IDs
-  competitors.json   # Competitor page IDs and Ad Library search terms
-  script_frameworks.json  # Script templates per creative format
-  naming_conventions.json # Campaign/ad set/ad naming patterns
-  kpi_thresholds.json     # CPL targets, kill thresholds, winner/loser criteria
-  creative_templates.json # Creatomate + Figma template IDs
-miscellaneous/       # Shared resources (learnings, meetings) not tied to a specific department
-  learnings/         # Self-improvement loop: master learnings log and system rules
-  meetings/          # Processed meeting notes (structured, linked, browsable in Obsidian)
-    raw/             # Raw unedited transcripts (archived, hidden from Obsidian)
-    templates/       # Meeting note template
-tools/               # Python scripts for deterministic execution
-workflows/           # Markdown SOPs defining what to do and how
+01-CEO/              # CEO strategy, acquisitions, international expansion
+02-Marketing/        # Marketing plans, social media, blogs, ads
+03-Sales/            # Sales CRM, feedback agent, data stores
+04-HR/               # HR staffing models, documents
+05-Finance/          # Financial models, EBITDA, budgets
+06-Spa/              # Spa brand operations, research
+07-Aesthetics/       # Aesthetics brand operations
+08-Slimming/         # Slimming brand operations
+09-Miscellaneous/    # Shared resources not tied to a department
+  learnings/         # Self-improvement loop: master learnings log
+  meetings/          # Processed meeting notes
+  Workflows/         # Markdown SOPs defining what to do and how
+Config/              # Brand definitions, offers, KPIs, naming conventions, templates
+Docs/                # Documentation and plans
+Tech/                # Technical projects (CarismaSoft, CEO-Cockpit)
+Tests/               # Test files
+Tools/               # Python scripts for deterministic execution
 .tmp/                # Temporary files. Regenerated as needed.
-  research/          # Competitor research, hook banks, reports
-  scripts/           # Generated ad scripts
-  briefs/            # Creative production briefs
-  performance/       # Performance data and analysis
-  creatives/         # Generated/downloaded creative assets
 .env                 # API keys and environment variables (NEVER store secrets anywhere else)
 .mcp.json            # MCP server configuration (Meta Ads, Playwright, Sheets, Figma, Fetch)
-credentials.json, token.json  # Google OAuth (gitignored)
 ```
 
 **Core principle:** Local files are just for processing. Anything I need to see or use lives in cloud services. Everything in `.tmp/` is disposable.
@@ -139,7 +135,7 @@ You turn research insights into compelling ad scripts and production-ready creat
 You build technically correct campaign structures in Meta Ads Manager. Create everything in PAUSED state for human review. Follow CBO structure, naming conventions, and targeting specs exactly. **NEVER activate campaigns** — that is always a human decision.
 
 **Performance Analyst Agent** (Workflows 09, 11)
-You pull performance data, compute KPIs, identify winners and losers, and recommend actions. Be strictly data-driven. Only recommend pausing or scaling based on thresholds in `config/kpi_thresholds.json` — never gut feeling. Present findings with specific numbers.
+You pull performance data, compute KPIs, identify winners and losers, and recommend actions. Be strictly data-driven. Only recommend pausing or scaling based on thresholds in `Config/kpi_thresholds.json` — never gut feeling. Present findings with specific numbers.
 
 **Iteration Agent** (Workflow 10)
 You take winning ads and create smart variations that test one variable at a time. Each variation tests a specific hypothesis. Preserve what works, change one element to isolate what drives performance.
@@ -167,23 +163,23 @@ Six MCP servers are configured in `.mcp.json`:
 
 You sit between what I want (workflows) and what actually gets done (tools). Your job is to read instructions, make smart decisions, call the right tools, recover from errors, and keep improving the system as you go.
 
-Start every task by reading the relevant workflow in `workflows/`. When the user says "run performance review," read `workflows/09_performance_review.md` and follow it step by step. When they say "run the weekly cycle," read `workflows/00_master_orchestration.md`.
+Start every task by reading the relevant workflow in `09-Miscellaneous/Workflows/`. When the user says "run performance review," read `09-Miscellaneous/Workflows/09_performance_review.md` and follow it step by step. When they say "run the weekly cycle," read `09-Miscellaneous/Workflows/00_master_orchestration.md`.
 
 Stay pragmatic. Stay reliable. Keep learning.
 
 ## Strategic Reference Documents
 
-Before executing any workflow, read `config/REFERENCE_INDEX.md` for which config files to consult (brand voice, offers, angles, competitive intel) per workflow.
+Before executing any workflow, read `Config/REFERENCE_INDEX.md` for which config files to consult (brand voice, offers, angles, competitive intel) per workflow.
 
 ## Meeting Transcript Processing
 
-**On every session start**, run `python tools/check_unprocessed_meetings.py` to check for new raw transcripts in `miscellaneous/meetings/raw/`. If unprocessed transcripts are found, notify the user and offer to process them.
+**On every session start**, run `python tools/check_unprocessed_meetings.py` to check for new raw transcripts in `09-Miscellaneous/meetings/raw/`. If unprocessed transcripts are found, notify the user and offer to process them.
 
-**When processing:** Follow `workflows/process_meeting_transcript.md` step by step. The key is connecting meeting content to existing vault knowledge — always search for related strategy docs, brand docs, and past meetings before writing the summary.
+**When processing:** Follow `09-Miscellaneous/Workflows/process_meeting_transcript.md` step by step. The key is connecting meeting content to existing vault knowledge — always search for related strategy docs, brand docs, and past meetings before writing the summary.
 
 **Automation flow:**
 1. User's transcription tool saves transcripts to `miscellaneous/meetings/raw/` automatically
 2. Claude Code detects new files at session start via `tools/check_unprocessed_meetings.py`
-3. Claude Code processes each transcript into a structured note in `miscellaneous/meetings/`
-4. Raw transcripts stay archived in `miscellaneous/meetings/raw/` (hidden from Obsidian)
+3. Claude Code processes each transcript into a structured note in `09-Miscellaneous/meetings/`
+4. Raw transcripts stay archived in `09-Miscellaneous/meetings/raw/` (hidden from Obsidian)
 5. Processed notes are visible and linked in Obsidian
