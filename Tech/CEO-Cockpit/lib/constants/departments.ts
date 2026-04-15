@@ -7,6 +7,7 @@ import {
   Users,
   UserRound,
   Settings,
+  Activity,
   type LucideIcon,
 } from "lucide-react";
 
@@ -26,4 +27,5 @@ export const departments: Department[] = [
   { slug: "hr", label: "HR", icon: Users, path: "/hr" },
   { slug: "operations", label: "Operations", icon: Settings, path: "/operations" },
   { slug: "customers", label: "Customers", icon: UserRound, path: "/customers" },
+  { slug: "productivity", label: "Productivity", icon: Activity, path: "/productivity" },
 ];
