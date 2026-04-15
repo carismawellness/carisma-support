@@ -119,6 +119,20 @@
         "reconciliation": "Reconciliation"
       }
     },
+    "brand_standards": {
+      "spreadsheet_id": "1WWM7W6S5wtSC-5hdlcuJgW3zbYaO7YRgg4_-Bju4-5s",
+      "title": "Brand Standards (Accounting Master)",
+      "tabs": {
+        "facility_24": { "tab_name": "Facility standards", "standard_type": "facility" },
+        "facility_25": { "tab_name": "Facility standards 25", "standard_type": "facility" },
+        "facility_26": { "tab_name": "Facility standards 26", "standard_type": "facility" },
+        "front_desk_24": { "tab_name": "Front desk standards", "standard_type": "front_desk" },
+        "front_desk_25": { "tab_name": "Front desk standards 25", "standard_type": "front_desk" },
+        "front_desk_26": { "tab_name": "Front desk standards 26", "standard_type": "front_desk" },
+        "mystery_guest_24": { "tab_name": "Mystery guest standards", "standard_type": "mystery_guest" },
+        "mystery_guest_25_26": { "tab_name": "Mystery guest standards 25 from AUGUST to 2026", "standard_type": "mystery_guest" }
+      }
+    },
     "aesthetics_sales": {
       "spreadsheet_id": "1Mr_aRRbRf3ex--WmUJIqXwko7okCyD82KxBOXWYnW24",
       "title": "Aesthetics Sales (Leticia)",
