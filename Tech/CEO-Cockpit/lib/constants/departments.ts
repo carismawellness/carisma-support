@@ -5,9 +5,9 @@ import {
   Headphones,
   PiggyBank,
   Users,
-  UserRound,
   Settings,
   Activity,
+  ClipboardCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -26,6 +26,6 @@ export const departments: Department[] = [
   { slug: "finance", label: "Finance", icon: PiggyBank, path: "/finance" },
   { slug: "hr", label: "HR", icon: Users, path: "/hr" },
   { slug: "operations", label: "Operations", icon: Settings, path: "/operations" },
-  { slug: "customers", label: "Customers", icon: UserRound, path: "/customers" },
+  { slug: "brand-standards", label: "Brand Standards", icon: ClipboardCheck, path: "/brand-standards" },
   { slug: "productivity", label: "Productivity", icon: Activity, path: "/productivity" },
 ];

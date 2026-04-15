@@ -104,6 +104,22 @@ function avg(arr: number[]): number {
 }
 
 const BRAND_NAMES: Record<number, string> = { 1: "Spa", 2: "Aesthetics", 3: "Slimming" };
+
+/* ── Static customer metrics (until Fresha/Lapis integration) ── */
+
+const clvByBrand = [
+  { brand: "Spa", avgCLV: 774 },
+  { brand: "Aesthetics", avgCLV: 2236 },
+  { brand: "Slimming", avgCLV: 1546 },
+];
+
+const visitDistribution = [
+  { bucket: "1", count: 6 },
+  { bucket: "2-3", count: 10 },
+  { bucket: "4-6", count: 8 },
+  { bucket: "7-10", count: 8 },
+  { bucket: "10+", count: 12 },
+];
 const CPL_TARGETS: Record<number, number> = { 1: 8, 2: 12, 3: 10 };
 
 /* ---------- page ---------- */
@@ -204,6 +220,7 @@ function MarketingContent({
         value: hasGrowth ? formatPercent(emailPct) : "N/A",
         ...(hasGrowth ? { target: "35%", targetValue: 35, currentValue: emailPct } : {}),
       },
+      { label: "Retention Rate", value: "77.3%", target: "80%", targetValue: 80, currentValue: 77.3 },
     ];
   }, [growthData, marketingData, salesData, hasGrowth]);
 
@@ -568,7 +585,44 @@ function MarketingContent({
         </Card>
       </div>
 
-      {/* Section 5: Campaign Performance Table */}
+      {/* Section 5: Customer Value Metrics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Avg CLV by Brand */}
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Avg CLV by Brand
+          </h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={clvByBrand} margin={chartDefaults.margin}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="brand" />
+              <YAxis tickFormatter={(v: number) => formatCurrency(v)} />
+              <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+              <Legend />
+              <Bar dataKey="avgCLV" name="Avg CLV" fill={chartColors.aesthetics} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+
+        {/* Visit Frequency Distribution */}
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Visit Frequency Distribution
+          </h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={visitDistribution} margin={chartDefaults.margin}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="bucket" label={{ value: "Visits", position: "insideBottom", offset: -2 }} />
+              <YAxis label={{ value: "Customers", angle: -90, position: "insideLeft" }} />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="count" name="Customers" fill={chartColors.spa} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
+
+      {/* Campaign Performance Table */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Campaign Performance by Platform
@@ -580,7 +634,7 @@ function MarketingContent({
         )}
       </Card>
 
-      {/* Section 6: Organic Performance (GA4 + GSC) */}
+      {/* Organic Performance (GA4 + GSC) */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Organic Performance
