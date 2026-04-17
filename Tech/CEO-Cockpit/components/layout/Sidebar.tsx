@@ -56,13 +56,14 @@ function NavItem({
     );
   }
 
-  // Parent with children
+  // Parent with children — entire row toggles expand/collapse
   return (
     <div>
-      {/* Parent row — clicking the label goes to the parent page, chevron toggles children */}
-      <div
+      <button
+        onClick={() => setOpen(!open)}
+        title={collapsed ? dept.label : undefined}
         className={cn(
-          "flex items-center rounded-lg text-sm font-medium transition-all",
+          "w-full flex items-center rounded-lg text-sm font-medium transition-all cursor-pointer",
           collapsed ? "justify-center px-0 py-2.5" : "gap-3 px-4 py-2.5",
           isActive
             ? "border-l-[3px] border-gold bg-gold-bg text-gold"
@@ -71,30 +72,17 @@ function NavItem({
               : "text-text-secondary hover:bg-warm-gray hover:text-charcoal"
         )}
       >
-        <Link
-          href={dept.path}
-          onClick={onMobileClose}
-          title={collapsed ? dept.label : undefined}
-          className="flex items-center gap-3 flex-1 min-w-0"
-        >
-          <Icon className={cn("h-[18px] w-[18px] shrink-0", (isActive || isChildActive) ? "text-gold" : "text-text-secondary")} />
-          {!collapsed && <span className="truncate">{dept.label}</span>}
-        </Link>
+        <Icon className={cn("h-[18px] w-[18px] shrink-0", (isActive || isChildActive) ? "text-gold" : "text-text-secondary")} />
+        {!collapsed && <span className="truncate flex-1 text-left">{dept.label}</span>}
         {!collapsed && (
-          <button
-            onClick={() => setOpen(!open)}
-            className="p-0.5 rounded hover:bg-black/5 transition-colors"
-            aria-label={open ? "Collapse" : "Expand"}
-          >
-            <ChevronDown
-              className={cn(
-                "h-3.5 w-3.5 transition-transform duration-200",
-                open ? "rotate-0" : "-rotate-90"
-              )}
-            />
-          </button>
+          <ChevronDown
+            className={cn(
+              "h-3.5 w-3.5 transition-transform duration-200",
+              open ? "rotate-0" : "-rotate-90"
+            )}
+          />
         )}
-      </div>
+      </button>
 
       {/* Children */}
       {!collapsed && open && dept.children && (
