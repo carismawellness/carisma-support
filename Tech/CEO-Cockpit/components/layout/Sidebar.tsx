@@ -2,15 +2,129 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { departments } from "@/lib/constants/departments";
+import { useState } from "react";
+import { departments, type Department } from "@/lib/constants/departments";
 import { cn } from "@/lib/utils";
-import { ChevronsLeft, ChevronsRight, X } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, ChevronDown, X } from "lucide-react";
 
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
   mobileOpen: boolean;
   onMobileClose: () => void;
+}
+
+function NavItem({
+  dept,
+  pathname,
+  collapsed,
+  onMobileClose,
+}: {
+  dept: Department;
+  pathname: string;
+  collapsed: boolean;
+  onMobileClose: () => void;
+}) {
+  const isActive = pathname === dept.path;
+  const isChildActive = dept.children?.some((c) => pathname === c.path) ?? false;
+  const isExpanded = isActive || isChildActive;
+  const [open, setOpen] = useState(isExpanded);
+
+  const Icon = dept.icon;
+  const hasChildren = dept.children && dept.children.length > 0;
+
+  // Keep open state in sync when navigating
+  if (isExpanded && !open) setOpen(true);
+
+  if (!hasChildren) {
+    return (
+      <Link
+        href={dept.path}
+        title={collapsed ? dept.label : undefined}
+        onClick={onMobileClose}
+        className={cn(
+          "flex items-center rounded-lg text-sm font-medium transition-all",
+          collapsed ? "justify-center px-0 py-2.5" : "gap-3 px-4 py-2.5",
+          isActive
+            ? "border-l-[3px] border-gold bg-gold-bg text-gold"
+            : "text-text-secondary hover:bg-warm-gray hover:text-charcoal"
+        )}
+      >
+        <Icon className={cn("h-[18px] w-[18px] shrink-0", isActive ? "text-gold" : "text-text-secondary")} />
+        {!collapsed && dept.label}
+      </Link>
+    );
+  }
+
+  // Parent with children
+  return (
+    <div>
+      {/* Parent row — clicking the label goes to the parent page, chevron toggles children */}
+      <div
+        className={cn(
+          "flex items-center rounded-lg text-sm font-medium transition-all",
+          collapsed ? "justify-center px-0 py-2.5" : "gap-3 px-4 py-2.5",
+          isActive
+            ? "border-l-[3px] border-gold bg-gold-bg text-gold"
+            : isChildActive
+              ? "text-gold"
+              : "text-text-secondary hover:bg-warm-gray hover:text-charcoal"
+        )}
+      >
+        <Link
+          href={dept.path}
+          onClick={onMobileClose}
+          title={collapsed ? dept.label : undefined}
+          className="flex items-center gap-3 flex-1 min-w-0"
+        >
+          <Icon className={cn("h-[18px] w-[18px] shrink-0", (isActive || isChildActive) ? "text-gold" : "text-text-secondary")} />
+          {!collapsed && <span className="truncate">{dept.label}</span>}
+        </Link>
+        {!collapsed && (
+          <button
+            onClick={() => setOpen(!open)}
+            className="p-0.5 rounded hover:bg-black/5 transition-colors"
+            aria-label={open ? "Collapse" : "Expand"}
+          >
+            <ChevronDown
+              className={cn(
+                "h-3.5 w-3.5 transition-transform duration-200",
+                open ? "rotate-0" : "-rotate-90"
+              )}
+            />
+          </button>
+        )}
+      </div>
+
+      {/* Children */}
+      {!collapsed && open && dept.children && (
+        <div className="ml-4 pl-4 border-l border-warm-border space-y-0.5 mt-0.5">
+          {dept.children.map((child) => {
+            const childActive = pathname === child.path;
+            const ChildIcon = child.icon;
+            return (
+              <Link
+                key={child.slug}
+                href={child.path}
+                onClick={onMobileClose}
+                className={cn(
+                  "flex items-center gap-2.5 rounded-lg text-[13px] font-medium transition-all px-3 py-2",
+                  childActive
+                    ? "bg-gold-bg text-gold"
+                    : "text-text-secondary hover:bg-warm-gray hover:text-charcoal"
+                )}
+              >
+                {ChildIcon && (
+                  <ChildIcon className={cn("h-[15px] w-[15px] shrink-0", childActive ? "text-gold" : "text-text-secondary")} />
+                )}
+                {child.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: SidebarProps) {
@@ -35,7 +149,6 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
             </p>
           )}
         </div>
-        {/* Close button on mobile, collapse toggle on desktop */}
         <button
           onClick={onMobileClose}
           className="lg:hidden h-7 w-7 rounded-lg flex items-center justify-center text-text-secondary hover:bg-warm-gray hover:text-charcoal transition-colors"
@@ -56,29 +169,16 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-2 space-y-0.5">
-        {departments.map((dept) => {
-          const isActive = pathname === dept.path;
-          const Icon = dept.icon;
-          return (
-            <Link
-              key={dept.slug}
-              href={dept.path}
-              title={collapsed ? dept.label : undefined}
-              onClick={onMobileClose}
-              className={cn(
-                "flex items-center rounded-lg text-sm font-medium transition-all",
-                collapsed ? "justify-center px-0 py-2.5" : "gap-3 px-4 py-2.5",
-                isActive
-                  ? "border-l-[3px] border-gold bg-gold-bg text-gold"
-                  : "text-text-secondary hover:bg-warm-gray hover:text-charcoal"
-              )}
-            >
-              <Icon className={cn("h-[18px] w-[18px] shrink-0", isActive ? "text-gold" : "text-text-secondary")} />
-              {!collapsed && dept.label}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
+        {departments.map((dept) => (
+          <NavItem
+            key={dept.slug}
+            dept={dept}
+            pathname={pathname}
+            collapsed={collapsed}
+            onMobileClose={onMobileClose}
+          />
+        ))}
       </nav>
 
       {/* User section */}
@@ -108,16 +208,12 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       {/* Mobile drawer overlay */}
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
-          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/40"
             onClick={onMobileClose}
             aria-label="Close sidebar"
           />
-          {/* Sidebar drawer (always full-width, not collapsed on mobile) */}
-          <aside
-            className="relative h-screen w-60 bg-warm-white flex flex-col border-r border-warm-border z-50"
-          >
+          <aside className="relative h-screen w-60 bg-warm-white flex flex-col border-r border-warm-border z-50">
             {/* Logo */}
             <div className="border-b border-warm-border flex items-center p-6 justify-between">
               <div>
@@ -136,27 +232,16 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-2 space-y-0.5">
-              {departments.map((dept) => {
-                const isActive = pathname === dept.path;
-                const Icon = dept.icon;
-                return (
-                  <Link
-                    key={dept.slug}
-                    href={dept.path}
-                    onClick={onMobileClose}
-                    className={cn(
-                      "flex items-center rounded-lg text-sm font-medium transition-all gap-3 px-4 py-2.5",
-                      isActive
-                        ? "border-l-[3px] border-gold bg-gold-bg text-gold"
-                        : "text-text-secondary hover:bg-warm-gray hover:text-charcoal"
-                    )}
-                  >
-                    <Icon className={cn("h-[18px] w-[18px] shrink-0", isActive ? "text-gold" : "text-text-secondary")} />
-                    {dept.label}
-                  </Link>
-                );
-              })}
+            <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
+              {departments.map((dept) => (
+                <NavItem
+                  key={dept.slug}
+                  dept={dept}
+                  pathname={pathname}
+                  collapsed={false}
+                  onMobileClose={onMobileClose}
+                />
+              ))}
             </nav>
 
             {/* User section */}
