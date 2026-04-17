@@ -10,6 +10,7 @@ import {
   chartDefaults,
   formatCurrency,
 } from "@/lib/charts/config";
+import Link from "next/link";
 import {
   BarChart,
   Bar,
@@ -343,6 +344,18 @@ function CRMContent() {
       <div className="flex items-baseline justify-between">
         <h1 className="text-2xl font-bold text-foreground">CRM Performance Dashboard</h1>
         <span className="text-sm text-text-secondary">Feb 18 - Mar 14, 2026 | {activeDays} working days</span>
+      </div>
+
+      {/* Sub-dashboards */}
+      <div className="flex gap-3">
+        <Link
+          href="/crm/speed-to-lead"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium transition-colors border border-blue-200"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          Speed to Lead Dashboard
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+        </Link>
       </div>
 
       {/* KPI Cards */}
