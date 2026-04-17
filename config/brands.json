@@ -11,6 +11,16 @@
       "meta_page_id": "375775105843811",
       "instagram_account_id": "TO_BE_FILLED",
       "pixel_id": "TO_BE_FILLED",
+      "capi_events": {
+        "consultation_booked": {
+          "event_name": "ConsultationBooked",
+          "trigger_stage": "Closed Won"
+        },
+        "appointment_made": {
+          "event_name": "AppointmentMade",
+          "trigger_stage": "Closed Won"
+        }
+      },
       "website_url": "https://www.carismaspa.com",
       "landing_pages": {
         "spa_day_package": "https://www.carismaspa.com/spa-day",
@@ -93,6 +103,16 @@
       "meta_page_id": "117681807972195",
       "instagram_account_id": "TO_BE_FILLED",
       "pixel_id": "TO_BE_FILLED",
+      "capi_events": {
+        "consultation_booked": {
+          "event_name": "ConsultationBooked",
+          "trigger_stage": "Consultation - won"
+        },
+        "appointment_made": {
+          "event_name": "AppointmentMade",
+          "trigger_stage": "Booking closed won"
+        }
+      },
       "website_url": "https://www.carismaaesthetics.com",
       "landing_pages": {
         "botox": "https://www.carismaaesthetics.com/botox",
@@ -177,6 +197,16 @@
       "meta_page_id": "923445584188552",
       "instagram_account_id": "TO_BE_FILLED",
       "pixel_id": "TO_BE_FILLED",
+      "capi_events": {
+        "consultation_booked": {
+          "event_name": "ConsultationBooked",
+          "trigger_stage": "Consultation - won"
+        },
+        "appointment_made": {
+          "event_name": "AppointmentMade",
+          "trigger_stage": "Booking closed won"
+        }
+      },
       "website_url": "https://www.carismaslimming.com",
       "landing_pages": {},
       "target_audience": {
