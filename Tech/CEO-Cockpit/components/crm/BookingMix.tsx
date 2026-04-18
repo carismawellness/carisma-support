@@ -113,7 +113,10 @@ export function BookingMix({
           .map(([name, value]) => ({ name, value }))
           .sort((a, b) => b.value - a.value);
 
-        const isDummy = items.length === 0;
+        // Use dummy data if no real treatment data or if data looks like
+        // person names (ETL not yet mapping treatment_name correctly)
+        const looksLikeNames = items.length > 0 && items.every((t) => !t.name.includes(" ") || /^[A-Z][a-z]+ [A-Z]?[a-z]+$/.test(t.name));
+        const isDummy = items.length === 0 || looksLikeNames;
         if (isDummy) {
           items = DUMMY_BOOKING_MIX[brand.slug] ?? [];
         }
