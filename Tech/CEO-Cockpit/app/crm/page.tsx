@@ -8,6 +8,7 @@ import { MessageQueueHealth } from "@/components/crm/MessageQueueHealth";
 import { BookingMix } from "@/components/crm/BookingMix";
 import { RepLeaderboard } from "@/components/crm/RepLeaderboard";
 import { LeadReconciliation } from "@/components/crm/LeadReconciliation";
+import { LeadsPerHour } from "@/components/crm/LeadsPerHour";
 import { CIChat } from "@/components/ci/CIChat";
 import { formatDateRangeLabel } from "@/lib/utils/mock-date-filter";
 
@@ -44,6 +45,12 @@ function CRMContent({
       <section>
         <h2 className="text-lg font-semibold text-foreground mb-3">Message Queue Health</h2>
         <MessageQueueHealth dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
+      </section>
+
+      {/* Leads per Hour Distribution */}
+      <section>
+        <h2 className="text-lg font-semibold text-foreground mb-3">Lead Volume by Hour</h2>
+        <LeadsPerHour dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
       </section>
 
       {/* Lead Reconciliation */}

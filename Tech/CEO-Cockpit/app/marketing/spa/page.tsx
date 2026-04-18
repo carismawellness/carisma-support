@@ -334,14 +334,23 @@ function SpaMarketingContent({
       )}
 
       {/* Section 1: Hero KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <HeroKPICard label="Revenue" value={formatCurrency(9847)} lastYear={formatCurrency(8620)} yoyLabel="+14.2%" positive />
-        <HeroKPICard label="Wix Revenue" value={formatCurrency(1240)} lastYear={formatCurrency(1080)} yoyLabel="+14.8%" positive />
-        <HeroKPICard label="Total Marketing Spend" value={formatCurrency(655)} lastYear={formatCurrency(601)} yoyLabel="+8.5%" positive={false} />
-        <HeroKPICard label="Meta Blended CPL" value="€7.80" lastYear="€8.40" yoyLabel="-7.1%" positive />
-        <HeroKPICard label="Google Blended CPC" value="€1.85" lastYear="€2.10" yoyLabel="-11.9%" positive />
-        <HeroKPICard label="Rebooking Rate" value="44%" lastYear="40%" yoyLabel="+10.0%" positive />
-      </div>
+      {(() => {
+        const totalMetaLeads = META_CAMPAIGNS.reduce((s, c) => s + c.totalLeads, 0);
+        const totalGoogleLeads = GOOGLE_CAMPAIGNS.reduce((s, c) => s + c.totalLeads, 0);
+        const totalLeads = totalMetaLeads + totalGoogleLeads;
+        const conversionRate = totalLeads > 0 ? ((totalLeads * 0.65 * 0.55) / totalLeads * 100) : 0;
+        return (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+            <HeroKPICard label="Revenue" value={formatCurrency(9847)} lastYear={formatCurrency(8620)} yoyLabel="+14.2%" positive />
+            <HeroKPICard label="Wix Revenue" value={formatCurrency(1240)} lastYear={formatCurrency(1080)} yoyLabel="+14.8%" positive />
+            <HeroKPICard label="Total Marketing Spend" value={formatCurrency(655)} lastYear={formatCurrency(601)} yoyLabel="+8.5%" positive={false} />
+            <HeroKPICard label="Meta Blended CPL" value="€7.80" lastYear="€8.40" yoyLabel="-7.1%" positive />
+            <HeroKPICard label="Google Blended CPC" value="€1.85" lastYear="€2.10" yoyLabel="-11.9%" positive />
+            <HeroKPICard label="Conversion / Leads" value={`${conversionRate.toFixed(1)}%`} lastYear="33.2%" yoyLabel="+7.8%" positive />
+            <HeroKPICard label="Rebooking Rate" value="44%" lastYear="40%" yoyLabel="+10.0%" positive />
+          </div>
+        );
+      })()}
 
       {/* Section 2: Meta Ads */}
       <Card className="p-3 md:p-6">

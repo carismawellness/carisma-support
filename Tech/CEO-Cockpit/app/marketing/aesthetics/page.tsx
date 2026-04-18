@@ -52,6 +52,7 @@ const HERO_KPIS = [
   { label: "Total Marketing Spend", value: "€925", lastYear: "€810", yoy: "+14.2%", yoyPositive: false },
   { label: "Meta Blended CPL", value: "€14.20", lastYear: "€15.80", yoy: "-10.1%", yoyPositive: true },
   { label: "Google Blended CPC", value: "€3.80", lastYear: "€4.30", yoy: "-11.6%", yoyPositive: true },
+  { label: "Conversion / Leads", value: "34.8%", lastYear: "30.5%", yoy: "+14.1%", yoyPositive: true },
   { label: "Rebooking Rate", value: "38%", lastYear: "34%", yoy: "+11.8%", yoyPositive: true },
 ];
 
@@ -229,7 +230,7 @@ function AestheticsMarketingContent({
       )}
 
       {/* Section 1: Hero KPIs with YoY */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
         {HERO_KPIS.map((kpi) => (
           <Card key={kpi.label} className="p-4">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{kpi.label}</p>

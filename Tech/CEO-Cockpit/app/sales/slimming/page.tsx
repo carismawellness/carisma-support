@@ -63,6 +63,16 @@ const PRACTITIONER_DATA = [
   { name: "Christine Attard", serviceRevenue: 890, retailRevenue: 180 },
 ];
 
+const THERAPIST_BOOKINGS = [
+  { name: "Maria Vella", totalBookings: 42, availableSlots: 56, avgSessionLength: 55, cancellations: 3, noShows: 2 },
+  { name: "Katya Borg", totalBookings: 38, availableSlots: 56, avgSessionLength: 50, cancellations: 4, noShows: 1 },
+  { name: "Daniela Camilleri", totalBookings: 35, availableSlots: 48, avgSessionLength: 52, cancellations: 2, noShows: 3 },
+  { name: "Joanne Grech", totalBookings: 28, availableSlots: 48, avgSessionLength: 48, cancellations: 5, noShows: 2 },
+  { name: "Lara Zammit", totalBookings: 22, availableSlots: 40, avgSessionLength: 55, cancellations: 1, noShows: 1 },
+  { name: "Nadia Farrugia", totalBookings: 18, availableSlots: 40, avgSessionLength: 45, cancellations: 3, noShows: 4 },
+  { name: "Christine Attard", totalBookings: 12, availableSlots: 32, avgSessionLength: 50, cancellations: 2, noShows: 0 },
+];
+
 const SLIMMING_SERVICE_BREAKDOWN = [
   { service: "Body Contouring", revenue: 22800, pct: 34.7 },
   { service: "Weight Loss Programme", revenue: 16400, pct: 24.9 },
@@ -350,6 +360,88 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
         retailColor={chartColors.spa}
         icon={<UserCheck className="h-5 w-5 text-[#8EB093]" />}
       />
+
+      {/* ── Therapist Bookings & Utilization ──────────────────────────── */}
+      <Card className="p-3 md:p-6">
+        <div className="flex items-center gap-2 mb-1">
+          <UserCheck className="h-5 w-5 text-[#8EB093]" />
+          <h2 className="text-lg font-semibold text-foreground">Therapist Bookings &amp; Utilization</h2>
+        </div>
+        <p className="text-xs text-muted-foreground mb-4">
+          Bookings per therapist for the selected period — how effectively each therapist&apos;s available slots are filled
+        </p>
+
+        {/* Summary row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+          <div className="text-center p-3 rounded-lg bg-[#8EB093]/10">
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">Total Bookings</p>
+            <p className="text-xl font-bold text-foreground mt-0.5">{THERAPIST_BOOKINGS.reduce((s, t) => s + t.totalBookings, 0)}</p>
+          </div>
+          <div className="text-center p-3 rounded-lg bg-[#8EB093]/10">
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">Avg Utilization</p>
+            <p className="text-xl font-bold text-foreground mt-0.5">
+              {(THERAPIST_BOOKINGS.reduce((s, t) => s + (t.totalBookings / t.availableSlots) * 100, 0) / THERAPIST_BOOKINGS.length).toFixed(0)}%
+            </p>
+          </div>
+          <div className="text-center p-3 rounded-lg bg-amber-50">
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">Total Cancellations</p>
+            <p className="text-xl font-bold text-amber-600 mt-0.5">{THERAPIST_BOOKINGS.reduce((s, t) => s + t.cancellations, 0)}</p>
+          </div>
+          <div className="text-center p-3 rounded-lg bg-red-50">
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">Total No-Shows</p>
+            <p className="text-xl font-bold text-red-600 mt-0.5">{THERAPIST_BOOKINGS.reduce((s, t) => s + t.noShows, 0)}</p>
+          </div>
+        </div>
+
+        {/* Per-therapist cards */}
+        <div className="space-y-3">
+          {[...THERAPIST_BOOKINGS].sort((a, b) => (b.totalBookings / b.availableSlots) - (a.totalBookings / a.availableSlots)).map((t) => {
+            const utilization = (t.totalBookings / t.availableSlots) * 100;
+            const barColor = utilization >= 80 ? "#059669" : utilization >= 60 ? "#d97706" : "#dc2626";
+            const effectiveBookings = t.totalBookings - t.noShows;
+            const effectiveRate = (effectiveBookings / t.availableSlots) * 100;
+            return (
+              <div key={t.name} className="flex flex-col md:flex-row md:items-center gap-3 p-3 rounded-lg border hover:bg-muted/30 transition-colors">
+                {/* Name + utilization badge */}
+                <div className="flex items-center gap-3 md:w-[200px] shrink-0">
+                  <div className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: chartColors.slimming }}>
+                    {t.name.split(" ").map((n) => n[0]).join("")}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{t.name}</p>
+                    <p className="text-xs text-muted-foreground">{t.avgSessionLength}min avg session</p>
+                  </div>
+                </div>
+
+                {/* Utilization bar */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-muted-foreground">{t.totalBookings} / {t.availableSlots} slots</span>
+                    <span className="text-sm font-bold" style={{ color: barColor }}>{utilization.toFixed(0)}%</span>
+                  </div>
+                  <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden relative">
+                    <div className="h-full rounded-full transition-all" style={{ width: `${utilization}%`, backgroundColor: barColor }} />
+                    {/* Effective utilization line */}
+                    <div className="absolute top-0 h-full w-0.5 bg-gray-400" style={{ left: `${effectiveRate}%` }} title={`Effective: ${effectiveRate.toFixed(0)}% (excl. no-shows)`} />
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="flex gap-4 shrink-0 text-center">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Cancellations</p>
+                    <p className="text-sm font-semibold text-amber-600">{t.cancellations}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">No-Shows</p>
+                    <p className="text-sm font-semibold text-red-600">{t.noShows}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
 
       {/* ── Service Revenue Breakdown ───────────────────────────────── */}
       <ServiceBreakdownChart

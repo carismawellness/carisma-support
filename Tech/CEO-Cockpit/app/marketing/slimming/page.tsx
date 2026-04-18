@@ -129,6 +129,7 @@ function SlimmingMarketingContent({
     { label: "Total Marketing Spend", value: "€525" },
     { label: "Meta Blended CPL", value: "€18.50" },
     { label: "Google Blended CPC", value: "€2.60" },
+    { label: "Conversion / Leads", value: "40.7%" },
     { label: "Rebooking Rate", value: "52%" },
   ], []);
 
@@ -301,7 +302,7 @@ function SlimmingMarketingContent({
       )}
 
       {/* Section 1: Hero KPIs with "New Brand" badges */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
         {heroCards.map((kpi) => (
           <Card key={kpi.label} className="p-4">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{kpi.label}</p>
