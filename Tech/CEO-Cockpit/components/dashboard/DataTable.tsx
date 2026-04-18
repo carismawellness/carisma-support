@@ -24,9 +24,10 @@ interface DataTableProps {
   columns: Column[];
   data: Record<string, unknown>[];
   pageSize?: number;
+  onRowClick?: (row: Record<string, unknown>) => void;
 }
 
-export function DataTable({ columns, data, pageSize = 10 }: DataTableProps) {
+export function DataTable({ columns, data, pageSize = 10, onRowClick }: DataTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(0);
@@ -78,7 +79,7 @@ export function DataTable({ columns, data, pageSize = 10 }: DataTableProps) {
         </TableHeader>
         <TableBody>
           {paged.map((row, i) => (
-            <TableRow key={i} className="hover:bg-gold-bg/50 transition-colors">
+            <TableRow key={i} className={`hover:bg-gold-bg/50 transition-colors ${onRowClick ? "cursor-pointer" : ""}`} onClick={onRowClick ? () => onRowClick(row) : undefined}>
               {columns.map((col) => (
                 <TableCell key={col.key} className={`text-charcoal ${col.align === "right" ? "text-right" : ""}`}>
                   {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? "")}
