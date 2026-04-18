@@ -36,7 +36,7 @@ export function SalesKPICard({
     : "";
 
   return (
-    <Card className="relative px-5 py-4">
+    <Card className="relative px-3 py-3 md:px-5 md:py-4">
       {/* YoY badge — top right */}
       {hasYoY && (
         <div
@@ -55,7 +55,7 @@ export function SalesKPICard({
       {/* Label row with optional icon */}
       <div className="flex items-center gap-1.5">
         {Icon && <Icon className="h-4 w-4 text-muted-foreground/70" />}
-        <p className="text-xs font-medium text-muted-foreground tracking-wide uppercase pr-24">
+        <p className="text-xs font-medium text-muted-foreground tracking-wide uppercase pr-16 md:pr-24">
           {label}
         </p>
       </div>

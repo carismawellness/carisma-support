@@ -53,7 +53,7 @@ export function KPICard({
           </span>
         )}
       </div>
-      <div className="text-3xl font-bold text-gray-900 mb-2">{value}</div>
+      <div className="text-xl md:text-3xl font-bold text-gray-900 mb-2">{value}</div>
       {progressPct !== null && (
         <div className="space-y-1">
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -74,7 +74,7 @@ export function KPICard({
   if (href) {
     return (
       <Link href={href} className="block">
-        <Card className="p-6 group cursor-pointer hover:shadow-md transition-shadow">
+        <Card className="p-3 md:p-6 group cursor-pointer hover:shadow-md transition-shadow">
           {content}
         </Card>
       </Link>
@@ -82,7 +82,7 @@ export function KPICard({
   }
 
   return (
-    <Card className="p-6">
+    <Card className="p-3 md:p-6">
       {content}
     </Card>
   );

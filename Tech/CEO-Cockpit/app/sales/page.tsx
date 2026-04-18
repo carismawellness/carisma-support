@@ -10,6 +10,7 @@ import {
   formatCurrency,
   formatPercent,
 } from "@/lib/charts/config";
+import { formatDateRangeLabel } from "@/lib/utils/mock-date-filter";
 import {
   Bar,
   ComposedChart,
@@ -245,8 +246,7 @@ export default function SalesPage() {
               Sales Overview
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              Company-wide performance across all brands | All figures EUR ex
-              VAT
+              {formatDateRangeLabel(dateFrom, dateTo)} · Company-wide performance across all brands · EUR ex VAT
             </p>
           </div>
 

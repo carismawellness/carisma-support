@@ -8,6 +8,7 @@ import { CIChat } from "@/components/ci/CIChat";
 import {
   formatCurrency,
 } from "@/lib/charts/config";
+import { formatDateRangeLabel } from "@/lib/utils/mock-date-filter";
 import {
   BarChart,
   Bar,
@@ -89,7 +90,7 @@ function AggregateBox({ label, value, className }: { label: string; value: strin
       style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}
     >
       <p className="text-sm text-gray-600">{label}</p>
-      <p className="text-2xl font-bold mt-1" style={{ color: BRAND_COLOR }}>{value}</p>
+      <p className="text-xl md:text-2xl font-bold mt-1" style={{ color: BRAND_COLOR }}>{value}</p>
     </div>
   );
 }
@@ -207,9 +208,9 @@ function AestheticsMarketingContent({
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Aesthetics Marketing Dashboard</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900">Aesthetics Marketing Dashboard</h1>
         <p className="text-sm text-text-secondary mt-1">
-          Carisma Aesthetics — consult-driven medical aesthetics performance
+          {formatDateRangeLabel(dateFrom, dateTo)} · Carisma Aesthetics — consult-driven performance
         </p>
       </div>
 
@@ -228,7 +229,7 @@ function AestheticsMarketingContent({
         {HERO_KPIS.map((kpi) => (
           <Card key={kpi.label} className="p-4">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{kpi.label}</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{kpi.value}</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">{kpi.value}</p>
             <p className="text-xs text-gray-400 mt-1">LY: {kpi.lastYear}</p>
             <p className={`text-xs font-semibold mt-0.5 ${kpi.yoyPositive ? "text-green-600" : "text-red-600"}`}>
               {kpi.yoy} YoY
@@ -238,23 +239,23 @@ function AestheticsMarketingContent({
       </div>
 
       {/* Consultation Funnel KPIs */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="p-4 text-center">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Leads</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">62</p>
+          <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">62</p>
         </Card>
         <Card className="p-4 text-center">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Consultations</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">17</p>
+          <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">17</p>
         </Card>
         <Card className="p-4 text-center">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Bookings</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">13</p>
+          <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">13</p>
         </Card>
       </div>
 
       {/* Section 2: Meta Ads */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Meta Ads</h2>
           <div className="text-right">
@@ -273,20 +274,22 @@ function AestheticsMarketingContent({
         {/* CPL by Campaign - Horizontal Bar with fatigue coloring */}
         <div className="mb-6">
           <h3 className="text-sm font-medium text-gray-700 mb-3">CPL by Campaign (Best to Worst)</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={metaCplChartData} layout="vertical" margin={{ top: 5, right: 60, left: 140, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-              <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
-              <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-              <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
-              <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
-                {metaCplChartData.map((entry, i) => (
-                  <Cell key={i} fill={entry.barColor} />
-                ))}
-                <LabelList dataKey="cpl" position="right" formatter={(v) => `€${Number(v).toFixed(2)}`} style={{ fontSize: 11, fill: "#374151" }} />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="h-[160px] md:h-[200px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={metaCplChartData} layout="vertical" margin={{ top: 5, right: 50, left: 100, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
+                <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
+                <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
+                  {metaCplChartData.map((entry, i) => (
+                    <Cell key={i} fill={entry.barColor} />
+                  ))}
+                  <LabelList dataKey="cpl" position="right" formatter={(v) => `€${Number(v).toFixed(2)}`} style={{ fontSize: 11, fill: "#374151" }} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         {/* Campaign Table */}
@@ -301,13 +304,13 @@ function AestheticsMarketingContent({
             style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}
           >
             <p className="text-sm text-gray-600">Expected ROAS</p>
-            <p className={`text-2xl font-bold mt-1 ${roasColor(metaExpectedRoasNum)}`}>{metaExpectedRoas}x</p>
+            <p className={`text-xl md:text-2xl font-bold mt-1 ${roasColor(metaExpectedRoasNum)}`}>{metaExpectedRoas}x</p>
           </div>
         </div>
       </Card>
 
       {/* Section 3: Google Ads */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Google Ads</h2>
           <div className="text-right">
@@ -326,20 +329,22 @@ function AestheticsMarketingContent({
         {/* CPL by Campaign - Horizontal Bar with fatigue coloring */}
         <div className="mb-6">
           <h3 className="text-sm font-medium text-gray-700 mb-3">CPL by Campaign (Best to Worst)</h3>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={googleCplChartData} layout="vertical" margin={{ top: 5, right: 60, left: 140, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-              <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
-              <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-              <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
-              <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
-                {googleCplChartData.map((entry, i) => (
-                  <Cell key={i} fill={entry.barColor} />
-                ))}
-                <LabelList dataKey="cpl" position="right" formatter={(v) => `€${Number(v).toFixed(2)}`} style={{ fontSize: 11, fill: "#374151" }} />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="h-[150px] md:h-[180px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={googleCplChartData} layout="vertical" margin={{ top: 5, right: 50, left: 100, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
+                <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
+                <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
+                  {googleCplChartData.map((entry, i) => (
+                    <Cell key={i} fill={entry.barColor} />
+                  ))}
+                  <LabelList dataKey="cpl" position="right" formatter={(v) => `€${Number(v).toFixed(2)}`} style={{ fontSize: 11, fill: "#374151" }} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         {/* Campaign Table */}
@@ -354,18 +359,18 @@ function AestheticsMarketingContent({
             style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}
           >
             <p className="text-sm text-gray-600">Expected ROAS</p>
-            <p className={`text-2xl font-bold mt-1 ${roasColor(googleExpectedRoasNum)}`}>{googleExpectedRoas}x</p>
+            <p className={`text-xl md:text-2xl font-bold mt-1 ${roasColor(googleExpectedRoasNum)}`}>{googleExpectedRoas}x</p>
           </div>
         </div>
       </Card>
 
       {/* Section 4: Email Marketing */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Email Marketing</h2>
 
         {/* Top: Campaign Revenue + Flow Revenue */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <Card className="p-5 text-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <Card className="p-3 md:p-5 text-center">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Campaign Revenue</p>
             <p className="text-3xl font-bold text-gray-900 mt-2">{formatCurrency(emailCampaignRevenue)}</p>
             <div className="mt-2 flex items-center justify-center gap-2 text-xs text-gray-500">
@@ -373,7 +378,7 @@ function AestheticsMarketingContent({
               {campaignPct}% of total
             </div>
           </Card>
-          <Card className="p-5 text-center">
+          <Card className="p-3 md:p-5 text-center">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Flow Revenue</p>
             <p className="text-3xl font-bold text-gray-900 mt-2">{formatCurrency(emailFlowRevenue)}</p>
             <div className="mt-2 flex items-center justify-center gap-2 text-xs text-gray-500">
@@ -391,18 +396,18 @@ function AestheticsMarketingContent({
         </div>
 
         {/* Bottom: Summary Stats */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="p-4 text-center">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Email ROAS</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">38x</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">38x</p>
           </Card>
           <Card className="p-4 text-center">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Subscribers</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">2,814</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">2,814</p>
           </Card>
           <Card className="p-4 text-center">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Pop-up Capture Rate</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">4.1%</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">4.1%</p>
           </Card>
         </div>
       </Card>

@@ -189,14 +189,15 @@ export function RepLeaderboard({
       )}
 
       {/* Combo chart: bars for sales metrics, lines for percentages */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <h3 className="text-base font-semibold text-foreground mb-4">
           Rep Performance Overview
         </h3>
-        <ResponsiveContainer width="100%" height={420}>
+        <div className="h-[300px] md:h-[420px]">
+        <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
-            margin={{ top: 10, right: 20, left: 10, bottom: 60 }}
+            margin={{ top: 10, right: 20, left: 0, bottom: 60 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis
@@ -278,6 +279,7 @@ export function RepLeaderboard({
             />
           </ComposedChart>
         </ResponsiveContainer>
+        </div>
       </Card>
     </div>
   );

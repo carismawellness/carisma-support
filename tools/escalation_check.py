@@ -1,13 +1,19 @@
 """
-Speed to Lead — Escalation Check
-Runs every 5 minutes via launchd. Checks all 3 Zoho CRM instances for
-uncontacted leads and escalates via WhatsApp.
+Speed to Lead — Escalation & Response Tracking
+Runs every 5 minutes via launchd. Handles all 3 Zoho CRM instances
+(Spa, Aesthetics, Slimming).
 
-Tiers:
-  Tier 1 (15 min)  — handled by Zoho native email workflow (not this script)
-  Tier 2 (30 min)  — WhatsApp alert to Mert
-  Tier 3 (60 min)  — WhatsApp urgent to Mert
-  Tier 4 (120 min) — WhatsApp critical to Mert + Supabase log
+Three responsibilities per brand, per run:
+  1. stamp_first_contact — detects leads moved to a "contacted" status,
+     stamps First_Contacted_Time, calculates Response_Time_Minutes,
+     sets Response_Status = "Called"
+  2. mark_overdue_leads — finds leads >60 min old still "Not Called",
+     sets Response_Status = "Overdue (60+ min)"
+  3. escalation tiers — WhatsApp alerts for uncontacted leads:
+       Tier 2 (30 min)  — alert to Mert
+       Tier 3 (60 min)  — urgent to Mert
+       Tier 4 (120 min) — critical to Mert + Supabase log
+     Tier 1 (15 min) email handled by Zoho native workflow (Spa only).
 
 Business hours: 08:00–20:00 Malta time only.
 Overnight leads: timer starts at 08:00 next business day.
@@ -267,6 +273,116 @@ def log_escalation(brand_id: int, lead: dict, tier: int, minutes: float, channel
 
 BRAND_IDS = {"spa": 1, "aesthetics": 2, "slimming": 3}
 
+
+# ---------------------------------------------------------------------------
+# Stamp First Contact (replaces Deluge stampFirstContact for AES/SLIM,
+# safety net for SPA which has the native Deluge function)
+# ---------------------------------------------------------------------------
+
+def stamp_first_contact(brand: str, client: ZohoClient, now: datetime) -> int:
+    """Find leads whose status indicates contact but First_Contacted_Time is empty.
+    Stamp the time and calculate Response_Time_Minutes."""
+    cutoff = f"{GO_LIVE_DATE}T00:00:00+00:00"
+    contacted = CONTACTED_STATUSES.get(brand, set())
+    if not contacted:
+        return 0
+
+    # Use IN clause (COQL doesn't support parenthesized OR with custom fields)
+    status_csv = ", ".join(f"'{s}'" for s in sorted(contacted))
+    query = (
+        "SELECT id, Created_Time, Lead_Status, Response_Status "
+        f"FROM Leads WHERE Lead_Status in ({status_csv}) "
+        f"AND Created_Time >= '{cutoff}' "
+        "LIMIT 0, 200"
+    )
+
+    try:
+        leads = client.coql(query)
+    except Exception as e:
+        log.error(f"[{brand}] stamp_first_contact COQL failed: {e}")
+        return 0
+
+    stamped = 0
+    for lead in leads:
+        # Skip if already stamped (Response_Status = Called means we already processed)
+        if lead.get("Response_Status") == "Called":
+            continue
+
+        created_str = lead.get("Created_Time", "")
+        if not created_str:
+            continue
+        try:
+            created_dt = datetime.fromisoformat(created_str.replace("Z", "+00:00"))
+        except (ValueError, TypeError):
+            continue
+
+        minutes = effective_minutes_elapsed(created_dt, now)
+        now_str = now.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+
+        try:
+            client.update_lead(lead["id"], {
+                "First_Contacted_Time": now_str,
+                "Response_Time_Minutes": round(minutes, 1),
+                "Response_Status": "Called",
+            })
+            log.info(f"[{brand}] Stamped first contact: {lead['id']} — {minutes} min")
+            stamped += 1
+        except Exception as e:
+            log.error(f"[{brand}] Failed to stamp lead {lead['id']}: {e}")
+
+    return stamped
+
+
+# ---------------------------------------------------------------------------
+# Mark Overdue Leads (replaces Deluge markOverdueLeads for AES/SLIM,
+# safety net for SPA which has the native Deluge schedule)
+# ---------------------------------------------------------------------------
+
+def mark_overdue_leads(brand: str, client: ZohoClient, now: datetime) -> int:
+    """Find leads >60 min old with Response_Status='Not Called' or null, mark as overdue."""
+    cutoff_60 = (now - timedelta(minutes=60)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+    go_live_dt = datetime.fromisoformat(f"{GO_LIVE_DATE}T00:00:00+00:00")
+
+    total = 0
+    for condition in ["Response_Status = 'Not Called'", "Response_Status is null"]:
+        # COQL doesn't support two conditions on the same field,
+        # so we filter by Created_Time < cutoff only and check GO_LIVE_DATE in Python
+        query = (
+            "SELECT id, Created_Time, Response_Status "
+            f"FROM Leads WHERE {condition} "
+            f"AND Created_Time < '{cutoff_60}' "
+            "LIMIT 0, 200"
+        )
+        try:
+            leads = client.coql(query)
+        except Exception as e:
+            log.error(f"[{brand}] mark_overdue COQL failed: {e}")
+            continue
+
+        for lead in leads:
+            # Skip leads created before go-live
+            created_str = lead.get("Created_Time", "")
+            if created_str:
+                try:
+                    created_dt = datetime.fromisoformat(created_str.replace("Z", "+00:00"))
+                    if created_dt < go_live_dt:
+                        continue
+                except (ValueError, TypeError):
+                    continue
+
+            try:
+                client.update_lead(lead["id"], {
+                    "Response_Status": "Overdue (60+ min)",
+                })
+                total += 1
+            except Exception as e:
+                log.error(f"[{brand}] Failed to mark overdue {lead['id']}: {e}")
+
+    if total:
+        log.info(f"[{brand}] Marked {total} leads as overdue")
+    return total
+
+
 def check_brand(brand: str, client: ZohoClient, now: datetime) -> int:
     """Check one brand for leads needing escalation. Returns count of escalations."""
     # Only query leads created after go-live date
@@ -393,6 +509,9 @@ def main():
     }
 
     total_escalated = 0
+    total_stamped = 0
+    total_overdue = 0
+
     for brand, mcp_key in brands.items():
         srv = mcp["mcpServers"].get(mcp_key)
         if not srv:
@@ -401,13 +520,24 @@ def main():
 
         try:
             client = ZohoClient(srv["env"])
+
+            # 1. Stamp first contact for leads with contacted status but no timestamp
+            stamped = stamp_first_contact(brand, client, now)
+            total_stamped += stamped
+
+            # 2. Mark overdue leads (>60 min, not contacted)
+            overdue = mark_overdue_leads(brand, client, now)
+            total_overdue += overdue
+
+            # 3. Escalation checks (Tier 2-4 WhatsApp alerts)
             count = check_brand(brand, client, now)
             total_escalated += count
-            log.info(f"[{brand}] {count} escalations")
+
+            log.info(f"[{brand}] stamped={stamped} overdue={overdue} escalations={count}")
         except Exception as e:
             log.error(f"[{brand}] Failed: {e}")
 
-    log.info(f"Done. Total escalations: {total_escalated}")
+    log.info(f"Done. stamped={total_stamped} overdue={total_overdue} escalations={total_escalated}")
 
 
 if __name__ == "__main__":

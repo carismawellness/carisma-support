@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { CIChat } from "@/components/ci/CIChat";
 import { SalesKPICard } from "@/components/sales/SalesKPICard";
@@ -13,6 +14,14 @@ import {
   formatCurrency,
   formatPercent,
 } from "@/lib/charts/config";
+import {
+  weekLabelsToDateObjects,
+  getFilteredIndices,
+  filterByIndices,
+  sumFiltered,
+  formatDateRangeLabel,
+  filteredCountLabel,
+} from "@/lib/utils/mock-date-filter";
 import {
   TrendingUp,
   Rocket,
@@ -35,6 +44,8 @@ const MOCK_SLIM_BOOK_CAL         = [1,16,31,43,53,76,102,67,91];
 const MOCK_SLIM_COURSE_CONV_PCT  = [100,57,35,53,38,68,49,42,76];
 const MOCK_SLIM_MAX_COURSE_PCT   = [0,6,13,5,17,8,10,10,12];
 const MOCK_SLIM_SHOWUP_PCT       = [50,82,82,73,75,58,80,71,54];
+
+const WEEK_DATES = weekLabelsToDateObjects(MOCK_SLIM_WEEKS, 2026);
 
 /* ═══════════════════════════════════════════════════════════════════════
    MOCK DATA — Practitioner Performance
@@ -80,19 +91,25 @@ interface SlimmingContentProps {
 }
 
 function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
-  const L = MOCK_SLIM_WEEKS.length;
-  const latestIdx = L - 1;
+  /* ── Filtered indices based on date range ──────────────────────────── */
+  const filteredIdx = useMemo(
+    () => getFilteredIndices(WEEK_DATES, dateFrom, dateTo),
+    [dateFrom, dateTo]
+  );
+
+  const L = filteredIdx.length;
+  const latestIdx = filteredIdx.length > 0 ? filteredIdx[filteredIdx.length - 1] : MOCK_SLIM_WEEKS.length - 1;
 
   // Totals & latest values
-  const totalSvcRev = sum(MOCK_SLIM_SVC_REV);
-  const totalRetailRev = sum(MOCK_SLIM_RETAIL_REV);
-  const avgRevPerHour = Math.round(totalSvcRev / (L * 40)); // ~40 available hours per week
-  const totalActiveMembers = sum(MOCK_SLIM_BOOK_CAL); // cumulative bookings as proxy
+  const totalSvcRev = useMemo(() => sumFiltered(MOCK_SLIM_SVC_REV, filteredIdx), [filteredIdx]);
+  const totalRetailRev = useMemo(() => sumFiltered(MOCK_SLIM_RETAIL_REV, filteredIdx), [filteredIdx]);
+  const avgRevPerHour = L > 0 ? Math.round(totalSvcRev / (L * 40)) : 0;
+  const totalActiveMembers = useMemo(() => sumFiltered(MOCK_SLIM_BOOK_CAL, filteredIdx), [filteredIdx]);
   const latestCourseConv = MOCK_SLIM_COURSE_CONV_PCT[latestIdx];
   const latestMaxCourse = MOCK_SLIM_MAX_COURSE_PCT[latestIdx];
 
   // WoW growth (brand too new for YoY)
-  const prevSvcRev = MOCK_SLIM_SVC_REV[latestIdx - 1];
+  const prevSvcRev = MOCK_SLIM_SVC_REV[latestIdx - 1] || 1;
   const latestSvcRev = MOCK_SLIM_SVC_REV[latestIdx];
   const svcRevGrowth = ((latestSvcRev - prevSvcRev) / prevSvcRev) * 100;
 
@@ -101,20 +118,29 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
   const retailRevGrowth = latestRetailRev > 0 ? ((latestRetailRev - prevRetailRev) / prevRetailRev) * 100 : 0;
 
   // Avg rev per hour growth (compare last 4 weeks vs first 4)
-  const last4SvcRev = sum(MOCK_SLIM_SVC_REV.slice(-4));
-  const first4SvcRev = sum(MOCK_SLIM_SVC_REV.slice(0, 4));
-  const revPerHourGrowth = ((last4SvcRev - first4SvcRev) / first4SvcRev) * 100;
+  const filteredSvcRevArr = useMemo(() => filterByIndices(MOCK_SLIM_SVC_REV, filteredIdx), [filteredIdx]);
+  const last4SvcRev = sum(filteredSvcRevArr.slice(-4));
+  const first4SvcRev = sum(filteredSvcRevArr.slice(0, 4));
+  const revPerHourGrowth = first4SvcRev > 0 ? ((last4SvcRev - first4SvcRev) / first4SvcRev) * 100 : 0;
 
   // Active members growth (bookings ramp)
-  const last4Bookings = sum(MOCK_SLIM_BOOK_CAL.slice(-4));
-  const first4Bookings = sum(MOCK_SLIM_BOOK_CAL.slice(0, 4));
-  const bookingsGrowth = ((last4Bookings - first4Bookings) / first4Bookings) * 100;
+  const filteredBookings = useMemo(() => filterByIndices(MOCK_SLIM_BOOK_CAL, filteredIdx), [filteredIdx]);
+  const last4Bookings = sum(filteredBookings.slice(-4));
+  const first4Bookings = sum(filteredBookings.slice(0, 4));
+  const bookingsGrowth = first4Bookings > 0 ? ((last4Bookings - first4Bookings) / first4Bookings) * 100 : 0;
 
   // Conversion deltas (latest vs prior week)
-  const prevCourseConv = MOCK_SLIM_COURSE_CONV_PCT[latestIdx - 1];
+  const prevCourseConv = MOCK_SLIM_COURSE_CONV_PCT[latestIdx - 1] ?? 0;
   const courseConvDelta = latestCourseConv - prevCourseConv;
-  const prevMaxCourseVal = MOCK_SLIM_MAX_COURSE_PCT[latestIdx - 1];
+  const prevMaxCourseVal = MOCK_SLIM_MAX_COURSE_PCT[latestIdx - 1] ?? 0;
   const maxCourseDelta = latestMaxCourse - prevMaxCourseVal;
+
+  /* ── Subtitle ──────────────────────────────────────────────────────── */
+  const subtitle = useMemo(() => {
+    const weekCount = filteredCountLabel(L, "week");
+    const range = formatDateRangeLabel(dateFrom, dateTo);
+    return `${weekCount} of data · ${range} · Rapid ramp-up trajectory`;
+  }, [L, dateFrom, dateTo]);
 
   /* ── Funnel data ────────────────────────────────────────────────── */
   const leads = (MOCK_SLIM_LEADS[latestIdx] ?? MOCK_SLIM_CONSULTS_CAL[latestIdx]) as number;
@@ -137,7 +163,7 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
               Slimming Sales Dashboard
             </h1>
             <p className="text-sm text-muted-foreground">
-              Launched Feb 2026 &middot; {L} weeks of data &middot; Rapid ramp-up trajectory
+              Launched Feb 2026 &middot; {subtitle}
             </p>
           </div>
         </div>

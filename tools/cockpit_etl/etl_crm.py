@@ -339,6 +339,39 @@ def aggregate_lead_reconciliation(
     return rows
 
 
+def _is_treatment_name(name: str) -> bool:
+    """Heuristic to distinguish treatment names from client/person names.
+
+    Treatment names contain known keywords (filler, botox, skinbooster, etc.)
+    or are clearly not human names. Person names are typically 2+ capitalized
+    words with no treatment keywords.
+    """
+    lower = name.lower().strip()
+    # Known treatment keywords
+    treatment_keywords = {
+        "filler", "botox", "skinbooster", "profhilo", "fat dissolving",
+        "peel", "laser", "rf", "cavitation", "lymphatic", "contouring",
+        "massage", "facial", "microneedling", "prp", "hifu", "dermapen",
+        "consultation", "member", "package", "campaign", "treatment",
+        "skin", "body", "hair", "removal", "tightening", "rejuvenation",
+        "mesotherapy", "slimming", "wrap", "detox", "vitamin",
+    }
+    for kw in treatment_keywords:
+        if kw in lower:
+            return True
+
+    # If all words are capitalized and look like a person name, skip it
+    words = name.strip().split()
+    if len(words) >= 2 and all(w[0].isupper() and w[1:].islower() for w in words if len(w) > 1):
+        return False
+
+    # Single word that's all caps (like "LOVE MALTA") — skip
+    if name.isupper() and " " in name:
+        return False
+
+    return True
+
+
 def aggregate_booking_mix(
     all_deals: list[dict],
     brand_id: int,
@@ -348,6 +381,7 @@ def aggregate_booking_mix(
     """Build booking mix rows from deal names (treatment proxy).
 
     Only uses deals at specific stages where Deal_Name = treatment name.
+    Filters out entries that look like person/client names.
     """
     if not booking_mix_stages:
         return []
@@ -361,7 +395,7 @@ def aggregate_booking_mix(
         if not d and deal.get("Modified_Time"):
             d = parse_zoho_datetime(deal["Modified_Time"]).strftime("%Y-%m-%d")
         name = deal.get("Deal_Name", "Unknown")
-        if d:
+        if d and _is_treatment_name(name):
             mix[(d, name)] += 1
 
     return [

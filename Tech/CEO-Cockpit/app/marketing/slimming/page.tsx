@@ -8,6 +8,7 @@ import { CIChat } from "@/components/ci/CIChat";
 import {
   formatCurrency,
 } from "@/lib/charts/config";
+import { formatDateRangeLabel } from "@/lib/utils/mock-date-filter";
 import {
   BarChart,
   Bar,
@@ -78,7 +79,7 @@ function AggregateBox({ label, value, valueColor }: { label: string; value: stri
       style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}
     >
       <p className="text-sm text-gray-600">{label}</p>
-      <p className="text-2xl font-bold mt-1" style={{ color: valueColor ?? BRAND_COLOR }}>{value}</p>
+      <p className="text-xl md:text-2xl font-bold mt-1" style={{ color: valueColor ?? BRAND_COLOR }}>{value}</p>
     </div>
   );
 }
@@ -208,9 +209,9 @@ function SlimmingMarketingContent({
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Slimming Marketing Dashboard</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900">Slimming Marketing Dashboard</h1>
         <p className="text-sm text-text-secondary mt-1">
-          Carisma Slimming — course-based model, launched Feb 2026
+          {formatDateRangeLabel(dateFrom, dateTo)} · Carisma Slimming — course-based model, launched Feb 2026
         </p>
       </div>
 
@@ -249,7 +250,7 @@ function SlimmingMarketingContent({
         {heroCards.map((kpi) => (
           <Card key={kpi.label} className="p-4">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{kpi.label}</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{kpi.value}</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">{kpi.value}</p>
             <p className="text-xs text-gray-400 mt-1">LY: N/A</p>
             <span className="inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
               New Brand
@@ -259,26 +260,26 @@ function SlimmingMarketingContent({
       </div>
 
       {/* Consultation Funnel */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Consultation Funnel</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           <div className="border-l-4 pl-4" style={{ borderColor: BRAND_COLOR }}>
             <p className="text-sm text-gray-500 mb-1">Total Leads</p>
-            <p className="text-2xl font-bold text-gray-900">18</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900">18</p>
           </div>
           <div className="border-l-4 pl-4" style={{ borderColor: BRAND_COLOR }}>
             <p className="text-sm text-gray-500 mb-1">Total Consultations</p>
-            <p className="text-2xl font-bold text-gray-900">10</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900">10</p>
           </div>
           <div className="border-l-4 pl-4" style={{ borderColor: BRAND_COLOR }}>
             <p className="text-sm text-gray-500 mb-1">Total Bookings</p>
-            <p className="text-2xl font-bold text-gray-900">6</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900">6</p>
           </div>
         </div>
       </Card>
 
       {/* Section 2: Meta Ads */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Meta Ads</h2>
           <div className="text-right">
@@ -298,20 +299,22 @@ function SlimmingMarketingContent({
         {/* CPL by Campaign - Fatigue Color Coded + CPL Labels */}
         <div className="mb-6">
           <h3 className="text-sm font-medium text-gray-700 mb-3">CPL by Campaign (Best to Worst)</h3>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={metaCplChartData} layout="vertical" margin={{ top: 5, right: 60, left: 140, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-              <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
-              <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-              <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
-              <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
-                {metaCplChartData.map((entry, i) => (
-                  <Cell key={i} fill={entry.fill} />
-                ))}
-                <LabelList dataKey="cplLabel" position="right" style={{ fontSize: 11, fontWeight: 600 }} />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="h-[150px] md:h-[180px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={metaCplChartData} layout="vertical" margin={{ top: 5, right: 50, left: 100, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
+                <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
+                <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
+                  {metaCplChartData.map((entry, i) => (
+                    <Cell key={i} fill={entry.fill} />
+                  ))}
+                  <LabelList dataKey="cplLabel" position="right" style={{ fontSize: 11, fontWeight: 600 }} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         {/* Campaign Table */}
@@ -330,7 +333,7 @@ function SlimmingMarketingContent({
       </Card>
 
       {/* Section 3: Google Ads */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Google Ads</h2>
           <div className="text-right">
@@ -350,20 +353,22 @@ function SlimmingMarketingContent({
         {/* CPL by Campaign - Fatigue Color Coded + CPL Labels */}
         <div className="mb-6">
           <h3 className="text-sm font-medium text-gray-700 mb-3">CPL by Campaign (Best to Worst)</h3>
-          <ResponsiveContainer width="100%" height={160}>
-            <BarChart data={googleCplChartData} layout="vertical" margin={{ top: 5, right: 60, left: 140, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-              <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
-              <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-              <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
-              <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
-                {googleCplChartData.map((entry, i) => (
-                  <Cell key={i} fill={entry.fill} />
-                ))}
-                <LabelList dataKey="cplLabel" position="right" style={{ fontSize: 11, fontWeight: 600 }} />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="h-[140px] md:h-[160px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={googleCplChartData} layout="vertical" margin={{ top: 5, right: 50, left: 100, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
+                <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
+                <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
+                  {googleCplChartData.map((entry, i) => (
+                    <Cell key={i} fill={entry.fill} />
+                  ))}
+                  <LabelList dataKey="cplLabel" position="right" style={{ fontSize: 11, fontWeight: 600 }} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         {/* Campaign Table */}
@@ -382,16 +387,16 @@ function SlimmingMarketingContent({
       </Card>
 
       {/* Section 4: Email Marketing — Redesigned */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Email Marketing</h2>
 
         {/* Top: Campaign Revenue + Flow Revenue big cards */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <Card className="p-5 text-center" style={{ borderColor: BRAND_COLOR, borderWidth: 2 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <Card className="p-3 md:p-5 text-center" style={{ borderColor: BRAND_COLOR, borderWidth: 2 }}>
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Campaign Revenue</p>
             <p className="text-3xl font-bold mt-2" style={{ color: BRAND_COLOR }}>€{emailCampaignRev.toLocaleString()}</p>
           </Card>
-          <Card className="p-5 text-center" style={{ borderColor: BRAND_COLOR, borderWidth: 2 }}>
+          <Card className="p-3 md:p-5 text-center" style={{ borderColor: BRAND_COLOR, borderWidth: 2 }}>
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Flow Revenue</p>
             <p className="text-3xl font-bold mt-2" style={{ color: BRAND_COLOR }}>€{emailFlowRev.toLocaleString()}</p>
           </Card>
@@ -405,18 +410,18 @@ function SlimmingMarketingContent({
         </div>
 
         {/* Bottom: Email ROAS, Subscribers, Pop-up */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="p-4 text-center">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Email ROAS</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">28x</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">28x</p>
           </Card>
           <Card className="p-4 text-center">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Subscribers</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">812</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">812</p>
           </Card>
           <Card className="p-4 text-center">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Pop-up Capture</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">2.8%</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">2.8%</p>
           </Card>
         </div>
       </Card>

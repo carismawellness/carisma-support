@@ -8,6 +8,7 @@ import { BookingMix } from "@/components/crm/BookingMix";
 import { RepLeaderboard } from "@/components/crm/RepLeaderboard";
 import { LeadReconciliation } from "@/components/crm/LeadReconciliation";
 import { CIChat } from "@/components/ci/CIChat";
+import { formatDateRangeLabel } from "@/lib/utils/mock-date-filter";
 
 function CRMContent({
   dateFrom,
@@ -20,7 +21,12 @@ function CRMContent({
 }) {
   return (
     <>
-      <h1 className="text-2xl font-bold text-foreground">CRM Master</h1>
+      <div>
+        <h1 className="text-xl md:text-2xl font-bold text-foreground">CRM Master</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">
+          {formatDateRangeLabel(dateFrom, dateTo)} · Cross-brand CRM performance
+        </p>
+      </div>
 
       {/* Sales Performance by Brand */}
       <section>

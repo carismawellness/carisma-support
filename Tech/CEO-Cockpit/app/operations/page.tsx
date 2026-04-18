@@ -7,6 +7,7 @@ import { CIChat } from "@/components/ci/CIChat";
 import {
   formatCurrency,
 } from "@/lib/charts/config";
+import { formatDateRangeLabel } from "@/lib/utils/mock-date-filter";
 import {
   Bar,
   BarChart,
@@ -252,7 +253,12 @@ function OperationsContent({
   return (
     <>
       {/* ═══════ HEADER ═══════════════════════════════════════════════ */}
-      <h1 className="text-xl md:text-2xl font-bold text-foreground">Operations Dashboard</h1>
+      <div>
+        <h1 className="text-xl md:text-2xl font-bold text-foreground">Operations Dashboard</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">
+          {formatDateRangeLabel(dateFrom, dateTo)} · Facility standards, compliance &amp; reviews
+        </p>
+      </div>
       <KPICardRow kpis={kpis} />
 
       {/* ═══════ AREAS NEEDING ATTENTION ═════════════════════════════ */}

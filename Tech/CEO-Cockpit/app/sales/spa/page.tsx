@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { CIChat } from "@/components/ci/CIChat";
 import { SalesKPICard } from "@/components/sales/SalesKPICard";
@@ -11,6 +12,14 @@ import {
   formatCurrency,
   formatPercent,
 } from "@/lib/charts/config";
+import {
+  weekLabelsToDateObjects,
+  getFilteredIndices,
+  filterByIndices,
+  sumFiltered,
+  formatDateRangeLabel,
+  filteredCountLabel,
+} from "@/lib/utils/mock-date-filter";
 import { StaffPerformanceChart } from "@/components/sales/StaffPerformanceChart";
 import { ServiceBreakdownChart } from "@/components/sales/ServiceBreakdownChart";
 import {
@@ -45,6 +54,8 @@ const MOCK_LABRANDA  = [5715,1977,1410,1930,3305,3561,3030,4263,3412,4259,2985,3
 const MOCK_ODYCY     = [2510,2324,2186,2410,2738,4464,3622,3340,1683,2990,2208,3664,3387,2627,3563,3676,4475,3862,4525,4330,3825,5624];
 
 const MOCK_YOY_COMPANY = [-3.3,-5.6,19.5,4.9,22.1,36.4,-7.1,1.4,-22.9,-43.4,-8.6,-3.3,-7.6,-12.6,8.3,-5.8,0.4,-8.8,-19.2,12.0,-14.7,1.8];
+
+const WEEK_DATES = weekLabelsToDateObjects(MOCK_WEEKS, 2025);
 
 const MOCK_RETAIL_PCT_COMPANY = [7.7,6.4,4.2,6.6,4.7,5.1,7.1,2.8,5.0,4.9,3.6,7.1,8.2,6.0,7.0,4.2,7.1,4.8,5.0,4.9,8.3,7.1];
 const MOCK_ADDON_PCT_COMPANY  = [3.5,3.6,5.2,4.8,4.5,3.3,4.5,2.2,4.0,3.4,3.6,3.5,3.5,3.9,3.1,3.1,2.3,3.2,3.1,4.2,4.0,3.4];
@@ -114,16 +125,22 @@ const HOTEL_LY_FACTORS: Record<string, number> = {
    SPA CONTENT
    ═══════════════════════════════════════════════════════════════════════ */
 
-function SpaContent() {
-  const L = MOCK_WEEKS.length; // all 22 weeks
-  const L4 = 4;
+function SpaContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }) {
+  /* ── Filtered indices based on date range ──────────────────────────── */
+  const filteredIdx = useMemo(
+    () => getFilteredIndices(WEEK_DATES, dateFrom, dateTo),
+    [dateFrom, dateTo]
+  );
+
+  const L = filteredIdx.length;
+  const L4 = Math.min(4, L);
 
   // Company-level KPIs — compute LY totals from weekly YoY data
-  const totalRev = sum(MOCK_COMPANY);
+  const totalRev = useMemo(() => sumFiltered(MOCK_COMPANY, filteredIdx), [filteredIdx]);
   // Derive LY total by summing each week's implied LY value: week_rev / (1 + yoy/100)
-  const totalRevLY = MOCK_COMPANY.reduce(
-    (acc, weekRev, i) => acc + weekRev / (1 + MOCK_YOY_COMPANY[i] / 100),
-    0
+  const totalRevLY = useMemo(
+    () => filteredIdx.reduce((acc, i) => acc + MOCK_COMPANY[i] / (1 + MOCK_YOY_COMPANY[i] / 100), 0),
+    [filteredIdx]
   );
   const yoyTotal = ((totalRev - totalRevLY) / totalRevLY) * 100;
 
@@ -131,23 +148,25 @@ function SpaContent() {
   const totalServiceLY = Math.round(totalRevLY * 0.89);
   const yoyService = ((totalService - totalServiceLY) / totalServiceLY) * 100;
 
-  const avgRetailPct = avg(MOCK_RETAIL_PCT_COMPANY);
+  const filteredRetailPcts = useMemo(() => filterByIndices(MOCK_RETAIL_PCT_COMPANY, filteredIdx), [filteredIdx]);
+  const avgRetailPct = filteredRetailPcts.length > 0 ? avg(filteredRetailPcts) : 0;
   const totalRetail = Math.round(totalRev * (avgRetailPct / 100));
   const avgRetailPctLY = 5.1;
   const totalRetailLY = Math.round(totalRevLY * (avgRetailPctLY / 100));
-  const yoyRetail = ((totalRetail - totalRetailLY) / totalRetailLY) * 100;
+  const yoyRetail = totalRetailLY > 0 ? ((totalRetail - totalRetailLY) / totalRetailLY) * 100 : 0;
 
-  const avgAddonPct = avg(MOCK_ADDON_PCT_COMPANY);
+  const filteredAddonPcts = useMemo(() => filterByIndices(MOCK_ADDON_PCT_COMPANY, filteredIdx), [filteredIdx]);
+  const avgAddonPct = filteredAddonPcts.length > 0 ? avg(filteredAddonPcts) : 0;
   const totalAddon = Math.round(totalRev * (avgAddonPct / 100));
   const avgAddonPctLY = 3.8;
   const totalAddonLY = Math.round(totalRevLY * (avgAddonPctLY / 100));
-  const yoyAddon = ((totalAddon - totalAddonLY) / totalAddonLY) * 100;
+  const yoyAddon = totalAddonLY > 0 ? ((totalAddon - totalAddonLY) / totalAddonLY) * 100 : 0;
 
   // Available hours: ~440 hrs/week across all locations (realistic for 6 spas)
   const totalHours = 440 * L;
-  const revPerHour = totalRev / totalHours;
-  const revPerHourLY = totalRevLY / totalHours;
-  const yoyRevPerHour = ((revPerHour - revPerHourLY) / revPerHourLY) * 100;
+  const revPerHour = totalHours > 0 ? totalRev / totalHours : 0;
+  const revPerHourLY = totalHours > 0 ? totalRevLY / totalHours : 0;
+  const yoyRevPerHour = revPerHourLY > 0 ? ((revPerHour - revPerHourLY) / revPerHourLY) * 100 : 0;
 
   // Spa Club memberships
   const memberships = 847;
@@ -155,7 +174,8 @@ function SpaContent() {
   const yoyMemberships = ((memberships - membershipsLY) / membershipsLY) * 100;
 
   // Hotel Guest Capture Rate
-  const avgHotelCapture = avg(MOCK_HOTEL_PCT_COMPANY);
+  const filteredHotelPcts = useMemo(() => filterByIndices(MOCK_HOTEL_PCT_COMPANY, filteredIdx), [filteredIdx]);
+  const avgHotelCapture = filteredHotelPcts.length > 0 ? avg(filteredHotelPcts) : 0;
   const hotelCaptureLY = 5.8;
   const yoyHotelCapture = avgHotelCapture - hotelCaptureLY;
 
@@ -164,9 +184,18 @@ function SpaContent() {
   const localGuestPctLY = 34.5;
   const yoyLocalGuest = localGuestPct - localGuestPctLY;
 
+  /* ── Subtitle ──────────────────────────────────────────────────────── */
+  const subtitle = useMemo(() => {
+    const weekCount = filteredCountLabel(L, "week");
+    const range = formatDateRangeLabel(dateFrom, dateTo);
+    return `${weekCount} of data · ${range} · All figures EUR ex VAT`;
+  }, [L, dateFrom, dateTo]);
+
   /* ── Visualization 1: Revenue by Hotel (Stacked Bar + Line) ────── */
-  const hotelRevenueData = HOTELS.map((h) => {
-    const total4w = sum(last(h.data, L4));
+  const hotelRevenueData = useMemo(() => HOTELS.map((h) => {
+    const filteredData = filterByIndices(h.data, filteredIdx);
+    const lastN = filteredData.slice(-L4);
+    const total4w = sum(lastN);
     const retailPct = HOTEL_RETAIL_PCTS[h.name];
     const addonPct = HOTEL_ADDON_PCTS[h.name];
     const servicePct = 1 - retailPct - addonPct;
@@ -183,7 +212,7 @@ function SpaContent() {
       yoy: ((total4w - lyTotal) / lyTotal) * 100,
       retailPct: (HOTEL_RETAIL_PCTS[h.name] * 100).toFixed(1),
     };
-  }).sort((a, b) => b.total - a.total);
+  }).sort((a, b) => b.total - a.total), [filteredIdx, L4]);
 
   /* ── Visualization 2: Average Order Value by Location ──────────── */
   const aovData = [
@@ -226,8 +255,7 @@ function SpaContent() {
         Sales Performance — Spa Network
       </h1>
       <p className="text-sm text-muted-foreground -mt-4">
-        22 weeks of 2025 data | Last updated: W/C 02-Jun | All figures EUR ex
-        VAT
+        {subtitle}
       </p>
 
       {/* ── KPI Summary Cards ─────────────────────────────────────── */}
@@ -475,7 +503,7 @@ function SpaContent() {
 export default function SpaSalesPage() {
   return (
     <DashboardShell>
-      {() => <SpaContent />}
+      {({ dateFrom, dateTo }) => <SpaContent dateFrom={dateFrom} dateTo={dateTo} />}
     </DashboardShell>
   );
 }

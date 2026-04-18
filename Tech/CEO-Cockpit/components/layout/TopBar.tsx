@@ -1,16 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Bell, LogOut } from "lucide-react";
+import { Bell, LogOut, Menu } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { DateRangePicker } from "./DateRangePicker";
+import { cn } from "@/lib/utils";
 
 interface TopBarProps {
   dateFrom: Date;
   dateTo: Date;
   onDateChange: (from: Date, to: Date) => void;
   alertCount?: number;
+  onMobileMenuOpen?: () => void;
+  sidebarCollapsed?: boolean;
 }
 
 export function TopBar({
@@ -18,6 +21,8 @@ export function TopBar({
   dateTo,
   onDateChange,
   alertCount = 0,
+  onMobileMenuOpen,
+  sidebarCollapsed = false,
 }: TopBarProps) {
   const router = useRouter();
   const supabase = createClient();
@@ -29,21 +34,36 @@ export function TopBar({
   }
 
   return (
-    <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-6 fixed top-0 left-0 md:left-60 right-0 z-30">
-      <div className="shrink min-w-0">
+    <header
+      className={cn(
+        "h-14 bg-card border-b border-border flex items-center justify-between px-3 md:px-6 fixed top-0 right-0 z-30 transition-all duration-200",
+        "left-0",
+        sidebarCollapsed ? "lg:left-[4.5rem]" : "lg:left-60"
+      )}
+    >
+      <div className="flex items-center gap-2 shrink min-w-0">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden shrink-0"
+          onClick={onMobileMenuOpen}
+          aria-label="Open menu"
+        >
+          <Menu className="h-5 w-5 text-muted-foreground" />
+        </Button>
         <DateRangePicker from={dateFrom} to={dateTo} onChange={onDateChange} />
       </div>
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5 text-gray-500" />
+      <div className="flex items-center gap-1 md:gap-3">
+        <Button variant="ghost" size="icon" className="relative h-9 w-9">
+          <Bell className="h-[18px] w-[18px] text-muted-foreground" />
           {alertCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
               {alertCount}
             </span>
           )}
         </Button>
-        <Button variant="ghost" size="icon" onClick={handleLogout}>
-          <LogOut className="h-5 w-5 text-gray-500" />
+        <Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleLogout}>
+          <LogOut className="h-[18px] w-[18px] text-muted-foreground" />
         </Button>
       </div>
     </header>

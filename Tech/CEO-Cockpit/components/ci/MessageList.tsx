@@ -13,15 +13,17 @@ interface MessageListProps {
 }
 
 export function MessageList({ messages, loading }: MessageListProps) {
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when messages change (including streaming updates)
+  // Auto-scroll within the chat container only (not the whole page)
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   return (
-    <div className="space-y-4 max-h-64 overflow-y-auto p-4">
+    <div ref={containerRef} className="space-y-4 max-h-64 overflow-y-auto p-4">
       {messages.map((msg, i) => {
         const isStreaming =
           loading &&
@@ -69,7 +71,6 @@ export function MessageList({ messages, loading }: MessageListProps) {
           </div>
         );
       })}
-      <div ref={bottomRef} />
     </div>
   );
 }

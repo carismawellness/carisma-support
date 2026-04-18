@@ -121,7 +121,7 @@ export function BookingMix({
         const total = items.reduce((s, t) => s + t.value, 0);
 
         return (
-          <Card key={brand.slug} className="p-6 relative">
+          <Card key={brand.slug} className="p-3 md:p-6 relative">
             {isDummy && (
               <span className="absolute top-2 right-3 text-[10px] uppercase tracking-wider text-text-secondary bg-gray-100 px-1.5 py-0.5 rounded">
                 sample

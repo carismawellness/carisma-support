@@ -232,14 +232,14 @@ export default function DataPage() {
     <DashboardShell>
       {() => (
         <>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-2xl font-bold text-charcoal">Data Sources</h1>
+              <h1 className="text-xl md:text-2xl font-bold text-charcoal">Data Sources</h1>
               <p className="text-sm text-text-secondary mt-1">
                 {dataSources.length} sources feeding {dataSources.reduce((s, d) => s + d.tables.length, 0)} database tables
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant="outline" className={typeColors.google_sheet}>
                 <FileSpreadsheet className="h-3 w-3 mr-1" />
                 {sheetSources.length} Sheets
@@ -263,6 +263,7 @@ export default function DataPage() {
                 Google Sheets
               </h2>
             </div>
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="bg-warm-white/50">
@@ -307,6 +308,7 @@ export default function DataPage() {
                 ))}
               </TableBody>
             </Table>
+            </div>
           </Card>
 
           {/* API Sources */}
@@ -317,6 +319,7 @@ export default function DataPage() {
                 API Sources
               </h2>
             </div>
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="bg-warm-white/50">
@@ -356,6 +359,7 @@ export default function DataPage() {
                 ))}
               </TableBody>
             </Table>
+            </div>
           </Card>
 
           {/* Database */}

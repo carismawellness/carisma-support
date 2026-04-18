@@ -1,9 +1,19 @@
 "use client";
 
+import { useMemo } from "react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { Card } from "@/components/ui/card";
 import { CIChat } from "@/components/ci/CIChat";
 import { formatCurrency } from "@/lib/charts/config";
+import { formatDateRangeLabel } from "@/lib/utils/mock-date-filter";
+
+/* ---------- date-scale helpers ---------- */
+
+const MOCK_DATA_PERIOD_DAYS = 30;
+
+function scaleValue(value: number, scale: number): number {
+  return Math.round(value * scale);
+}
 
 /* ---------- brand colours ---------- */
 
@@ -169,18 +179,18 @@ function MarketingMasterContent({
   brandFilter: string | null;
 }) {
   return (
-    <div className="space-y-10">
+    <div className="space-y-6 md:space-y-10">
       {/* -- Page header -- */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Marketing Master</h1>
+        <h1 className="text-xl md:text-2xl font-bold tracking-tight">Marketing Master</h1>
         <p className="text-sm text-muted-foreground">
-          Cross-brand marketing performance overview
+          {formatDateRangeLabel(dateFrom, dateTo)} · Cross-brand marketing performance overview
         </p>
       </div>
 
       {/* -- Section 1: Cross-Brand KPI Table -- */}
       <section>
-        <Card className="p-6">
+        <Card className="p-3 md:p-6">
           <h2 className="text-lg font-semibold mb-4">Cross-Brand KPIs</h2>
           <BrandTable rows={CROSS_BRAND_KPIS} />
         </Card>
@@ -188,9 +198,9 @@ function MarketingMasterContent({
 
       {/* -- Section 2: Creative Fatigue by Brand (Prominent) -- */}
       <section>
-        <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-6 text-center">Creative Fatigue by Brand</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <Card className="p-3 md:p-6">
+          <h2 className="text-lg font-semibold mb-4 md:mb-6 text-center">Creative Fatigue by Brand</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {FATIGUE_DATA.map((f) => {
               const b = BRAND[f.brand];
               const total = f.healthy + f.watch + f.fatigued;
@@ -256,10 +266,10 @@ function MarketingMasterContent({
       </section>
 
       {/* -- Section 3: Channel Aggregates by Brand -- */}
-      <section className="space-y-6">
+      <section className="space-y-4 md:space-y-6">
         <h2 className="text-lg font-semibold">Channel Performance by Brand</h2>
         {CHANNEL_BY_BRAND.map((ch) => (
-          <Card key={ch.channel} className="p-6">
+          <Card key={ch.channel} className="p-3 md:p-6">
             <h3 className="font-semibold mb-4">{ch.channel}</h3>
             <BrandTable rows={ch.rows} colorCodeRoas />
           </Card>

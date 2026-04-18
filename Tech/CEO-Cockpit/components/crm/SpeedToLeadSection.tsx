@@ -313,7 +313,7 @@ export function SpeedToLeadSection({
       {/* Brand Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {brandSummaries.map((b) => (
-          <Card key={b.slug} className="p-5 border-l-4" style={{ borderLeftColor: chartColors[b.slug as keyof typeof chartColors] ?? "#888" }}>
+          <Card key={b.slug} className="p-3 md:p-5 border-l-4" style={{ borderLeftColor: chartColors[b.slug as keyof typeof chartColors] ?? "#888" }}>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold uppercase tracking-wider text-text-secondary">{b.label}</h3>
               <span className={`text-xl font-bold ${stlColor(b.median)}`}>{b.grade}</span>
@@ -350,12 +350,13 @@ export function SpeedToLeadSection({
       </div>
 
       {/* Distribution + Trend side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* STL Distribution Histogram */}
-        <Card className="p-6">
+        <Card className="p-3 md:p-6">
           <h3 className="text-base font-semibold text-foreground mb-4">Response Time Distribution</h3>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={distChartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+          <div className="h-[220px] md:h-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={distChartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
               <XAxis dataKey="bucket" tick={{ fontSize: 11 }} />
               <YAxis />
@@ -368,6 +369,7 @@ export function SpeedToLeadSection({
               </Bar>
             </BarChart>
           </ResponsiveContainer>
+          </div>
           <div className="flex gap-3 mt-2 justify-center text-xs text-text-secondary flex-wrap">
             {BUCKET_ORDER.map((b, i) => (
               <div key={b} className="flex items-center gap-1">
@@ -379,10 +381,11 @@ export function SpeedToLeadSection({
         </Card>
 
         {/* Trend Chart */}
-        <Card className="p-6">
+        <Card className="p-3 md:p-6">
           <h3 className="text-base font-semibold text-foreground mb-4">Daily Median STL Trend</h3>
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={trendData.length > 0 ? trendData : [{ date: "-", Spa: null, Aesthetics: null, Slimming: null }]} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+          <div className="h-[220px] md:h-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={trendData.length > 0 ? trendData : [{ date: "-", Spa: null, Aesthetics: null, Slimming: null }]} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
               <XAxis dataKey="date" tick={{ fontSize: 11 }} interval="preserveStartEnd" />
               <YAxis label={{ value: "Min", angle: -90, position: "insideLeft", style: { fontSize: 10 } }} />
@@ -400,19 +403,22 @@ export function SpeedToLeadSection({
               )}
             </LineChart>
           </ResponsiveContainer>
+          </div>
         </Card>
       </div>
 
       {/* Rep Leaderboard */}
       {repData.length > 0 && (
-        <Card className="p-6">
+        <Card className="p-3 md:p-6">
           <h3 className="text-base font-semibold text-foreground mb-4">Rep Speed-to-Lead Leaderboard</h3>
+          <div className="overflow-x-auto">
           <DataTable columns={repColumns} data={repData as unknown as Record<string, unknown>[]} />
+          </div>
         </Card>
       )}
 
       {/* Benchmarks */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <h3 className="text-base font-semibold text-foreground mb-4">Speed-to-Lead Benchmarks</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">

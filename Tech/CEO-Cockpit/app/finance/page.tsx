@@ -16,6 +16,14 @@ import {
   formatPercent,
 } from "@/lib/charts/config";
 import {
+  weekLabelsToDateObjects,
+  getFilteredIndices,
+  filterByIndices,
+  sumFiltered,
+  formatDateRangeLabel,
+  filteredCountLabel,
+} from "@/lib/utils/mock-date-filter";
+import {
   LineChart,
   Line,
   BarChart,
@@ -60,6 +68,8 @@ const WEEKS = [
   "02-Feb", "09-Feb", "16-Feb", "23-Feb",
   "02-Mar", "09-Mar", "16-Mar", "23-Mar",
 ];
+
+const WEEK_DATES = weekLabelsToDateObjects(WEEKS, 2026);
 
 // --- SPA CONSOLIDATED ---
 const MOCK_SPA_SERVICE_REV = [90940, 57391, 44546, 51833, 58281, 64317, 84959, 75501, 72259, 67817, 77198, 80930];
@@ -109,128 +119,8 @@ function sum(arr: number[]): number {
   return arr.reduce((a, b) => a + b, 0);
 }
 
-function sumLast(arr: number[], n: number): number {
-  return sum(arr.slice(-n));
-}
-
-// Per-location cumulative EBITDA
-const locationCumulativeEbitda = Object.entries(MOCK_LOC_EBITDA).map(([name, arr]) => ({
-  name,
-  ebitda: sum(arr),
-  trend: arr,
-}));
-
-// Add Aesthetics, Slimming, Corporate
-const allUnitsEbitda = [
-  ...locationCumulativeEbitda,
-  { name: "Aesthetics", ebitda: sum(MOCK_AES_EBITDA), trend: MOCK_AES_EBITDA },
-  { name: "Slimming", ebitda: sum(MOCK_SLIM_EBITDA), trend: MOCK_SLIM_EBITDA },
-  { name: "Corporate", ebitda: -(MOCK_CORPORATE_WAGES * 12), trend: Array(12).fill(-MOCK_CORPORATE_WAGES) },
-];
-
-// Sort by EBITDA descending
-const sortedUnits = [...allUnitsEbitda].sort((a, b) => b.ebitda - a.ebitda);
-
-// Group EBITDA (all 12 weeks)
-const groupEbitdaTotal = sum(MOCK_SPA_EBITDA) + sum(MOCK_AES_EBITDA) + sum(MOCK_SLIM_EBITDA) - (MOCK_CORPORATE_WAGES * 12);
-
-// Group revenue
-const groupRevenueTotal =
-  sum(MOCK_SPA_SERVICE_REV) + sum(MOCK_SPA_PRODUCT_REV) +
-  sum(MOCK_AES_REV) +
-  sum(MOCK_SLIM_REV);
-
-// Last 4 weeks group EBITDA
-const groupEbitdaLast4 = sumLast(MOCK_SPA_EBITDA, 4) + sumLast(MOCK_AES_EBITDA, 4) + sumLast(MOCK_SLIM_EBITDA, 4) - (MOCK_CORPORATE_WAGES * 4);
-
-// Group EBITDA weekly trend
-const groupEbitdaWeekly = WEEKS.map((_, i) =>
-  MOCK_SPA_EBITDA[i] + MOCK_AES_EBITDA[i] + MOCK_SLIM_EBITDA[i] - MOCK_CORPORATE_WAGES
-);
-
 /* ------------------------------------------------------------------ */
-/*  Chart data builders                                                */
-/* ------------------------------------------------------------------ */
-
-// EBITDA by Location bar chart
-const ebitdaByLocationData = sortedUnits.map((u) => {
-  const rev =
-    u.name === "Aesthetics" ? sum(MOCK_AES_REV) :
-    u.name === "Slimming" ? sum(MOCK_SLIM_REV) :
-    u.name === "Corporate" ? 0 :
-    // For spa locations, approximate revenue from EBITDA + COGS proportional share
-    // We use consolidated spa revenue * location EBITDA share
-    0;
-
-  return {
-    location: u.name,
-    ebitda: u.ebitda,
-    // Margin calculated for BUs with known revenue
-    margin: u.name === "Corporate" ? 0 :
-      u.name === "Aesthetics" ? Math.round((u.ebitda / sum(MOCK_AES_REV)) * 1000) / 10 :
-      u.name === "Slimming" ? Math.round((u.ebitda / sum(MOCK_SLIM_REV)) * 1000) / 10 :
-      // For spa locations: use spa consolidated margin as proxy
-      Math.round((sum(MOCK_SPA_EBITDA) / (sum(MOCK_SPA_SERVICE_REV) + sum(MOCK_SPA_PRODUCT_REV))) * 1000) / 10,
-  };
-});
-
-// EBITDA trend (weekly, multi-line for top performers)
-const trendData = WEEKS.map((week, i) => ({
-  week,
-  "Hugo's": MOCK_LOC_EBITDA["Hugo's"][i],
-  "Inter": MOCK_LOC_EBITDA["Inter"][i],
-  "Hyatt": MOCK_LOC_EBITDA["Hyatt"][i],
-  "Aesthetics": MOCK_AES_EBITDA[i],
-  "Slimming": MOCK_SLIM_EBITDA[i],
-}));
-
-// Waterfall data
-function buildWaterfallData() {
-  // Order: positive locations desc, then negative desc, then Aesthetics, Slimming, Corporate
-  const spaLocs = locationCumulativeEbitda.sort((a, b) => b.ebitda - a.ebitda);
-  const entries: { name: string; value: number; cumulative: number; start: number; end: number; isTotal?: boolean }[] = [];
-  let running = 0;
-
-  for (const loc of spaLocs) {
-    const start = running;
-    running += loc.ebitda;
-    entries.push({ name: loc.name, value: loc.ebitda, cumulative: running, start, end: running });
-  }
-
-  // Aesthetics
-  {
-    const start = running;
-    const val = sum(MOCK_AES_EBITDA);
-    running += val;
-    entries.push({ name: "Aesthetics", value: val, cumulative: running, start, end: running });
-  }
-
-  // Slimming
-  {
-    const start = running;
-    const val = sum(MOCK_SLIM_EBITDA);
-    running += val;
-    entries.push({ name: "Slimming", value: val, cumulative: running, start, end: running });
-  }
-
-  // Corporate
-  {
-    const start = running;
-    const val = -(MOCK_CORPORATE_WAGES * 12);
-    running += val;
-    entries.push({ name: "Corporate", value: val, cumulative: running, start, end: running });
-  }
-
-  // Total bar
-  entries.push({ name: "Group EBITDA", value: running, cumulative: running, start: 0, end: running, isTotal: true });
-
-  return entries;
-}
-
-const waterfallData = buildWaterfallData();
-
-/* ------------------------------------------------------------------ */
-/*  P&L table data — cumulative (12 weeks)                             */
+/*  P&L table types                                                    */
 /* ------------------------------------------------------------------ */
 
 interface PnLUnit {
@@ -244,46 +134,6 @@ interface PnLUnit {
   cogs?: number;
 }
 
-const MOCK_PNL_UNITS: PnLUnit[] = [
-  {
-    name: "Spa Consolidated",
-    tradingIncome: sum(MOCK_SPA_SERVICE_REV) + sum(MOCK_SPA_PRODUCT_REV),
-    wages: sum(MOCK_SPA_WAGES),
-    advertising: sum(MOCK_SPA_ADVERTISING),
-    rent: sum(MOCK_SPA_RENT),
-    utilities: sum(MOCK_SPA_UTILITIES),
-    sga: MOCK_SPA_SGA * 12,
-    cogs: sum(MOCK_SPA_COGS),
-  },
-  {
-    name: "Aesthetics",
-    tradingIncome: sum(MOCK_AES_REV),
-    wages: MOCK_AES_WAGES * 12,
-    advertising: sum(MOCK_AES_ADVERTISING),
-    rent: 0,
-    utilities: 0,
-    sga: MOCK_AES_SGA * 12,
-  },
-  {
-    name: "Slimming",
-    tradingIncome: sum(MOCK_SLIM_REV),
-    wages: MOCK_SLIM_WAGES * (12 - MOCK_SLIM_WAGES_START),
-    advertising: sum(MOCK_SLIM_ADVERTISING),
-    rent: 0,
-    utilities: 0,
-    sga: 0,
-  },
-  {
-    name: "Corporate",
-    tradingIncome: 0,
-    wages: MOCK_CORPORATE_WAGES * 12,
-    advertising: 0,
-    rent: 0,
-    utilities: 0,
-    sga: 0,
-  },
-];
-
 function computeOpex(u: PnLUnit): number {
   return u.wages + u.advertising + u.rent + u.utilities + u.sga;
 }
@@ -296,13 +146,6 @@ function computeMargin(u: PnLUnit): number {
   if (u.tradingIncome === 0) return 0;
   return (computeEbitda(u) / u.tradingIncome) * 100;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Best / Worst location                                              */
-/* ------------------------------------------------------------------ */
-
-const bestLoc = locationCumulativeEbitda.reduce((a, b) => (a.ebitda > b.ebitda ? a : b));
-const worstLoc = locationCumulativeEbitda.reduce((a, b) => (a.ebitda < b.ebitda ? a : b));
 
 /* ------------------------------------------------------------------ */
 /*  Custom Waterfall Bar Shape                                         */
@@ -346,9 +189,218 @@ function FinanceContent({
 }) {
   const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
 
+  /* --- Filtered indices based on date range ------------------------- */
+  const filteredIdx = useMemo(
+    () => getFilteredIndices(WEEK_DATES, dateFrom, dateTo),
+    [dateFrom, dateTo]
+  );
+
+  const filteredWeeks = useMemo(() => filterByIndices(WEEKS, filteredIdx), [filteredIdx]);
+  const weekCount = filteredIdx.length;
+
   /* --- Prior-year date range for SSG -------------------------------- */
   const priorFrom = useMemo(() => subYears(dateFrom, 1), [dateFrom]);
   const priorTo = useMemo(() => subYears(dateTo, 1), [dateTo]);
+
+  /* --- Filtered aggregates ------------------------------------------ */
+  const groupEbitdaTotal = useMemo(
+    () =>
+      sumFiltered(MOCK_SPA_EBITDA, filteredIdx) +
+      sumFiltered(MOCK_AES_EBITDA, filteredIdx) +
+      sumFiltered(MOCK_SLIM_EBITDA, filteredIdx) -
+      MOCK_CORPORATE_WAGES * weekCount,
+    [filteredIdx, weekCount]
+  );
+
+  const groupRevenueTotal = useMemo(
+    () =>
+      sumFiltered(MOCK_SPA_SERVICE_REV, filteredIdx) +
+      sumFiltered(MOCK_SPA_PRODUCT_REV, filteredIdx) +
+      sumFiltered(MOCK_AES_REV, filteredIdx) +
+      sumFiltered(MOCK_SLIM_REV, filteredIdx),
+    [filteredIdx]
+  );
+
+  // Last 4 filtered weeks
+  const last4Idx = useMemo(() => filteredIdx.slice(-4), [filteredIdx]);
+  const groupEbitdaLast4 = useMemo(
+    () =>
+      sumFiltered(MOCK_SPA_EBITDA, last4Idx) +
+      sumFiltered(MOCK_AES_EBITDA, last4Idx) +
+      sumFiltered(MOCK_SLIM_EBITDA, last4Idx) -
+      MOCK_CORPORATE_WAGES * last4Idx.length,
+    [last4Idx]
+  );
+
+  // Per-location cumulative EBITDA
+  const locationCumulativeEbitda = useMemo(
+    () =>
+      Object.entries(MOCK_LOC_EBITDA).map(([name, arr]) => ({
+        name,
+        ebitda: sumFiltered(arr, filteredIdx),
+        trend: filterByIndices(arr, filteredIdx),
+      })),
+    [filteredIdx]
+  );
+
+  // All units EBITDA
+  const allUnitsEbitda = useMemo(
+    () => [
+      ...locationCumulativeEbitda,
+      { name: "Aesthetics", ebitda: sumFiltered(MOCK_AES_EBITDA, filteredIdx), trend: filterByIndices(MOCK_AES_EBITDA, filteredIdx) },
+      { name: "Slimming", ebitda: sumFiltered(MOCK_SLIM_EBITDA, filteredIdx), trend: filterByIndices(MOCK_SLIM_EBITDA, filteredIdx) },
+      { name: "Corporate", ebitda: -(MOCK_CORPORATE_WAGES * weekCount), trend: Array(weekCount).fill(-MOCK_CORPORATE_WAGES) },
+    ],
+    [locationCumulativeEbitda, filteredIdx, weekCount]
+  );
+
+  const sortedUnits = useMemo(
+    () => [...allUnitsEbitda].sort((a, b) => b.ebitda - a.ebitda),
+    [allUnitsEbitda]
+  );
+
+  // Group EBITDA weekly trend (filtered)
+  const groupEbitdaWeekly = useMemo(
+    () =>
+      filteredIdx.map((i) =>
+        MOCK_SPA_EBITDA[i] + MOCK_AES_EBITDA[i] + MOCK_SLIM_EBITDA[i] - MOCK_CORPORATE_WAGES
+      ),
+    [filteredIdx]
+  );
+
+  /* --- Chart data builders (filtered) ------------------------------- */
+
+  // EBITDA by Location bar chart
+  const ebitdaByLocationData = useMemo(
+    () =>
+      sortedUnits.map((u) => ({
+        location: u.name,
+        ebitda: u.ebitda,
+        margin:
+          u.name === "Corporate"
+            ? 0
+            : u.name === "Aesthetics"
+            ? Math.round((u.ebitda / sumFiltered(MOCK_AES_REV, filteredIdx)) * 1000) / 10
+            : u.name === "Slimming"
+            ? Math.round((u.ebitda / sumFiltered(MOCK_SLIM_REV, filteredIdx)) * 1000) / 10
+            : Math.round(
+                (sumFiltered(MOCK_SPA_EBITDA, filteredIdx) /
+                  (sumFiltered(MOCK_SPA_SERVICE_REV, filteredIdx) + sumFiltered(MOCK_SPA_PRODUCT_REV, filteredIdx))) *
+                  1000
+              ) / 10,
+      })),
+    [sortedUnits, filteredIdx]
+  );
+
+  // EBITDA trend (multi-line for top performers)
+  const trendData = useMemo(
+    () =>
+      filteredIdx.map((i) => ({
+        week: WEEKS[i],
+        "Hugo's": MOCK_LOC_EBITDA["Hugo's"][i],
+        Inter: MOCK_LOC_EBITDA["Inter"][i],
+        Hyatt: MOCK_LOC_EBITDA["Hyatt"][i],
+        Aesthetics: MOCK_AES_EBITDA[i],
+        Slimming: MOCK_SLIM_EBITDA[i],
+      })),
+    [filteredIdx]
+  );
+
+  // Waterfall data
+  const waterfallData = useMemo(() => {
+    const spaLocs = [...locationCumulativeEbitda].sort((a, b) => b.ebitda - a.ebitda);
+    const entries: { name: string; value: number; cumulative: number; start: number; end: number; isTotal?: boolean }[] = [];
+    let running = 0;
+
+    for (const loc of spaLocs) {
+      const start = running;
+      running += loc.ebitda;
+      entries.push({ name: loc.name, value: loc.ebitda, cumulative: running, start, end: running });
+    }
+
+    // Aesthetics
+    {
+      const start = running;
+      const val = sumFiltered(MOCK_AES_EBITDA, filteredIdx);
+      running += val;
+      entries.push({ name: "Aesthetics", value: val, cumulative: running, start, end: running });
+    }
+
+    // Slimming
+    {
+      const start = running;
+      const val = sumFiltered(MOCK_SLIM_EBITDA, filteredIdx);
+      running += val;
+      entries.push({ name: "Slimming", value: val, cumulative: running, start, end: running });
+    }
+
+    // Corporate
+    {
+      const start = running;
+      const val = -(MOCK_CORPORATE_WAGES * weekCount);
+      running += val;
+      entries.push({ name: "Corporate", value: val, cumulative: running, start, end: running });
+    }
+
+    // Total bar
+    entries.push({ name: "Group EBITDA", value: running, cumulative: running, start: 0, end: running, isTotal: true });
+
+    return entries;
+  }, [locationCumulativeEbitda, filteredIdx, weekCount]);
+
+  /* --- P&L table data (filtered) ------------------------------------ */
+  const MOCK_PNL_UNITS: PnLUnit[] = useMemo(() => {
+    const slimWagesWeeks = filteredIdx.filter((i) => i >= MOCK_SLIM_WAGES_START).length;
+    return [
+      {
+        name: "Spa Consolidated",
+        tradingIncome: sumFiltered(MOCK_SPA_SERVICE_REV, filteredIdx) + sumFiltered(MOCK_SPA_PRODUCT_REV, filteredIdx),
+        wages: sumFiltered(MOCK_SPA_WAGES, filteredIdx),
+        advertising: sumFiltered(MOCK_SPA_ADVERTISING, filteredIdx),
+        rent: sumFiltered(MOCK_SPA_RENT, filteredIdx),
+        utilities: sumFiltered(MOCK_SPA_UTILITIES, filteredIdx),
+        sga: MOCK_SPA_SGA * weekCount,
+        cogs: sumFiltered(MOCK_SPA_COGS, filteredIdx),
+      },
+      {
+        name: "Aesthetics",
+        tradingIncome: sumFiltered(MOCK_AES_REV, filteredIdx),
+        wages: MOCK_AES_WAGES * weekCount,
+        advertising: sumFiltered(MOCK_AES_ADVERTISING, filteredIdx),
+        rent: 0,
+        utilities: 0,
+        sga: MOCK_AES_SGA * weekCount,
+      },
+      {
+        name: "Slimming",
+        tradingIncome: sumFiltered(MOCK_SLIM_REV, filteredIdx),
+        wages: MOCK_SLIM_WAGES * slimWagesWeeks,
+        advertising: sumFiltered(MOCK_SLIM_ADVERTISING, filteredIdx),
+        rent: 0,
+        utilities: 0,
+        sga: 0,
+      },
+      {
+        name: "Corporate",
+        tradingIncome: 0,
+        wages: MOCK_CORPORATE_WAGES * weekCount,
+        advertising: 0,
+        rent: 0,
+        utilities: 0,
+        sga: 0,
+      },
+    ];
+  }, [filteredIdx, weekCount]);
+
+  /* --- Best / Worst location ---------------------------------------- */
+  const bestLoc = useMemo(
+    () => locationCumulativeEbitda.reduce((a, b) => (a.ebitda > b.ebitda ? a : b)),
+    [locationCumulativeEbitda]
+  );
+  const worstLoc = useMemo(
+    () => locationCumulativeEbitda.reduce((a, b) => (a.ebitda < b.ebitda ? a : b)),
+    [locationCumulativeEbitda]
+  );
 
   /* --- Data hooks for SSG chart ------------------------------------- */
   const { data: salesData, loading: salesLoading } = useKPIData<SalesRow>({
@@ -450,7 +502,7 @@ function FinanceContent({
 
   const kpis: KPIData[] = [
     {
-      label: "Group EBITDA (L4W)",
+      label: `Group EBITDA (L${last4Idx.length}W)`,
       value: formatCurrency(groupEbitdaLast4),
       trend: groupEbitdaLast4 > 0 ? 1 : -1,
     },
@@ -499,12 +551,50 @@ function FinanceContent({
     ? (pnlTotals.ebitda / pnlTotals.tradingIncome) * 100
     : 0;
 
+  /* --- Dynamic subtitle --------------------------------------------- */
+  const subtitle = weekCount > 0
+    ? `Weekly EBITDA — ${formatDateRangeLabel(dateFrom, dateTo)} (${filteredCountLabel(weekCount, "week")}) | Real accounting data`
+    : "No data in selected range";
+
+  /* --- OPEX chart data (filtered) ----------------------------------- */
+  const opexChartData = useMemo(
+    () =>
+      filteredIdx.map((i) => {
+        const spaRev = MOCK_SPA_SERVICE_REV[i] + MOCK_SPA_PRODUCT_REV[i];
+        const spaOpexPct = spaRev > 0 ? (MOCK_SPA_COGS[i] / spaRev) * 100 : 0;
+        const aesRev = MOCK_AES_REV[i];
+        const aesOpexPct = aesRev > 0 ? ((aesRev - MOCK_AES_EBITDA[i]) / aesRev) * 100 : 0;
+        const slimRev = MOCK_SLIM_REV[i];
+        const slimOpexPct = slimRev > 0 ? ((slimRev - MOCK_SLIM_EBITDA[i]) / slimRev) * 100 : 0;
+        return {
+          week: WEEKS[i],
+          Spa: Math.round(spaOpexPct * 10) / 10,
+          Aesthetics: Math.round(aesOpexPct * 10) / 10,
+          Slimming: Math.round(slimOpexPct * 10) / 10,
+        };
+      }),
+    [filteredIdx]
+  );
+
+  /* --- Heatmap data (filtered) -------------------------------------- */
+  const heatmapUnits = useMemo(
+    () => [
+      ...Object.entries(MOCK_LOC_EBITDA).map(([name, arr]) => ({
+        name,
+        data: filterByIndices(arr, filteredIdx),
+      })),
+      { name: "Aesthetics", data: filterByIndices(MOCK_AES_EBITDA, filteredIdx) },
+      { name: "Slimming", data: filterByIndices(MOCK_SLIM_EBITDA, filteredIdx) },
+    ],
+    [filteredIdx]
+  );
+
   /* --- Render ------------------------------------------------------- */
   return (
     <>
       <h1 className="text-2xl font-bold text-foreground">Finance Dashboard</h1>
       <p className="text-sm text-muted-foreground -mt-2 mb-2">
-        Weekly EBITDA — Jan to Mar 2026 (12 weeks) | Real accounting data
+        {subtitle}
       </p>
 
       {/* KPI Cards with sparklines */}
@@ -517,7 +607,7 @@ function FinanceContent({
             <div>
               <p className="text-xs text-muted-foreground">Group EBITDA Trend</p>
               <p className="text-lg font-bold text-foreground">{formatCurrency(groupEbitdaTotal)}</p>
-              <p className="text-xs text-muted-foreground">12-week total</p>
+              <p className="text-xs text-muted-foreground">{filteredCountLabel(weekCount, "week")} total</p>
             </div>
             <Sparkline data={groupEbitdaWeekly} width={100} height={32} color="#22C55E" label="Group EBITDA weekly trend" />
           </div>
@@ -526,38 +616,39 @@ function FinanceContent({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground">Spa EBITDA Trend</p>
-              <p className="text-lg font-bold text-foreground">{formatCurrency(sum(MOCK_SPA_EBITDA))}</p>
+              <p className="text-lg font-bold text-foreground">{formatCurrency(sumFiltered(MOCK_SPA_EBITDA, filteredIdx))}</p>
             </div>
-            <Sparkline data={MOCK_SPA_EBITDA} width={100} height={32} color={chartColors.spa} label="Spa EBITDA weekly" />
+            <Sparkline data={filterByIndices(MOCK_SPA_EBITDA, filteredIdx)} width={100} height={32} color={chartColors.spa} label="Spa EBITDA weekly" />
           </div>
         </Card>
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground">Aesthetics Trend</p>
-              <p className="text-lg font-bold text-foreground">{formatCurrency(sum(MOCK_AES_EBITDA))}</p>
+              <p className="text-lg font-bold text-foreground">{formatCurrency(sumFiltered(MOCK_AES_EBITDA, filteredIdx))}</p>
             </div>
-            <Sparkline data={MOCK_AES_EBITDA} width={100} height={32} color={chartColors.aesthetics} label="Aesthetics EBITDA weekly" />
+            <Sparkline data={filterByIndices(MOCK_AES_EBITDA, filteredIdx)} width={100} height={32} color={chartColors.aesthetics} label="Aesthetics EBITDA weekly" />
           </div>
         </Card>
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground">Slimming Trend</p>
-              <p className="text-lg font-bold text-foreground">{formatCurrency(sum(MOCK_SLIM_EBITDA))}</p>
+              <p className="text-lg font-bold text-foreground">{formatCurrency(sumFiltered(MOCK_SLIM_EBITDA, filteredIdx))}</p>
             </div>
-            <Sparkline data={MOCK_SLIM_EBITDA} width={100} height={32} color={chartColors.slimming} label="Slimming EBITDA weekly" />
+            <Sparkline data={filterByIndices(MOCK_SLIM_EBITDA, filteredIdx)} width={100} height={32} color={chartColors.slimming} label="Slimming EBITDA weekly" />
           </div>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* PRIMARY: EBITDA by Location — ComposedChart */}
-        <Card className="p-6">
+        <Card className="p-3 md:p-6">
           <h2 className="text-lg font-semibold text-foreground mb-1">EBITDA by Business Unit</h2>
-          <p className="text-xs text-muted-foreground mb-4">Cumulative 12 weeks, sorted by performance. Green = profit, Red = loss.</p>
-          <ResponsiveContainer width="100%" height={360}>
-            <ComposedChart data={ebitdaByLocationData} margin={{ top: 5, right: 30, left: 20, bottom: 60 }}>
+          <p className="text-xs text-muted-foreground mb-4">Cumulative {filteredCountLabel(weekCount, "week")}, sorted by performance. Green = profit, Red = loss.</p>
+          <div className="h-[260px] md:h-[360px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={ebitdaByLocationData} margin={{ top: 5, right: 10, left: 10, bottom: 60 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="location" angle={-40} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
               <YAxis
@@ -597,13 +688,15 @@ function FinanceContent({
               />
             </ComposedChart>
           </ResponsiveContainer>
+          </div>
         </Card>
 
         {/* EBITDA Trend — Multi-line */}
-        <Card className="p-6">
+        <Card className="p-3 md:p-6">
           <h2 className="text-lg font-semibold text-foreground mb-1">Weekly EBITDA Trend</h2>
           <p className="text-xs text-muted-foreground mb-4">Top 3 spas + Aesthetics + Slimming</p>
-          <ResponsiveContainer width="100%" height={360}>
+          <div className="h-[260px] md:h-[360px]">
+          <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={trendData} margin={chartDefaults.margin}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="week" tick={{ fontSize: 10 }} />
@@ -653,15 +746,17 @@ function FinanceContent({
               />
             </AreaChart>
           </ResponsiveContainer>
+          </div>
         </Card>
       </div>
 
       {/* Contribution Waterfall */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <h2 className="text-lg font-semibold text-foreground mb-1">Contribution Waterfall</h2>
-        <p className="text-xs text-muted-foreground mb-4">How each unit contributes to Group EBITDA (12-week cumulative)</p>
-        <ResponsiveContainer width="100%" height={360}>
-          <BarChart data={waterfallData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+        <p className="text-xs text-muted-foreground mb-4">How each unit contributes to Group EBITDA ({filteredCountLabel(weekCount, "week")} cumulative)</p>
+        <div className="h-[260px] md:h-[360px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={waterfallData} margin={{ top: 20, right: 10, left: 10, bottom: 60 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" angle={-40} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
             <YAxis tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} />
@@ -706,12 +801,13 @@ function FinanceContent({
             </Bar>
           </BarChart>
         </ResponsiveContainer>
+        </div>
       </Card>
 
       {/* P&L Drill-Down Table */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <h2 className="text-lg font-semibold text-foreground mb-1">P&L by Business Unit</h2>
-        <p className="text-xs text-muted-foreground mb-4">Cumulative 12 weeks (Jan-Mar 2026). Click to expand.</p>
+        <p className="text-xs text-muted-foreground mb-4">Cumulative {filteredCountLabel(weekCount, "week")} ({formatDateRangeLabel(dateFrom, dateTo)}). Click to expand.</p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -746,7 +842,7 @@ function FinanceContent({
               {/* Spa sub-locations (non-expandable summary) */}
               <tr className="border-t border-border/50">
                 <td colSpan={5} className="py-2 px-4">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Spa Per-Location EBITDA (12-week cumulative)</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Spa Per-Location EBITDA ({filteredCountLabel(weekCount, "week")} cumulative)</p>
                 </td>
               </tr>
               {locationCumulativeEbitda
@@ -783,7 +879,7 @@ function FinanceContent({
       </Card>
 
       {/* Same-Store Growth (SSG) — Real data from hooks */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <h2 className="text-lg font-semibold text-foreground mb-1">
           Total Growth vs Same-Store Growth
         </h2>
@@ -805,7 +901,8 @@ function FinanceContent({
                 </span>
               ))}
             </div>
-            <ResponsiveContainer width="100%" height={300}>
+            <div className="h-[220px] md:h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
               <LineChart data={ssgChartData} margin={chartDefaults.margin}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
@@ -831,27 +928,18 @@ function FinanceContent({
                 />
               </LineChart>
             </ResponsiveContainer>
+            </div>
           </>
         )}
       </Card>
 
       {/* OPEX as % of Revenue Trend */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <h2 className="text-lg font-semibold text-foreground mb-1">OPEX as % of Revenue</h2>
         <p className="text-xs text-muted-foreground mb-4">Operating efficiency — lower is better</p>
-        <ResponsiveContainer width="100%" height={360}>
-          <LineChart
-            data={WEEKS.map((week, i) => {
-              const spaRev = MOCK_SPA_SERVICE_REV[i] + MOCK_SPA_PRODUCT_REV[i];
-              const spaOpexPct = spaRev > 0 ? (MOCK_SPA_COGS[i] / spaRev) * 100 : 0;
-              const aesRev = MOCK_AES_REV[i];
-              const aesOpexPct = aesRev > 0 ? ((aesRev - MOCK_AES_EBITDA[i]) / aesRev) * 100 : 0;
-              const slimRev = MOCK_SLIM_REV[i];
-              const slimOpexPct = slimRev > 0 ? ((slimRev - MOCK_SLIM_EBITDA[i]) / slimRev) * 100 : 0;
-              return { week, Spa: Math.round(spaOpexPct * 10) / 10, Aesthetics: Math.round(aesOpexPct * 10) / 10, Slimming: Math.round(slimOpexPct * 10) / 10 };
-            })}
-            margin={chartDefaults.margin}
-          >
+        <div className="h-[260px] md:h-[360px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={opexChartData} margin={chartDefaults.margin}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="week" tick={{ fontSize: 10 }} />
             <YAxis domain={[0, 120]} tickFormatter={(v: number) => `${v}%`} />
@@ -863,10 +951,11 @@ function FinanceContent({
             <Line type="monotone" dataKey="Slimming" stroke={chartColors.slimming} strokeWidth={chartDefaults.strokeWidth} dot={{ r: chartDefaults.dotRadius }} connectNulls={false} />
           </LineChart>
         </ResponsiveContainer>
+        </div>
       </Card>
 
       {/* EBITDA Heatmap by Unit */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <h2 className="text-lg font-semibold text-foreground mb-1">EBITDA Heatmap by Unit</h2>
         <p className="text-xs text-muted-foreground mb-4">Green = profit, Red = loss — spot patterns at a glance</p>
         <div className="overflow-x-auto">
@@ -874,17 +963,13 @@ function FinanceContent({
             <thead>
               <tr>
                 <th className="text-left py-2 px-2 font-medium text-muted-foreground sticky left-0 bg-background z-10 min-w-[90px]">Unit</th>
-                {WEEKS.map((w) => (
+                {filteredWeeks.map((w) => (
                   <th key={w} className="text-center py-2 px-1 font-medium text-muted-foreground whitespace-nowrap">{w}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {[
-                ...Object.entries(MOCK_LOC_EBITDA).map(([name, arr]) => ({ name, data: arr })),
-                { name: "Aesthetics", data: MOCK_AES_EBITDA },
-                { name: "Slimming", data: MOCK_SLIM_EBITDA },
-              ].map((unit) => {
+              {heatmapUnits.map((unit) => {
                 const maxAbs = Math.max(...unit.data.map((v) => Math.abs(v)), 1);
                 return (
                   <tr key={unit.name} className="border-b border-border/20">
@@ -1009,7 +1094,7 @@ function PnLDetailRow({
   return (
     <tr className={`${isHighlight ? "bg-muted/40" : "bg-muted/20"}`}>
       <td
-        className={`py-2 px-4 pl-12 text-muted-foreground ${isBold ? "font-semibold" : ""}`}
+        className={`py-2 px-4 pl-6 md:pl-12 text-muted-foreground ${isBold ? "font-semibold" : ""}`}
         colSpan={3}
       >
         {label}

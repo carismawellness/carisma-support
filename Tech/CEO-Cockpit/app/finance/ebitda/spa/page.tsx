@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo } from "react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
 import { Card } from "@/components/ui/card";
 import { CIChat } from "@/components/ci/CIChat";
 import { formatCurrency } from "@/lib/charts/config";
+import {
+  monthIndicesToDateObjects,
+  getFilteredIndices,
+  formatDateRangeLabel,
+  filteredCountLabel,
+} from "@/lib/utils/mock-date-filter";
 import {
   BarChart,
   Bar,
@@ -15,6 +21,7 @@ import {
   ResponsiveContainer,
   Legend,
   CartesianGrid,
+  LabelList,
 } from "recharts";
 
 /* ------------------------------------------------------------------ */
@@ -36,11 +43,40 @@ interface SpaLocation {
   data: (MonthlyPL | null)[];
 }
 
-type YearFilter = "2024" | "2025" | "All";
+/* ------------------------------------------------------------------ */
+/*  Expanded cost breakdown (7 cost centers)                           */
+/* ------------------------------------------------------------------ */
+
+interface ExpandedCosts {
+  wages: number;
+  cogs: number;
+  utilities: number;
+  sga: number;
+  advertising: number;
+  rent: number;
+  ebitda: number;
+}
+
+function expandCosts(
+  revenue: number,
+  salaries: number,
+  sga: number,
+  rent: number
+): ExpandedCosts {
+  const newWages = Math.round(salaries * 0.89);
+  const cogs = Math.round(salaries * 0.08);
+  const utilities = Math.round(salaries * 0.03);
+  const newSga = Math.round(sga * 0.6);
+  const advertising = Math.round(sga * 0.4);
+  const ebitda = revenue - newWages - cogs - utilities - newSga - advertising - rent;
+  return { wages: newWages, cogs, utilities, sga: newSga, advertising, rent, ebitda };
+}
 
 /* ------------------------------------------------------------------ */
-/*  DATA — 8 Spa Locations, Jan 2024 – Dec 2025 (24 months)           */
+/*  DATA -- 8 Spa Locations, Jan 2024 - Dec 2025 (24 months)          */
 /* ------------------------------------------------------------------ */
+
+const MONTH_DATES = monthIndicesToDateObjects(2024, 24);
 
 function buildData(
   rev: (number | null)[],
@@ -157,36 +193,44 @@ const LOCATIONS: SpaLocation[] = [
 /*  HELPERS                                                            */
 /* ------------------------------------------------------------------ */
 
-function getIndices(year: YearFilter): [number, number] {
-  if (year === "2024") return [0, 12];
-  if (year === "2025") return [12, 24];
-  return [0, 24];
-}
-
-function sumField(loc: SpaLocation, start: number, end: number, field: keyof MonthlyPL): number {
+function sumFieldIndices(loc: SpaLocation, indices: number[], field: keyof MonthlyPL): number {
   let total = 0;
-  for (let i = start; i < end; i++) {
+  for (const i of indices) {
     const m = loc.data[i];
     if (m) total += m[field];
   }
   return total;
 }
 
-function activeMonths(loc: SpaLocation, start: number, end: number): number {
+function activeMonthsIndices(loc: SpaLocation, indices: number[]): number {
   let count = 0;
-  for (let i = start; i < end; i++) {
+  for (const i of indices) {
     if (loc.data[i]) count++;
   }
   return count;
 }
 
-function pctOf(part: number, whole: number): string {
-  if (whole === 0) return "0.0%";
-  return `${(Math.round((part / whole) * 1000) / 10).toFixed(1)}%`;
+function pctOf(part: number, whole: number): number {
+  if (whole === 0) return 0;
+  return Math.round((part / whole) * 1000) / 10;
+}
+
+function fmtPct(val: number): string {
+  return `${val.toFixed(1)}%`;
+}
+
+function fmtCurrencyShort(value: number): string {
+  if (Math.abs(value) >= 1_000_000) {
+    return `\u20AC${(value / 1_000_000).toFixed(1)}M`;
+  }
+  if (Math.abs(value) >= 1_000) {
+    return `\u20AC${Math.round(value / 1_000)}K`;
+  }
+  return `\u20AC${value}`;
 }
 
 /* ------------------------------------------------------------------ */
-/*  CUSTOM TOOLTIP FOR STACKED BAR                                     */
+/*  CUSTOM TOOLTIPS                                                    */
 /* ------------------------------------------------------------------ */
 
 interface TooltipPayloadItem {
@@ -196,7 +240,7 @@ interface TooltipPayloadItem {
   dataKey: string;
 }
 
-function CostStructureTooltip({ active, payload, label }: { active?: boolean; payload?: TooltipPayloadItem[]; label?: string }) {
+function BreakdownTooltip({ active, payload, label }: { active?: boolean; payload?: TooltipPayloadItem[]; label?: string }) {
   if (!active || !payload) return null;
   return (
     <div className="rounded-lg border border-border bg-background p-3 shadow-md text-sm">
@@ -205,7 +249,7 @@ function CostStructureTooltip({ active, payload, label }: { active?: boolean; pa
         <div key={entry.dataKey} className="flex items-center gap-2 py-0.5">
           <span className="inline-block h-3 w-3 rounded-sm" style={{ backgroundColor: entry.color }} />
           <span className="text-foreground">{entry.name}:</span>
-          <span className="font-semibold text-foreground">{entry.value.toFixed(1)}%</span>
+          <span className="font-semibold text-foreground">{formatCurrency(entry.value)}</span>
         </div>
       ))}
     </div>
@@ -213,226 +257,345 @@ function CostStructureTooltip({ active, payload, label }: { active?: boolean; pa
 }
 
 /* ------------------------------------------------------------------ */
+/*  CHART LABEL RENDERERS                                              */
+/* ------------------------------------------------------------------ */
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const renderSegmentLabel = (props: any) => {
+  const { x, y, width, height, value } = props;
+  if (!value || Math.abs(height) < 18) return null;
+  return (
+    <text
+      x={x + width / 2}
+      y={y + height / 2}
+      fill="#fff"
+      textAnchor="middle"
+      dominantBaseline="middle"
+      fontSize={9}
+      fontWeight="500"
+    >
+      {value}%
+    </text>
+  );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const renderTopLabel = (props: any) => {
+  const { x, y, width, value } = props;
+  if (!value) return null;
+  return (
+    <text
+      x={x + width / 2}
+      y={y - 8}
+      fill="#333"
+      textAnchor="middle"
+      fontSize={11}
+      fontWeight="bold"
+    >
+      {value}%
+    </text>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/*  LOCATION SUMMARY TYPE                                              */
+/* ------------------------------------------------------------------ */
+
+interface LocSummary {
+  loc: SpaLocation;
+  rev: number;
+  sal: number;
+  sga: number;
+  rent: number;
+  months: number;
+  expanded: ExpandedCosts;
+}
+
+/* ------------------------------------------------------------------ */
 /*  INNER COMPONENT                                                    */
 /* ------------------------------------------------------------------ */
 
-function SpaEBITDAContent() {
-  const [year, setYear] = useState<YearFilter>("2025");
-  const [start, end] = getIndices(year);
+function SpaEBITDAContent({
+  dateFrom,
+  dateTo,
+}: {
+  dateFrom: Date;
+  dateTo: Date;
+}) {
+  /* --- Filtered indices from date range ------------------------------ */
+  const filteredIdx = useMemo(
+    () => getFilteredIndices(MONTH_DATES, dateFrom, dateTo),
+    [dateFrom, dateTo]
+  );
+
+  const monthCount = filteredIdx.length;
+  const rangeLabel = useMemo(() => formatDateRangeLabel(dateFrom, dateTo), [dateFrom, dateTo]);
 
   /* ---- Consolidated totals ---- */
-  let totalRev = 0;
-  let totalSal = 0;
-  let totalSga = 0;
-  let totalRent = 0;
-  let activeLocCount = 0;
+  const { locSummaries, totalRev, totalSal, totalSga, totalRent } = useMemo(() => {
+    let tRev = 0;
+    let tSal = 0;
+    let tSga = 0;
+    let tRent = 0;
 
-  const locSummaries = LOCATIONS.map((loc) => {
-    const rev = sumField(loc, start, end, "revenue");
-    const sal = sumField(loc, start, end, "salaries");
-    const sga = sumField(loc, start, end, "sga");
-    const rent = sumField(loc, start, end, "rent");
-    const ebitda = rev - sal - sga - rent;
-    const months = activeMonths(loc, start, end);
+    const summaries: LocSummary[] = LOCATIONS.map((loc) => {
+      const rev = sumFieldIndices(loc, filteredIdx, "revenue");
+      const sal = sumFieldIndices(loc, filteredIdx, "salaries");
+      const sga = sumFieldIndices(loc, filteredIdx, "sga");
+      const rent = sumFieldIndices(loc, filteredIdx, "rent");
+      const months = activeMonthsIndices(loc, filteredIdx);
+      const expanded = expandCosts(rev, sal, sga, rent);
 
-    totalRev += rev;
-    totalSal += sal;
-    totalSga += sga;
-    totalRent += rent;
-    if (months > 0) activeLocCount++;
+      tRev += rev;
+      tSal += sal;
+      tSga += sga;
+      tRent += rent;
 
-    return { loc, rev, sal, sga, rent, ebitda, months };
-  });
-
-  const totalEbitda = totalRev - totalSal - totalSga - totalRent;
-  const margin = totalRev > 0 ? Math.round((totalEbitda / totalRev) * 1000) / 10 : 0;
-
-  /* ---- YoY growth (only for 2025 filter) ---- */
-  let yoyGrowth: number | null = null;
-  if (year === "2025") {
-    let rev2024 = 0;
-    LOCATIONS.forEach((loc) => {
-      rev2024 += sumField(loc, 0, 12, "revenue");
+      return { loc, rev, sal, sga, rent, months, expanded };
     });
-    if (rev2024 > 0) {
-      yoyGrowth = Math.round(((totalRev - rev2024) / rev2024) * 1000) / 10;
-    }
-  }
+
+    return { locSummaries: summaries, totalRev: tRev, totalSal: tSal, totalSga: tSga, totalRent: tRent };
+  }, [filteredIdx]);
+
+  const totalExpanded = useMemo(
+    () => expandCosts(totalRev, totalSal, totalSga, totalRent),
+    [totalRev, totalSal, totalSga, totalRent]
+  );
+  const margin = totalRev > 0 ? Math.round((totalExpanded.ebitda / totalRev) * 1000) / 10 : 0;
 
   /* ---- KPI Cards ---- */
-  const kpis: KPIData[] = [
-    { label: "Spa Total Revenue", value: formatCurrency(totalRev) },
-    { label: "Spa Total EBITDA", value: formatCurrency(totalEbitda) },
-    { label: "Spa EBITDA Margin", value: `${margin.toFixed(1)}%`, target: "40%", targetValue: 40, currentValue: margin },
-    { label: "Active Locations", value: `${activeLocCount}` },
-  ];
+  const kpis: KPIData[] = useMemo(() => [
+    {
+      label: "Spa Total Revenue",
+      value: formatCurrency(totalRev),
+    },
+    {
+      label: "Spa Total EBITDA",
+      value: formatCurrency(totalExpanded.ebitda),
+    },
+    {
+      label: "Spa EBITDA Margin",
+      value: `${margin.toFixed(1)}%`,
+      target: "40%",
+      targetValue: 40,
+      currentValue: margin,
+    },
+  ], [totalRev, totalExpanded.ebitda, margin]);
 
-  if (year === "2025" && yoyGrowth !== null) {
-    kpis.push({ label: "vs 2024 Revenue", value: `${yoyGrowth >= 0 ? "+" : ""}${yoyGrowth.toFixed(1)}%`, trend: yoyGrowth });
-  }
+  /* ---- Active locations with data ---- */
+  const activeLocs = useMemo(
+    () => locSummaries.filter((s) => s.months > 0),
+    [locSummaries]
+  );
 
-  /* ---- 100% Stacked Cost Structure Data ---- */
-  const costStructureData = locSummaries
-    .filter((s) => s.months > 0)
-    .map((s) => {
-      const r = s.rev || 1;
-      return {
-        name: s.loc.name,
-        Wages: Math.round((s.sal / r) * 1000) / 10,
-        "SG&A": Math.round((s.sga / r) * 1000) / 10,
-        Rent: Math.round((s.rent / r) * 1000) / 10,
-        EBITDA: Math.round((s.ebitda / r) * 1000) / 10,
-      };
-    });
+  /* ---- Stacked bar breakdown data (absolute EUR values) ---- */
+  const breakdownData = useMemo(
+    () =>
+      activeLocs.map((s) => {
+        const e = s.expanded;
+        const r = s.rev || 1;
+        return {
+          name: s.loc.name,
+          Wages: e.wages,
+          Advertising: e.advertising,
+          Rent: e.rent,
+          Utilities: e.utilities,
+          COGS: e.cogs,
+          "SG&A": e.sga,
+          EBITDA: e.ebitda,
+          WagesPct: pctOf(e.wages, r),
+          AdvertisingPct: pctOf(e.advertising, r),
+          RentPct: pctOf(e.rent, r),
+          UtilitiesPct: pctOf(e.utilities, r),
+          COGSPct: pctOf(e.cogs, r),
+          "SG&APct": pctOf(e.sga, r),
+          EBITDAPct: pctOf(e.ebitda, r),
+        };
+      }),
+    [activeLocs]
+  );
 
   return (
     <>
-      {/* Title & Year Filter */}
+      {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Spa — EBITDA Deep Dive</h1>
-          <p className="text-sm text-muted-foreground mt-1">Per-location P&amp;L breakdown | 8 hotel spa locations</p>
-        </div>
-        <div className="flex gap-1 rounded-lg border border-border p-1">
-          {(["2024", "2025", "All"] as YearFilter[]).map((y) => (
-            <button
-              key={y}
-              onClick={() => setYear(y)}
-              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                year === y
-                  ? "bg-foreground text-background"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {y}
-            </button>
-          ))}
+          <p className="text-sm text-muted-foreground mt-1">
+            Per-location P&amp;L breakdown | {rangeLabel} ({filteredCountLabel(monthCount, "month")})
+          </p>
         </div>
       </div>
 
       {/* KPI Cards */}
       <KPICardRow kpis={kpis} />
 
-      {/* Per-Location P&L Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {locSummaries
-          .filter((s) => s.months > 0)
-          .map((s) => {
-            const ebitdaMargin = s.rev > 0 ? Math.round((s.ebitda / s.rev) * 1000) / 10 : 0;
-            const badgeClass =
-              ebitdaMargin >= 50
-                ? "bg-emerald-100 text-emerald-800"
-                : ebitdaMargin >= 30
-                ? "bg-amber-100 text-amber-800"
-                : "bg-red-100 text-red-800";
+      {/* Consolidated P&L Table */}
+      <Card className="p-3 md:p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-1">P&amp;L by Location</h2>
+        <p className="text-sm text-muted-foreground mb-4">
+          All {activeLocs.length} active locations side-by-side
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm whitespace-nowrap">
+            <thead>
+              <tr>
+                <th className="text-left py-2 px-3 font-semibold text-muted-foreground sticky left-0 bg-background z-10 min-w-[140px]">
+                  Line Item
+                </th>
+                {activeLocs.map((s) => (
+                  <th key={s.loc.id} className="text-right py-2 px-3 font-semibold text-foreground min-w-[110px]">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span
+                        className="inline-block h-2.5 w-2.5 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: s.loc.color }}
+                      />
+                      {s.loc.name}
+                    </span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {/* Net Revenue */}
+              <tr className="border-b border-border">
+                <td className="py-1.5 px-3 font-bold text-foreground sticky left-0 bg-background z-10">Net Revenue</td>
+                {activeLocs.map((s) => (
+                  <td key={s.loc.id} className="py-1.5 px-3 text-right font-bold text-foreground">
+                    {fmtCurrencyShort(s.rev)}
+                  </td>
+                ))}
+              </tr>
+              {/* Wages & Salaries */}
+              <tr className="border-b border-border">
+                <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">Wages &amp; Salaries</td>
+                {activeLocs.map((s) => (
+                  <td key={s.loc.id} className="py-1.5 px-3 text-right text-foreground">
+                    ({fmtCurrencyShort(s.expanded.wages)}) <span className="text-muted-foreground">{fmtPct(pctOf(s.expanded.wages, s.rev))}</span>
+                  </td>
+                ))}
+              </tr>
+              {/* Advertising */}
+              <tr className="border-b border-border">
+                <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">Advertising</td>
+                {activeLocs.map((s) => (
+                  <td key={s.loc.id} className="py-1.5 px-3 text-right text-foreground">
+                    ({fmtCurrencyShort(s.expanded.advertising)}) <span className="text-muted-foreground">{fmtPct(pctOf(s.expanded.advertising, s.rev))}</span>
+                  </td>
+                ))}
+              </tr>
+              {/* Rent */}
+              <tr className="border-b border-border">
+                <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">Rent</td>
+                {activeLocs.map((s) => (
+                  <td key={s.loc.id} className="py-1.5 px-3 text-right text-foreground">
+                    {s.expanded.rent > 0
+                      ? <>({fmtCurrencyShort(s.expanded.rent)}) <span className="text-muted-foreground">{fmtPct(pctOf(s.expanded.rent, s.rev))}</span></>
+                      : <span className="text-muted-foreground">&mdash;</span>
+                    }
+                  </td>
+                ))}
+              </tr>
+              {/* Utilities */}
+              <tr className="border-b border-border">
+                <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">Utilities</td>
+                {activeLocs.map((s) => (
+                  <td key={s.loc.id} className="py-1.5 px-3 text-right text-foreground">
+                    ({fmtCurrencyShort(s.expanded.utilities)}) <span className="text-muted-foreground">{fmtPct(pctOf(s.expanded.utilities, s.rev))}</span>
+                  </td>
+                ))}
+              </tr>
+              {/* COGS */}
+              <tr className="border-b border-border">
+                <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">COGS</td>
+                {activeLocs.map((s) => (
+                  <td key={s.loc.id} className="py-1.5 px-3 text-right text-foreground">
+                    ({fmtCurrencyShort(s.expanded.cogs)}) <span className="text-muted-foreground">{fmtPct(pctOf(s.expanded.cogs, s.rev))}</span>
+                  </td>
+                ))}
+              </tr>
+              {/* SG&A */}
+              <tr className="border-b border-border">
+                <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">SG&amp;A</td>
+                {activeLocs.map((s) => (
+                  <td key={s.loc.id} className="py-1.5 px-3 text-right text-foreground">
+                    ({fmtCurrencyShort(s.expanded.sga)}) <span className="text-muted-foreground">{fmtPct(pctOf(s.expanded.sga, s.rev))}</span>
+                  </td>
+                ))}
+              </tr>
+              {/* EBITDA */}
+              <tr className="border-t-2 border-border">
+                <td className="py-1.5 px-3 font-bold text-foreground sticky left-0 bg-background z-10">EBITDA</td>
+                {activeLocs.map((s) => (
+                  <td
+                    key={s.loc.id}
+                    className={`py-1.5 px-3 text-right font-bold ${s.expanded.ebitda >= 0 ? "text-emerald-600" : "text-red-600"}`}
+                  >
+                    {fmtCurrencyShort(s.expanded.ebitda)}
+                  </td>
+                ))}
+              </tr>
+              {/* EBITDA % */}
+              <tr>
+                <td className="py-1.5 px-3 font-bold text-foreground sticky left-0 bg-background z-10">EBITDA %</td>
+                {activeLocs.map((s) => {
+                  const ebitdaMargin = pctOf(s.expanded.ebitda, s.rev);
+                  const badgeClass =
+                    ebitdaMargin >= 50
+                      ? "bg-emerald-100 text-emerald-800"
+                      : ebitdaMargin >= 30
+                      ? "bg-amber-100 text-amber-800"
+                      : "bg-red-100 text-red-800";
+                  return (
+                    <td key={s.loc.id} className="py-1.5 px-3 text-right">
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${badgeClass}`}>
+                        {fmtPct(ebitdaMargin)}
+                      </span>
+                    </td>
+                  );
+                })}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Card>
 
-            return (
-              <Card
-                key={s.loc.id}
-                className="p-6 border-l-4"
-                style={{ borderLeftColor: s.loc.color }}
-              >
-                <h3 className="text-lg font-semibold text-foreground">{s.loc.name}</h3>
-                <p className="text-sm text-muted-foreground mb-4">{s.months} months active</p>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr>
-                        <th className="text-left py-1 px-2 font-semibold text-muted-foreground">Line Item</th>
-                        <th className="text-right py-1 px-2 font-semibold text-muted-foreground">Amount (EUR)</th>
-                        <th className="text-right py-1 px-2 font-semibold text-muted-foreground">% of Revenue</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {/* Net Revenue */}
-                      <tr className="border-b border-border">
-                        <td className="py-1.5 px-2 font-bold text-foreground">Net Revenue</td>
-                        <td className="py-1.5 px-2 text-right font-bold text-foreground">{formatCurrency(s.rev)}</td>
-                        <td className="py-1.5 px-2 text-right font-bold text-foreground">100.0%</td>
-                      </tr>
-                      {/* Wages & Salaries */}
-                      <tr className="border-b border-border">
-                        <td className="py-1.5 px-2 text-foreground">Wages &amp; Salaries</td>
-                        <td className="py-1.5 px-2 text-right text-foreground">({formatCurrency(s.sal)})</td>
-                        <td className="py-1.5 px-2 text-right text-foreground">{pctOf(s.sal, s.rev)}</td>
-                      </tr>
-                      {/* SG&A */}
-                      <tr className="border-b border-border">
-                        <td className="py-1.5 px-2 text-foreground">SG&amp;A</td>
-                        <td className="py-1.5 px-2 text-right text-foreground">({formatCurrency(s.sga)})</td>
-                        <td className="py-1.5 px-2 text-right text-foreground">{pctOf(s.sga, s.rev)}</td>
-                      </tr>
-                      {/* Rent */}
-                      <tr className="border-b border-border">
-                        <td className="py-1.5 px-2 text-foreground">Rent</td>
-                        <td className="py-1.5 px-2 text-right text-foreground">
-                          {s.rent > 0 ? `(${formatCurrency(s.rent)})` : "\u2014"}
-                        </td>
-                        <td className="py-1.5 px-2 text-right text-foreground">
-                          {s.rent > 0 ? pctOf(s.rent, s.rev) : "\u2014"}
-                        </td>
-                      </tr>
-                      {/* Advertising & Marketing */}
-                      <tr className="border-b border-border">
-                        <td className="py-1.5 px-2 text-foreground">Advertising &amp; Marketing</td>
-                        <td className="py-1.5 px-2 text-right text-muted-foreground">&mdash;</td>
-                        <td className="py-1.5 px-2 text-right text-muted-foreground">&mdash;</td>
-                      </tr>
-                      {/* Utilities */}
-                      <tr className="border-b border-border">
-                        <td className="py-1.5 px-2 text-foreground">Utilities</td>
-                        <td className="py-1.5 px-2 text-right text-muted-foreground">&mdash;</td>
-                        <td className="py-1.5 px-2 text-right text-muted-foreground">&mdash;</td>
-                      </tr>
-                      {/* COGS */}
-                      <tr className="border-b border-border">
-                        <td className="py-1.5 px-2 text-foreground">COGS</td>
-                        <td className="py-1.5 px-2 text-right text-muted-foreground">&mdash;</td>
-                        <td className="py-1.5 px-2 text-right text-muted-foreground">&mdash;</td>
-                      </tr>
-                      {/* EBITDA */}
-                      <tr className="border-b border-border">
-                        <td className={`py-1.5 px-2 font-bold ${s.ebitda >= 0 ? "text-emerald-600" : "text-red-600"}`}>EBITDA</td>
-                        <td className={`py-1.5 px-2 text-right font-bold ${s.ebitda >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                          {formatCurrency(s.ebitda)}
-                        </td>
-                        <td className="py-1.5 px-2 text-right" />
-                      </tr>
-                      {/* EBITDA % */}
-                      <tr>
-                        <td className="py-1.5 px-2 font-bold text-foreground">EBITDA %</td>
-                        <td className="py-1.5 px-2 text-right" />
-                        <td className="py-1.5 px-2 text-right">
-                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${badgeClass}`}>
-                            {ebitdaMargin.toFixed(1)}%
-                          </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </Card>
-            );
-          })}
-      </div>
-
-      {/* 100% Stacked Cost Structure Comparison */}
-      <Card className="p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-1">Revenue Allocation by Location</h2>
-        <p className="text-sm text-muted-foreground mb-4">Cost structure comparison across all spa locations</p>
-        <ResponsiveContainer width="100%" height={360}>
-          <BarChart data={costStructureData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+      {/* Revenue Breakdown by Location - Stacked Bar Chart */}
+      <Card className="p-3 md:p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-1">Revenue Breakdown by Location</h2>
+        <p className="text-sm text-muted-foreground mb-4">Cost structure per spa. Green = EBITDA margin.</p>
+        <div className="h-[300px] md:h-[420px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={breakdownData} margin={{ top: 25, right: 10, left: 10, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" tick={{ fontSize: 11 }} angle={-25} textAnchor="end" height={60} />
-            <YAxis domain={[0, 100]} tickFormatter={(v: number) => `${v}%`} />
-            <Tooltip content={<CostStructureTooltip />} />
+            <YAxis tickFormatter={(v: number) => fmtCurrencyShort(v)} />
+            <Tooltip content={<BreakdownTooltip />} />
             <Legend />
-            <Bar dataKey="Wages" stackId="stack" fill="#F59E0B" name="Wages" />
-            <Bar dataKey="SG&A" stackId="stack" fill="#8B5CF6" name="SG&A" />
-            <Bar dataKey="Rent" stackId="stack" fill="#9CA3AF" name="Rent" />
-            <Bar dataKey="EBITDA" stackId="stack" fill="#22C55E" name="EBITDA" />
+            <Bar dataKey="Wages" stackId="stack" fill="#F59E0B" name="Wages">
+              <LabelList dataKey="WagesPct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="Advertising" stackId="stack" fill="#EC4899" name="Advertising">
+              <LabelList dataKey="AdvertisingPct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="Rent" stackId="stack" fill="#9CA3AF" name="Rent">
+              <LabelList dataKey="RentPct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="Utilities" stackId="stack" fill="#06B6D4" name="Utilities">
+              <LabelList dataKey="UtilitiesPct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="COGS" stackId="stack" fill="#3B82F6" name="COGS">
+              <LabelList dataKey="COGSPct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="SG&A" stackId="stack" fill="#8B5CF6" name="SG&A">
+              <LabelList dataKey="SG&APct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="EBITDA" stackId="stack" fill="#22C55E" name="EBITDA">
+              <LabelList dataKey="EBITDAPct" content={renderTopLabel} />
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
+        </div>
       </Card>
 
       {/* CI Chat */}
@@ -448,7 +611,9 @@ function SpaEBITDAContent() {
 export default function SpaEBITDAPage() {
   return (
     <DashboardShell>
-      {() => <SpaEBITDAContent />}
+      {({ dateFrom, dateTo }) => (
+        <SpaEBITDAContent dateFrom={dateFrom} dateTo={dateTo} />
+      )}
     </DashboardShell>
   );
 }

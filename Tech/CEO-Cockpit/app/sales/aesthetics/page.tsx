@@ -11,6 +11,7 @@ import {
   chartColors,
   formatCurrency,
 } from "@/lib/charts/config";
+import { formatDateRangeLabel } from "@/lib/utils/mock-date-filter";
 
 /* ═══════════════════════════════════════════════════════════════════════
    MOCK DATA — Aesthetics KPIs
@@ -103,7 +104,7 @@ function AestheticsContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date 
           Sales Performance — Aesthetics
         </h1>
         <p className="text-sm text-muted-foreground">
-          All figures EUR ex VAT
+          {formatDateRangeLabel(dateFrom, dateTo)} · All figures EUR ex VAT
         </p>
       </div>
 

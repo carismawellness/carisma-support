@@ -40,9 +40,9 @@ export const departments: Department[] = [
       { slug: "spa", label: "Spa", path: "/sales/spa", icon: Sparkles },
       { slug: "aesthetics", label: "Aesthetics", path: "/sales/aesthetics", icon: Heart },
       { slug: "slimming", label: "Slimming", path: "/sales/slimming", icon: Activity },
+      { slug: "crm", label: "CRM", path: "/crm", icon: Headphones },
     ],
   },
-  { slug: "crm", label: "CRM", icon: Headphones, path: "/crm" },
   {
     slug: "marketing",
     label: "Marketing",

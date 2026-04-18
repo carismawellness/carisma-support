@@ -31,7 +31,7 @@ export function DateRangePicker({ from, to, onChange }: DateRangePickerProps) {
           key={preset.label}
           variant="ghost"
           size="sm"
-          className="text-xs text-text-secondary hover:text-gold hover:bg-gold-bg"
+          className="hidden md:inline-flex text-xs text-text-secondary hover:text-gold hover:bg-gold-bg"
           onClick={() => {
             const range = preset.fn();
             onChange(range.from, range.to);
@@ -43,13 +43,32 @@ export function DateRangePicker({ from, to, onChange }: DateRangePickerProps) {
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
           className={cn(
-            "inline-flex items-center justify-start gap-2 rounded-lg border border-warm-border bg-white px-3 py-1.5 text-left text-sm font-normal text-charcoal hover:border-gold/30 transition-colors"
+            "inline-flex items-center justify-start gap-2 rounded-lg border border-warm-border bg-white px-2 md:px-3 py-1.5 text-left text-xs md:text-sm font-normal text-charcoal hover:border-gold/30 transition-colors"
           )}
         >
-          <CalendarIcon className="h-4 w-4 text-gold" />
-          {format(from, "MMM d")} - {format(to, "MMM d, yyyy")}
+          <CalendarIcon className="h-4 w-4 text-gold shrink-0" />
+          <span className="truncate">
+            {format(from, "MMM d")} - {format(to, "MMM d, yyyy")}
+          </span>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
+          <div className="flex gap-1 p-2 border-b border-border md:hidden">
+            {presets.map((preset) => (
+              <Button
+                key={preset.label}
+                variant="ghost"
+                size="sm"
+                className="text-xs flex-1 text-text-secondary hover:text-gold hover:bg-gold-bg"
+                onClick={() => {
+                  const range = preset.fn();
+                  onChange(range.from, range.to);
+                  setOpen(false);
+                }}
+              >
+                {preset.label}
+              </Button>
+            ))}
+          </div>
           <Calendar
             mode="range"
             selected={{ from, to }}

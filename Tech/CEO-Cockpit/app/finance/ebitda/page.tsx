@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo } from "react";
 import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
@@ -9,6 +9,12 @@ import {
   chartColors,
   formatCurrency,
 } from "@/lib/charts/config";
+import {
+  monthIndicesToDateObjects,
+  getFilteredIndices,
+  formatDateRangeLabel,
+  filteredCountLabel,
+} from "@/lib/utils/mock-date-filter";
 import {
   BarChart,
   Bar,
@@ -19,6 +25,8 @@ import {
   ResponsiveContainer,
   ReferenceLine,
   Cell,
+  LabelList,
+  Legend,
 } from "recharts";
 
 /* ------------------------------------------------------------------ */
@@ -57,7 +65,9 @@ interface MonthlyPL {
   ebitdaPct: number;
 }
 
-/* ---- PER-LOCATION MONTHLY DATA (indices 0–11 = 2024, 12–23 = 2025) ---- */
+/* ---- PER-LOCATION MONTHLY DATA (indices 0-11 = 2024, 12-23 = 2025) ---- */
+
+const MONTH_DATES = monthIndicesToDateObjects(2024, 24);
 
 function buildLocationData(): Record<string, (MonthlyPL | null)[]> {
   function buildSpa(
@@ -164,10 +174,10 @@ const LOCATION_DATA = buildLocationData();
 /*  HELPERS                                                            */
 /* ------------------------------------------------------------------ */
 
-function sumRange(locId: string, start: number, end: number) {
+function sumRangeIndices(locId: string, indices: number[]) {
   const data = LOCATION_DATA[locId];
   let revenue = 0, salaries = 0, sga = 0, rent = 0, ebitda = 0;
-  for (let i = start; i < end; i++) {
+  for (const i of indices) {
     const d = data[i];
     if (d) {
       revenue += d.revenue;
@@ -184,13 +194,13 @@ function sumRange(locId: string, start: number, end: number) {
 /*  WATERFALL BUILDER                                                  */
 /* ------------------------------------------------------------------ */
 
-function buildWaterfall(start: number, end: number) {
+function buildWaterfall(indices: number[]) {
   const entries: { name: string; value: number; cumulative: number; start: number; end: number; isTotal?: boolean }[] = [];
   let running = 0;
 
   // Spa locations sorted by EBITDA desc
   const spaLocs = LOCATIONS.filter(l => l.type === "spa")
-    .map(l => ({ name: l.name, ebitda: sumRange(l.id, start, end).ebitda }))
+    .map(l => ({ name: l.name, ebitda: sumRangeIndices(l.id, indices).ebitda }))
     .sort((a, b) => b.ebitda - a.ebitda);
 
   for (const loc of spaLocs) {
@@ -201,11 +211,17 @@ function buildWaterfall(start: number, end: number) {
 
   // Clinics
   for (const loc of LOCATIONS.filter(l => l.type === "clinic")) {
-    const totals = sumRange(loc.id, start, end);
+    const totals = sumRangeIndices(loc.id, indices);
     const s = running;
     running += totals.ebitda;
     entries.push({ name: loc.name, value: totals.ebitda, cumulative: running, start: s, end: running });
   }
+
+  // Corporate / HQ expenses (estimated)
+  const corpExpenses = -85000;
+  const sBeforeCorp = running;
+  running += corpExpenses;
+  entries.push({ name: "Corporate / HQ", value: corpExpenses, cumulative: running, start: sBeforeCorp, end: running });
 
   // Group Total
   entries.push({ name: "Group EBITDA", value: running, cumulative: running, start: 0, end: running, isTotal: true });
@@ -214,78 +230,190 @@ function buildWaterfall(start: number, end: number) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  STACKED BAR CHART DATA BUILDER                                     */
+/* ------------------------------------------------------------------ */
+
+interface CostBreakdownRow {
+  name: string;
+  wages: number;
+  wagesPct: number;
+  advertising: number;
+  adPct: number;
+  rent: number;
+  rentPct: number;
+  utilities: number;
+  utilPct: number;
+  cogs: number;
+  cogsPct: number;
+  sga: number;
+  sgaPct: number;
+  ebitda: number;
+  ebitdaPct: number;
+  revenue: number;
+  revenueLabel: string;
+}
+
+function buildCostBreakdownData(indices: number[]): CostBreakdownRow[] {
+  return LOCATIONS.map(loc => {
+    const totals = sumRangeIndices(loc.id, indices);
+    const rev = totals.revenue;
+    if (rev <= 0) {
+      return {
+        name: loc.name,
+        wages: 0, wagesPct: 0,
+        advertising: 0, adPct: 0,
+        rent: 0, rentPct: 0,
+        utilities: 0, utilPct: 0,
+        cogs: 0, cogsPct: 0,
+        sga: 0, sgaPct: 0,
+        ebitda: 0, ebitdaPct: 0,
+        revenue: 0, revenueLabel: "\u20AC0",
+      };
+    }
+
+    // Redistribute existing costs into 7 cost centers
+    const newWages = Math.round(totals.salaries * 0.89);
+    const cogsVal = Math.round(totals.salaries * 0.08);
+    const utilitiesVal = Math.round(totals.salaries * 0.03);
+    const newSga = Math.round(totals.sga * 0.60);
+    const advertisingVal = Math.round(totals.sga * 0.40);
+    const rentVal = totals.rent;
+    const ebitdaVal = rev - newWages - cogsVal - utilitiesVal - newSga - advertisingVal - rentVal;
+
+    const pct = (v: number) => Math.round((v / rev) * 100);
+    const formatRevLabel = (v: number) => {
+      if (v >= 1000000) return `\u20AC${(v / 1000000).toFixed(1)}M`;
+      if (v >= 1000) return `\u20AC${Math.round(v / 1000)}K`;
+      return `\u20AC${v}`;
+    };
+
+    return {
+      name: loc.name,
+      wages: newWages,
+      wagesPct: pct(newWages),
+      advertising: advertisingVal,
+      adPct: pct(advertisingVal),
+      rent: rentVal,
+      rentPct: pct(rentVal),
+      utilities: utilitiesVal,
+      utilPct: pct(utilitiesVal),
+      cogs: cogsVal,
+      cogsPct: pct(cogsVal),
+      sga: newSga,
+      sgaPct: pct(newSga),
+      ebitda: ebitdaVal,
+      ebitdaPct: pct(ebitdaVal),
+      revenue: rev,
+      revenueLabel: formatRevLabel(rev),
+    };
+  }).filter(r => r.revenue > 0)
+    .sort((a, b) => b.revenue - a.revenue);
+}
+
+/* ------------------------------------------------------------------ */
+/*  CUSTOM LABEL RENDERERS                                             */
+/* ------------------------------------------------------------------ */
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const renderSegmentLabel = (props: any) => {
+  const { x, y, width, height, value } = props;
+  if (!value || Math.abs(height) < 18) return null;
+  return (
+    <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" fontSize={9} fontWeight="500">
+      {value}%
+    </text>
+  );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const renderTopLabel = (props: any) => {
+  const { x, y, width, value } = props;
+  if (!value) return null;
+  return (
+    <text x={x + width / 2} y={y - 8} fill="#22C55E" textAnchor="middle" fontSize={11} fontWeight="bold">
+      {value}%
+    </text>
+  );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const renderRevenueLabel = (props: any) => {
+  const { x, y, width, value } = props;
+  if (!value) return null;
+  return (
+    <text x={x + width / 2} y={y - 22} fill="currentColor" textAnchor="middle" fontSize={10} fontWeight="600">
+      {value}
+    </text>
+  );
+};
+
+/* ------------------------------------------------------------------ */
 /*  INNER COMPONENT                                                    */
 /* ------------------------------------------------------------------ */
 
-function EBITDAOverviewContent() {
-  const [yearFilter, setYearFilter] = useState<"2024" | "2025" | "all">("2025");
+function EBITDAOverviewContent({
+  dateFrom,
+  dateTo,
+}: {
+  dateFrom: Date;
+  dateTo: Date;
+}) {
+  /* --- Filtered indices from date range ------------------------------ */
+  const filteredIdx = useMemo(
+    () => getFilteredIndices(MONTH_DATES, dateFrom, dateTo),
+    [dateFrom, dateTo]
+  );
 
-  const rangeStart = yearFilter === "2024" ? 0 : yearFilter === "2025" ? 12 : 0;
-  const rangeEnd = yearFilter === "2024" ? 12 : 24;
-  const yearLabel = yearFilter === "all" ? "2024–2025" : yearFilter;
+  const monthCount = filteredIdx.length;
+  const rangeLabel = useMemo(() => formatDateRangeLabel(dateFrom, dateTo), [dateFrom, dateTo]);
 
   /* --- Compute totals per location --------------------------------- */
-  const locationTotals = LOCATIONS.map(loc => ({
-    ...loc,
-    ...sumRange(loc.id, rangeStart, rangeEnd),
-  })).filter(l => l.revenue > 0 || l.ebitda !== 0);
+  const locationTotals = useMemo(
+    () =>
+      LOCATIONS.map(loc => ({
+        ...loc,
+        ...sumRangeIndices(loc.id, filteredIdx),
+      })).filter(l => l.revenue > 0 || l.ebitda !== 0),
+    [filteredIdx]
+  );
 
   /* --- Brand aggregates -------------------------------------------- */
-  const spaTotals = locationTotals.filter(l => l.type === "spa").reduce(
-    (acc, l) => ({ revenue: acc.revenue + l.revenue, ebitda: acc.ebitda + l.ebitda }),
-    { revenue: 0, ebitda: 0 },
-  );
-  const aesSummary = sumRange("aesthetics", rangeStart, rangeEnd);
-  const slimSummary = sumRange("slimming", rangeStart, rangeEnd);
+  const { spaTotals, aesSummary, slimSummary, groupRevenue, groupEbitda, groupMargin } = useMemo(() => {
+    const spa = locationTotals.filter(l => l.type === "spa").reduce(
+      (acc, l) => ({ revenue: acc.revenue + l.revenue, ebitda: acc.ebitda + l.ebitda }),
+      { revenue: 0, ebitda: 0 },
+    );
+    const aes = sumRangeIndices("aesthetics", filteredIdx);
+    const slim = sumRangeIndices("slimming", filteredIdx);
 
-  const groupRevenue = spaTotals.revenue + aesSummary.revenue + slimSummary.revenue;
-  const groupEbitda = spaTotals.ebitda + aesSummary.ebitda + slimSummary.ebitda;
-  const groupMargin = groupRevenue > 0 ? Math.round((groupEbitda / groupRevenue) * 100) : 0;
+    const gRev = spa.revenue + aes.revenue + slim.revenue;
+    const gEbitda = spa.ebitda + aes.ebitda + slim.ebitda;
+    const gMargin = gRev > 0 ? Math.round((gEbitda / gRev) * 100) : 0;
 
-  /* --- YoY comparison (only meaningful when yearFilter is 2025) ----- */
-  const priorGroupRev = yearFilter === "2025"
-    ? LOCATIONS.reduce((s, l) => s + sumRange(l.id, 0, 12).revenue, 0)
-    : 0;
-  const priorGroupEbitda = yearFilter === "2025"
-    ? LOCATIONS.reduce((s, l) => s + sumRange(l.id, 0, 12).ebitda, 0)
-    : 0;
-  const revenueYoY = priorGroupRev > 0
-    ? Math.round(((groupRevenue - priorGroupRev) / priorGroupRev) * 100) : undefined;
-  const ebitdaYoY = priorGroupEbitda > 0
-    ? Math.round(((groupEbitda - priorGroupEbitda) / Math.abs(priorGroupEbitda)) * 100) : undefined;
+    return { spaTotals: spa, aesSummary: aes, slimSummary: slim, groupRevenue: gRev, groupEbitda: gEbitda, groupMargin: gMargin };
+  }, [locationTotals, filteredIdx]);
 
   /* --- KPI cards --------------------------------------------------- */
-  const kpis: KPIData[] = [
-    { label: `Group EBITDA (${yearLabel})`, value: formatCurrency(groupEbitda), trend: ebitdaYoY },
-    { label: "Group EBITDA Margin", value: `${groupMargin}%`, target: "30%", targetValue: 30, currentValue: groupMargin },
-    { label: "Group Revenue", value: formatCurrency(groupRevenue), trend: revenueYoY },
-    { label: "Active Locations", value: `${locationTotals.length}` },
-  ];
+  const kpis: KPIData[] = useMemo(() => [
+    { label: "Group Revenue", value: formatCurrency(groupRevenue) },
+    { label: `Group EBITDA (${filteredCountLabel(monthCount, "month")})`, value: formatCurrency(groupEbitda) },
+    { label: "EBITDA Margin", value: `${groupMargin}%`, target: "30%", targetValue: 30, currentValue: groupMargin },
+  ], [groupRevenue, groupEbitda, groupMargin, monthCount]);
 
   /* --- Waterfall --------------------------------------------------- */
-  const waterfallData = buildWaterfall(rangeStart, rangeEnd);
+  const waterfallData = useMemo(() => buildWaterfall(filteredIdx), [filteredIdx]);
 
-  /* --- P&L table: all locations sorted by EBITDA desc -------------- */
-  const pnlRows = [...locationTotals].sort((a, b) => b.ebitda - a.ebitda);
-  const pnlTotal = pnlRows.reduce(
-    (acc, r) => ({ revenue: acc.revenue + r.revenue, salaries: acc.salaries + r.salaries, sga: acc.sga + r.sga, rent: acc.rent + r.rent, ebitda: acc.ebitda + r.ebitda }),
-    { revenue: 0, salaries: 0, sga: 0, rent: 0, ebitda: 0 },
-  );
+  /* --- Stacked bar chart data -------------------------------------- */
+  const costBreakdownData = useMemo(() => buildCostBreakdownData(filteredIdx), [filteredIdx]);
 
   /* --- Brand cards data -------------------------------------------- */
-  const brands = [
+  const brands = useMemo(() => [
     {
       name: "Spa",
       color: chartColors.spa,
       ebitda: spaTotals.ebitda,
       revenue: spaTotals.revenue,
       margin: spaTotals.revenue > 0 ? Math.round((spaTotals.ebitda / spaTotals.revenue) * 100) : 0,
-      yoy: yearFilter === "2025"
-        ? (() => {
-            const prior = LOCATIONS.filter(l => l.type === "spa").reduce((s, l) => s + sumRange(l.id, 0, 12).ebitda, 0);
-            return prior > 0 ? Math.round(((spaTotals.ebitda - prior) / Math.abs(prior)) * 100) : undefined;
-          })()
-        : undefined,
       locations: LOCATIONS.filter(l => l.type === "spa").length,
     },
     {
@@ -294,7 +422,6 @@ function EBITDAOverviewContent() {
       ebitda: aesSummary.ebitda,
       revenue: aesSummary.revenue,
       margin: aesSummary.ebitdaPct,
-      yoy: undefined, // no prior year
       locations: 1,
     },
     {
@@ -303,30 +430,18 @@ function EBITDAOverviewContent() {
       ebitda: slimSummary.ebitda,
       revenue: slimSummary.revenue,
       margin: slimSummary.ebitdaPct,
-      yoy: undefined,
       locations: 1,
     },
-  ];
+  ], [spaTotals, aesSummary, slimSummary]);
 
   return (
     <>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">EBITDA Overview</h1>
-          <p className="text-sm text-muted-foreground">Group-wide EBITDA performance across all brands and locations</p>
-        </div>
-        <div className="flex gap-1 bg-muted rounded-lg p-1">
-          {(["2024", "2025", "all"] as const).map(y => (
-            <button
-              key={y}
-              onClick={() => setYearFilter(y)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                yearFilter === y ? "bg-background shadow text-foreground" : "text-text-secondary hover:text-foreground"
-              }`}
-            >
-              {y === "all" ? "All" : y}
-            </button>
-          ))}
+          <p className="text-sm text-muted-foreground">
+            Group-wide EBITDA performance — {rangeLabel} ({filteredCountLabel(monthCount, "month")})
+          </p>
         </div>
       </div>
 
@@ -334,18 +449,11 @@ function EBITDAOverviewContent() {
       <KPICardRow kpis={kpis} />
 
       {/* Brand Breakdown Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
         {brands.map(brand => (
-          <Card key={brand.name} className="p-6 border-l-4" style={{ borderLeftColor: brand.color }}>
+          <Card key={brand.name} className="p-3 md:p-6 border-l-4" style={{ borderLeftColor: brand.color }}>
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-foreground">{brand.name}</h3>
-              {brand.yoy !== undefined && (
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  brand.yoy >= 0 ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
-                }`}>
-                  {brand.yoy >= 0 ? "+" : ""}{brand.yoy}% YoY
-                </span>
-              )}
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
@@ -377,15 +485,77 @@ function EBITDAOverviewContent() {
         ))}
       </div>
 
-      {/* Contribution Waterfall */}
-      <Card className="p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-1">Contribution Waterfall</h2>
-        <p className="text-xs text-muted-foreground mb-4">How each location contributes to Group EBITDA ({yearLabel})</p>
-        <ResponsiveContainer width="100%" height={380}>
-          <BarChart data={waterfallData} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
+      {/* EBITDA by Business Unit — Stacked Bar Chart */}
+      <Card className="p-3 md:p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-1">EBITDA by Business Unit — Revenue Breakdown</h2>
+        <p className="text-xs text-muted-foreground mb-4">Stacked cost structure per location. Green = EBITDA margin.</p>
+        <div className="h-[300px] md:h-[420px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={costBreakdownData} margin={{ top: 40, right: 10, left: 10, bottom: 70 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" angle={-40} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
-            <YAxis tickFormatter={(v: number) => `€${Math.round(v / 1000)}k`} />
+            <YAxis tickFormatter={(v: number) => `\u20AC${Math.round(v / 1000)}k`} />
+            <Tooltip
+              content={({ active, payload, label }) => {
+                if (!active || !payload?.length) return null;
+                const row = costBreakdownData.find(d => d.name === label);
+                if (!row) return null;
+                return (
+                  <div className="bg-background border border-border rounded-lg p-3 shadow-lg text-sm">
+                    <p className="font-semibold text-foreground mb-1">{row.name}</p>
+                    <p className="text-muted-foreground">Revenue: <span className="font-medium text-foreground">{formatCurrency(row.revenue)}</span></p>
+                    <p className="text-amber-600">Wages: {formatCurrency(row.wages)} ({row.wagesPct}%)</p>
+                    <p className="text-pink-600">Advertising: {formatCurrency(row.advertising)} ({row.adPct}%)</p>
+                    <p className="text-gray-500">Rent: {formatCurrency(row.rent)} ({row.rentPct}%)</p>
+                    <p className="text-cyan-600">Utilities: {formatCurrency(row.utilities)} ({row.utilPct}%)</p>
+                    <p className="text-blue-600">COGS: {formatCurrency(row.cogs)} ({row.cogsPct}%)</p>
+                    <p className="text-purple-600">SG&A: {formatCurrency(row.sga)} ({row.sgaPct}%)</p>
+                    <p className={`font-bold ${row.ebitda >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                      EBITDA: {formatCurrency(row.ebitda)} ({row.ebitdaPct}%)
+                    </p>
+                  </div>
+                );
+              }}
+            />
+            <Legend verticalAlign="top" height={36} />
+            <Bar dataKey="wages" stackId="costs" fill="#F59E0B" name="Wages">
+              <LabelList dataKey="wagesPct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="advertising" stackId="costs" fill="#EC4899" name="Advertising">
+              <LabelList dataKey="adPct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="rent" stackId="costs" fill="#9CA3AF" name="Rent">
+              <LabelList dataKey="rentPct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="utilities" stackId="costs" fill="#06B6D4" name="Utilities">
+              <LabelList dataKey="utilPct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="cogs" stackId="costs" fill="#3B82F6" name="COGS">
+              <LabelList dataKey="cogsPct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="sga" stackId="costs" fill="#8B5CF6" name="SG&A">
+              <LabelList dataKey="sgaPct" content={renderSegmentLabel} />
+            </Bar>
+            <Bar dataKey="ebitda" stackId="costs" fill="#22C55E" name="EBITDA">
+              <LabelList dataKey="ebitdaPct" content={renderSegmentLabel} />
+              <LabelList dataKey="ebitdaPct" content={renderTopLabel} />
+              <LabelList dataKey="revenueLabel" content={renderRevenueLabel} />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* Contribution Waterfall */}
+      <Card className="p-3 md:p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-1">Contribution Waterfall</h2>
+        <p className="text-xs text-muted-foreground mb-4">How each location contributes to Group EBITDA ({filteredCountLabel(monthCount, "month")})</p>
+        <div className="h-[280px] md:h-[380px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={waterfallData} margin={{ top: 20, right: 10, left: 10, bottom: 70 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" angle={-40} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
+            <YAxis tickFormatter={(v: number) => `\u20AC${Math.round(v / 1000)}k`} />
             <Tooltip
               content={({ active, payload, label }) => {
                 if (!active || !payload?.length) return null;
@@ -416,76 +586,6 @@ function EBITDAOverviewContent() {
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-      </Card>
-
-      {/* P&L by Business Unit */}
-      <Card className="p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-1">P&L by Business Unit</h2>
-        <p className="text-xs text-muted-foreground mb-4">All locations — {yearLabel}. Sorted by EBITDA.</p>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b-2 border-border">
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Location</th>
-                <th className="text-left py-3 px-4 font-semibold text-muted-foreground">Type</th>
-                <th className="text-right py-3 px-4 font-semibold text-muted-foreground">Revenue</th>
-                <th className="text-right py-3 px-4 font-semibold text-muted-foreground">Wages</th>
-                <th className="text-right py-3 px-4 font-semibold text-muted-foreground">SG&A</th>
-                <th className="text-right py-3 px-4 font-semibold text-muted-foreground">Rent</th>
-                <th className="text-right py-3 px-4 font-semibold text-muted-foreground">EBITDA</th>
-                <th className="text-right py-3 px-4 font-semibold text-muted-foreground">EBITDA %</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pnlRows.map(row => (
-                <tr key={row.id} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
-                  <td className="py-3 px-4 font-medium text-foreground">
-                    <span className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: row.color }} />
-                      {row.name}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-muted-foreground capitalize">{row.type}</td>
-                  <td className="py-3 px-4 text-right text-foreground">{formatCurrency(row.revenue)}</td>
-                  <td className="py-3 px-4 text-right text-foreground">{formatCurrency(row.salaries)}</td>
-                  <td className="py-3 px-4 text-right text-foreground">{row.sga > 0 ? formatCurrency(row.sga) : "—"}</td>
-                  <td className="py-3 px-4 text-right text-foreground">{row.rent > 0 ? formatCurrency(row.rent) : "—"}</td>
-                  <td className={`py-3 px-4 text-right font-bold ${row.ebitda >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                    {formatCurrency(row.ebitda)}
-                  </td>
-                  <td className="py-3 px-4 text-right">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                      row.ebitdaPct >= 40 ? "bg-emerald-100 text-emerald-800"
-                      : row.ebitdaPct >= 20 ? "bg-amber-100 text-amber-800"
-                      : "bg-red-100 text-red-800"
-                    }`}>
-                      {row.ebitdaPct}%
-                    </span>
-                  </td>
-                </tr>
-              ))}
-              {/* Total row */}
-              <tr className="border-t-2 border-border font-bold bg-muted/50">
-                <td className="py-3 px-4 text-foreground" colSpan={2}>Group Total</td>
-                <td className="py-3 px-4 text-right text-foreground">{formatCurrency(pnlTotal.revenue)}</td>
-                <td className="py-3 px-4 text-right text-foreground">{formatCurrency(pnlTotal.salaries)}</td>
-                <td className="py-3 px-4 text-right text-foreground">{pnlTotal.sga > 0 ? formatCurrency(pnlTotal.sga) : "—"}</td>
-                <td className="py-3 px-4 text-right text-foreground">{pnlTotal.rent > 0 ? formatCurrency(pnlTotal.rent) : "—"}</td>
-                <td className={`py-3 px-4 text-right ${pnlTotal.ebitda >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                  {formatCurrency(pnlTotal.ebitda)}
-                </td>
-                <td className="py-3 px-4 text-right">
-                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                    (pnlTotal.revenue > 0 ? Math.round((pnlTotal.ebitda / pnlTotal.revenue) * 100) : 0) >= 30
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-amber-100 text-amber-800"
-                  }`}>
-                    {pnlTotal.revenue > 0 ? `${Math.round((pnlTotal.ebitda / pnlTotal.revenue) * 100)}%` : "0%"}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </Card>
 
@@ -501,7 +601,9 @@ function EBITDAOverviewContent() {
 export default function EBITDAPage() {
   return (
     <DashboardShell>
-      {() => <EBITDAOverviewContent />}
+      {({ dateFrom, dateTo }) => (
+        <EBITDAOverviewContent dateFrom={dateFrom} dateTo={dateTo} />
+      )}
     </DashboardShell>
   );
 }

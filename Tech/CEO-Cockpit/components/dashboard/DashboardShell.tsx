@@ -31,8 +31,16 @@ export function DashboardShell({ children }: DashboardShellProps) {
         dateFrom={from}
         dateTo={to}
         onDateChange={setRange}
+        onMobileMenuOpen={() => setMobileOpen(true)}
+        sidebarCollapsed={collapsed}
       />
-      <main className={cn("pt-16 p-6 space-y-6 transition-all duration-200", collapsed ? "ml-[4.5rem]" : "ml-60")}>
+      <main
+        className={cn(
+          "pt-14 p-3 md:p-6 space-y-4 md:space-y-6 transition-all duration-200",
+          "ml-0",
+          collapsed ? "lg:ml-[4.5rem]" : "lg:ml-60"
+        )}
+      >
         {children({ dateFrom: from, dateTo: to, brandFilter: null })}
       </main>
     </div>
