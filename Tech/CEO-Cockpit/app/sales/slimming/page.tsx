@@ -6,6 +6,7 @@ import { SalesKPICard } from "@/components/sales/SalesKPICard";
 import { SalesKPIGrid } from "@/components/sales/SalesKPIGrid";
 import { FunnelChart } from "@/components/sales/FunnelChart";
 import { StaffPerformanceChart } from "@/components/sales/StaffPerformanceChart";
+import { ServiceBreakdownChart } from "@/components/sales/ServiceBreakdownChart";
 import { Card } from "@/components/ui/card";
 import {
   chartColors,
@@ -36,10 +37,10 @@ const MOCK_SLIM_MAX_COURSE_PCT   = [0,6,13,5,17,8,10,10,12];
 const MOCK_SLIM_SHOWUP_PCT       = [50,82,82,73,75,58,80,71,54];
 
 /* ═══════════════════════════════════════════════════════════════════════
-   MOCK DATA — Therapist Performance
+   MOCK DATA — Practitioner Performance
    ═══════════════════════════════════════════════════════════════════════ */
 
-const THERAPIST_DATA = [
+const PRACTITIONER_DATA = [
   { name: "Maria Vella", serviceRevenue: 3240, retailRevenue: 380 },
   { name: "Katya Borg", serviceRevenue: 2890, retailRevenue: 420 },
   { name: "Daniela Camilleri", serviceRevenue: 2450, retailRevenue: 290 },
@@ -47,6 +48,15 @@ const THERAPIST_DATA = [
   { name: "Lara Zammit", serviceRevenue: 1650, retailRevenue: 120 },
   { name: "Nadia Farrugia", serviceRevenue: 1420, retailRevenue: 85 },
   { name: "Christine Attard", serviceRevenue: 890, retailRevenue: 180 },
+];
+
+const SLIMMING_SERVICE_BREAKDOWN = [
+  { service: "Body Contouring", revenue: 22800, pct: 34.7 },
+  { service: "Weight Loss Programme", revenue: 16400, pct: 24.9 },
+  { service: "Fat Reduction", revenue: 10200, pct: 15.5 },
+  { service: "Cellulite Treatment", revenue: 7600, pct: 11.6 },
+  { service: "Nutritional Consult", revenue: 5200, pct: 7.9 },
+  { service: "Other", revenue: 3537, pct: 5.4 },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -134,7 +144,7 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
       </div>
 
       {/* ── Ramp-up Banner ──────────────────────────────────────────── */}
-      <Card className="border-[#8EB093]/30 bg-gradient-to-r from-[#8EB093]/5 via-transparent to-[#B79E61]/5 p-5">
+      <Card className="border-[#8EB093]/30 bg-gradient-to-r from-[#8EB093]/5 via-transparent to-[#B79E61]/5 p-3 md:p-5">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <TrendingUp className="h-5 w-5 text-[#8EB093]" />
@@ -165,7 +175,7 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
       </Card>
 
       {/* ── KPI Summary Cards ───────────────────────────────────────── */}
-      <SalesKPIGrid>
+      <SalesKPIGrid columns={4}>
         <SalesKPICard
           label="Total Service Revenue"
           value={formatCurrency(totalSvcRev)}
@@ -190,19 +200,43 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
           yoyChange={undefined}
           subtitle={`L4W vs F4W: +${bookingsGrowth.toFixed(0)}%`}
         />
-        <SalesKPICard
-          label="Consult-to-Course Conv"
-          value={formatPercent(latestCourseConv)}
-          yoyChange={undefined}
-          subtitle={`Target: 65% | ${courseConvDelta > 0 ? "+" : ""}${courseConvDelta}pp WoW`}
-        />
-        <SalesKPICard
-          label="Max Course Rate"
-          value={formatPercent(latestMaxCourse)}
-          yoyChange={undefined}
-          subtitle={`Target: 12.5% | ${maxCourseDelta > 0 ? "+" : ""}${maxCourseDelta}pp WoW`}
-        />
       </SalesKPIGrid>
+
+      {/* ── Conversion Rates (matching Aesthetics style) ────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        <Card className="p-3 md:p-6 flex flex-col items-center justify-center text-center bg-gradient-to-br from-[#8EB093]/10 to-white">
+          <UserCheck className="h-8 w-8 text-[#8EB093] mb-2" />
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">
+            Consultation Conversion Rate
+          </p>
+          <p className="text-4xl font-bold text-[#8EB093] tracking-tight">
+            {latestCourseConv}%
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Target: 65% | Avg: {avg(MOCK_SLIM_COURSE_CONV_PCT).toFixed(0)}%
+          </p>
+          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold mt-2 ${courseConvDelta >= 0 ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+            <TrendingUp className="h-3 w-3" />
+            {courseConvDelta > 0 ? "+" : ""}{courseConvDelta}pp WoW
+          </span>
+        </Card>
+        <Card className="p-3 md:p-6 flex flex-col items-center justify-center text-center bg-gradient-to-br from-[#B79E61]/10 to-white">
+          <Rocket className="h-8 w-8 text-[#B79E61] mb-2" />
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">
+            Max Course Rate
+          </p>
+          <p className="text-4xl font-bold text-[#B79E61] tracking-tight">
+            {latestMaxCourse}%
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Target: 10-15% | Avg: {avg(MOCK_SLIM_MAX_COURSE_PCT).toFixed(0)}%
+          </p>
+          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold mt-2 ${maxCourseDelta >= 0 ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+            <TrendingUp className="h-3 w-3" />
+            {maxCourseDelta > 0 ? "+" : ""}{maxCourseDelta}pp WoW
+          </span>
+        </Card>
+      </div>
 
       {/* ── Sales Funnel ────────────────────────────────────────────── */}
       <FunnelChart
@@ -221,14 +255,21 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
         ]}
       />
 
-      {/* ── Therapist Performance ──────────────────────────────────── */}
+      {/* ── Practitioner Performance ──────────────────────────────────── */}
       <StaffPerformanceChart
-        title="Therapist Performance"
+        title="Practitioner Performance"
         subtitle="Service + Retail revenue (EUR)"
-        data={THERAPIST_DATA}
+        data={PRACTITIONER_DATA}
         serviceColor={chartColors.slimming}
         retailColor={chartColors.spa}
         icon={<UserCheck className="h-5 w-5 text-[#8EB093]" />}
+      />
+
+      {/* ── Service Revenue Breakdown ───────────────────────────────── */}
+      <ServiceBreakdownChart
+        title="Service Revenue Breakdown"
+        data={SLIMMING_SERVICE_BREAKDOWN}
+        color={chartColors.slimming}
       />
 
       <CIChat />

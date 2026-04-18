@@ -88,6 +88,7 @@ const brandChartData = BRAND_REVENUE_DATA.map((b) => {
     "Retail Revenue": b.retail,
     "Last Year Total": b.lastYearTotal > 0 ? b.lastYearTotal : null,
     yoyPct: b.lastYearTotal > 0 ? yoyPct(currentTotal, b.lastYearTotal) : null,
+    total: currentTotal,
     fill: brandColorMap[b.brand],
   };
 });
@@ -249,8 +250,8 @@ export default function SalesPage() {
             </p>
           </div>
 
-          {/* ── KPI Summary Cards (6 cards, 3 per row) ──────────────── */}
-          <SalesKPIGrid columns={6}>
+          {/* ── Company-wide KPIs ──────────────────────────────────── */}
+          <SalesKPIGrid columns={3}>
             <SalesKPICard
               label="Total Net Revenue"
               value={formatCurrency(KPI_DATA.totalNetRevenue.value)}
@@ -267,25 +268,38 @@ export default function SalesPage() {
               subtitle={`${KPI_DATA.retailRevenue.pctOfTotal}% of total`}
               yoyChange={KPI_DATA.retailRevenue.yoy}
             />
-            <SalesKPICard
-              label="Spa Members"
-              value={KPI_DATA.spaMembers.value.toLocaleString()}
-              yoyChange={KPI_DATA.spaMembers.yoy}
-            />
-            <SalesKPICard
-              label="Aesthetics Members"
-              value={KPI_DATA.aestheticsMembers.value.toLocaleString()}
-              yoyChange={KPI_DATA.aestheticsMembers.yoy}
-            />
-            <SalesKPICard
-              label="Slimming Members"
-              value={KPI_DATA.slimmingMembers.value.toLocaleString()}
-              subtitle="Since Feb 2026"
-            />
           </SalesKPIGrid>
 
+          {/* ── Brand Snapshot (3 cols: Spa | Aesthetics | Slimming) ── */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="p-3 md:p-5 border-l-4" style={{ borderLeftColor: chartColors.spa }}>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Spa</p>
+              <p className="text-xl md:text-2xl font-bold text-foreground">{formatCurrency(BRAND_REVENUE_DATA[0].services + BRAND_REVENUE_DATA[0].retail)}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {KPI_DATA.spaMembers.value.toLocaleString()} members
+                <span className="text-green-600 font-medium ml-1">+{KPI_DATA.spaMembers.yoy}%</span>
+              </p>
+            </Card>
+            <Card className="p-3 md:p-5 border-l-4" style={{ borderLeftColor: chartColors.aesthetics }}>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Aesthetics</p>
+              <p className="text-xl md:text-2xl font-bold text-foreground">{formatCurrency(BRAND_REVENUE_DATA[1].services + BRAND_REVENUE_DATA[1].retail)}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {KPI_DATA.aestheticsMembers.value.toLocaleString()} clients
+                <span className="text-green-600 font-medium ml-1">+{KPI_DATA.aestheticsMembers.yoy}%</span>
+              </p>
+            </Card>
+            <Card className="p-3 md:p-5 border-l-4" style={{ borderLeftColor: chartColors.slimming }}>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Slimming</p>
+              <p className="text-xl md:text-2xl font-bold text-foreground">{formatCurrency(BRAND_REVENUE_DATA[2].services + BRAND_REVENUE_DATA[2].retail)}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {KPI_DATA.slimmingMembers.value.toLocaleString()} members
+                <span className="text-muted-foreground ml-1">Since Feb 2026</span>
+              </p>
+            </Card>
+          </div>
+
           {/* ── Revenue by Brand (Stacked Bar + Line) ───────────────── */}
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             <h2 className="text-lg font-semibold text-foreground mb-1">
               Revenue by Brand
             </h2>
@@ -293,10 +307,11 @@ export default function SalesPage() {
               Service + Retail revenue per brand vs last year total | YoY delta
               shown above each bar
             </p>
-            <ResponsiveContainer width="100%" height={380}>
+            <div className="h-[260px] md:h-[380px]">
+            <ResponsiveContainer width="100%" height="100%">
               <ComposedChart
                 data={brandChartData}
-                margin={{ top: 24, right: 30, left: 20, bottom: 5 }}
+                margin={{ top: 16, right: 10, left: 10, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
                 <XAxis dataKey="brand" tick={{ fontSize: 12 }} />
@@ -314,14 +329,72 @@ export default function SalesPage() {
                   stackId="revenue"
                   fill={chartColors.spa}
                   radius={[0, 0, 0, 0]}
-                />
+                >
+                  <LabelList
+                    dataKey="Service Revenue"
+                    content={(props) => {
+                      const { x, width, y, height, value } = props as Record<string, unknown>;
+                      const w = Number(width);
+                      if (w < 40) return <></>;
+                      return (
+                        <text
+                          x={Number(x) + w / 2}
+                          y={Number(y) + Number(height) / 2}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fontSize={11}
+                          fontWeight={600}
+                          fill="white"
+                        >
+                          {formatCurrency(Number(value))}
+                        </text>
+                      );
+                    }}
+                  />
+                </Bar>
                 <Bar
                   dataKey="Retail Revenue"
                   stackId="revenue"
                   fill={chartColors.aesthetics}
                   radius={[3, 3, 0, 0]}
-                  label={renderBrandYoYLabel}
-                />
+                >
+                  <LabelList
+                    dataKey="total"
+                    content={(props) => {
+                      const { x, width, y, index } = props as Record<string, unknown>;
+                      const entry = brandChartData[Number(index)];
+                      if (!entry) return <></>;
+                      const pct = entry.yoyPct;
+                      const isPositive = pct !== null && pct >= 0;
+                      return (
+                        <>
+                          <text
+                            x={Number(x) + Number(width) / 2}
+                            y={Number(y) - 20}
+                            textAnchor="middle"
+                            fontSize={12}
+                            fontWeight={700}
+                            fill="#374151"
+                          >
+                            {formatCurrency(entry.total)}
+                          </text>
+                          {pct !== null && (
+                            <text
+                              x={Number(x) + Number(width) / 2}
+                              y={Number(y) - 6}
+                              textAnchor="middle"
+                              fontSize={10}
+                              fontWeight={600}
+                              fill={isPositive ? "#059669" : "#dc2626"}
+                            >
+                              {isPositive ? "+" : ""}{pct.toFixed(1)}% YoY
+                            </text>
+                          )}
+                        </>
+                      );
+                    }}
+                  />
+                </Bar>
                 <Line
                   type="monotone"
                   dataKey="Last Year Total"
@@ -333,20 +406,22 @@ export default function SalesPage() {
                 />
               </ComposedChart>
             </ResponsiveContainer>
+            </div>
           </Card>
 
           {/* ── Average Order Value by Brand ────────────────────────── */}
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             <h2 className="text-lg font-semibold text-foreground mb-1">
               Average Order Value by Brand
             </h2>
             <p className="text-xs text-muted-foreground mb-5">
               Current period AOV vs last year | YoY delta shown above each bar
             </p>
-            <ResponsiveContainer width="100%" height={340}>
+            <div className="h-[240px] md:h-[340px]">
+            <ResponsiveContainer width="100%" height="100%">
               <ComposedChart
                 data={aovChartData}
-                margin={{ top: 24, right: 30, left: 20, bottom: 5 }}
+                margin={{ top: 16, right: 10, left: 10, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
                 <XAxis dataKey="brand" tick={{ fontSize: 12 }} />
@@ -376,6 +451,7 @@ export default function SalesPage() {
                 />
               </ComposedChart>
             </ResponsiveContainer>
+            </div>
           </Card>
 
           <CIChat />

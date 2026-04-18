@@ -6,12 +6,11 @@ import { SalesKPICard } from "@/components/sales/SalesKPICard";
 import { SalesKPIGrid } from "@/components/sales/SalesKPIGrid";
 import { FunnelChart } from "@/components/sales/FunnelChart";
 import { StaffPerformanceChart } from "@/components/sales/StaffPerformanceChart";
-import { Card } from "@/components/ui/card";
+import { ServiceBreakdownChart } from "@/components/sales/ServiceBreakdownChart";
 import {
   chartColors,
   formatCurrency,
 } from "@/lib/charts/config";
-import { TrendingUp, UserCheck } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════════════
    MOCK DATA — Aesthetics KPIs
@@ -53,10 +52,10 @@ const SERVICE_BREAKDOWN = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
-   THERAPIST PERFORMANCE DATA (mock — sorted descending)
+   PRACTITIONER PERFORMANCE DATA (mock — sorted descending)
    ═══════════════════════════════════════════════════════════════════════ */
 
-const THERAPIST_DATA = [
+const PRACTITIONER_DATA = [
   { name: "Dr. Elisa Grech", serviceRevenue: 14200, retailRevenue: 620 },
   { name: "Dr. Martina Vella", serviceRevenue: 11850, retailRevenue: 410 },
   { name: "Kyra Camilleri", serviceRevenue: 9400, retailRevenue: 2850 },
@@ -93,7 +92,8 @@ function AestheticsContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date 
   const bookShowRate = sum(MOCK_AES_BOOK_SHOW) / sum(MOCK_AES_BOOK_CAL) * 100;
 
   // Consultation conversion rate
-  const recentConvPct = MOCK_AES_CONV_PCT;
+  const avgConvPct = avg(MOCK_AES_CONV_PCT);
+  const avgAov = Math.round(avg(MOCK_AES_AOV));
 
   return (
     <>
@@ -107,8 +107,8 @@ function AestheticsContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date 
         </p>
       </div>
 
-      {/* ── KPI Summary Cards (4 cards) ─────────────────────────────── */}
-      <SalesKPIGrid columns={4}>
+      {/* ── KPI Summary Cards (6 cards) ─────────────────────────────── */}
+      <SalesKPIGrid columns={6}>
         <SalesKPICard
           label="Total Net Revenue"
           value={formatCurrency(totalNetRev)}
@@ -126,6 +126,18 @@ function AestheticsContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date 
           value={`\u20AC${avgRevPerHour.toFixed(0)}`}
           subtitle="Per treatment hour"
           yoyChange={6.1}
+        />
+        <SalesKPICard
+          label="Consultation Conv %"
+          value={`${avgConvPct.toFixed(0)}%`}
+          subtitle="Avg across all periods"
+          yoyChange={5.2}
+        />
+        <SalesKPICard
+          label="Avg Order Value"
+          value={formatCurrency(avgAov)}
+          subtitle="Across all consultations"
+          yoyChange={3.8}
         />
         <SalesKPICard
           label="Repeat Customer %"
@@ -156,73 +168,20 @@ function AestheticsContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date 
         ]}
       />
 
-      {/* ── Conversion Rate / AOV / Service Breakdown ───────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Consultation Conversion Rate */}
-        <Card className="p-6 flex flex-col items-center justify-center text-center bg-gradient-to-br from-teal-50/50 to-white">
-          <UserCheck className="h-8 w-8 text-teal-600 mb-2" />
-          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">
-            Consultation Conversion Rate
-          </p>
-          <p className="text-4xl font-bold text-teal-700 tracking-tight">
-            {avg(recentConvPct).toFixed(0)}%
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Average across all periods
-          </p>
-          <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700 mt-2">
-            <TrendingUp className="h-3 w-3" />
-            +5.2% vs LY
-          </span>
-        </Card>
-
-        {/* Average Order Value */}
-        <Card className="p-6 flex flex-col items-center justify-center text-center">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">
-            Average Order Value
-          </p>
-          <p className="text-4xl font-bold text-foreground tracking-tight">
-            {formatCurrency(Math.round(avg(MOCK_AES_AOV)))}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Across all consultations
-          </p>
-        </Card>
-
-        {/* Service Revenue Breakdown */}
-        <Card className="p-6">
-          <h2 className="text-sm font-semibold text-foreground mb-4">Service Revenue Breakdown</h2>
-          <div className="space-y-2.5">
-            {SERVICE_BREAKDOWN.map((svc) => (
-              <div key={svc.service} className="flex items-center gap-3">
-                <span className="text-xs text-muted-foreground w-28 shrink-0 truncate">
-                  {svc.service}
-                </span>
-                <div className="flex-1 h-5 bg-gray-100 rounded-full overflow-hidden relative">
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: `${svc.pct}%`,
-                      background: `linear-gradient(90deg, ${chartColors.aesthetics}, ${chartColors.aesthetics}cc)`,
-                    }}
-                  />
-                </div>
-                <span className="text-xs font-semibold text-foreground w-16 text-right">
-                  {formatCurrency(svc.revenue)}
-                </span>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-
-      {/* ── Therapist Performance (tabbed) ───────────────────────── */}
+      {/* ── Practitioner Performance ────────────────────────────────── */}
       <StaffPerformanceChart
-        title="Therapist Performance"
+        title="Practitioner Performance"
         subtitle="Service + Retail revenue (EUR)"
-        data={THERAPIST_DATA}
+        data={PRACTITIONER_DATA}
         serviceColor={chartColors.aesthetics}
         retailColor={chartColors.spa}
+      />
+
+      {/* ── Service Revenue Breakdown ───────────────────────────────── */}
+      <ServiceBreakdownChart
+        title="Service Revenue Breakdown"
+        data={SERVICE_BREAKDOWN}
+        color={chartColors.aesthetics}
       />
 
       <CIChat />

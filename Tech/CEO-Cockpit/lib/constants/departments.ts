@@ -74,11 +74,6 @@ export const departments: Department[] = [
     label: "HR",
     icon: Users,
     path: "/hr",
-    children: [
-      { slug: "master", label: "Master", path: "/hr", icon: Users },
-      { slug: "productivity", label: "Productivity", path: "/productivity", icon: Activity },
-      { slug: "talexio", label: "Talexio Deep Dive", path: "/hr/talexio", icon: Users },
-    ],
   },
   {
     slug: "operations",

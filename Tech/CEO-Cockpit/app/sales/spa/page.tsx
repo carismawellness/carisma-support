@@ -12,6 +12,7 @@ import {
   formatPercent,
 } from "@/lib/charts/config";
 import { StaffPerformanceChart } from "@/components/sales/StaffPerformanceChart";
+import { ServiceBreakdownChart } from "@/components/sales/ServiceBreakdownChart";
 import {
   Bar,
   ComposedChart,
@@ -194,7 +195,18 @@ function SpaContent() {
     { hotel: "Odycy", current: 68, lastYear: 62 },
   ];
 
-  /* ── Visualization 3: Staff Performance ────────────────────────── */
+  /* ── Visualization 3: Service Revenue Breakdown ─────────────────── */
+  const spaServiceBreakdown = [
+    { service: "Massage Therapy", revenue: 68400, pct: 37.5 },
+    { service: "Facials", revenue: 34200, pct: 18.7 },
+    { service: "Body Treatments", revenue: 25600, pct: 14.0 },
+    { service: "Hydrotherapy", revenue: 18200, pct: 10.0 },
+    { service: "Couples Packages", revenue: 14800, pct: 8.1 },
+    { service: "Nail Services", revenue: 11400, pct: 6.2 },
+    { service: "Other", revenue: 10000, pct: 5.5 },
+  ];
+
+  /* ── Visualization 4: Staff Performance ────────────────────────── */
   const staffData = [
     { name: "Maria Vella", serviceRevenue: 14820, retailRevenue: 2560 },
     { name: "Carmen Borg", serviceRevenue: 13450, retailRevenue: 1720 },
@@ -219,14 +231,14 @@ function SpaContent() {
       </p>
 
       {/* ── KPI Summary Cards ─────────────────────────────────────── */}
-      <SalesKPIGrid>
+      <SalesKPIGrid columns={4}>
         <SalesKPICard
-          label="Total Net Revenue"
+          label="Total Revenue"
           value={formatCurrency(totalRev)}
           yoyChange={yoyTotal}
         />
         <SalesKPICard
-          label="Services Revenue"
+          label="Service Revenue"
           value={formatCurrency(totalService)}
           yoyChange={yoyService}
         />
@@ -242,45 +254,24 @@ function SpaContent() {
           yoyChange={yoyAddon}
           subtitle={`${avgAddonPct.toFixed(1)}% of total`}
         />
-        <SalesKPICard
-          label="Avg Revenue / Available Hr"
-          value={`\u20AC${revPerHour.toFixed(0)}`}
-          yoyChange={yoyRevPerHour}
-        />
-        <SalesKPICard
-          label="Spa Club Memberships"
-          value={memberships.toLocaleString()}
-          yoyChange={yoyMemberships}
-        />
-        <SalesKPICard
-          label="Hotel Guest Capture Rate"
-          value={formatPercent(avgHotelCapture)}
-          yoyChange={yoyHotelCapture}
-          yoyIsDelta
-        />
-        <SalesKPICard
-          label="Local Guest %"
-          value={formatPercent(localGuestPct)}
-          yoyChange={yoyLocalGuest}
-          yoyIsDelta
-        />
       </SalesKPIGrid>
 
       {/* ── Viz 1: Revenue by Hotel (Stacked Bar + Line) ──────────── */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <div className="mb-1 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-foreground">
-            Revenue by Hotel — Last 4 Weeks
+            Revenue by Hotel
           </h2>
         </div>
         <p className="text-xs text-muted-foreground mb-4">
           Stacked by revenue type with last year overlay. Sorted by current
           total descending.
         </p>
-        <ResponsiveContainer width="100%" height={360}>
+        <div className="h-[260px] md:h-[360px]">
+        <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={hotelRevenueData}
-            margin={{ ...chartDefaults.margin, bottom: 20 }}
+            margin={{ top: 16, right: 10, left: 10, bottom: 20 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
             <XAxis
@@ -312,20 +303,16 @@ function SpaContent() {
               stackId="rev"
               fill={chartColors.spa}
               radius={[0, 0, 0, 0]}
-            />
-            <Bar
-              dataKey="Retail"
-              stackId="rev"
-              fill={chartColors.aesthetics}
-              radius={[0, 0, 0, 0]}
             >
               <LabelList
-                dataKey="retailPct"
-                content={({ x, width, y, height, value }: any) => {
-                  if (!value) return null;
+                dataKey="Service"
+                content={(props) => {
+                  const { x, width, y, height, value } = props as Record<string, unknown>;
+                  const w = Number(width);
+                  if (w < 35) return <></>;
                   return (
                     <text
-                      x={Number(x) + Number(width) / 2}
+                      x={Number(x) + w / 2}
                       y={Number(y) + Number(height) / 2}
                       textAnchor="middle"
                       dominantBaseline="middle"
@@ -333,12 +320,18 @@ function SpaContent() {
                       fontWeight={600}
                       fill="white"
                     >
-                      {value}%
+                      {formatCurrency(Number(value))}
                     </text>
                   );
                 }}
               />
             </Bar>
+            <Bar
+              dataKey="Retail"
+              stackId="rev"
+              fill={chartColors.aesthetics}
+              radius={[0, 0, 0, 0]}
+            />
             <Bar
               dataKey="Add-on"
               stackId="rev"
@@ -346,20 +339,21 @@ function SpaContent() {
               radius={[3, 3, 0, 0]}
             >
               <LabelList
-                dataKey="yoy"
-                content={({ x, width, y, value }: any) => {
-                  if (value === undefined) return null;
-                  const isPositive = Number(value) >= 0;
+                dataKey="total"
+                content={(props) => {
+                  const { x, width, y, index } = props as Record<string, unknown>;
+                  const entry = hotelRevenueData[Number(index)];
+                  if (!entry) return <></>;
                   return (
                     <text
                       x={Number(x) + Number(width) / 2}
                       y={Number(y) - 8}
                       textAnchor="middle"
                       fontSize={11}
-                      fontWeight={600}
-                      fill={isPositive ? "#059669" : "#dc2626"}
+                      fontWeight={700}
+                      fill="#374151"
                     >
-                      {isPositive ? "+" : ""}{Number(value).toFixed(1)}%
+                      {formatCurrency(entry.total)}
                     </text>
                   );
                 }}
@@ -375,20 +369,22 @@ function SpaContent() {
             />
           </ComposedChart>
         </ResponsiveContainer>
+        </div>
       </Card>
 
       {/* ── Viz 2: Average Order Value by Location ────────────────── */}
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <h2 className="text-lg font-semibold text-foreground mb-1">
           Average Order Value by Location
         </h2>
         <p className="text-xs text-muted-foreground mb-4">
           Current period AOV vs last year per hotel
         </p>
-        <ResponsiveContainer width="100%" height={320}>
+        <div className="h-[240px] md:h-[320px]">
+        <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={aovData}
-            margin={{ ...chartDefaults.margin, bottom: 20 }}
+            margin={{ top: 16, right: 10, left: 10, bottom: 20 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
             <XAxis
@@ -416,7 +412,27 @@ function SpaContent() {
               fill={chartColors.spa}
               radius={[3, 3, 0, 0]}
               barSize={32}
-            />
+            >
+              <LabelList
+                dataKey="current"
+                position="top"
+                content={(props) => {
+                  const { x, width, y, value } = props as Record<string, unknown>;
+                  return (
+                    <text
+                      x={Number(x) + Number(width) / 2}
+                      y={Number(y) - 6}
+                      textAnchor="middle"
+                      fontSize={11}
+                      fontWeight={600}
+                      fill="#374151"
+                    >
+                      €{String(value)}
+                    </text>
+                  );
+                }}
+              />
+            </Bar>
             <Line
               type="monotone"
               dataKey="lastYear"
@@ -428,15 +444,23 @@ function SpaContent() {
             />
           </ComposedChart>
         </ResponsiveContainer>
+        </div>
       </Card>
 
       {/* ── Viz 3: Staff Performance ─────────────────────────────── */}
       <StaffPerformanceChart
         title="Staff Performance"
-        subtitle="Top 10 therapists (EUR)"
+        subtitle="Top 10 staff (EUR)"
         data={staffData}
         serviceColor={chartColors.spa}
         retailColor={chartColors.aesthetics}
+      />
+
+      {/* ── Viz 4: Service Revenue Breakdown ──────────────────────── */}
+      <ServiceBreakdownChart
+        title="Service Revenue Breakdown"
+        data={spaServiceBreakdown}
+        color={chartColors.spa}
       />
 
       <CIChat />
