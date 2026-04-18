@@ -14,15 +14,18 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 ENV_PATH = PROJECT_ROOT / ".env"
 
+COCKPIT_ENV_PATH = PROJECT_ROOT / "Tech" / "CEO-Cockpit" / ".env.local"
+
 def load_env():
-    """Load .env file into os.environ."""
-    if ENV_PATH.exists():
-        with open(ENV_PATH) as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith("#") and "=" in line:
-                    key, _, value = line.partition("=")
-                    os.environ.setdefault(key.strip(), value.strip())
+    """Load .env files into os.environ."""
+    for env_path in [ENV_PATH, COCKPIT_ENV_PATH]:
+        if env_path.exists():
+            with open(env_path) as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        key, _, value = line.partition("=")
+                        os.environ.setdefault(key.strip(), value.strip())
 
 load_env()
 
@@ -35,13 +38,17 @@ def get_supabase_client():
             "supabase-py not installed. Run: pip install supabase"
         )
 
-    url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_SERVICE_KEY")
+    url = os.environ.get("SUPABASE_URL") or os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
+    key = (
+        os.environ.get("SUPABASE_SERVICE_KEY")
+        or os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+    )
 
     if not url or not key:
         raise ValueError(
-            "Missing SUPABASE_URL or SUPABASE_SERVICE_KEY in .env file. "
-            f"Checked: {ENV_PATH}"
+            "Missing SUPABASE_URL/NEXT_PUBLIC_SUPABASE_URL or "
+            "SUPABASE_SERVICE_KEY/SUPABASE_SERVICE_ROLE_KEY in .env files. "
+            f"Checked: {ENV_PATH}, {COCKPIT_ENV_PATH}"
         )
 
     return create_client(url, key)

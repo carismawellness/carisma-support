@@ -20,6 +20,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  LabelList,
 } from "recharts";
 
 /* ═══════════════════════════════════════════════════════════════════════

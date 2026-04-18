@@ -1,0 +1,110 @@
+// ──────────────────────────────────────────────────────────────
+// Deluge Custom Function: Calculate Lead Qualification Score
+// Deploy in: Zoho CRM > Settings > Automation > Workflow Rules
+// Trigger: On Create OR Edit of Lead
+// Works for: Spa, Aesthetics, and Slimming CRMs (identical logic)
+//
+// Scoring Model (max 105 pts):
+//   Factor 1: Experienced before         → up to +20
+//   Factor 2: Timeline                    → up to +30
+//   Factor 3: Response time (≤60 min)     → up to +25
+//   Factor 4: Referral source             → +15
+//   Factor 5: Intent signal               → up to +15
+//
+// Thresholds:
+//   60+   = Hot    (book consultation same day)
+//   30–59 = Warm   (standard cadence)
+//   <30   = Nurture (nurture sequence)
+// ──────────────────────────────────────────────────────────────
+
+// Fetch the lead record
+leadId = input.leadId.toLong();
+lead = zoho.crm.getRecordById("Leads", leadId);
+
+score = 0;
+
+// ── Factor 1: Experienced before (+20 max) ──
+experienced = ifnull(lead.get("Is_this_something_you_ve_experienced_before"), "");
+if (experienced == "Yes, it's something I do regularly")
+{
+    score = score + 20;
+}
+else if (experienced == "Yes, I've tried it before")
+{
+    score = score + 15;
+}
+else if (experienced == "No, this would be a first for me")
+{
+    score = score + 5;
+}
+
+// ── Factor 2: Timeline (+30 max) ──
+timeline = ifnull(lead.get("How_soon_would_you_like_to_get_started"), "");
+if (timeline == "This week")
+{
+    score = score + 30;
+}
+else if (timeline == "Within 2 weeks")
+{
+    score = score + 20;
+}
+else if (timeline == "This month")
+{
+    score = score + 10;
+}
+
+// ── Factor 3: Response time (+25 max) ──
+responseTime = lead.get("Response_Time_Minutes");
+if (responseTime != null)
+{
+    mins = responseTime.toDecimal();
+    if (mins <= 60)
+    {
+        score = score + 25;
+    }
+    else if (mins <= 240)
+    {
+        score = score + 10;
+    }
+}
+
+// ── Factor 4: Referral (+15) ──
+leadSource = ifnull(lead.get("Lead_Source"), "");
+if (leadSource == "External Referral" || leadSource == "Employee Referral")
+{
+    score = score + 15;
+}
+
+// ── Factor 5: Intent signal (+15 max) ──
+intent = ifnull(lead.get("What_would_help_you_most_right_now"), "");
+if (intent == "I'm ready to book")
+{
+    score = score + 15;
+}
+else if (intent == "I'd like to speak with someone")
+{
+    score = score + 10;
+}
+else if (intent == "I'd like to know more")
+{
+    score = score + 5;
+}
+
+// ── Calculate temperature ──
+temperature = "Nurture";
+if (score >= 60)
+{
+    temperature = "Hot";
+}
+else if (score >= 30)
+{
+    temperature = "Warm";
+}
+
+// ── Update the lead record ──
+updateMap = Map();
+updateMap.put("Qualification_Score", score);
+updateMap.put("Lead_Temperature", temperature);
+zoho.crm.updateRecord("Leads", leadId, updateMap);
+
+info "Lead " + leadId + " scored: " + score + " (" + temperature + ")";

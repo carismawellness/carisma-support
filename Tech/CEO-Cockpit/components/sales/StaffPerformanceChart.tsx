@@ -39,7 +39,7 @@ export function StaffPerformanceChart({
 }: StaffPerformanceChartProps) {
   if (data.length === 0) return null;
 
-  // Sort by total descending, compute retail %
+  // Sort by total descending, compute retail % and total
   const chartData = [...data]
     .map((d) => {
       const total = d.serviceRevenue + d.retailRevenue;
@@ -48,14 +48,10 @@ export function StaffPerformanceChart({
         "Service Revenue": d.serviceRevenue,
         "Retail Revenue": d.retailRevenue,
         retailPct: total > 0 ? ((d.retailRevenue / total) * 100).toFixed(0) : "0",
+        total,
       };
     })
-    .sort(
-      (a, b) =>
-        b["Service Revenue"] +
-        b["Retail Revenue"] -
-        (a["Service Revenue"] + a["Retail Revenue"])
-    );
+    .sort((a, b) => b.total - a.total);
 
   return (
     <Card className="p-6">
@@ -71,7 +67,7 @@ export function StaffPerformanceChart({
         <BarChart
           data={chartData}
           layout="vertical"
-          margin={{ top: 5, right: 60, left: 10, bottom: 5 }}
+          margin={{ top: 5, right: 90, left: 10, bottom: 5 }}
         >
           <CartesianGrid
             strokeDasharray="3 3"
@@ -124,6 +120,30 @@ export function StaffPerformanceChart({
                     fill="white"
                   >
                     {String(value)}%
+                  </text>
+                );
+              }}
+            />
+            <LabelList
+              dataKey="total"
+              content={(props) => {
+                const { x, width, y, height, value, index } = props as Record<string, unknown>;
+                const entry = chartData[Number(index)];
+                if (!entry) return <></>;
+                const svcWidth = Number(width);
+                // Position at the right edge of the full stacked bar
+                const totalBarWidth = svcWidth + (Number(x) - 0);
+                return (
+                  <text
+                    x={Number(x) + svcWidth + 8}
+                    y={Number(y) + Number(height) / 2}
+                    textAnchor="start"
+                    dominantBaseline="middle"
+                    fontSize={11}
+                    fontWeight={600}
+                    fill="#374151"
+                  >
+                    {formatCurrency(entry.total)}
                   </text>
                 );
               }}

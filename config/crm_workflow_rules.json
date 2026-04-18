@@ -1,0 +1,323 @@
+{
+  "spa": [
+    {
+      "name": "[SPA] Auto-Task: First Contact on New Lead",
+      "trigger": "When a Deal is created or edited",
+      "condition": "Stage is \"New Leads\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "First Contact Attempt",
+        "Due Date": "Rule trigger date",
+        "Priority": "Urgent",
+        "Status": "Not Started",
+        "Task_Type": "First Contact",
+        "Related To": "${Deals.Deal_Name}",
+        "Owner": "${Deals.Owner}"
+      }
+    },
+    {
+      "name": "[SPA] Auto-Task: Follow-up on No Answer",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"First Contact\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow-up Call #1",
+        "Due Date": "Rule trigger date + 1 day",
+        "Priority": "High",
+        "Status": "Not Started",
+        "Task_Type": "Follow-up 1",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[SPA] Auto-Task: Follow-up 2 on No Answer",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"Follow-up 1\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow-up Call #2 + WhatsApp",
+        "Due Date": "Rule trigger date + 2 days",
+        "Priority": "Normal",
+        "Status": "Not Started",
+        "Task_Type": "Follow-up 2",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[SPA] Auto-Task: Follow-up 3 on No Answer",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"Follow-up 2\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow-up Call #3 + SMS",
+        "Due Date": "Rule trigger date + 2 days",
+        "Priority": "Normal",
+        "Status": "Not Started",
+        "Task_Type": "Follow-up 3",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[SPA] Auto-Task: Final Attempt",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"Follow-up 3\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "FINAL Attempt \u2014 Call + Last Chance WhatsApp",
+        "Due Date": "Rule trigger date + 3 days",
+        "Priority": "Low",
+        "Status": "Not Started",
+        "Task_Type": "Final Attempt",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[SPA] Auto-Task: Callback Scheduled",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"Connected - Call Back\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Scheduled Callback",
+        "Due Date": "${Tasks.Callback_Date_Time}",
+        "Priority": "High",
+        "Status": "Not Started",
+        "Task_Type": "Scheduled Callback",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[SPA] Auto-Task: Post-Interest Follow-up",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"Connected - Interested\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow up on Interest \u2014 Book Appointment",
+        "Due Date": "Rule trigger date + 1 day",
+        "Priority": "High",
+        "Status": "Not Started",
+        "Task_Type": "Post-Interest Follow-up",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    }
+  ],
+  "aesthetics": [
+    {
+      "name": "[AESTHETICS] Auto-Task: First Contact on New Lead",
+      "trigger": "When a Deal is created or edited",
+      "condition": "Stage is \"New Leads\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "First Contact Attempt",
+        "Due Date": "Rule trigger date",
+        "Priority": "Urgent",
+        "Status": "Not Started",
+        "Task_Type": "First Contact",
+        "Related To": "${Deals.Deal_Name}",
+        "Owner": "${Deals.Owner}"
+      }
+    },
+    {
+      "name": "[AESTHETICS] Auto-Task: Follow-up on No Answer",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"First Contact\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow-up Call #1",
+        "Due Date": "Rule trigger date + 1 day",
+        "Priority": "High",
+        "Status": "Not Started",
+        "Task_Type": "Follow-up 1",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[AESTHETICS] Auto-Task: Follow-up 2 on No Answer",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"Follow-up 1\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow-up Call #2 + WhatsApp",
+        "Due Date": "Rule trigger date + 2 days",
+        "Priority": "Normal",
+        "Status": "Not Started",
+        "Task_Type": "Follow-up 2",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[AESTHETICS] Auto-Task: Follow-up 3 on No Answer",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"Follow-up 2\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow-up Call #3 + SMS",
+        "Due Date": "Rule trigger date + 2 days",
+        "Priority": "Normal",
+        "Status": "Not Started",
+        "Task_Type": "Follow-up 3",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[AESTHETICS] Auto-Task: Final Attempt",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"Follow-up 3\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "FINAL Attempt \u2014 Call + Last Chance WhatsApp",
+        "Due Date": "Rule trigger date + 3 days",
+        "Priority": "Low",
+        "Status": "Not Started",
+        "Task_Type": "Final Attempt",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[AESTHETICS] Auto-Task: Callback Scheduled",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"Connected - Call Back\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Scheduled Callback",
+        "Due Date": "${Tasks.Callback_Date_Time}",
+        "Priority": "High",
+        "Status": "Not Started",
+        "Task_Type": "Scheduled Callback",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[AESTHETICS] Auto-Task: Post-Interest Follow-up",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"Connected - Interested\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow up on Interest \u2014 Book Appointment",
+        "Due Date": "Rule trigger date + 1 day",
+        "Priority": "High",
+        "Status": "Not Started",
+        "Task_Type": "Post-Interest Follow-up",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    }
+  ],
+  "slimming": [
+    {
+      "name": "[SLIMMING] Auto-Task: First Contact on New Lead",
+      "trigger": "When a Deal is created or edited",
+      "condition": "Stage is \"New Leads\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "First Contact Attempt",
+        "Due Date": "Rule trigger date",
+        "Priority": "Urgent",
+        "Status": "Not Started",
+        "Task_Type": "First Contact",
+        "Related To": "${Deals.Deal_Name}",
+        "Owner": "${Deals.Owner}"
+      }
+    },
+    {
+      "name": "[SLIMMING] Auto-Task: Follow-up on No Answer",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"First Contact\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow-up Call #1",
+        "Due Date": "Rule trigger date + 1 day",
+        "Priority": "High",
+        "Status": "Not Started",
+        "Task_Type": "Follow-up 1",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[SLIMMING] Auto-Task: Follow-up 2 on No Answer",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"Follow-up 1\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow-up Call #2 + WhatsApp",
+        "Due Date": "Rule trigger date + 2 days",
+        "Priority": "Normal",
+        "Status": "Not Started",
+        "Task_Type": "Follow-up 2",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[SLIMMING] Auto-Task: Follow-up 3 on No Answer",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"Follow-up 2\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow-up Call #3 + SMS",
+        "Due Date": "Rule trigger date + 2 days",
+        "Priority": "Normal",
+        "Status": "Not Started",
+        "Task_Type": "Follow-up 3",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[SLIMMING] Auto-Task: Final Attempt",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"No Answer\" AND Task_Type is \"Follow-up 3\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "FINAL Attempt \u2014 Call + Last Chance WhatsApp",
+        "Due Date": "Rule trigger date + 3 days",
+        "Priority": "Low",
+        "Status": "Not Started",
+        "Task_Type": "Final Attempt",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[SLIMMING] Auto-Task: Callback Scheduled",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"Connected - Call Back\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Scheduled Callback",
+        "Due Date": "${Tasks.Callback_Date_Time}",
+        "Priority": "High",
+        "Status": "Not Started",
+        "Task_Type": "Scheduled Callback",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    },
+    {
+      "name": "[SLIMMING] Auto-Task: Post-Interest Follow-up",
+      "trigger": "When a Task is created or edited",
+      "condition": "Task_Outcome is \"Connected - Interested\"",
+      "action": "Create Task",
+      "task_details": {
+        "Subject": "Follow up on Interest \u2014 Book Appointment",
+        "Due Date": "Rule trigger date + 1 day",
+        "Priority": "High",
+        "Status": "Not Started",
+        "Task_Type": "Post-Interest Follow-up",
+        "Related To": "${Tasks.What_Id}",
+        "Owner": "${Tasks.Owner}"
+      }
+    }
+  ]
+}

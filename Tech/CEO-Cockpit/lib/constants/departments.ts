@@ -76,7 +76,10 @@ export const departments: Department[] = [
     path: "/finance",
     children: [
       { slug: "master", label: "Master", path: "/finance", icon: PiggyBank },
-      { slug: "ebitda", label: "EBITDA Detail", path: "/finance/ebitda", icon: TrendingUp },
+      { slug: "ebitda", label: "EBITDA Overview", path: "/finance/ebitda", icon: TrendingUp },
+      { slug: "ebitda-spa", label: "EBITDA Spa", path: "/finance/ebitda/spa", icon: Sparkles },
+      { slug: "ebitda-aesthetics", label: "EBITDA Aesthetics", path: "/finance/ebitda/aesthetics", icon: Heart },
+      { slug: "ebitda-slimming", label: "EBITDA Slimming", path: "/finance/ebitda/slimming", icon: Activity },
     ],
   },
   {

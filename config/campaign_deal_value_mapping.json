@@ -1,0 +1,213 @@
+{
+  "_metadata": {
+    "version": "2.0.0",
+    "last_updated": "2026-04-18",
+    "updated_by": "funnel-manager",
+    "description": "Maps Meta Ads campaigns to package deal values and expected net revenue for Zoho CRM. Used by Tools/assign_deal_values.py and Zoho workflow rules.",
+    "notes": "Deal values represent the advertised package price (VAT-inclusive). Expected net revenue = (deal_value / (1 + VAT) - COGS) * show_rate.",
+    "enr_parameters": {
+      "spa": { "vat_rate": 0.18, "show_rate": 0.85 },
+      "slimming": { "vat_rate": 0.18, "show_rate": 0.80 },
+      "aesthetics": { "vat_rate": 0.15, "show_rate": 0.80 }
+    }
+  },
+
+  "slimming": {
+    "crm_instance": "zoho-crm-slimming",
+    "campaigns": {
+      "CBO_FatFreeze": {
+        "campaign_id": "120242759417850017",
+        "lead_form": "Fat Freezing",
+        "package_name": "Fat Eraser Protocol (CoolSculpting Starter Pack)",
+        "deal_value": 199,
+        "deal_value_notes": "3x CoolSculpting sessions + spa access + body comp analysis",
+        "full_value": 550,
+        "single_session_value": 100,
+        "cogs": 0,
+        "expected_net_revenue": 134.92
+      },
+      "CBO_MuscleStim": {
+        "campaign_id": "120242760574090017",
+        "lead_form": "Muscle Stimulation",
+        "package_name": "EMSculpt NEO 3-in-1 Body Sculpt Protocol",
+        "deal_value": 199,
+        "deal_value_notes": "4x EMSculpt NEO sessions + spa access + body comp analysis",
+        "full_value": 625,
+        "single_session_value": 100,
+        "cogs": 0,
+        "expected_net_revenue": 134.92
+      },
+      "CBO_SkinTight": {
+        "campaign_id": "120242760708010017",
+        "lead_form": "Skin Tightening",
+        "package_name": "4-in-1 Skin Tightening Protocol (VelaShape III)",
+        "deal_value": 199,
+        "deal_value_notes": "4x VelaShape III sessions + spa access + body comp analysis",
+        "full_value": 625,
+        "single_session_value": 100,
+        "cogs": 0,
+        "expected_net_revenue": 134.92
+      },
+      "CBO_MWL_RiskReversal": {
+        "campaign_id": "120242919520010017",
+        "lead_form": "Weight loss: Free Body Comp",
+        "package_name": "Medical Weight Loss Consultation (Risk Reversal angle)",
+        "deal_value": 199,
+        "deal_value_notes": "Free consultation — deal value is expected starter package upsell (€199)",
+        "consultation_is_free": true,
+        "cogs": 0,
+        "expected_net_revenue": 134.92
+      },
+      "CBO_MWL_Menopause": {
+        "campaign_id": "120242919964590017",
+        "lead_form": "Weight loss: Free Body Comp",
+        "package_name": "Medical Weight Loss Consultation (Menopause angle)",
+        "deal_value": 199,
+        "deal_value_notes": "Free consultation — deal value is expected starter package upsell (€199)",
+        "consultation_is_free": true,
+        "cogs": 0,
+        "expected_net_revenue": 134.92
+      },
+      "CBO_MWL_Pain-Solution": {
+        "campaign_id": "120242920452760017",
+        "lead_form": "Weight loss: Free Body Comp",
+        "package_name": "Medical Weight Loss Consultation (Pain-Solution angle)",
+        "deal_value": 199,
+        "deal_value_notes": "Free consultation — deal value is expected starter package upsell (€199)",
+        "consultation_is_free": true,
+        "cogs": 0,
+        "expected_net_revenue": 134.92
+      },
+      "CBO_MWL_AfterBaby": {
+        "campaign_id": "120243268136690017",
+        "lead_form": "Weight loss: Free Body Comp",
+        "package_name": "Medical Weight Loss Consultation (After Baby angle)",
+        "deal_value": 199,
+        "deal_value_notes": "Free consultation — deal value is expected starter package upsell (€199)",
+        "consultation_is_free": true,
+        "cogs": 0,
+        "expected_net_revenue": 134.92
+      }
+    }
+  },
+
+  "aesthetics": {
+    "crm_instance": "zoho-crm-aesthetics",
+    "campaigns": {
+      "Lead | Snatch Jawline \u2013 Cost Cap 5": {
+        "campaign_id": "120233988990660408",
+        "lead_form": "Snatch Your Jawline-FINAL-NEW PRICE",
+        "package_name": "Snatch Your Jawline",
+        "deal_value": 149,
+        "deal_value_notes": "Fat-dissolving injection + LED + skin tightening laser + €40 credit",
+        "full_value": 400,
+        "cogs": 15,
+        "expected_net_revenue": 91.65
+      },
+      "Lead | LHR January": {
+        "campaign_id": "120237487977490408",
+        "lead_form": "LHR",
+        "package_name": "Laser Hair Removal",
+        "deal_value": 139,
+        "deal_value_notes": "Bronze membership (6 sessions, 15 min each)",
+        "full_value": null,
+        "cogs": 0,
+        "expected_net_revenue": 96.70
+      },
+      "Lead | Hair Regrowth": {
+        "campaign_id": "120232937984250408",
+        "lead_form": "Hair Regrowth-NewWebsite",
+        "package_name": "Hair Regrowth 30",
+        "deal_value": 399,
+        "deal_value_notes": "Hair Regrowth 30 one-time program",
+        "full_value": null,
+        "cogs": 25,
+        "expected_net_revenue": 257.57
+      },
+      "Lead | Ultimate Facelift": {
+        "campaign_id": "120232937282910408",
+        "lead_form": "Ultimate Facelift_New Price",
+        "package_name": "Ultimate Facelift (Thread Lift)",
+        "deal_value": 239,
+        "deal_value_notes": "2x threads + hyaluronic serum + consultation + €25 credit",
+        "full_value": 430,
+        "cogs": 30,
+        "expected_net_revenue": 142.26
+      },
+      "Lead | 4-in-1 Hydrafacial Glow": {
+        "campaign_id": "120232934997300408",
+        "lead_form": "4in1 Hydrafacial Glow",
+        "package_name": "4-in-1 HydraFacial Glow",
+        "deal_value": 99,
+        "deal_value_notes": "HydraFacial + LED + dermaplaning + spa day + €25 credit",
+        "full_value": 335,
+        "cogs": 0,
+        "expected_net_revenue": 68.87
+      },
+      "Lead | Lip & Glow Evergreen": {
+        "campaign_id": "120240746699790408",
+        "lead_form": "Lip & Glow",
+        "package_name": "Lip Fillers + Glow Package",
+        "deal_value": 219,
+        "deal_value_notes": "Lip fillers (1ml) starting price",
+        "full_value": null,
+        "cogs": 30,
+        "expected_net_revenue": 128.35
+      },
+      "New Leads campaign": {
+        "campaign_id": "120241208636870408",
+        "lead_form": "Beautician",
+        "package_name": "Beautician Recruitment",
+        "deal_value": 0,
+        "deal_value_notes": "Recruitment campaign — not a customer lead",
+        "is_recruitment": true
+      }
+    }
+  },
+
+  "spa": {
+    "crm_instance": "zoho-crm-spa",
+    "campaigns": {
+      "CBO_Leads | Gifting": {
+        "campaign_id": "120243020613500093",
+        "lead_form": "Gifting",
+        "package_name": "Spa Gift Voucher",
+        "deal_value": 75,
+        "deal_value_notes": "Average gift voucher value (range €50-€100)",
+        "full_value": null,
+        "cogs": 0,
+        "expected_net_revenue": 54.03
+      },
+      "CBO_Leads | Couples Package": {
+        "campaign_id": "120244771947410093",
+        "lead_form": "Couple",
+        "package_name": "Couples Spa Package",
+        "deal_value": 199,
+        "deal_value_notes": "Couple's Just for You — 55 min, from €199 per couple",
+        "full_value": null,
+        "cogs": 0,
+        "expected_net_revenue": 143.35
+      },
+      "CBO_Leads | Massage": {
+        "campaign_id": "120243020781260093",
+        "lead_form": "Massage",
+        "package_name": "Massage Spa Day (Time to Relax)",
+        "deal_value": 99,
+        "deal_value_notes": "55-min massage spa day package with facilities",
+        "full_value": null,
+        "cogs": 0,
+        "expected_net_revenue": 71.31
+      },
+      "CBO_Leads | Spa Day": {
+        "campaign_id": "120243020862770093",
+        "lead_form": "Spa Day",
+        "package_name": "Spa Day Package (Time to Relax)",
+        "deal_value": 99,
+        "deal_value_notes": "55-min spa day package from €99",
+        "full_value": null,
+        "cogs": 0,
+        "expected_net_revenue": 71.31
+      }
+    }
+  }
+}
