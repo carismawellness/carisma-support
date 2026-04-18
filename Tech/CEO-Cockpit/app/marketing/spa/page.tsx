@@ -17,6 +17,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  LabelList,
 } from "recharts";
 
 /* ---------- constants ---------- */
@@ -62,6 +63,12 @@ function getFatigueSummary(campaigns: { frequency: number; ctr: number; peakCtr:
   return { healthy, watch, fatigued };
 }
 
+function getRoasColor(roas: number): string {
+  if (roas >= 5) return "#22C55E";
+  if (roas >= 3) return "#F59E0B";
+  return "#EF4444";
+}
+
 /* ---------- Hero KPI Card ---------- */
 
 function HeroKPICard({
@@ -91,14 +98,31 @@ function HeroKPICard({
 
 /* ---------- Aggregate Metric Box ---------- */
 
-function AggregateBox({ label, value }: { label: string; value: string }) {
+function AggregateBox({ label, value, valueColor }: { label: string; value: string; valueColor?: string }) {
   return (
     <div
       className="rounded-lg border-2 p-4 text-center"
       style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}
     >
       <p className="text-sm text-gray-600">{label}</p>
-      <p className="text-2xl font-bold mt-1" style={{ color: BRAND_COLOR }}>{value}</p>
+      <p className="text-2xl font-bold mt-1" style={{ color: valueColor ?? BRAND_COLOR }}>{value}</p>
+    </div>
+  );
+}
+
+/* ---------- Email Progress Bar ---------- */
+
+function EmailRateBar({ label, value, max, color }: { label: string; value: number; max: number; color: string }) {
+  const pct = Math.min((value / max) * 100, 100);
+  return (
+    <div className="flex-1 min-w-0">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-sm font-medium text-gray-700">{label}</span>
+        <span className="text-sm font-bold text-gray-900">{value}%</span>
+      </div>
+      <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: color }} />
+      </div>
     </div>
   );
 }
@@ -117,60 +141,73 @@ function SpaMarketingContent({
   /* --- Fatigue checks --- */
   const metaFatigue = useMemo(() => getFatigueSummary(META_CAMPAIGNS), []);
   const googleFatigue = useMemo(() => getFatigueSummary(GOOGLE_CAMPAIGNS), []);
-  const anyFatigued = metaFatigue.fatigued > 0 || googleFatigue.fatigued > 0;
+  const totalFatigued = metaFatigue.fatigued + googleFatigue.fatigued;
+  const anyFatigued = totalFatigued > 0;
 
-  /* --- Section 4: Meta Ads --- */
+  /* --- Meta Ads --- */
   const metaColumns = [
     { key: "campaign", label: "Campaign Name" },
-    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `\u20AC${(v as number).toFixed(2)}` },
+    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "dailyBudget", label: "Daily Budget", align: "right" as const, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalSpend", label: "Total Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalLeads", label: "Total Leads", align: "right" as const, sortable: true },
     { key: "ctr", label: "CTR", align: "right" as const, sortable: true, render: (v: unknown) => `${(v as number).toFixed(1)}%` },
-    { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `\u20AC${(v as number).toFixed(2)}` },
+    { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "frequency", label: "Freq", align: "right" as const, render: (v: unknown) => (v as number).toFixed(1) },
-    { key: "attributedRevenue", label: "Attributed Revenue", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+    { key: "attributedRevenue", label: "Attributed Rev", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
   ];
 
   const metaCplChartData = useMemo(() =>
     [...META_CAMPAIGNS]
       .sort((a, b) => a.cpl - b.cpl)
-      .map((c) => ({ name: c.campaign.length > 25 ? c.campaign.slice(0, 22) + "..." : c.campaign, cpl: c.cpl, fullName: c.campaign })),
+      .map((c) => {
+        const status = getFatigueStatus(c.frequency, c.ctr, c.peakCtr);
+        const color = status.label === "Fatigued" ? "#EF4444" : status.label === "Watch" ? "#F59E0B" : "#22C55E";
+        return { name: c.campaign.length > 25 ? c.campaign.slice(0, 22) + "..." : c.campaign, cpl: c.cpl, color };
+      }),
   []);
 
   const metaTotalAttributed = META_CAMPAIGNS.reduce((s, c) => s + c.attributedRevenue, 0);
   const metaExpectedRevenue = Math.round(metaTotalAttributed * 1.15);
   const metaTotalSpend = META_CAMPAIGNS.reduce((s, c) => s + c.totalSpend, 0);
-  const metaExpectedRoas = metaTotalSpend > 0 ? (metaExpectedRevenue / metaTotalSpend).toFixed(1) : "0";
+  const metaExpectedRoasNum = metaTotalSpend > 0 ? metaExpectedRevenue / metaTotalSpend : 0;
+  const metaExpectedRoas = metaExpectedRoasNum.toFixed(1);
 
-  /* --- Section 5: Google Ads --- */
+  /* --- Google Ads --- */
   const googleColumns = [
     { key: "campaign", label: "Campaign Name" },
-    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `\u20AC${(v as number).toFixed(2)}` },
+    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "dailyBudget", label: "Daily Budget", align: "right" as const, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalSpend", label: "Total Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalLeads", label: "Total Leads", align: "right" as const, sortable: true },
     { key: "ctr", label: "CTR", align: "right" as const, sortable: true, render: (v: unknown) => `${(v as number).toFixed(1)}%` },
-    { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `\u20AC${(v as number).toFixed(2)}` },
+    { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "frequency", label: "Freq", align: "right" as const, render: (v: unknown) => (v as number).toFixed(1) },
-    { key: "attributedRevenue", label: "Attributed Revenue", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+    { key: "attributedRevenue", label: "Attributed Rev", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
   ];
 
   const googleCplChartData = useMemo(() =>
     [...GOOGLE_CAMPAIGNS]
       .sort((a, b) => a.cpl - b.cpl)
-      .map((c) => ({ name: c.campaign.length > 25 ? c.campaign.slice(0, 22) + "..." : c.campaign, cpl: c.cpl, fullName: c.campaign })),
+      .map((c) => {
+        const status = getFatigueStatus(c.frequency, c.ctr, c.peakCtr);
+        const color = status.label === "Fatigued" ? "#EF4444" : status.label === "Watch" ? "#F59E0B" : "#22C55E";
+        return { name: c.campaign.length > 25 ? c.campaign.slice(0, 22) + "..." : c.campaign, cpl: c.cpl, color };
+      }),
   []);
 
   const googleTotalAttributed = GOOGLE_CAMPAIGNS.reduce((s, c) => s + c.attributedRevenue, 0);
   const googleExpectedRevenue = Math.round(googleTotalAttributed * 1.15);
   const googleTotalSpend = GOOGLE_CAMPAIGNS.reduce((s, c) => s + c.totalSpend, 0);
-  const googleExpectedRoas = googleTotalSpend > 0 ? (googleExpectedRevenue / googleTotalSpend).toFixed(1) : "0";
+  const googleExpectedRoasNum = googleTotalSpend > 0 ? googleExpectedRevenue / googleTotalSpend : 0;
+  const googleExpectedRoas = googleExpectedRoasNum.toFixed(1);
 
-  /* --- Email aggregate --- */
+  /* --- Email data --- */
   const emailCampaignRev = 6840;
   const emailFlowRev = 3120;
-  const emailExpectedRevenue = Math.round((emailCampaignRev + emailFlowRev) * 1.15);
+  const emailTotalRev = emailCampaignRev + emailFlowRev;
+  const campaignPct = Math.round((emailCampaignRev / emailTotalRev) * 100);
+  const flowPct = 100 - campaignPct;
 
   return (
     <>
@@ -181,21 +218,22 @@ function SpaMarketingContent({
         </p>
       </div>
 
-      {/* Section 1: Hero KPIs */}
-      <div className="relative">
-        {anyFatigued && (
-          <span className="absolute -top-2 -right-2 z-10 inline-flex items-center gap-1 rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white shadow">
-            Ad Fatigue Alert
-          </span>
-        )}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <HeroKPICard label="Revenue" value={formatCurrency(9847)} lastYear={formatCurrency(8620)} yoyLabel="+14.2%" positive />
-          <HeroKPICard label="Wix Revenue" value={formatCurrency(1240)} lastYear={formatCurrency(1080)} yoyLabel="+14.8%" positive />
-          <HeroKPICard label="Total Marketing Spend" value={formatCurrency(655)} lastYear={formatCurrency(601)} yoyLabel="+8.5%" positive={false} />
-          <HeroKPICard label="Meta Blended CPL" value="\u20AC7.80" lastYear="\u20AC8.40" yoyLabel="-7.1%" positive />
-          <HeroKPICard label="Google Blended CPC" value="\u20AC1.85" lastYear="\u20AC2.10" yoyLabel="-11.9%" positive />
-          <HeroKPICard label="Rebooking Rate" value="44%" lastYear="40%" yoyLabel="+10.0%" positive />
+      {/* Ad Fatigue Alert Banner */}
+      {anyFatigued && (
+        <div className="rounded-lg bg-red-50 border border-red-200 p-3 flex items-center justify-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-red-500 animate-pulse" />
+          <span className="text-sm font-semibold text-red-700">Creative Fatigue Alert: {totalFatigued} campaign{totalFatigued !== 1 ? "s" : ""} need attention</span>
         </div>
+      )}
+
+      {/* Section 1: Hero KPIs */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <HeroKPICard label="Revenue" value={formatCurrency(9847)} lastYear={formatCurrency(8620)} yoyLabel="+14.2%" positive />
+        <HeroKPICard label="Wix Revenue" value={formatCurrency(1240)} lastYear={formatCurrency(1080)} yoyLabel="+14.8%" positive />
+        <HeroKPICard label="Total Marketing Spend" value={formatCurrency(655)} lastYear={formatCurrency(601)} yoyLabel="+8.5%" positive={false} />
+        <HeroKPICard label="Meta Blended CPL" value="€7.80" lastYear="€8.40" yoyLabel="-7.1%" positive />
+        <HeroKPICard label="Google Blended CPC" value="€1.85" lastYear="€2.10" yoyLabel="-11.9%" positive />
+        <HeroKPICard label="Rebooking Rate" value="44%" lastYear="40%" yoyLabel="+10.0%" positive />
       </div>
 
       {/* Section 2: Meta Ads */}
@@ -208,10 +246,10 @@ function SpaMarketingContent({
           </div>
         </div>
 
-        {/* Creative Fatigue Indicator */}
+        {/* Fatigue Summary + CPL Chart */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <h3 className="text-sm font-medium text-gray-700">Creative Fatigue</h3>
+            <h3 className="text-sm font-medium text-gray-700">CPL by Campaign (Best to Worst)</h3>
             <span className="text-xs text-gray-500">
               <span className="text-green-600 font-medium">{metaFatigue.healthy} Healthy</span>
               {" | "}
@@ -220,33 +258,17 @@ function SpaMarketingContent({
               <span className="text-red-600 font-medium">{metaFatigue.fatigued} Fatigued</span>
             </span>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {META_CAMPAIGNS.map((c) => {
-              const status = getFatigueStatus(c.frequency, c.ctr, c.peakCtr);
-              return (
-                <div key={c.campaign} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${status.bg}`}>
-                  <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${status.color}`} />
-                  <span className="truncate">{c.campaign}</span>
-                  <span className="text-xs opacity-70 flex-shrink-0">({c.frequency}x)</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* CPL by Campaign - Horizontal Bar */}
-        <div className="mb-6">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">CPL by Campaign (Best to Worst)</h3>
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={metaCplChartData} layout="vertical" margin={{ top: 5, right: 30, left: 140, bottom: 5 }}>
+            <BarChart data={metaCplChartData} layout="vertical" margin={{ top: 5, right: 60, left: 140, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-              <XAxis type="number" tickFormatter={(v: number) => `\u20AC${v}`} />
+              <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
               <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-              <Tooltip formatter={(value) => `\u20AC${Number(value).toFixed(2)}`} />
+              <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
               <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
-                {metaCplChartData.map((_, i) => (
-                  <Cell key={i} fill={BRAND_COLOR} fillOpacity={1 - i * 0.12} />
+                {metaCplChartData.map((entry, i) => (
+                  <Cell key={i} fill={entry.color} />
                 ))}
+                <LabelList dataKey="cpl" position="right" formatter={(v) => `€${Number(v).toFixed(2)}`} style={{ fontSize: 11, fill: "#374151" }} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -259,7 +281,7 @@ function SpaMarketingContent({
         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           <AggregateBox label="Expected Revenue in Meta" value={formatCurrency(metaExpectedRevenue)} />
           <AggregateBox label="Expected Ad Spend" value={formatCurrency(metaTotalSpend)} />
-          <AggregateBox label="Expected ROAS" value={`${metaExpectedRoas}x`} />
+          <AggregateBox label="Expected ROAS" value={`${metaExpectedRoas}x`} valueColor={getRoasColor(metaExpectedRoasNum)} />
         </div>
       </Card>
 
@@ -273,10 +295,10 @@ function SpaMarketingContent({
           </div>
         </div>
 
-        {/* Creative Fatigue Indicator */}
+        {/* Fatigue Summary + CPL Chart */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <h3 className="text-sm font-medium text-gray-700">Creative Fatigue</h3>
+            <h3 className="text-sm font-medium text-gray-700">CPL by Campaign (Best to Worst)</h3>
             <span className="text-xs text-gray-500">
               <span className="text-green-600 font-medium">{googleFatigue.healthy} Healthy</span>
               {" | "}
@@ -285,33 +307,17 @@ function SpaMarketingContent({
               <span className="text-red-600 font-medium">{googleFatigue.fatigued} Fatigued</span>
             </span>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {GOOGLE_CAMPAIGNS.map((c) => {
-              const status = getFatigueStatus(c.frequency, c.ctr, c.peakCtr);
-              return (
-                <div key={c.campaign} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${status.bg}`}>
-                  <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${status.color}`} />
-                  <span className="truncate">{c.campaign}</span>
-                  <span className="text-xs opacity-70 flex-shrink-0">({c.frequency}x)</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* CPL by Campaign - Horizontal Bar */}
-        <div className="mb-6">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">CPL by Campaign (Best to Worst)</h3>
           <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={googleCplChartData} layout="vertical" margin={{ top: 5, right: 30, left: 140, bottom: 5 }}>
+            <BarChart data={googleCplChartData} layout="vertical" margin={{ top: 5, right: 60, left: 140, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-              <XAxis type="number" tickFormatter={(v: number) => `\u20AC${v}`} />
+              <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
               <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-              <Tooltip formatter={(value) => `\u20AC${Number(value).toFixed(2)}`} />
+              <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
               <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
-                {googleCplChartData.map((_, i) => (
-                  <Cell key={i} fill={BRAND_COLOR} fillOpacity={1 - i * 0.15} />
+                {googleCplChartData.map((entry, i) => (
+                  <Cell key={i} fill={entry.color} />
                 ))}
+                <LabelList dataKey="cpl" position="right" formatter={(v) => `€${Number(v).toFixed(2)}`} style={{ fontSize: 11, fill: "#374151" }} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -324,36 +330,59 @@ function SpaMarketingContent({
         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           <AggregateBox label="Expected Revenue in Google" value={formatCurrency(googleExpectedRevenue)} />
           <AggregateBox label="Expected Ad Spend" value={formatCurrency(googleTotalSpend)} />
-          <AggregateBox label="Expected ROAS" value={`${googleExpectedRoas}x`} />
+          <AggregateBox label="Expected ROAS" value={`${googleExpectedRoas}x`} valueColor={getRoasColor(googleExpectedRoasNum)} />
         </div>
       </Card>
 
       {/* Section 4: Email Marketing */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Email Marketing</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          {[
-            { label: "Email ROAS", value: "42x" },
-            { label: "Total Subscribers", value: "4,527" },
-            { label: "Pop-up Capture Rate", value: "3.2%" },
-            { label: "Open Rate", value: "38.4%" },
-            { label: "Click Rate", value: "4.2%" },
-            { label: "Unsubscribe Rate", value: "0.3%" },
-            { label: "Campaign Revenue", value: formatCurrency(emailCampaignRev) },
-            { label: "Flow Revenue", value: formatCurrency(emailFlowRev) },
-          ].map((kpi) => (
-            <Card key={kpi.label} className="p-3">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{kpi.label}</p>
-              <p className="text-lg font-bold text-gray-900 mt-1">{kpi.value}</p>
-            </Card>
-          ))}
+
+        {/* Top row: Campaign Revenue vs Flow Revenue */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <Card className="p-5 border-2" style={{ borderColor: BRAND_COLOR }}>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Campaign Revenue</p>
+            <p className="text-3xl font-bold text-gray-900 mt-1">{formatCurrency(emailCampaignRev)}</p>
+            <div className="mt-3 flex items-center gap-2">
+              <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-full rounded-full" style={{ width: `${campaignPct}%`, backgroundColor: BRAND_COLOR }} />
+              </div>
+              <span className="text-xs font-medium text-gray-500">{campaignPct}% of total</span>
+            </div>
+          </Card>
+          <Card className="p-5 border-2" style={{ borderColor: "#8B7A4A" }}>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Flow Revenue</p>
+            <p className="text-3xl font-bold text-gray-900 mt-1">{formatCurrency(emailFlowRev)}</p>
+            <div className="mt-3 flex items-center gap-2">
+              <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-full rounded-full" style={{ width: `${flowPct}%`, backgroundColor: "#8B7A4A" }} />
+              </div>
+              <span className="text-xs font-medium text-gray-500">{flowPct}% of total</span>
+            </div>
+          </Card>
         </div>
 
-        {/* Email Aggregate Metrics */}
+        {/* Middle row: Key rates as progress bars */}
+        <div className="flex flex-col md:flex-row gap-6 mb-6 p-4 bg-gray-50 rounded-lg">
+          <EmailRateBar label="Open Rate" value={38.4} max={60} color="#22C55E" />
+          <EmailRateBar label="Click Rate" value={4.2} max={10} color={BRAND_COLOR} />
+          <EmailRateBar label="Unsubscribe Rate" value={0.3} max={2} color="#EF4444" />
+        </div>
+
+        {/* Bottom row: Accent cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <AggregateBox label="Expected Revenue in Email" value={formatCurrency(emailExpectedRevenue)} />
-          <AggregateBox label="Expected Subscribers (next month)" value="4,890" />
-          <AggregateBox label="Expected ROAS" value="42x" />
+          <Card className="p-4 bg-green-50 border border-green-200">
+            <p className="text-xs font-medium text-green-600 uppercase tracking-wide">Email ROAS</p>
+            <p className="text-2xl font-bold text-green-700 mt-1">42x</p>
+          </Card>
+          <Card className="p-4" style={{ backgroundColor: `${BRAND_COLOR}15`, borderColor: BRAND_COLOR, borderWidth: 1 }}>
+            <p className="text-xs font-medium uppercase tracking-wide" style={{ color: BRAND_COLOR }}>Total Subscribers</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">4,527</p>
+          </Card>
+          <Card className="p-4 bg-blue-50 border border-blue-200">
+            <p className="text-xs font-medium text-blue-600 uppercase tracking-wide">Pop-up Capture Rate</p>
+            <p className="text-2xl font-bold text-blue-700 mt-1">3.2%</p>
+          </Card>
         </div>
       </Card>
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
 import { Card } from "@/components/ui/card";
 import { CIChat } from "@/components/ci/CIChat";
 import { formatCurrency } from "@/lib/charts/config";
@@ -9,47 +8,52 @@ import { formatCurrency } from "@/lib/charts/config";
 /* ---------- brand colours ---------- */
 
 const BRAND = {
-  spa:         { name: "Spa",         color: "#B79E61" },
-  aesthetics:  { name: "Aesthetics",  color: "#96B2B2" },
-  slimming:    { name: "Slimming",    color: "#8EB093" },
+  spa:        { name: "Spa",        color: "#B79E61" },
+  aesthetics: { name: "Aesthetics", color: "#96B2B2" },
+  slimming:   { name: "Slimming",   color: "#8EB093" },
 } as const;
 
-/* ---------- Section 1 – Hero KPI data ---------- */
+type BrandKey = keyof typeof BRAND;
+const BRAND_KEYS: BrandKey[] = ["spa", "aesthetics", "slimming"];
 
-const CPL_KPIS: KPIData[] = [
-  { label: "CPL — Spa",         value: "€7.80"  },
-  { label: "CPL — Aesthetics",  value: "€14.20" },
-  { label: "CPL — Slimming",    value: "€18.50" },
-];
+/* ---------- helpers ---------- */
 
-const CPC_KPIS: KPIData[] = [
-  { label: "CPC — Spa",         value: "€1.85" },
-  { label: "CPC — Aesthetics",  value: "€3.80" },
-  { label: "CPC — Slimming",    value: "€2.60" },
-];
+function BrandDot({ brand }: { brand: BrandKey }) {
+  return (
+    <span
+      className="inline-block h-3 w-3 rounded-full shrink-0"
+      style={{ backgroundColor: BRAND[brand].color }}
+    />
+  );
+}
 
-const ROAS_KPIS: KPIData[] = [
-  { label: "ROAS — Spa",        value: "5.2x",  target: "5.0x", targetValue: 5.0, currentValue: 5.2 },
-  { label: "ROAS — Aesthetics", value: "4.6x",  target: "4.0x", targetValue: 4.0, currentValue: 4.6 },
-  { label: "ROAS — Slimming",   value: "2.8x",  target: "3.0x", targetValue: 3.0, currentValue: 2.8 },
-];
+function roasColor(value: number): string {
+  if (value >= 5) return "text-green-600";
+  if (value >= 3) return "text-amber-600";
+  return "text-red-600";
+}
 
-const SPEND_KPIS: KPIData[] = [
-  { label: "Spend — Spa",        value: formatCurrency(2760)  },
-  { label: "Spend — Aesthetics", value: formatCurrency(3735)  },
-  { label: "Spend — Slimming",   value: formatCurrency(1737)  },
-];
+/* ---------- Section 1 – Cross-Brand KPI data ---------- */
 
-const REVENUE_KPIS: KPIData[] = [
-  { label: "Revenue — Spa",        value: formatCurrency(9847)  },
-  { label: "Revenue — Aesthetics", value: formatCurrency(4280)  },
-  { label: "Revenue — Slimming",   value: formatCurrency(1480)  },
+interface KPIRow {
+  metric: string;
+  spa: string;
+  aesthetics: string;
+  slimming: string;
+}
+
+const CROSS_BRAND_KPIS: KPIRow[] = [
+  { metric: "Revenue",      spa: formatCurrency(9847),  aesthetics: formatCurrency(4280),  slimming: formatCurrency(1480) },
+  { metric: "Total Spend",  spa: formatCurrency(2760),  aesthetics: formatCurrency(3735),  slimming: formatCurrency(1737) },
+  { metric: "Blended ROAS", spa: "5.2x",                aesthetics: "4.6x",                slimming: "2.8x" },
+  { metric: "CPL",          spa: "€7.80",               aesthetics: "€14.20",              slimming: "€18.50" },
+  { metric: "CPC",          spa: "€1.85",               aesthetics: "€3.80",               slimming: "€2.60" },
 ];
 
 /* ---------- Section 2 – Creative fatigue data ---------- */
 
 interface FatigueSummary {
-  brand: keyof typeof BRAND;
+  brand: BrandKey;
   fatigued: number;
   watch: number;
   healthy: number;
@@ -61,39 +65,97 @@ const FATIGUE_DATA: FatigueSummary[] = [
   { brand: "slimming",   fatigued: 0, watch: 1, healthy: 4 },
 ];
 
-/* ---------- Section 3 – Channel aggregate data ---------- */
+/* ---------- Section 3 – Channel data by brand ---------- */
 
-interface ChannelAggregate {
-  channel: string;
-  metrics: { label: string; value: string }[];
+interface ChannelRow {
+  metric: string;
+  spa: string;
+  aesthetics: string;
+  slimming: string;
+  /** numeric ROAS values for color-coding (only for ROAS rows) */
+  roasValues?: { spa: number; aesthetics: number; slimming: number };
 }
 
-const CHANNEL_AGGREGATES: ChannelAggregate[] = [
+interface ChannelSection {
+  channel: string;
+  rows: ChannelRow[];
+}
+
+const CHANNEL_BY_BRAND: ChannelSection[] = [
   {
     channel: "Meta Ads",
-    metrics: [
-      { label: "Expected Revenue",  value: formatCurrency(35840) },
-      { label: "Expected Ad Spend", value: formatCurrency(8232)  },
-      { label: "Expected ROAS",     value: "4.4x"                },
+    rows: [
+      { metric: "Expected Revenue", spa: formatCurrency(15064), aesthetics: formatCurrency(45441), slimming: formatCurrency(24323) },
+      { metric: "Ad Spend",         spa: formatCurrency(2760),  aesthetics: formatCurrency(3735),  slimming: formatCurrency(1737) },
+      { metric: "Expected ROAS",    spa: "5.5x",                aesthetics: "12.2x",               slimming: "14.0x",
+        roasValues: { spa: 5.5, aesthetics: 12.2, slimming: 14.0 } },
     ],
   },
   {
     channel: "Google Ads",
-    metrics: [
-      { label: "Expected Revenue",  value: formatCurrency(18720) },
-      { label: "Expected Ad Spend", value: formatCurrency(2680)  },
-      { label: "Expected ROAS",     value: "7.0x"                },
+    rows: [
+      { metric: "Expected Revenue", spa: formatCurrency(10604), aesthetics: formatCurrency(10707), slimming: formatCurrency(11385) },
+      { metric: "Ad Spend",         spa: formatCurrency(1087),  aesthetics: formatCurrency(586),   slimming: formatCurrency(575) },
+      { metric: "Expected ROAS",    spa: "9.8x",                aesthetics: "18.3x",               slimming: "19.8x",
+        roasValues: { spa: 9.8, aesthetics: 18.3, slimming: 19.8 } },
     ],
   },
   {
-    channel: "Email (Klaviyo)",
-    metrics: [
-      { label: "Expected Revenue",     value: formatCurrency(17190) },
-      { label: "Expected Subscribers", value: "8,153"               },
-      { label: "Expected ROAS",        value: "34x"                 },
+    channel: "Email",
+    rows: [
+      { metric: "Revenue",     spa: formatCurrency(9960), aesthetics: formatCurrency(5310), slimming: formatCurrency(1920) },
+      { metric: "Subscribers", spa: "4,527",               aesthetics: "2,814",              slimming: "812" },
+      { metric: "ROAS",        spa: "42x",                 aesthetics: "38x",                slimming: "28x",
+        roasValues: { spa: 42, aesthetics: 38, slimming: 28 } },
     ],
   },
 ];
+
+/* ---------- reusable brand table component ---------- */
+
+function BrandTable({
+  rows,
+  colorCodeRoas,
+}: {
+  rows: { metric: string; spa: string; aesthetics: string; slimming: string; roasValues?: { spa: number; aesthetics: number; slimming: number } }[];
+  colorCodeRoas?: boolean;
+}) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b">
+            <th className="text-left py-3 pr-4 font-medium text-muted-foreground w-[180px]">Metric</th>
+            {BRAND_KEYS.map((key) => (
+              <th key={key} className="py-3 px-4 text-right font-medium">
+                <span className="inline-flex items-center gap-2 justify-end">
+                  <BrandDot brand={key} />
+                  {BRAND[key].name}
+                </span>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.metric} className="border-b last:border-b-0">
+              <td className="py-3 pr-4 text-muted-foreground">{row.metric}</td>
+              {BRAND_KEYS.map((key) => {
+                const isRoas = colorCodeRoas && row.roasValues;
+                const colorClass = isRoas ? roasColor(row.roasValues![key]) : "";
+                return (
+                  <td key={key} className={`py-3 px-4 text-right font-bold ${colorClass}`}>
+                    {row[key]}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 /* ---------- content component ---------- */
 
@@ -108,7 +170,7 @@ function MarketingMasterContent({
 }) {
   return (
     <div className="space-y-10">
-      {/* ── Page header ── */}
+      {/* -- Page header -- */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Marketing Master</h1>
         <p className="text-sm text-muted-foreground">
@@ -116,87 +178,95 @@ function MarketingMasterContent({
         </p>
       </div>
 
-      {/* ── Section 1: Hero KPIs ── */}
-      <section className="space-y-6">
-        <h2 className="text-lg font-semibold">CPL by Brand</h2>
-        <KPICardRow kpis={CPL_KPIS} />
-
-        <h2 className="text-lg font-semibold">CPC by Brand</h2>
-        <KPICardRow kpis={CPC_KPIS} />
-
-        <h2 className="text-lg font-semibold">Blended ROAS by Brand</h2>
-        <KPICardRow kpis={ROAS_KPIS} />
-
-        <h2 className="text-lg font-semibold">Total Spend by Brand</h2>
-        <KPICardRow kpis={SPEND_KPIS} />
-
-        <h2 className="text-lg font-semibold">Total Revenue by Brand</h2>
-        <KPICardRow kpis={REVENUE_KPIS} />
+      {/* -- Section 1: Cross-Brand KPI Table -- */}
+      <section>
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold mb-4">Cross-Brand KPIs</h2>
+          <BrandTable rows={CROSS_BRAND_KPIS} />
+        </Card>
       </section>
 
-      {/* ── Section 2: Creative Fatigue by Brand ── */}
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold">Creative Fatigue by Brand</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {FATIGUE_DATA.map((f) => {
-            const b = BRAND[f.brand];
-            return (
-              <Card key={f.brand} className="p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <span
-                    className="inline-block h-3 w-3 rounded-full"
-                    style={{ backgroundColor: b.color }}
-                  />
-                  <span className="font-medium">{b.name}</span>
-                </div>
+      {/* -- Section 2: Creative Fatigue by Brand (Prominent) -- */}
+      <section>
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold mb-6 text-center">Creative Fatigue by Brand</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {FATIGUE_DATA.map((f) => {
+              const b = BRAND[f.brand];
+              const total = f.healthy + f.watch + f.fatigued;
+              const healthyPct = (f.healthy / total) * 100;
+              const watchPct = (f.watch / total) * 100;
+              const fatiguedPct = (f.fatigued / total) * 100;
 
-                <div className="flex items-center gap-3 flex-wrap">
-                  {f.fatigued > 0 && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">
-                      <span className="h-2 w-2 rounded-full bg-red-500" />
-                      {f.fatigued} Fatigued
-                    </span>
-                  )}
-                  {f.watch > 0 && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
-                      <span className="h-2 w-2 rounded-full bg-amber-500" />
-                      {f.watch} Watch
-                    </span>
-                  )}
-                  {f.healthy > 0 && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
-                      <span className="h-2 w-2 rounded-full bg-green-500" />
+              return (
+                <div key={f.brand} className="flex flex-col items-center gap-4">
+                  {/* Brand label */}
+                  <div className="flex items-center gap-2">
+                    <BrandDot brand={f.brand} />
+                    <span className="font-semibold text-base">{b.name}</span>
+                  </div>
+
+                  {/* Stacked horizontal bar */}
+                  <div className="w-full h-6 rounded-full overflow-hidden flex bg-muted">
+                    {healthyPct > 0 && (
+                      <div
+                        className="h-full bg-green-500 transition-all"
+                        style={{ width: `${healthyPct}%` }}
+                        title={`${f.healthy} Healthy`}
+                      />
+                    )}
+                    {watchPct > 0 && (
+                      <div
+                        className="h-full bg-amber-400 transition-all"
+                        style={{ width: `${watchPct}%` }}
+                        title={`${f.watch} Watch`}
+                      />
+                    )}
+                    {fatiguedPct > 0 && (
+                      <div
+                        className="h-full bg-red-500 transition-all"
+                        style={{ width: `${fatiguedPct}%` }}
+                        title={`${f.fatigued} Fatigued`}
+                      />
+                    )}
+                  </div>
+
+                  {/* Counts */}
+                  <div className="flex items-center gap-3 text-xs font-medium flex-wrap justify-center">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
                       {f.healthy} Healthy
                     </span>
-                  )}
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ── Section 3: Channel Aggregate Metrics ── */}
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold">Channel Aggregate Metrics</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {CHANNEL_AGGREGATES.map((ch) => (
-            <Card key={ch.channel} className="p-5">
-              <h3 className="font-medium mb-4">{ch.channel}</h3>
-              <dl className="space-y-3">
-                {ch.metrics.map((m) => (
-                  <div key={m.label} className="flex items-center justify-between">
-                    <dt className="text-sm text-muted-foreground">{m.label}</dt>
-                    <dd className="text-sm font-semibold">{m.value}</dd>
+                    <span className="text-muted-foreground">|</span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                      {f.watch} Watch
+                    </span>
+                    <span className="text-muted-foreground">|</span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
+                      {f.fatigued} Fatigued
+                    </span>
                   </div>
-                ))}
-              </dl>
-            </Card>
-          ))}
-        </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
       </section>
 
-      {/* ── Section 4: CIChat ── */}
+      {/* -- Section 3: Channel Aggregates by Brand -- */}
+      <section className="space-y-6">
+        <h2 className="text-lg font-semibold">Channel Performance by Brand</h2>
+        {CHANNEL_BY_BRAND.map((ch) => (
+          <Card key={ch.channel} className="p-6">
+            <h3 className="font-semibold mb-4">{ch.channel}</h3>
+            <BrandTable rows={ch.rows} colorCodeRoas />
+          </Card>
+        ))}
+      </section>
+
+      {/* -- Section 4: CIChat -- */}
       <section>
         <CIChat embedded />
       </section>
