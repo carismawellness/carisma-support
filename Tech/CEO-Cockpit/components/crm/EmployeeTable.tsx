@@ -60,20 +60,28 @@ interface AggregatedRep {
   conversion_rate_pct: number;
   deposit_pct: number;
   missed_pct: number;
+  total_tasks: number;
+  avg_tasks_per_day: number;
 }
 
 const DUMMY_EMPLOYEES: AggregatedRep[] = [
-  { name: "Maria Vella", brand: "aesthetics", team_type: "SDR", total_sales: 12480, dials: 342, bookings: 42, conversion_rate_pct: 34.2, deposit_pct: 78.5, missed_pct: 8.2 },
-  { name: "Katrina Borg", brand: "slimming", team_type: "SDR", total_sales: 10950, dials: 298, bookings: 38, conversion_rate_pct: 31.5, deposit_pct: 72.1, missed_pct: 10.4 },
-  { name: "Sarah Camilleri", brand: "spa", team_type: "Chat", total_sales: 9870, dials: 0, bookings: 35, conversion_rate_pct: 28.9, deposit_pct: 75.3, missed_pct: 5.1 },
-  { name: "Anna Grech", brand: "aesthetics", team_type: "SDR", total_sales: 8640, dials: 267, bookings: 31, conversion_rate_pct: 26.1, deposit_pct: 69.8, missed_pct: 11.7 },
-  { name: "Elena Farrugia", brand: "slimming", team_type: "Chat", total_sales: 7820, dials: 0, bookings: 28, conversion_rate_pct: 24.8, deposit_pct: 81.2, missed_pct: 6.3 },
-  { name: "Julia Zammit", brand: "spa", team_type: "SDR", total_sales: 6950, dials: 215, bookings: 25, conversion_rate_pct: 22.3, deposit_pct: 66.4, missed_pct: 14.8 },
-  { name: "Lisa Galea", brand: "aesthetics", team_type: "Chat", total_sales: 6210, dials: 0, bookings: 22, conversion_rate_pct: 20.7, deposit_pct: 73.6, missed_pct: 7.5 },
-  { name: "Diane Attard", brand: "slimming", team_type: "SDR", total_sales: 5480, dials: 189, bookings: 19, conversion_rate_pct: 19.2, deposit_pct: 64.1, missed_pct: 16.2 },
-  { name: "Nicole Mifsud", brand: "spa", team_type: "Chat", total_sales: 4720, dials: 0, bookings: 17, conversion_rate_pct: 17.4, deposit_pct: 71.9, missed_pct: 9.8 },
-  { name: "Claire Spiteri", brand: "aesthetics", team_type: "SDR", total_sales: 3890, dials: 156, bookings: 14, conversion_rate_pct: 15.8, deposit_pct: 58.3, missed_pct: 18.5 },
+  { name: "Maria Vella", brand: "aesthetics", team_type: "SDR", total_sales: 12480, dials: 342, bookings: 42, conversion_rate_pct: 34.2, deposit_pct: 78.5, missed_pct: 8.2, total_tasks: 312, avg_tasks_per_day: 22.3 },
+  { name: "Katrina Borg", brand: "slimming", team_type: "SDR", total_sales: 10950, dials: 298, bookings: 38, conversion_rate_pct: 31.5, deposit_pct: 72.1, missed_pct: 10.4, total_tasks: 274, avg_tasks_per_day: 19.6 },
+  { name: "Sarah Camilleri", brand: "spa", team_type: "Chat", total_sales: 9870, dials: 0, bookings: 35, conversion_rate_pct: 28.9, deposit_pct: 75.3, missed_pct: 5.1, total_tasks: 245, avg_tasks_per_day: 17.5 },
+  { name: "Anna Grech", brand: "aesthetics", team_type: "SDR", total_sales: 8640, dials: 267, bookings: 31, conversion_rate_pct: 26.1, deposit_pct: 69.8, missed_pct: 11.7, total_tasks: 238, avg_tasks_per_day: 17.0 },
+  { name: "Elena Farrugia", brand: "slimming", team_type: "Chat", total_sales: 7820, dials: 0, bookings: 28, conversion_rate_pct: 24.8, deposit_pct: 81.2, missed_pct: 6.3, total_tasks: 196, avg_tasks_per_day: 14.0 },
+  { name: "Julia Zammit", brand: "spa", team_type: "SDR", total_sales: 6950, dials: 215, bookings: 25, conversion_rate_pct: 22.3, deposit_pct: 66.4, missed_pct: 14.8, total_tasks: 203, avg_tasks_per_day: 14.5 },
+  { name: "Lisa Galea", brand: "aesthetics", team_type: "Chat", total_sales: 6210, dials: 0, bookings: 22, conversion_rate_pct: 20.7, deposit_pct: 73.6, missed_pct: 7.5, total_tasks: 182, avg_tasks_per_day: 13.0 },
+  { name: "Diane Attard", brand: "slimming", team_type: "SDR", total_sales: 5480, dials: 189, bookings: 19, conversion_rate_pct: 19.2, deposit_pct: 64.1, missed_pct: 16.2, total_tasks: 168, avg_tasks_per_day: 12.0 },
+  { name: "Nicole Mifsud", brand: "spa", team_type: "Chat", total_sales: 4720, dials: 0, bookings: 17, conversion_rate_pct: 17.4, deposit_pct: 71.9, missed_pct: 9.8, total_tasks: 154, avg_tasks_per_day: 11.0 },
+  { name: "Claire Spiteri", brand: "aesthetics", team_type: "SDR", total_sales: 3890, dials: 156, bookings: 14, conversion_rate_pct: 15.8, deposit_pct: 58.3, missed_pct: 18.5, total_tasks: 126, avg_tasks_per_day: 9.0 },
 ];
+
+const BRAND_LABELS: Record<string, string> = {
+  spa: "Spa",
+  aesthetics: "Aesthetics",
+  slimming: "Slimming",
+};
 
 function generateDummyDailyData(name: string): { date: string; Sales: number; Bookings: number; "Conv %": number; "Deposit %": number; "Missed %": number }[] {
   const baseDate = new Date("2026-04-05");
@@ -191,6 +199,8 @@ export function EmployeeTable({
     conversion_rate_pct: r.convCount > 0 ? r.convSum / r.convCount : 0,
     deposit_pct: r.depCount > 0 ? r.depSum / r.depCount : 0,
     missed_pct: r.missedCount > 0 ? r.missedSum / r.missedCount : 0,
+    total_tasks: 0,
+    avg_tasks_per_day: 0,
   }));
 
   const hasRealData = realTableData.length > 0;
@@ -253,6 +263,23 @@ export function EmployeeTable({
       render: (v: unknown) =>
         statusBadge(Number(v) || 0, (Number(v) || 0) <= 12),
     },
+    {
+      key: "total_tasks",
+      label: "Tasks",
+      align: "right" as const,
+      sortable: true,
+    },
+    {
+      key: "avg_tasks_per_day",
+      label: "Tasks/Day",
+      align: "right" as const,
+      sortable: true,
+      render: (v: unknown) => {
+        const val = Number(v) || 0;
+        const color = val >= 20 ? "text-red-600 font-bold" : val >= 15 ? "text-amber-600 font-semibold" : "text-foreground font-semibold";
+        return <span className={color}>{val.toFixed(1)}</span>;
+      },
+    },
   ];
 
   // --- Agent detail chart (dummy daily) ---
@@ -272,6 +299,27 @@ export function EmployeeTable({
       : generateDummyDailyData(selectedAgent)
     : [];
 
+  // --- CRM Tasks by Brand ---
+  const brandTaskStats = (() => {
+    const brands = ["spa", "aesthetics", "slimming"];
+    return brands
+      .filter((b) => !brandFilter || b === brandFilter)
+      .map((brand) => {
+        const reps = tableData.filter((r) => r.brand === brand);
+        const totalTasks = reps.reduce((s, r) => s + r.total_tasks, 0);
+        const totalReps = reps.length;
+        const avgTasksPerDay = totalReps > 0
+          ? reps.reduce((s, r) => s + r.avg_tasks_per_day, 0) / totalReps
+          : 0;
+        return { brand, label: BRAND_LABELS[brand] ?? brand, totalTasks, totalReps, avgTasksPerDay };
+      });
+  })();
+
+  const companyTotalTasks = brandTaskStats.reduce((s, b) => s + b.totalTasks, 0);
+  const companyAvgTasksPerDay = brandTaskStats.length > 0
+    ? brandTaskStats.reduce((s, b) => s + b.avgTasksPerDay * b.totalReps, 0) / tableData.length
+    : 0;
+
   return (
     <div className="space-y-6 relative">
       {!hasRealData && (
@@ -279,6 +327,45 @@ export function EmployeeTable({
           sample data
         </div>
       )}
+
+      {/* CRM Tasks by Brand */}
+      <Card className="p-4 md:p-6">
+        <h3 className="text-base font-semibold text-foreground mb-1">CRM Task Volume by Brand</h3>
+        <p className="text-xs text-muted-foreground mb-4">Total tasks generated and average daily workload per rep — use this to balance CRM rep distribution across brands</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {brandTaskStats.map((b) => {
+            const loadLevel = b.avgTasksPerDay >= 20 ? "High" : b.avgTasksPerDay >= 15 ? "Medium" : "Low";
+            const loadColor = loadLevel === "High" ? "text-red-600" : loadLevel === "Medium" ? "text-amber-600" : "text-emerald-600";
+            const loadBg = loadLevel === "High" ? "bg-red-50 border-red-200" : loadLevel === "Medium" ? "bg-amber-50 border-amber-200" : "bg-emerald-50 border-emerald-200";
+            return (
+              <div key={b.brand} className="rounded-lg border p-4" style={{ borderLeftWidth: 4, borderLeftColor: chartColors[b.brand as keyof typeof chartColors] ?? "#888" }}>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{b.label}</p>
+                <p className="text-2xl font-bold text-foreground mt-1">{b.totalTasks}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{b.totalReps} rep{b.totalReps !== 1 ? "s" : ""} assigned</p>
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Avg/day/rep</span>
+                  <span className={`text-sm font-bold ${loadColor}`}>{b.avgTasksPerDay.toFixed(1)}</span>
+                </div>
+                <div className="mt-1.5">
+                  <span className={`inline-block text-[10px] font-semibold uppercase px-2 py-0.5 rounded border ${loadBg}`}>{loadLevel} Load</span>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Company total */}
+          <div className="rounded-lg border-2 border-gray-300 p-4 bg-gray-50">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">All Brands</p>
+            <p className="text-2xl font-bold text-foreground mt-1">{companyTotalTasks}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{tableData.length} total reps</p>
+            <div className="mt-2 flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">Avg/day/rep</span>
+              <span className="text-sm font-bold text-foreground">{companyAvgTasksPerDay.toFixed(1)}</span>
+            </div>
+          </div>
+        </div>
+      </Card>
 
       <Card className="p-6">
         <DataTable
