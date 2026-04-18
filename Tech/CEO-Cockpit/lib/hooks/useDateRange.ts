@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { subDays } from "date-fns";
+import { startOfYear } from "date-fns";
 
 export function useDateRange() {
-  const [from, setFrom] = useState(() => subDays(new Date(), 30));
+  const [from, setFrom] = useState(() => startOfYear(new Date()));
   const [to, setTo] = useState(() => new Date());
 
   function setRange(newFrom: Date, newTo: Date) {

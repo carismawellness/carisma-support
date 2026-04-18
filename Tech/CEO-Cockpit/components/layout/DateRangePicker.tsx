@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { format, subDays, startOfWeek, startOfMonth } from "date-fns";
+import { format, subDays, startOfWeek, startOfMonth, startOfYear, startOfQuarter } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -17,8 +17,10 @@ interface DateRangePickerProps {
 const presets = [
   { label: "7d", fn: () => ({ from: subDays(new Date(), 7), to: new Date() }) },
   { label: "30d", fn: () => ({ from: subDays(new Date(), 30), to: new Date() }) },
-  { label: "This Week", fn: () => ({ from: startOfWeek(new Date(), { weekStartsOn: 1 }), to: new Date() }) },
+  { label: "90d", fn: () => ({ from: subDays(new Date(), 90), to: new Date() }) },
   { label: "This Month", fn: () => ({ from: startOfMonth(new Date()), to: new Date() }) },
+  { label: "This Quarter", fn: () => ({ from: startOfQuarter(new Date()), to: new Date() }) },
+  { label: "YTD", fn: () => ({ from: startOfYear(new Date()), to: new Date() }) },
 ];
 
 export function DateRangePicker({ from, to, onChange }: DateRangePickerProps) {

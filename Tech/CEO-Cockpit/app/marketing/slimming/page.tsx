@@ -159,6 +159,8 @@ function SlimmingMarketingContent({
     { key: "dailyBudget", label: "Daily Budget", align: "right" as const, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalSpend", label: "Total Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalLeads", label: "Total Leads", align: "right" as const, sortable: true },
+    { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69)).toFixed(2)}` : "—"; } },
+    { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69 * 0.59)).toFixed(2)}` : "—"; } },
     { key: "ctr", label: "CTR", align: "right" as const, sortable: true, render: (v: unknown) => `${(v as number).toFixed(1)}%` },
     { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "frequency", label: "Freq", align: "right" as const, render: (v: unknown) => (v as number).toFixed(1) },
@@ -194,6 +196,8 @@ function SlimmingMarketingContent({
     { key: "dailyBudget", label: "Daily Budget", align: "right" as const, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalSpend", label: "Total Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalLeads", label: "Total Leads", align: "right" as const, sortable: true },
+    { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69)).toFixed(2)}` : "—"; } },
+    { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69 * 0.59)).toFixed(2)}` : "—"; } },
     { key: "ctr", label: "CTR", align: "right" as const, sortable: true, render: (v: unknown) => `${(v as number).toFixed(1)}%` },
     { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "frequency", label: "Freq", align: "right" as const, render: (v: unknown) => (v as number).toFixed(1) },
@@ -205,6 +209,57 @@ function SlimmingMarketingContent({
   const googleTotalSpend = GOOGLE_CAMPAIGNS.reduce((s, c) => s + c.totalSpend, 0);
   const googleExpectedRoasNum = googleTotalSpend > 0 ? googleExpectedRevenue / googleTotalSpend : 0;
   const googleExpectedRoas = googleExpectedRoasNum.toFixed(1);
+
+  /* --- Profitability Matrix --- */
+  const profitabilityData = useMemo(() => {
+    const metaRows = META_CAMPAIGNS.map((c) => {
+      const roas = c.totalSpend > 0 ? c.attributedRevenue / c.totalSpend : 0;
+      const profit = c.attributedRevenue - c.totalSpend;
+      const costPerShow = c.totalLeads > 0 ? c.totalSpend / (c.totalLeads * 0.69) : 0;
+      const costPerResult = c.totalLeads > 0 ? c.totalSpend / (c.totalLeads * 0.69 * 0.59) : 0;
+      const netExpectedRevenue = Math.round(c.attributedRevenue * 1.15);
+      const recommendation = roas >= 5 ? "Scale" : roas >= 3 ? "Maintain" : roas >= 2 ? "Optimize" : "Pause";
+      return { campaign: c.campaign, channel: "Meta", totalLeads: c.totalLeads, totalSpend: c.totalSpend, cpl: c.cpl, costPerShow, costPerResult, attributedRevenue: c.attributedRevenue, netExpectedRevenue, roas, profit, recommendation };
+    });
+    const googleRows = GOOGLE_CAMPAIGNS.map((c) => {
+      const roas = c.totalSpend > 0 ? c.attributedRevenue / c.totalSpend : 0;
+      const profit = c.attributedRevenue - c.totalSpend;
+      const costPerShow = c.totalLeads > 0 ? c.totalSpend / (c.totalLeads * 0.69) : 0;
+      const costPerResult = c.totalLeads > 0 ? c.totalSpend / (c.totalLeads * 0.69 * 0.59) : 0;
+      const netExpectedRevenue = Math.round(c.attributedRevenue * 1.15);
+      const recommendation = roas >= 5 ? "Scale" : roas >= 3 ? "Maintain" : roas >= 2 ? "Optimize" : "Pause";
+      return { campaign: c.campaign, channel: "Google", totalLeads: c.totalLeads, totalSpend: c.totalSpend, cpl: c.cpl, costPerShow, costPerResult, attributedRevenue: c.attributedRevenue, netExpectedRevenue, roas, profit, recommendation };
+    });
+    return [...metaRows, ...googleRows].sort((a, b) => b.profit - a.profit);
+  }, []);
+
+  const profitabilityTotals = useMemo(() => {
+    const totalLeads = profitabilityData.reduce((s, r) => s + r.totalLeads, 0);
+    const totalSpend = profitabilityData.reduce((s, r) => s + r.totalSpend, 0);
+    const totalAttrRevenue = profitabilityData.reduce((s, r) => s + r.attributedRevenue, 0);
+    const totalNetExpected = profitabilityData.reduce((s, r) => s + r.netExpectedRevenue, 0);
+    const totalProfit = profitabilityData.reduce((s, r) => s + r.profit, 0);
+    const blendedRoas = totalSpend > 0 ? totalAttrRevenue / totalSpend : 0;
+    const blendedCpl = totalLeads > 0 ? totalSpend / totalLeads : 0;
+    const blendedCpShow = totalLeads > 0 ? totalSpend / (totalLeads * 0.69) : 0;
+    const blendedCpResult = totalLeads > 0 ? totalSpend / (totalLeads * 0.69 * 0.59) : 0;
+    return { totalLeads, totalSpend, totalAttrRevenue, totalNetExpected, totalProfit, blendedRoas, blendedCpl, blendedCpShow, blendedCpResult };
+  }, [profitabilityData]);
+
+  const profitabilityColumns = [
+    { key: "campaign", label: "Campaign", render: (v: unknown) => <span className="font-medium cursor-pointer hover:underline" style={{ color: BRAND_COLOR }}>{v as string}</span> },
+    { key: "channel", label: "Channel", render: (v: unknown) => <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${(v as string) === "Meta" ? "bg-blue-50 text-blue-700" : "bg-emerald-50 text-emerald-700"}`}>{v as string}</span> },
+    { key: "totalLeads", label: "Leads", align: "right" as const, sortable: true },
+    { key: "totalSpend", label: "Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "attributedRevenue", label: "Attr. Rev", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+    { key: "netExpectedRevenue", label: "Net Exp. Rev", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+    { key: "roas", label: "ROAS", align: "right" as const, sortable: true, render: (v: unknown) => { const r = v as number; return <span style={{ color: getRoasColor(r), fontWeight: 600 }}>{r.toFixed(1)}x</span>; } },
+    { key: "profit", label: "Profit", align: "right" as const, sortable: true, render: (v: unknown) => { const p = v as number; return <span style={{ color: p >= 0 ? "#16a34a" : "#dc2626", fontWeight: 600 }}>{formatCurrency(p)}</span>; } },
+    { key: "recommendation", label: "Action", align: "center" as const, render: (v: unknown) => { const r = v as string; const styles: Record<string, string> = { Scale: "bg-green-100 text-green-800", Maintain: "bg-blue-100 text-blue-800", Optimize: "bg-amber-100 text-amber-800", Pause: "bg-red-100 text-red-800" }; return <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${styles[r] ?? ""}`}>{r}</span>; } },
+  ];
 
   return (
     <>
@@ -426,7 +481,57 @@ function SlimmingMarketingContent({
         </div>
       </Card>
 
-      {/* Section 5: CIChat */}
+      {/* Section 5: Profitability Matrix */}
+      <Card className="p-3 md:p-6">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Profitability Matrix</h2>
+          <p className="text-sm text-gray-500 mt-0.5">Cross-channel campaign profitability with budget scaling recommendations</p>
+        </div>
+
+        <DataTable columns={profitabilityColumns} data={profitabilityData as unknown as Record<string, unknown>[]} />
+
+        {/* Summary Totals */}
+        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
+            <p className="text-xs text-gray-500">Total Leads</p>
+            <p className="text-lg font-bold text-gray-900">{profitabilityTotals.totalLeads}</p>
+          </div>
+          <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
+            <p className="text-xs text-gray-500">Total Spend</p>
+            <p className="text-lg font-bold text-gray-900">{formatCurrency(profitabilityTotals.totalSpend)}</p>
+          </div>
+          <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
+            <p className="text-xs text-gray-500">Blended CPL</p>
+            <p className="text-lg font-bold text-gray-900">€{profitabilityTotals.blendedCpl.toFixed(2)}</p>
+          </div>
+          <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
+            <p className="text-xs text-gray-500">Blended ROAS</p>
+            <p className="text-lg font-bold" style={{ color: getRoasColor(profitabilityTotals.blendedRoas) }}>{profitabilityTotals.blendedRoas.toFixed(1)}x</p>
+          </div>
+          <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
+            <p className="text-xs text-gray-500">Total Profit</p>
+            <p className="text-lg font-bold" style={{ color: profitabilityTotals.totalProfit >= 0 ? "#16a34a" : "#dc2626" }}>{formatCurrency(profitabilityTotals.totalProfit)}</p>
+          </div>
+          <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
+            <p className="text-xs text-gray-500">Total Attr. Revenue</p>
+            <p className="text-lg font-bold text-gray-900">{formatCurrency(profitabilityTotals.totalAttrRevenue)}</p>
+          </div>
+          <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
+            <p className="text-xs text-gray-500">Net Expected Revenue</p>
+            <p className="text-lg font-bold text-gray-900">{formatCurrency(profitabilityTotals.totalNetExpected)}</p>
+          </div>
+          <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
+            <p className="text-xs text-gray-500">Blended CP Show</p>
+            <p className="text-lg font-bold text-gray-900">€{profitabilityTotals.blendedCpShow.toFixed(2)}</p>
+          </div>
+          <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
+            <p className="text-xs text-gray-500">Blended CP Result</p>
+            <p className="text-lg font-bold text-gray-900">€{profitabilityTotals.blendedCpResult.toFixed(2)}</p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Section 6: CIChat */}
       <CIChat />
     </>
   );

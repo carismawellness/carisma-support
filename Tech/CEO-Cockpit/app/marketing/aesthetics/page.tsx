@@ -139,6 +139,8 @@ function AestheticsMarketingContent({
     { key: "dailyBudget", label: "Daily Budget", align: "right" as const, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalSpend", label: "Total Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalLeads", label: "Total Leads", align: "right" as const, sortable: true },
+    { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const leads = row.totalLeads as number; const spend = row.totalSpend as number; return leads > 0 ? `€${(spend / (leads * 0.60)).toFixed(2)}` : "—"; } },
+    { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const leads = row.totalLeads as number; const spend = row.totalSpend as number; return leads > 0 ? `€${(spend / (leads * 0.60 * 0.58)).toFixed(2)}` : "—"; } },
     { key: "ctr", label: "CTR", align: "right" as const, sortable: true, render: (v: unknown) => `${(v as number).toFixed(1)}%` },
     { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "frequency", label: "Freq", align: "right" as const, render: (v: unknown) => (v as number).toFixed(1) },
@@ -172,6 +174,8 @@ function AestheticsMarketingContent({
     { key: "dailyBudget", label: "Daily Budget", align: "right" as const, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalSpend", label: "Total Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalLeads", label: "Total Leads", align: "right" as const, sortable: true },
+    { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const leads = row.totalLeads as number; const spend = row.totalSpend as number; return leads > 0 ? `€${(spend / (leads * 0.60)).toFixed(2)}` : "—"; } },
+    { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const leads = row.totalLeads as number; const spend = row.totalSpend as number; return leads > 0 ? `€${(spend / (leads * 0.60 * 0.58)).toFixed(2)}` : "—"; } },
     { key: "ctr", label: "CTR", align: "right" as const, sortable: true, render: (v: unknown) => `${(v as number).toFixed(1)}%` },
     { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "frequency", label: "Freq", align: "right" as const, render: (v: unknown) => (v as number).toFixed(1) },
@@ -412,7 +416,108 @@ function AestheticsMarketingContent({
         </div>
       </Card>
 
-      {/* Section 5: CIChat */}
+      {/* Section 5: Profitability Matrix */}
+      <Card className="p-3 md:p-6">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Profitability Matrix</h2>
+          <p className="text-sm text-gray-500 mt-1">Cross-channel campaign profitability with budget scaling recommendations</p>
+        </div>
+
+        {(() => {
+          const SHOW_RATE = 0.60;
+          const BOOKING_RATE = 0.58;
+
+          const allCampaigns = [
+            ...META_CAMPAIGNS.map((c) => ({ ...c, channel: "Meta" as const })),
+            ...GOOGLE_CAMPAIGNS.map((c) => ({ ...c, channel: "Google" as const })),
+          ].map((c) => {
+            const roas = c.totalSpend > 0 ? c.attributedRevenue / c.totalSpend : 0;
+            const profit = c.attributedRevenue - c.totalSpend;
+            const costPerShow = c.totalLeads > 0 ? c.totalSpend / (c.totalLeads * SHOW_RATE) : 0;
+            const costPerResult = c.totalLeads > 0 ? c.totalSpend / (c.totalLeads * SHOW_RATE * BOOKING_RATE) : 0;
+            const netExpectedRevenue = Math.round(c.attributedRevenue * 1.15);
+            const recommendation = roas >= 5 ? "Scale" : roas >= 3 ? "Maintain" : roas >= 2 ? "Optimize" : "Pause";
+            return {
+              campaign: c.campaign,
+              channel: c.channel,
+              totalLeads: c.totalLeads,
+              totalSpend: c.totalSpend,
+              cpl: c.cpl,
+              costPerShow,
+              costPerResult,
+              attributedRevenue: c.attributedRevenue,
+              netExpectedRevenue,
+              roas,
+              profit,
+              recommendation,
+            };
+          }).sort((a, b) => b.profit - a.profit);
+
+          const totalLeads = allCampaigns.reduce((s, c) => s + c.totalLeads, 0);
+          const totalSpend = allCampaigns.reduce((s, c) => s + c.totalSpend, 0);
+          const totalRevenue = allCampaigns.reduce((s, c) => s + c.attributedRevenue, 0);
+          const totalProfit = totalRevenue - totalSpend;
+          const blendedRoas = totalSpend > 0 ? totalRevenue / totalSpend : 0;
+          const totalNetExpected = allCampaigns.reduce((s, c) => s + c.netExpectedRevenue, 0);
+
+          const recBadge = (rec: string) => {
+            const styles: Record<string, string> = {
+              Scale: "bg-green-100 text-green-700",
+              Maintain: "bg-blue-100 text-blue-700",
+              Optimize: "bg-amber-100 text-amber-700",
+              Pause: "bg-red-100 text-red-700",
+            };
+            return <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${styles[rec] ?? ""}`}>{rec}</span>;
+          };
+
+          const profitabilityColumns = [
+            { key: "campaign", label: "Campaign", render: (v: unknown) => <span className="font-medium cursor-pointer hover:underline" style={{ color: BRAND_COLOR }}>{String(v)}</span> },
+            { key: "channel", label: "Channel" },
+            { key: "totalLeads", label: "Leads", align: "right" as const, sortable: true },
+            { key: "totalSpend", label: "Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+            { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+            { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+            { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+            { key: "attributedRevenue", label: "Revenue", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+            { key: "netExpectedRevenue", label: "Net Exp Rev", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+            { key: "roas", label: "ROAS", align: "right" as const, sortable: true, render: (v: unknown) => <span className={roasColor(v as number)}>{(v as number).toFixed(1)}x</span> },
+            { key: "profit", label: "Profit", align: "right" as const, sortable: true, render: (v: unknown) => <span className={(v as number) >= 0 ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>{formatCurrency(v as number)}</span> },
+            { key: "recommendation", label: "Action", align: "center" as const, render: (v: unknown) => recBadge(String(v)) },
+          ];
+
+          return (
+            <>
+              <DataTable columns={profitabilityColumns} data={allCampaigns as unknown as Record<string, unknown>[]} pageSize={20} />
+
+              {/* Summary totals */}
+              <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-4">
+                <AggregateBox label="Total Leads" value={String(totalLeads)} />
+                <AggregateBox label="Total Spend" value={formatCurrency(totalSpend)} />
+                <AggregateBox label="Total Revenue" value={formatCurrency(totalRevenue)} />
+                <AggregateBox label="Net Expected Rev" value={formatCurrency(totalNetExpected)} />
+                <div
+                  className="rounded-lg border-2 p-4 text-center"
+                  style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}
+                >
+                  <p className="text-sm text-gray-600">Blended ROAS</p>
+                  <p className={`text-xl md:text-2xl font-bold mt-1 ${roasColor(blendedRoas)}`}>{blendedRoas.toFixed(1)}x</p>
+                </div>
+              </div>
+              <div className="mt-3 flex justify-center">
+                <div
+                  className="rounded-lg border-2 px-8 py-4 text-center"
+                  style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}
+                >
+                  <p className="text-sm text-gray-600">Total Profit</p>
+                  <p className={`text-2xl md:text-3xl font-bold mt-1 ${totalProfit >= 0 ? "text-green-600" : "text-red-600"}`}>{formatCurrency(totalProfit)}</p>
+                </div>
+              </div>
+            </>
+          );
+        })()}
+      </Card>
+
+      {/* Section 6: CIChat */}
       <CIChat />
     </>
   );

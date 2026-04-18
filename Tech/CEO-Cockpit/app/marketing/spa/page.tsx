@@ -147,11 +147,23 @@ function SpaMarketingContent({
 
   /* --- Meta Ads --- */
   const metaColumns = [
-    { key: "campaign", label: "Campaign Name" },
+    { key: "campaign", label: "Campaign Name", render: (v: unknown) => (
+      <button className="text-left font-medium underline decoration-dotted underline-offset-2 hover:opacity-70 transition-opacity" style={{ color: BRAND_COLOR }}>{v as string}</button>
+    ) },
     { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "dailyBudget", label: "Daily Budget", align: "right" as const, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalSpend", label: "Total Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalLeads", label: "Total Leads", align: "right" as const, sortable: true },
+    { key: "costPerShow", label: "Cost/Show", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => {
+      const spend = row.totalSpend as number;
+      const leads = row.totalLeads as number;
+      return `€${(spend / (leads * 0.65)).toFixed(2)}`;
+    } },
+    { key: "costPerResult", label: "Cost/Result", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => {
+      const spend = row.totalSpend as number;
+      const leads = row.totalLeads as number;
+      return `€${(spend / (leads * 0.65 * 0.55)).toFixed(2)}`;
+    } },
     { key: "ctr", label: "CTR", align: "right" as const, sortable: true, render: (v: unknown) => `${(v as number).toFixed(1)}%` },
     { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "frequency", label: "Freq", align: "right" as const, render: (v: unknown) => (v as number).toFixed(1) },
@@ -176,11 +188,23 @@ function SpaMarketingContent({
 
   /* --- Google Ads --- */
   const googleColumns = [
-    { key: "campaign", label: "Campaign Name" },
+    { key: "campaign", label: "Campaign Name", render: (v: unknown) => (
+      <button className="text-left font-medium underline decoration-dotted underline-offset-2 hover:opacity-70 transition-opacity" style={{ color: BRAND_COLOR }}>{v as string}</button>
+    ) },
     { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "dailyBudget", label: "Daily Budget", align: "right" as const, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalSpend", label: "Total Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalLeads", label: "Total Leads", align: "right" as const, sortable: true },
+    { key: "costPerShow", label: "Cost/Show", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => {
+      const spend = row.totalSpend as number;
+      const leads = row.totalLeads as number;
+      return `€${(spend / (leads * 0.65)).toFixed(2)}`;
+    } },
+    { key: "costPerResult", label: "Cost/Result", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => {
+      const spend = row.totalSpend as number;
+      const leads = row.totalLeads as number;
+      return `€${(spend / (leads * 0.65 * 0.55)).toFixed(2)}`;
+    } },
     { key: "ctr", label: "CTR", align: "right" as const, sortable: true, render: (v: unknown) => `${(v as number).toFixed(1)}%` },
     { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
     { key: "frequency", label: "Freq", align: "right" as const, render: (v: unknown) => (v as number).toFixed(1) },
@@ -202,6 +226,88 @@ function SpaMarketingContent({
   const googleTotalSpend = GOOGLE_CAMPAIGNS.reduce((s, c) => s + c.totalSpend, 0);
   const googleExpectedRoasNum = googleTotalSpend > 0 ? googleExpectedRevenue / googleTotalSpend : 0;
   const googleExpectedRoas = googleExpectedRoasNum.toFixed(1);
+
+  /* --- Profitability Matrix --- */
+  const profitabilityData = useMemo(() => {
+    const allCampaigns = [
+      ...META_CAMPAIGNS.map((c) => ({ ...c, channel: "Meta" as const })),
+      ...GOOGLE_CAMPAIGNS.map((c) => ({ ...c, channel: "Google" as const })),
+    ];
+    return allCampaigns
+      .map((c) => {
+        const costPerShow = c.totalSpend / (c.totalLeads * 0.65);
+        const costPerResult = c.totalSpend / (c.totalLeads * 0.65 * 0.55);
+        const netExpectedRevenue = Math.round(c.attributedRevenue * 1.15);
+        const roas = c.totalSpend > 0 ? c.attributedRevenue / c.totalSpend : 0;
+        const profit = c.attributedRevenue - c.totalSpend;
+        const profitabilityPct = c.totalSpend > 0 ? ((c.attributedRevenue - c.totalSpend) / c.totalSpend) * 100 : 0;
+        const recommendation = roas >= 5 ? "Scale" : roas >= 3 ? "Maintain" : roas >= 2 ? "Optimize" : "Pause";
+        return {
+          campaign: c.campaign,
+          channel: c.channel,
+          totalLeads: c.totalLeads,
+          totalSpend: c.totalSpend,
+          cpl: c.cpl,
+          costPerShow,
+          costPerResult,
+          attributedRevenue: c.attributedRevenue,
+          netExpectedRevenue,
+          roas,
+          profit,
+          profitabilityPct,
+          recommendation,
+        };
+      })
+      .sort((a, b) => b.profitabilityPct - a.profitabilityPct);
+  }, []);
+
+  const profitabilityTotals = useMemo(() => {
+    const totalLeads = profitabilityData.reduce((s, c) => s + c.totalLeads, 0);
+    const totalSpend = profitabilityData.reduce((s, c) => s + c.totalSpend, 0);
+    const totalRevenue = profitabilityData.reduce((s, c) => s + c.attributedRevenue, 0);
+    const totalProfit = totalRevenue - totalSpend;
+    const totalRoas = totalSpend > 0 ? totalRevenue / totalSpend : 0;
+    const totalProfitPct = totalSpend > 0 ? (totalProfit / totalSpend) * 100 : 0;
+    return { totalLeads, totalSpend, totalRevenue, totalProfit, totalRoas, totalProfitPct };
+  }, [profitabilityData]);
+
+  const profitabilityColumns = [
+    { key: "campaign", label: "Campaign", render: (v: unknown) => (
+      <button className="text-left font-medium underline decoration-dotted underline-offset-2 hover:opacity-70 transition-opacity" style={{ color: BRAND_COLOR }}>{v as string}</button>
+    ) },
+    { key: "channel", label: "Channel", render: (v: unknown) => (
+      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${(v as string) === "Meta" ? "bg-blue-50 text-blue-700" : "bg-emerald-50 text-emerald-700"}`}>{v as string}</span>
+    ) },
+    { key: "totalLeads", label: "Leads", align: "right" as const, sortable: true },
+    { key: "totalSpend", label: "Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "costPerShow", label: "Cost/Show", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "costPerResult", label: "Cost/Booking", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "attributedRevenue", label: "Revenue", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+    { key: "netExpectedRevenue", label: "Net Exp. Rev", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
+    { key: "roas", label: "ROAS", align: "right" as const, sortable: true, render: (v: unknown) => {
+      const val = v as number;
+      return <span style={{ color: getRoasColor(val), fontWeight: 600 }}>{val.toFixed(1)}x</span>;
+    } },
+    { key: "profit", label: "Profit", align: "right" as const, sortable: true, render: (v: unknown) => {
+      const val = v as number;
+      return <span style={{ color: val >= 0 ? "#22C55E" : "#EF4444", fontWeight: 600 }}>{formatCurrency(val)}</span>;
+    } },
+    { key: "profitabilityPct", label: "Profit %", align: "right" as const, sortable: true, render: (v: unknown) => {
+      const val = v as number;
+      return <span style={{ color: val >= 0 ? "#22C55E" : "#EF4444", fontWeight: 600 }}>{val.toFixed(0)}%</span>;
+    } },
+    { key: "recommendation", label: "Action", align: "center" as const, render: (v: unknown) => {
+      const rec = v as string;
+      const styles: Record<string, string> = {
+        Scale: "bg-green-50 text-green-700 border-green-200",
+        Maintain: "bg-blue-50 text-blue-700 border-blue-200",
+        Optimize: "bg-amber-50 text-amber-700 border-amber-200",
+        Pause: "bg-red-50 text-red-700 border-red-200",
+      };
+      return <span className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-semibold ${styles[rec] ?? ""}`}>{rec}</span>;
+    } },
+  ];
 
   /* --- Email data --- */
   const emailCampaignRev = 6840;
@@ -391,7 +497,47 @@ function SpaMarketingContent({
         </div>
       </Card>
 
-      {/* Section 5: CIChat */}
+      {/* Section 5: Profitability Matrix */}
+      <Card className="p-3 md:p-6">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Profitability Matrix</h2>
+          <p className="text-sm text-gray-500 mt-0.5">Cross-channel campaign profitability analysis with budget scaling recommendations</p>
+        </div>
+
+        <DataTable columns={profitabilityColumns} data={profitabilityData as unknown as Record<string, unknown>[]} />
+
+        {/* Summary Row */}
+        <div className="mt-4 rounded-lg border-2 p-4" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}08` }}>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="text-center">
+              <p className="text-xs text-gray-500 font-medium uppercase">Total Campaigns</p>
+              <p className="text-lg font-bold text-gray-900 mt-0.5">{profitabilityData.length}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-gray-500 font-medium uppercase">Total Leads</p>
+              <p className="text-lg font-bold text-gray-900 mt-0.5">{profitabilityTotals.totalLeads}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-gray-500 font-medium uppercase">Total Spend</p>
+              <p className="text-lg font-bold text-gray-900 mt-0.5">{formatCurrency(profitabilityTotals.totalSpend)}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-gray-500 font-medium uppercase">Total Revenue</p>
+              <p className="text-lg font-bold text-gray-900 mt-0.5">{formatCurrency(profitabilityTotals.totalRevenue)}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-gray-500 font-medium uppercase">Blended ROAS</p>
+              <p className="text-lg font-bold mt-0.5" style={{ color: getRoasColor(profitabilityTotals.totalRoas) }}>{profitabilityTotals.totalRoas.toFixed(1)}x</p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-gray-500 font-medium uppercase">Total Profit</p>
+              <p className="text-lg font-bold mt-0.5" style={{ color: profitabilityTotals.totalProfit >= 0 ? "#22C55E" : "#EF4444" }}>{formatCurrency(profitabilityTotals.totalProfit)}</p>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Section 6: CIChat */}
       <CIChat />
     </>
   );

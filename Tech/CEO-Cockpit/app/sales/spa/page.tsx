@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { CIChat } from "@/components/ci/CIChat";
 import { SalesKPICard } from "@/components/sales/SalesKPICard";
@@ -34,6 +34,7 @@ import {
   Line,
   LabelList,
 } from "recharts";
+import { AlertTriangle, Target } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════════════
    REAL DATA — Weekly KPI Sheet 2025 (EUR ex VAT)
@@ -55,7 +56,7 @@ const MOCK_ODYCY     = [2510,2324,2186,2410,2738,4464,3622,3340,1683,2990,2208,3
 
 const MOCK_YOY_COMPANY = [-3.3,-5.6,19.5,4.9,22.1,36.4,-7.1,1.4,-22.9,-43.4,-8.6,-3.3,-7.6,-12.6,8.3,-5.8,0.4,-8.8,-19.2,12.0,-14.7,1.8];
 
-const WEEK_DATES = weekLabelsToDateObjects(MOCK_WEEKS, 2025);
+const WEEK_DATES = weekLabelsToDateObjects(MOCK_WEEKS, 2026);
 
 const MOCK_RETAIL_PCT_COMPANY = [7.7,6.4,4.2,6.6,4.7,5.1,7.1,2.8,5.0,4.9,3.6,7.1,8.2,6.0,7.0,4.2,7.1,4.8,5.0,4.9,8.3,7.1];
 const MOCK_ADDON_PCT_COMPANY  = [3.5,3.6,5.2,4.8,4.5,3.3,4.5,2.2,4.0,3.4,3.6,3.5,3.5,3.9,3.1,3.1,2.3,3.2,3.1,4.2,4.0,3.4];
@@ -121,11 +122,29 @@ const HOTEL_LY_FACTORS: Record<string, number> = {
   "Odycy": 0.88,
 };
 
+// Appointment booking & show data per week (company-wide)
+const MOCK_APPTS_BOOKED = [320,285,272,290,340,365,312,348,296,310,288,325,336,298,312,342,358,310,318,340,270,308];
+const MOCK_APPTS_SHOWED = [278,248,240,256,298,318,274,306,260,272,254,286,296,264,276,300,316,274,280,298,238,270];
+
+// Per-hotel weekly targets (EUR revenue)
+const DEFAULT_SPA_TARGETS: Record<string, number> = {
+  "InterContinental": 11000,
+  "Hugo's": 12000,
+  "Hyatt": 6000,
+  "Ramla Bay": 6000,
+  "Labranda": 3500,
+  "Odycy": 3500,
+};
+
 /* ═══════════════════════════════════════════════════════════════════════
    SPA CONTENT
    ═══════════════════════════════════════════════════════════════════════ */
 
 function SpaContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }) {
+  const [hotelTargets, setHotelTargets] = useState(DEFAULT_SPA_TARGETS);
+  const [editingTargets, setEditingTargets] = useState(false);
+  const [draftTargets, setDraftTargets] = useState(DEFAULT_SPA_TARGETS);
+
   /* ── Filtered indices based on date range ──────────────────────────── */
   const filteredIdx = useMemo(
     () => getFilteredIndices(WEEK_DATES, dateFrom, dateTo),
@@ -183,6 +202,24 @@ function SpaContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }) {
   const localGuestPct = 38.2;
   const localGuestPctLY = 34.5;
   const yoyLocalGuest = localGuestPct - localGuestPctLY;
+
+  // Appointment booking & show rates
+  const totalApptsBooked = useMemo(() => sumFiltered(MOCK_APPTS_BOOKED, filteredIdx), [filteredIdx]);
+  const totalApptsShowed = useMemo(() => sumFiltered(MOCK_APPTS_SHOWED, filteredIdx), [filteredIdx]);
+  const spaShowRate = totalApptsBooked > 0 ? (totalApptsShowed / totalApptsBooked) * 100 : 0;
+  const spaBookingRate = totalApptsShowed > 0 ? (totalApptsShowed / totalApptsBooked) * 100 : 0; // for spa: show = booking essentially
+  const noShows = totalApptsBooked - totalApptsShowed;
+  const avgRevenuePerAppt = totalApptsShowed > 0 ? totalRev / totalApptsShowed : 0;
+  const revenueLostToNoShows = Math.round(noShows * avgRevenuePerAppt);
+
+  // Per-hotel target data
+  const hotelTargetData = useMemo(() => HOTELS.map((h) => {
+    const filtered = filterByIndices(h.data, filteredIdx);
+    const actual = sum(filtered);
+    const target = (hotelTargets[h.name] || 0) * L;
+    const pct = target > 0 ? (actual / target) * 100 : 0;
+    return { name: h.name, actual, target, pct };
+  }), [filteredIdx, L, hotelTargets]);
 
   /* ── Subtitle ──────────────────────────────────────────────────────── */
   const subtitle = useMemo(() => {
@@ -283,6 +320,28 @@ function SpaContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }) {
           subtitle={`${avgAddonPct.toFixed(1)}% of total`}
         />
       </SalesKPIGrid>
+
+      {/* ── Booking Rate & Show Rate Row ──────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <Card className="p-3 md:p-5 text-center border-l-4" style={{ borderLeftColor: chartColors.spa }}>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Show Rate</p>
+          <p className="text-3xl font-bold" style={{ color: chartColors.spa }}>{spaShowRate.toFixed(0)}%</p>
+          <p className="text-xs text-muted-foreground mt-1">{totalApptsShowed.toLocaleString()} showed of {totalApptsBooked.toLocaleString()} booked</p>
+        </Card>
+        <Card className="p-3 md:p-5 text-center border-l-4" style={{ borderLeftColor: "#059669" }}>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Avg Revenue / Appointment</p>
+          <p className="text-3xl font-bold text-emerald-600">{formatCurrency(Math.round(avgRevenuePerAppt))}</p>
+          <p className="text-xs text-muted-foreground mt-1">Based on {totalApptsShowed.toLocaleString()} appointments</p>
+        </Card>
+        <Card className="p-3 md:p-5 text-center border-l-4 border-red-400 bg-red-50/50">
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <AlertTriangle className="h-4 w-4 text-red-500" />
+            <p className="text-xs uppercase tracking-wider text-red-600 font-medium">Revenue Lost to No-Shows</p>
+          </div>
+          <p className="text-3xl font-bold text-red-600">{formatCurrency(revenueLostToNoShows)}</p>
+          <p className="text-xs text-muted-foreground mt-1">{noShows} no-shows &times; {formatCurrency(Math.round(avgRevenuePerAppt))} avg per appointment</p>
+        </Card>
+      </div>
 
       {/* ── Viz 1: Revenue by Hotel (Stacked Bar + Line) ──────────── */}
       <Card className="p-3 md:p-6">
@@ -490,6 +549,97 @@ function SpaContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }) {
         data={spaServiceBreakdown}
         color={chartColors.spa}
       />
+
+      {/* ── Targets Section — Per Hotel ──────────────────────────────── */}
+      <Card className="p-3 md:p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Target className="h-5 w-5" style={{ color: chartColors.spa }} />
+            <h2 className="text-lg font-semibold text-foreground">Targets vs Actual — By Location</h2>
+          </div>
+          <button
+            onClick={() => {
+              if (editingTargets) {
+                setHotelTargets(draftTargets);
+                setEditingTargets(false);
+              } else {
+                setDraftTargets(hotelTargets);
+                setEditingTargets(true);
+              }
+            }}
+            className="text-xs font-medium px-3 py-1.5 rounded-lg border hover:bg-muted transition-colors"
+          >
+            {editingTargets ? "Save Targets" : "Edit Targets"}
+          </button>
+        </div>
+
+        {editingTargets && (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6 p-4 bg-muted/50 rounded-lg">
+            {HOTELS.map((h) => (
+              <div key={h.name}>
+                <label className="text-xs text-muted-foreground block mb-1">{h.name} /wk</label>
+                <input
+                  type="number"
+                  value={draftTargets[h.name] || 0}
+                  onChange={(e) => setDraftTargets({ ...draftTargets, [h.name]: Number(e.target.value) })}
+                  className="w-full border rounded px-2 py-1 text-sm"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        <p className="text-xs text-muted-foreground mb-4">
+          Weekly targets &times; {L} weeks selected. Revenue in EUR ex VAT.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {hotelTargetData.map((item) => {
+            const isOnTrack = item.pct >= 90;
+            const isWarning = item.pct >= 70 && item.pct < 90;
+            const barColor = isOnTrack ? "#059669" : isWarning ? "#d97706" : "#dc2626";
+            return (
+              <div key={item.name} className="space-y-2 p-3 rounded-lg border">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-foreground">{item.name}</p>
+                  <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${isOnTrack ? "bg-green-50 text-green-700" : isWarning ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"}`}>
+                    {item.pct.toFixed(0)}%
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-xl font-bold text-foreground">{formatCurrency(item.actual)}</p>
+                  <p className="text-xs text-muted-foreground">/ {formatCurrency(item.target)}</p>
+                </div>
+                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(item.pct, 100)}%`, backgroundColor: barColor }} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Company total */}
+        <div className="mt-4 pt-4 border-t">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-foreground">Company Total</p>
+            <div className="flex items-baseline gap-3">
+              <p className="text-xl font-bold text-foreground">{formatCurrency(totalRev)}</p>
+              <p className="text-sm text-muted-foreground">/ {formatCurrency(Object.values(hotelTargets).reduce((s, v) => s + v, 0) * L)}</p>
+              {(() => {
+                const companyTarget = Object.values(hotelTargets).reduce((s, v) => s + v, 0) * L;
+                const companyPct = companyTarget > 0 ? (totalRev / companyTarget) * 100 : 0;
+                const isOnTrack = companyPct >= 90;
+                const isWarning = companyPct >= 70 && companyPct < 90;
+                return (
+                  <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${isOnTrack ? "bg-green-50 text-green-700" : isWarning ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"}`}>
+                    {companyPct.toFixed(0)}%
+                  </span>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      </Card>
 
       <CIChat />
     </>

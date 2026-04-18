@@ -17,11 +17,11 @@ import type { CrmDailyRow } from "@/lib/types/crm";
 
 const DUMMY_BRAND_DATA: Record<
   string,
-  { totalSales: number; dailyAvg: number; depositPct: number; stlMedian: number }
+  { totalSales: number; dailyAvg: number; depositPct: number; stlMedian: number; stlMean: number }
 > = {
-  spa: { totalSales: 18420, dailyAvg: 1316, depositPct: 72.5, stlMedian: 3.2 },
-  aesthetics: { totalSales: 34850, dailyAvg: 2489, depositPct: 68.1, stlMedian: 4.8 },
-  slimming: { totalSales: 22100, dailyAvg: 1579, depositPct: 74.3, stlMedian: 6.1 },
+  spa: { totalSales: 18420, dailyAvg: 1316, depositPct: 72.5, stlMedian: 3.2, stlMean: 4.1 },
+  aesthetics: { totalSales: 34850, dailyAvg: 2489, depositPct: 68.1, stlMedian: 4.8, stlMean: 6.3 },
+  slimming: { totalSales: 22100, dailyAvg: 1579, depositPct: 74.3, stlMedian: 6.1, stlMean: 8.4 },
 };
 
 /* ------------------------------------------------------------------ */
@@ -109,6 +109,7 @@ export function SalesPerformance({
         dailyAvg: dummy.dailyAvg,
         depositPct: dummy.depositPct,
         stlMedian: dummy.stlMedian,
+        stlMean: dummy.stlMean,
         isDummy: true,
       };
     }
@@ -133,6 +134,7 @@ export function SalesPerformance({
       .map((r) => r.speed_to_lead_median_min)
       .filter((v): v is number => v !== null && v > 0);
     const stlMedian = median(stlValues);
+    const stlMean = stlValues.length > 0 ? stlValues.reduce((a, b) => a + b, 0) / stlValues.length : 0;
 
     return {
       slug,
@@ -141,6 +143,7 @@ export function SalesPerformance({
       dailyAvg: Math.round(dailyAvg),
       depositPct,
       stlMedian,
+      stlMean,
       isDummy: false,
     };
   });
@@ -183,11 +186,22 @@ export function SalesPerformance({
                 {formatPercent(b.depositPct)}
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-text-secondary">Speed to Lead</span>
-              <span className={`text-sm font-bold ${stlColor(b.stlMedian)}`}>
-                {b.stlMedian > 0 ? formatMinutes(b.stlMedian) : "-"}
-              </span>
+            <div className="mt-2 pt-3 border-t border-dashed">
+              <p className="text-[10px] uppercase tracking-wider text-text-secondary font-medium mb-2">Speed to Lead</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="text-center p-2 rounded-lg bg-gray-50">
+                  <p className="text-[10px] text-text-secondary mb-0.5">Median</p>
+                  <p className={`text-lg font-bold ${stlColor(b.stlMedian)}`}>
+                    {b.stlMedian > 0 ? formatMinutes(b.stlMedian) : "-"}
+                  </p>
+                </div>
+                <div className="text-center p-2 rounded-lg bg-gray-50">
+                  <p className="text-[10px] text-text-secondary mb-0.5">Mean</p>
+                  <p className={`text-lg font-bold ${stlColor(b.stlMean)}`}>
+                    {b.stlMean > 0 ? formatMinutes(b.stlMean) : "-"}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </Card>

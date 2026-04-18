@@ -2,6 +2,7 @@
 
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { SalesPerformance } from "@/components/crm/SalesPerformance";
+import { SpeedToLeadSection } from "@/components/crm/SpeedToLeadSection";
 import { EmployeeTable } from "@/components/crm/EmployeeTable";
 import { MessageQueueHealth } from "@/components/crm/MessageQueueHealth";
 import { BookingMix } from "@/components/crm/BookingMix";
@@ -32,6 +33,11 @@ function CRMContent({
       <section>
         <h2 className="text-lg font-semibold text-foreground mb-3">Sales Performance</h2>
         <SalesPerformance dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
+      </section>
+
+      {/* Speed to Lead — Central Metric */}
+      <section>
+        <SpeedToLeadSection dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
       </section>
 
       {/* Message Queue Health */}

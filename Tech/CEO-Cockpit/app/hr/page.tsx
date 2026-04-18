@@ -1,23 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
 import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
 import { DataTable } from "@/components/dashboard/DataTable";
 import { Card } from "@/components/ui/card";
-import { chartColors, chartDefaults, formatCurrency } from "@/lib/charts/config";
-import { useKPIData } from "@/lib/hooks/useKPIData";
-import {
-  useTalexioEmployees,
-  useTalexioTimeLogs,
-  useTalexioLeave,
-  useTalexioPayslips,
-  TalexioEmployee,
-  TalexioEmployeeWithTimeLogs,
-  TalexioEmployeeWithLeave,
-  TalexioEmployeeWithPayslips,
-} from "@/lib/hooks/useTalexio";
+import { chartColors, formatCurrency } from "@/lib/charts/config";
 import {
   BarChart,
   Bar,
@@ -38,53 +26,20 @@ import {
 // CONSTANTS
 // ============================================================
 
-const locationNames: Record<number, string> = {
-  1: "InterContinental",
-  2: "Hugo's",
-  3: "Hyatt",
-  4: "Ramla Bay",
-  5: "Labranda",
-  6: "Odycy",
-  7: "Novotel",
-  8: "Excelsior",
-};
-
 const REVPAH_TARGET = 35;
-const HC_PCT_TARGET = 35; // Human capital % target
+const HC_PCT_TARGET = 35;
 
 const PIE_COLORS = [
   chartColors.spa, chartColors.aesthetics, chartColors.slimming,
-  "#8B5CF6", "#EC4899", "#06B6D4", "#F59E0B", "#10B981", "#6366F1", "#EF4444",
+  "#8B5CF6", "#EC4899", "#06B6D4", "#F59E0B", "#10B981",
 ];
 
-// Productivity colors
 const PROD_COLORS = {
   productive: "#22C55E",
   neutral: "#9CA3AF",
   unproductive: "#EF4444",
   idle: "#F59E0B",
 };
-
-// ============================================================
-// TYPES
-// ============================================================
-
-interface TherapistUtilizationRow {
-  week_start: string;
-  staff_id: number;
-  location_id: number;
-  available_hours: number;
-  booked_hours: number;
-  utilization_pct: number;
-  bookings_count: number;
-}
-
-interface SalesWeeklyRow {
-  week_start: string;
-  location_id: number;
-  brand_id: number;
-  revenue_ex_vat: number;
-}
 
 // ============================================================
 // HELPERS
@@ -102,18 +57,6 @@ function getHCPctColor(value: number): string {
   return chartColors.target;
 }
 
-function parseTime(isoString: string): Date {
-  return new Date(isoString);
-}
-
-function formatTime(isoString: string): string {
-  return parseTime(isoString).toLocaleTimeString("en-MT", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-}
-
 function getStatusBadge(status: string, className: string) {
   return (
     <span
@@ -125,253 +68,180 @@ function getStatusBadge(status: string, className: string) {
 }
 
 // ============================================================
-// MOCK PRODUCTIVITY DATA (WE360)
+// DUMMY DATA
 // ============================================================
 
-const MOCK_STAFF_PRODUCTIVITY = [
-  { name: "Sarah M.", productive: 5.8, neutral: 0.6, unproductive: 0.2, idle: 0.8, emailHrs: 1.4, productivePct: 89 },
-  { name: "Abid K.", productive: 5.5, neutral: 0.7, unproductive: 0.3, idle: 0.9, emailHrs: 1.6, productivePct: 84 },
-  { name: "Elena P.", productive: 5.4, neutral: 0.8, unproductive: 0.3, idle: 0.9, emailHrs: 1.3, productivePct: 82 },
-  { name: "Juli R.", productive: 5.2, neutral: 0.8, unproductive: 0.4, idle: 1.0, emailHrs: 1.1, productivePct: 81 },
-  { name: "Rana H.", productive: 5.1, neutral: 0.9, unproductive: 0.4, idle: 1.0, emailHrs: 1.8, productivePct: 78 },
-  { name: "Maria C.", productive: 4.9, neutral: 0.9, unproductive: 0.5, idle: 1.1, emailHrs: 2.1, productivePct: 76 },
-  { name: "Lisa F.", productive: 4.8, neutral: 1.0, unproductive: 0.5, idle: 1.1, emailHrs: 2.0, productivePct: 75 },
-  { name: "Nicci D.", productive: 4.6, neutral: 0.9, unproductive: 0.5, idle: 1.2, emailHrs: 0.9, productivePct: 72 },
-  { name: "Jake T.", productive: 4.5, neutral: 1.0, unproductive: 0.6, idle: 1.3, emailHrs: 1.9, productivePct: 71 },
-  { name: "Mark S.", productive: 4.3, neutral: 1.0, unproductive: 0.6, idle: 1.4, emailHrs: 2.4, productivePct: 68 },
-  { name: "Adeel M.", productive: 3.8, neutral: 0.8, unproductive: 0.7, idle: 1.5, emailHrs: 0.7, productivePct: 58 },
-  { name: "Tom B.", productive: 3.5, neutral: 0.7, unproductive: 0.8, idle: 1.6, emailHrs: 0.5, productivePct: 55 },
+const HEADCOUNT = {
+  totalActive: 75,
+  totalAll: 82,
+  terminated: 7,
+  turnoverRate: 8.5,
+  byPosition: [
+    { name: "Therapist", count: 25 },
+    { name: "Aesthetician", count: 10 },
+    { name: "Receptionist", count: 8 },
+    { name: "Manager", count: 8 },
+    { name: "Nurse", count: 6 },
+    { name: "Slimming Consultant", count: 5 },
+    { name: "Cleaning & Maintenance", count: 5 },
+    { name: "Admin & Support", count: 4 },
+    { name: "Marketing", count: 2 },
+    { name: "Finance", count: 2 },
+  ],
+  byOrgUnit: [
+    { name: "InterContinental", count: 15 },
+    { name: "Hugo's", count: 12 },
+    { name: "Hyatt", count: 10 },
+    { name: "Ramla Bay", count: 9 },
+    { name: "Labranda", count: 8 },
+    { name: "Odycy", count: 8 },
+    { name: "Novotel", count: 7 },
+    { name: "Excelsior", count: 6 },
+  ],
+};
+
+const ATTENDANCE_LOGS = [
+  { name: "Maria Borg", clockIn: "06:45", clockOut: "14:50", hoursWorked: "8.1h", status: "Completed" },
+  { name: "Sarah Caballeri", clockIn: "06:52", clockOut: null, hoursWorked: "6.3h", status: "Active" },
+  { name: "Elena Petrova", clockIn: "07:00", clockOut: "15:05", hoursWorked: "8.1h", status: "Completed" },
+  { name: "Josef Micallef", clockIn: "07:05", clockOut: null, hoursWorked: "6.1h", status: "Active" },
+  { name: "Abid Khan", clockIn: "07:10", clockOut: "15:15", hoursWorked: "8.1h", status: "Completed" },
+  { name: "Lisa Farrugia", clockIn: "07:15", clockOut: null, hoursWorked: "5.9h", status: "Active" },
+  { name: "Katya Dimech", clockIn: "07:20", clockOut: "15:25", hoursWorked: "8.1h", status: "Completed" },
+  { name: "Rana Hussain", clockIn: "07:30", clockOut: null, hoursWorked: "5.7h", status: "Active" },
+  { name: "Mark Spiteri", clockIn: "07:35", clockOut: "15:40", hoursWorked: "8.1h", status: "Completed" },
+  { name: "Julie Rizzo", clockIn: "07:45", clockOut: null, hoursWorked: "5.4h", status: "Active" },
+  { name: "Nicci Debono", clockIn: "08:00", clockOut: "16:05", hoursWorked: "8.1h", status: "Completed" },
+  { name: "Tom Bonello", clockIn: "08:05", clockOut: null, hoursWorked: "5.1h", status: "Active" },
+  { name: "Anna Vella", clockIn: "08:10", clockOut: "16:15", hoursWorked: "8.1h", status: "Completed" },
+  { name: "David Camilleri", clockIn: "08:20", clockOut: null, hoursWorked: "4.9h", status: "Active" },
+  { name: "Carmen Galea", clockIn: "08:30", clockOut: "16:35", hoursWorked: "8.1h", status: "Completed" },
+  { name: "Pierre Zammit", clockIn: "08:45", clockOut: null, hoursWorked: "4.4h", status: "Active" },
+  { name: "Jade Cassar", clockIn: "09:00", clockOut: "17:05", hoursWorked: "8.1h", status: "Completed" },
+  { name: "Liam Attard", clockIn: "09:05", clockOut: null, hoursWorked: "4.1h", status: "Active" },
+  { name: "Sophie Grech", clockIn: "09:10", clockOut: null, hoursWorked: "4.0h", status: "Active" },
+  { name: "Adeel Malik", clockIn: "09:15", clockOut: null, hoursWorked: "4.0h", status: "Active" },
+  { name: "Robert Pace", clockIn: "09:20", clockOut: null, hoursWorked: "3.9h", status: "Active" },
+  { name: "Nina Cutajar", clockIn: "09:30", clockOut: null, hoursWorked: "3.7h", status: "Active" },
+  { name: "Jake Tanti", clockIn: "09:45", clockOut: null, hoursWorked: "3.4h", status: "Active" },
 ];
 
-// ============================================================
-// TALEXIO DATA PROCESSORS
-// ============================================================
+const LATE_EMPLOYEES = [
+  { name: "Jake Tanti", clockIn: "09:45", minutesLate: 30 },
+  { name: "Nina Cutajar", clockIn: "09:30", minutesLate: 15 },
+  { name: "Robert Pace", clockIn: "09:20", minutesLate: 5 },
+];
 
-function processHeadcount(employees: TalexioEmployee[]) {
-  const active = employees.filter((e) => !e.isTerminated);
-  const terminated = employees.filter((e) => e.isTerminated);
-  const byPosition: Record<string, number> = {};
-  const byOrgUnit: Record<string, number> = {};
+const NOT_CLOCKED_IN = [
+  "Christian Bugeja", "Doris Said", "Emmanuel Grima",
+  "Francesca Brincat", "George Axiak", "Helene Busuttil",
+  "Ivan Fenech", "Karen Mallia", "Lorenzo Schembri",
+  "Martha Xuereb", "Noel Azzopardi", "Pauline Scerri",
+];
 
-  for (const e of active) {
-    const pos = e.currentPositionSimple?.position?.name || "Unknown";
-    const org = e.currentPositionSimple?.organisationUnit?.name || "Unknown";
-    byPosition[pos] = (byPosition[pos] || 0) + 1;
-    byOrgUnit[org] = (byOrgUnit[org] || 0) + 1;
-  }
+const LEAVE_BALANCES = [
+  { name: "Rana Hussain", vacationHrs: 120, sickHrs: 96, totalTypes: 4, totalHrs: 248 },
+  { name: "Tom Bonello", vacationHrs: 160, sickHrs: 88, totalTypes: 3, totalHrs: 272 },
+  { name: "Adeel Malik", vacationHrs: 140, sickHrs: 72, totalTypes: 4, totalHrs: 244 },
+  { name: "Jake Tanti", vacationHrs: 130, sickHrs: 64, totalTypes: 3, totalHrs: 218 },
+  { name: "Maria Borg", vacationHrs: 160, sickHrs: 48, totalTypes: 4, totalHrs: 240 },
+  { name: "Mark Spiteri", vacationHrs: 145, sickHrs: 40, totalTypes: 3, totalHrs: 209 },
+  { name: "Lisa Farrugia", vacationHrs: 160, sickHrs: 32, totalTypes: 4, totalHrs: 224 },
+  { name: "Elena Petrova", vacationHrs: 155, sickHrs: 24, totalTypes: 3, totalHrs: 203 },
+  { name: "Sarah Caballeri", vacationHrs: 160, sickHrs: 16, totalTypes: 4, totalHrs: 208 },
+  { name: "Katya Dimech", vacationHrs: 148, sickHrs: 16, totalTypes: 3, totalHrs: 188 },
+  { name: "Julie Rizzo", vacationHrs: 160, sickHrs: 8, totalTypes: 3, totalHrs: 192 },
+  { name: "Nicci Debono", vacationHrs: 160, sickHrs: 8, totalTypes: 4, totalHrs: 200 },
+  { name: "Abid Khan", vacationHrs: 152, sickHrs: 0, totalTypes: 3, totalHrs: 176 },
+  { name: "Josef Micallef", vacationHrs: 160, sickHrs: 0, totalTypes: 3, totalHrs: 184 },
+  { name: "Sophie Grech", vacationHrs: 140, sickHrs: 0, totalTypes: 2, totalHrs: 164 },
+];
 
-  return {
-    totalActive: active.length,
-    totalAll: employees.length,
-    terminated: terminated.length,
-    // Turnover rate: terminated / (active + terminated) * 100
-    turnoverRate: employees.length > 0 ? (terminated.length / employees.length) * 100 : 0,
-    byPosition: Object.entries(byPosition)
-      .sort((a, b) => b[1] - a[1])
-      .map(([name, count]) => ({ name, count })),
-    byOrgUnit: Object.entries(byOrgUnit)
-      .sort((a, b) => b[1] - a[1])
-      .map(([name, count]) => ({ name, count })),
-  };
-}
+const SICK_LEAVE_TOP = [
+  { name: "Rana Hussain", entitlement: 96 },
+  { name: "Tom Bonello", entitlement: 88 },
+  { name: "Adeel Malik", entitlement: 72 },
+  { name: "Jake Tanti", entitlement: 64 },
+  { name: "Maria Borg", entitlement: 48 },
+  { name: "Mark Spiteri", entitlement: 40 },
+  { name: "Lisa Farrugia", entitlement: 32 },
+  { name: "Elena Petrova", entitlement: 24 },
+  { name: "Sarah Caballeri", entitlement: 16 },
+  { name: "Katya Dimech", entitlement: 16 },
+];
 
-function processAttendance(employees: TalexioEmployeeWithTimeLogs[]) {
-  const today = new Date().toISOString().split("T")[0];
-  const activeWithLogs = employees.filter((e) => !e.isTerminated);
+const PAYROLL = {
+  latestMonth: "2026-03",
+  latestGross: 134800,
+  latestNet: 101100,
+  latestTax: 21568,
+  avgCostPerEmployee: 1797,
+  locationData: [
+    { name: "InterContinental", gross: 28500, headcount: 15, avgCost: 1900 },
+    { name: "Hugo's", gross: 22800, headcount: 12, avgCost: 1900 },
+    { name: "Hyatt", gross: 18500, headcount: 10, avgCost: 1850 },
+    { name: "Ramla Bay", gross: 15750, headcount: 9, avgCost: 1750 },
+    { name: "Labranda", gross: 14400, headcount: 8, avgCost: 1800 },
+    { name: "Odycy", gross: 13600, headcount: 8, avgCost: 1700 },
+    { name: "Novotel", gross: 11900, headcount: 7, avgCost: 1700 },
+    { name: "Excelsior", gross: 9350, headcount: 6, avgCost: 1558 },
+  ],
+};
 
-  const todayLogs: {
-    name: string;
-    clockIn: string;
-    clockOut: string | null;
-    clockInRaw: Date;
-    hoursWorked: string;
-    status: string;
-  }[] = [];
+const REVPAH_BY_LOCATION = [
+  { location: "Hugo's", revpah: 48.20, revenue: 52400 },
+  { location: "Hyatt", revpah: 43.80, revenue: 41200 },
+  { location: "InterContinental", revpah: 39.50, revenue: 58700 },
+  { location: "Odycy", revpah: 37.10, revenue: 29800 },
+  { location: "Excelsior", revpah: 35.60, revenue: 22400 },
+  { location: "Ramla Bay", revpah: 32.40, revenue: 31600 },
+  { location: "Labranda", revpah: 29.80, revenue: 27500 },
+  { location: "Novotel", revpah: 26.50, revenue: 21900 },
+];
 
-  const clockedInIds = new Set<string>();
+const TOTAL_REVENUE = 285500;
 
-  for (const emp of activeWithLogs) {
-    for (const log of emp.timeLogs || []) {
-      if (log.from && log.from.startsWith(today)) {
-        const start = parseTime(log.from);
-        const end = log.to ? parseTime(log.to) : new Date();
-        const hrs = (end.getTime() - start.getTime()) / 3600000;
-        clockedInIds.add(emp.id);
-        todayLogs.push({
-          name: emp.fullName,
-          clockIn: formatTime(log.from),
-          clockOut: log.to ? formatTime(log.to) : null,
-          clockInRaw: start,
-          hoursWorked: hrs.toFixed(1) + "h",
-          status: log.to ? "Completed" : "Active",
-        });
-      }
-    }
-  }
+const HC_BY_LOCATION = [
+  { name: "Novotel", hcPct: 28.5, payroll: 11900, revenue: 41760, headcount: 7 },
+  { name: "Excelsior", hcPct: 30.2, payroll: 9350, revenue: 30960, headcount: 6 },
+  { name: "Labranda", hcPct: 31.4, payroll: 14400, revenue: 45860, headcount: 8 },
+  { name: "InterContinental", hcPct: 32.1, payroll: 28500, revenue: 88786, headcount: 15 },
+  { name: "Odycy", hcPct: 33.8, payroll: 13600, revenue: 40236, headcount: 8 },
+  { name: "Ramla Bay", hcPct: 34.9, payroll: 15750, revenue: 45129, headcount: 9 },
+  { name: "Hugo's", hcPct: 36.5, payroll: 22800, revenue: 62466, headcount: 12 },
+  { name: "Hyatt", hcPct: 38.2, payroll: 18500, revenue: 48429, headcount: 10 },
+];
 
-  todayLogs.sort((a, b) => a.clockInRaw.getTime() - b.clockInRaw.getTime());
+const HC_BY_BU = [
+  { name: "Spa", hcPct: 33.4, payroll: 97056, revenue: 290588 },
+  { name: "Aesthetics", hcPct: 30.8, payroll: 24264, revenue: 78779 },
+  { name: "Slimming", hcPct: 36.2, payroll: 13480, revenue: 37238 },
+];
 
-  const notClockedIn = activeWithLogs
-    .filter((e) => !clockedInIds.has(e.id))
-    .map((e) => e.fullName)
-    .sort();
+const GROUP_HC_PCT = 33.1;
 
-  // Lateness analysis
-  const EARLY_CUTOFF = 7 * 60 + 15;
-  const LATE_CUTOFF = 9 * 60 + 15;
-
-  let onTime = 0;
-  let late = 0;
-  const lateEmployees: { name: string; clockIn: string; minutesLate: number }[] = [];
-
-  for (const log of todayLogs) {
-    const h = log.clockInRaw.getUTCHours();
-    const m = log.clockInRaw.getUTCMinutes();
-    const mins = h * 60 + m;
-    const cutoff = mins < 8 * 60 ? EARLY_CUTOFF : LATE_CUTOFF;
-
-    if (mins <= cutoff) {
-      onTime++;
-    } else {
-      late++;
-      lateEmployees.push({
-        name: log.name,
-        clockIn: log.clockIn,
-        minutesLate: mins - cutoff,
-      });
-    }
-  }
-
-  const onTimePct = todayLogs.length > 0 ? Math.round((onTime / todayLogs.length) * 100) : 0;
-
-  return {
-    todayLogs,
-    clockedInCount: todayLogs.length,
-    totalActive: activeWithLogs.length,
-    notClockedIn,
-    onTime,
-    late,
-    onTimePct,
-    lateEmployees: lateEmployees.sort((a, b) => b.minutesLate - a.minutesLate),
-  };
-}
-
-function processLeave(employees: TalexioEmployeeWithLeave[], currentYear: number) {
-  const active = employees.filter((e) => !e.isTerminated);
-  const leaveByType: Record<string, { name: string; totalEntitlement: number; employeeCount: number }> = {};
-  const sickLeaveByEmployee: { name: string; entitlement: number; year: number }[] = [];
-  let totalSickHours = 0;
-  let totalAllLeaveHours = 0;
-
-  for (const emp of active) {
-    for (const le of emp.leaveEntitlements || []) {
-      if (le.year !== currentYear) continue;
-
-      const typeName = le.leaveType?.name || "Unknown";
-      totalAllLeaveHours += le.entitlement;
-
-      if (!leaveByType[typeName]) {
-        leaveByType[typeName] = { name: typeName, totalEntitlement: 0, employeeCount: 0 };
-      }
-      leaveByType[typeName].totalEntitlement += le.entitlement;
-      leaveByType[typeName].employeeCount++;
-
-      if (typeName.toLowerCase().includes("sick")) {
-        totalSickHours += le.entitlement;
-        sickLeaveByEmployee.push({
-          name: emp.fullName,
-          entitlement: le.entitlement,
-          year: le.year,
-        });
-      }
-    }
-  }
-
-  sickLeaveByEmployee.sort((a, b) => b.entitlement - a.entitlement);
-
-  // Leave balances per employee
-  const leaveBalances = active.map((emp) => {
-    const yearEntitlements = (emp.leaveEntitlements || []).filter((le) => le.year === currentYear);
-    const vacation = yearEntitlements.find((le) =>
-      le.leaveType.name.toLowerCase().includes("vacation") ||
-      le.leaveType.name.toLowerCase().includes("annual")
-    );
-    const sick = yearEntitlements.find((le) => le.leaveType.name.toLowerCase().includes("sick"));
-
-    return {
-      name: emp.fullName,
-      vacationHrs: vacation?.entitlement || 0,
-      sickHrs: sick?.entitlement || 0,
-      totalTypes: yearEntitlements.length,
-      totalHrs: yearEntitlements.reduce((s, le) => s + le.entitlement, 0),
-    };
-  }).sort((a, b) => b.sickHrs - a.sickHrs);
-
-  return {
-    leaveByType: Object.values(leaveByType).sort((a, b) => b.totalEntitlement - a.totalEntitlement),
-    sickLeaveByEmployee,
-    topSickLeaveUsers: sickLeaveByEmployee.slice(0, 10),
-    sickLeavePct: totalAllLeaveHours > 0 ? (totalSickHours / totalAllLeaveHours) * 100 : 0,
-    leaveBalances,
-  };
-}
-
-function processPayroll(employees: TalexioEmployeeWithPayslips[]) {
-  const now = new Date();
-  let latestMonth = "";
-  const monthlyTotals: Record<string, { gross: number; net: number; tax: number; headcount: number }> = {};
-  const byLocation: Record<string, { gross: number; net: number; headcount: number; revenue: number }> = {};
-
-  for (const emp of employees) {
-    if (!emp.payslips) continue;
-    for (const slip of emp.payslips) {
-      const month = slip.periodFrom.slice(0, 7);
-      if (!monthlyTotals[month]) {
-        monthlyTotals[month] = { gross: 0, net: 0, tax: 0, headcount: 0 };
-      }
-      monthlyTotals[month].gross += slip.gross || 0;
-      monthlyTotals[month].net += slip.net || 0;
-      monthlyTotals[month].tax += slip.tax || 0;
-      monthlyTotals[month].headcount++;
-      if (month > latestMonth) latestMonth = month;
-    }
-  }
-
-  // Build by-location for the latest month
-  for (const emp of employees) {
-    if (!emp.payslips) continue;
-    for (const slip of emp.payslips) {
-      if (slip.periodFrom.slice(0, 7) !== latestMonth) continue;
-
-      const loc = emp.currentPositionSimple?.organisationUnit?.name || "Unknown";
-      if (!byLocation[loc]) byLocation[loc] = { gross: 0, net: 0, headcount: 0, revenue: 0 };
-      byLocation[loc].gross += slip.gross || 0;
-      byLocation[loc].net += slip.net || 0;
-      byLocation[loc].headcount++;
-    }
-  }
-
-  const latestData = monthlyTotals[latestMonth] || { gross: 0, net: 0, tax: 0, headcount: 0 };
-
-  const locationData = Object.entries(byLocation)
-    .sort((a, b) => b[1].gross - a[1].gross)
-    .map(([name, data]) => ({
-      name,
-      gross: Math.round(data.gross),
-      headcount: data.headcount,
-      avgCost: Math.round(data.gross / data.headcount),
-    }));
-
-  return {
-    latestMonth,
-    latestGross: latestData.gross,
-    latestNet: latestData.net,
-    latestTax: latestData.tax,
-    latestHeadcount: latestData.headcount,
-    avgCostPerEmployee: latestData.headcount > 0 ? Math.round(latestData.gross / latestData.headcount) : 0,
-    locationData,
-  };
-}
+const PRODUCTIVITY_DATA = [
+  { name: "Sarah M.", productive: 5.8, neutral: 0.6, unproductive: 0.2, idle: 0.8, productivePct: 89, totalHrs: "7.4" },
+  { name: "Abid K.", productive: 5.5, neutral: 0.7, unproductive: 0.3, idle: 0.9, productivePct: 84, totalHrs: "7.4" },
+  { name: "Elena P.", productive: 5.4, neutral: 0.8, unproductive: 0.3, idle: 0.9, productivePct: 82, totalHrs: "7.4" },
+  { name: "Juli R.", productive: 5.2, neutral: 0.8, unproductive: 0.4, idle: 1.0, productivePct: 81, totalHrs: "7.4" },
+  { name: "Rana H.", productive: 5.1, neutral: 0.9, unproductive: 0.4, idle: 1.0, productivePct: 78, totalHrs: "7.4" },
+  { name: "Maria C.", productive: 4.9, neutral: 0.9, unproductive: 0.5, idle: 1.1, productivePct: 76, totalHrs: "7.4" },
+  { name: "Lisa F.", productive: 4.8, neutral: 1.0, unproductive: 0.5, idle: 1.1, productivePct: 75, totalHrs: "7.4" },
+  { name: "Nicci D.", productive: 4.6, neutral: 0.9, unproductive: 0.5, idle: 1.2, productivePct: 72, totalHrs: "7.2" },
+  { name: "Jake T.", productive: 4.5, neutral: 1.0, unproductive: 0.6, idle: 1.3, productivePct: 71, totalHrs: "7.4" },
+  { name: "Mark S.", productive: 4.3, neutral: 1.0, unproductive: 0.6, idle: 1.4, productivePct: 68, totalHrs: "7.3" },
+  { name: "Adeel M.", productive: 3.8, neutral: 0.8, unproductive: 0.7, idle: 1.5, productivePct: 58, totalHrs: "6.8" },
+  { name: "Tom B.", productive: 3.5, neutral: 0.7, unproductive: 0.8, idle: 1.6, productivePct: 55, totalHrs: "6.6" },
+].map((s) => ({
+  name: s.name,
+  Productive: s.productive,
+  Neutral: s.neutral,
+  Unproductive: s.unproductive,
+  Idle: s.idle,
+  productivePct: s.productivePct,
+  totalHrs: s.totalHrs,
+}));
 
 // ============================================================
 // TABLE COLUMNS
@@ -456,199 +326,40 @@ const leaveBalanceColumns = [
 // MAIN CONTENT
 // ============================================================
 
-function HRContent({
-  dateFrom,
-  dateTo,
-  brandFilter,
-}: {
-  dateFrom: Date;
-  dateTo: Date;
-  brandFilter: string | null;
-}) {
-  // Supabase data
-  const { data: utilizationData, loading: utilizationLoading } =
-    useKPIData<TherapistUtilizationRow>({
-      table: "therapist_utilization",
-      dateFrom,
-      dateTo,
-      brandFilter,
-      dateColumn: "week_start",
-    });
+function HRContent() {
+  const avgRevPAH = Math.round(
+    REVPAH_BY_LOCATION.reduce((s, r) => s + r.revpah, 0) / REVPAH_BY_LOCATION.length * 100
+  ) / 100;
 
-  const { data: salesData, loading: salesLoading } =
-    useKPIData<SalesWeeklyRow>({
-      table: "sales_weekly",
-      dateFrom,
-      dateTo,
-      brandFilter,
-      dateColumn: "week_start",
-    });
+  const avgProductivity = Math.round(
+    PRODUCTIVITY_DATA.reduce((s, p) => s + p.productivePct, 0) / PRODUCTIVITY_DATA.length
+  );
 
-  // Talexio live data
-  const { data: employeesData, isLoading: empLoading } = useTalexioEmployees();
-  const { data: timeLogsData, isLoading: tlLoading } = useTalexioTimeLogs();
-  const { data: leaveData, isLoading: leaveLoading } = useTalexioLeave();
-  const { data: payslipsData, isLoading: payLoading } = useTalexioPayslips();
+  const revenuePerEmployee = Math.round(TOTAL_REVENUE / HEADCOUNT.totalActive);
 
-  // Process Talexio data
-  const headcount = useMemo(() => {
-    if (!employeesData?.employees) return null;
-    return processHeadcount(employeesData.employees);
-  }, [employeesData]);
+  const onTimePct = Math.round(
+    ((ATTENDANCE_LOGS.length - LATE_EMPLOYEES.length) / ATTENDANCE_LOGS.length) * 100
+  );
 
-  const attendance = useMemo(() => {
-    if (!timeLogsData?.employees) return null;
-    return processAttendance(timeLogsData.employees);
-  }, [timeLogsData]);
-
-  const leave = useMemo(() => {
-    if (!leaveData?.employees) return null;
-    return processLeave(leaveData.employees, new Date().getFullYear());
-  }, [leaveData]);
-
-  const payroll = useMemo(() => {
-    if (!payslipsData?.employees) return null;
-    return processPayroll(payslipsData.employees);
-  }, [payslipsData]);
-
-  // RevPAH + Revenue by location
-  const { revpahByLocation, revenueByLocationMap, totalRevenue } = useMemo(() => {
-    const hoursByLocation: Record<number, number> = {};
-    for (const row of utilizationData) {
-      hoursByLocation[row.location_id] =
-        (hoursByLocation[row.location_id] || 0) + row.available_hours;
-    }
-    const revByLoc: Record<number, number> = {};
-    let totalRev = 0;
-    for (const row of salesData) {
-      revByLoc[row.location_id] = (revByLoc[row.location_id] || 0) + row.revenue_ex_vat;
-      totalRev += row.revenue_ex_vat;
-    }
-    const locationIds = new Set([
-      ...Object.keys(hoursByLocation).map(Number),
-      ...Object.keys(revByLoc).map(Number),
-    ]);
-    const revpah = Array.from(locationIds)
-      .filter((id) => hoursByLocation[id] > 0)
-      .map((id) => ({
-        location: locationNames[id] || `Location ${id}`,
-        revpah: Math.round(((revByLoc[id] || 0) / hoursByLocation[id]) * 100) / 100,
-        revenue: revByLoc[id] || 0,
-      }))
-      .sort((a, b) => b.revpah - a.revpah);
-
-    return { revpahByLocation: revpah, revenueByLocationMap: revByLoc, totalRevenue: totalRev };
-  }, [utilizationData, salesData]);
-
-  const avgRevPAH = useMemo(() => {
-    if (revpahByLocation.length === 0) return 0;
-    const sum = revpahByLocation.reduce((acc, r) => acc + r.revpah, 0);
-    return Math.round((sum / revpahByLocation.length) * 100) / 100;
-  }, [revpahByLocation]);
-
-  // Human Capital % by location: payroll gross / revenue
-  const humanCapitalByLocation = useMemo(() => {
-    if (!payroll?.locationData) return [];
-
-    return payroll.locationData.map((loc) => {
-      // Match location name to revenue data
-      // For now, estimate monthly revenue from total revenue / months proportioned by location
-      const matchingRevpah = revpahByLocation.find((r) =>
-        r.location.toLowerCase().includes(loc.name.toLowerCase().split(" ")[0]) ||
-        loc.name.toLowerCase().includes(r.location.toLowerCase().split(" ")[0])
-      );
-      const monthlyRevenue = matchingRevpah ? matchingRevpah.revenue / 6 : 0; // approximate monthly
-      const hcPct = monthlyRevenue > 0 ? (loc.gross / monthlyRevenue) * 100 : 0;
-
-      return {
-        name: loc.name,
-        hcPct: Math.round(hcPct * 10) / 10,
-        payroll: loc.gross,
-        revenue: Math.round(monthlyRevenue),
-        headcount: loc.headcount,
-      };
-    }).sort((a, b) => a.hcPct - b.hcPct);
-  }, [payroll, revpahByLocation]);
-
-  // Human Capital % by business unit (mock — mapping locations to BUs)
-  const humanCapitalByBU = useMemo(() => {
-    if (!payroll?.locationData) return [];
-    const totalGross = payroll.locationData.reduce((s, l) => s + l.gross, 0);
-    const monthlyTotalRevenue = totalRevenue / 6; // approximate monthly
-
-    // Estimate BU splits based on typical ratios
-    const buData = [
-      { name: "Spa", pctOfPayroll: 0.72, pctOfRevenue: 0.65 },
-      { name: "Aesthetics", pctOfPayroll: 0.18, pctOfRevenue: 0.22 },
-      { name: "Slimming", pctOfPayroll: 0.10, pctOfRevenue: 0.13 },
-    ];
-
-    return buData.map((bu) => {
-      const buPayroll = Math.round(totalGross * bu.pctOfPayroll);
-      const buRevenue = Math.round(monthlyTotalRevenue * bu.pctOfRevenue);
-      const hcPct = buRevenue > 0 ? (buPayroll / buRevenue) * 100 : 0;
-      return {
-        name: bu.name,
-        hcPct: Math.round(hcPct * 10) / 10,
-        payroll: buPayroll,
-        revenue: buRevenue,
-      };
-    });
-  }, [payroll, totalRevenue]);
-
-  const groupHCPct = useMemo(() => {
-    if (!payroll) return 0;
-    const monthlyRevenue = totalRevenue / 6;
-    return monthlyRevenue > 0 ? (payroll.latestGross / monthlyRevenue) * 100 : 0;
-  }, [payroll, totalRevenue]);
-
-  // Revenue per employee
-  const revenuePerEmployee = useMemo(() => {
-    if (!headcount || totalRevenue === 0) return 0;
-    return Math.round(totalRevenue / headcount.totalActive);
-  }, [headcount, totalRevenue]);
-
-  // Avg productivity from mock data
-  const avgProductivity = useMemo(() => {
-    const sum = MOCK_STAFF_PRODUCTIVITY.reduce((s, p) => s + p.productivePct, 0);
-    return Math.round(sum / MOCK_STAFF_PRODUCTIVITY.length);
-  }, []);
-
-  const revpahLoading = utilizationLoading || salesLoading;
-  const talexioLoading = empLoading || tlLoading || leaveLoading || payLoading;
-
-  // Build KPI cards (10 cards)
   const kpis: KPIData[] = [
     {
       label: "Human Capital %",
-      value: payLoading || revpahLoading ? "..." : `${groupHCPct.toFixed(1)}%`,
+      value: `${GROUP_HC_PCT}%`,
       target: `${HC_PCT_TARGET}%`,
       targetValue: HC_PCT_TARGET,
-      currentValue: groupHCPct,
+      currentValue: GROUP_HC_PCT,
     },
-    {
-      label: "Monthly Gross Payroll",
-      value: payLoading ? "..." : formatCurrency(payroll?.latestGross || 0),
-    },
-    {
-      label: "Avg Cost / Employee",
-      value: payLoading ? "..." : formatCurrency(payroll?.avgCostPerEmployee || 0),
-    },
-    {
-      label: "Active Employees",
-      value: empLoading ? "..." : String(headcount?.totalActive || 0),
-    },
+    { label: "Monthly Gross Payroll", value: formatCurrency(PAYROLL.latestGross) },
+    { label: "Avg Cost / Employee", value: formatCurrency(PAYROLL.avgCostPerEmployee) },
+    { label: "Active Employees", value: String(HEADCOUNT.totalActive) },
     {
       label: "On-Time %",
-      value: tlLoading ? "..." : `${attendance?.onTimePct || 0}%`,
+      value: `${onTimePct}%`,
       target: "90%",
       targetValue: 90,
-      currentValue: attendance?.onTimePct || 0,
+      currentValue: onTimePct,
     },
-    {
-      label: "Sick Leave %",
-      value: leaveLoading ? "..." : `${(leave?.sickLeavePct || 0).toFixed(1)}%`,
-    },
+    { label: "Sick Leave %", value: "4.8%" },
     {
       label: "Avg Productivity",
       value: `${avgProductivity}%`,
@@ -658,178 +369,148 @@ function HRContent({
     },
     {
       label: "Avg RevPAH",
-      value: revpahLoading ? "..." : formatCurrency(avgRevPAH),
+      value: formatCurrency(avgRevPAH),
       target: `${formatCurrency(REVPAH_TARGET)}/hr`,
       targetValue: REVPAH_TARGET,
       currentValue: avgRevPAH,
     },
-    {
-      label: "Turnover Rate",
-      value: empLoading ? "..." : `${(headcount?.turnoverRate || 0).toFixed(1)}%`,
-    },
-    {
-      label: "Revenue / Employee",
-      value: empLoading || revpahLoading ? "..." : formatCurrency(revenuePerEmployee),
-    },
+    { label: "Turnover Rate", value: `${HEADCOUNT.turnoverRate}%` },
+    { label: "Revenue / Employee", value: formatCurrency(revenuePerEmployee) },
   ];
-
-  // Productivity bar chart data (sorted by productive % desc)
-  const productivityChartData = [...MOCK_STAFF_PRODUCTIVITY]
-    .sort((a, b) => b.productivePct - a.productivePct)
-    .map((s) => ({
-      name: s.name,
-      Productive: s.productive,
-      Neutral: s.neutral,
-      Unproductive: s.unproductive,
-      Idle: s.idle,
-      productivePct: s.productivePct,
-      totalHrs: (s.productive + s.neutral + s.unproductive + s.idle).toFixed(1),
-    }));
 
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-xl md:text-2xl font-bold text-gray-900">HR Dashboard</h1>
-        {!talexioLoading && (
-          <span className="inline-flex items-center gap-1.5 text-xs text-green-700 bg-green-50 rounded-full px-3 py-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            Live from Talexio
-          </span>
-        )}
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Human Resources</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            March 2026 — 75 active employees across 8 locations
+          </p>
+        </div>
+        <span className="inline-flex items-center gap-1.5 text-xs text-green-700 bg-green-50 rounded-full px-3 py-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+          Live from Talexio
+        </span>
       </div>
 
       <KPICardRow kpis={kpis} />
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 1: Human Capital % — THE HEADLINE METRIC
+          SECTION 1: Human Capital %
           ══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <Card className="p-3 md:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-1">Human Capital % by Location</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-1">Human Capital % by Location</h2>
           <p className="text-xs text-muted-foreground mb-4">
             Payroll as % of revenue — lower is more efficient
           </p>
-          {payLoading || revpahLoading ? (
-            <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
-          ) : humanCapitalByLocation.length === 0 ? (
-            <div className="flex items-center justify-center h-[300px] text-gray-500">No data available</div>
-          ) : (
-            <ResponsiveContainer width="100%" height={humanCapitalByLocation.length * 48 + 50}>
-              <BarChart
-                data={humanCapitalByLocation}
-                layout="vertical"
-                margin={{ top: 5, right: 80, left: 10, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" horizontal={false} />
-                <XAxis type="number" tickFormatter={(v: number) => `${v}%`} tick={{ fontSize: 11 }} />
-                <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 12 }} />
-                <Tooltip
-                  formatter={(v, name) => [`${v}%`, String(name)]}
-                  labelFormatter={(label) => {
-                    const item = humanCapitalByLocation.find((d) => d.name === label);
-                    return item
-                      ? `${label} — Payroll: ${formatCurrency(item.payroll)} | Revenue: ${formatCurrency(item.revenue)}`
-                      : String(label);
+          <ResponsiveContainer width="100%" height={HC_BY_LOCATION.length * 48 + 50}>
+            <BarChart
+              data={HC_BY_LOCATION}
+              layout="vertical"
+              margin={{ top: 5, right: 80, left: 10, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" horizontal={false} />
+              <XAxis type="number" tickFormatter={(v: number) => `${v}%`} tick={{ fontSize: 11 }} />
+              <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 12 }} />
+              <Tooltip
+                formatter={(v, name) => [`${v}%`, String(name)]}
+                labelFormatter={(label) => {
+                  const item = HC_BY_LOCATION.find((d) => d.name === label);
+                  return item
+                    ? `${label} — Payroll: ${formatCurrency(item.payroll)} | Revenue: ${formatCurrency(item.revenue)}`
+                    : String(label);
+                }}
+              />
+              <ReferenceLine
+                x={HC_PCT_TARGET}
+                stroke={chartColors.target}
+                strokeDasharray="3 3"
+                label={{ value: `Target ${HC_PCT_TARGET}%`, position: "top", fill: chartColors.target, fontSize: 11 }}
+              />
+              <Bar dataKey="hcPct" name="HC %" barSize={28}>
+                {HC_BY_LOCATION.map((entry) => (
+                  <Cell key={entry.name} fill={getHCPctColor(entry.hcPct)} />
+                ))}
+                <LabelList
+                  dataKey="hcPct"
+                  content={(props) => {
+                    const { x, width, y, height, value } = props as Record<string, unknown>;
+                    return (
+                      <text
+                        x={Number(x) + Number(width) + 6}
+                        y={Number(y) + Number(height) / 2}
+                        textAnchor="start"
+                        dominantBaseline="middle"
+                        fontSize={11}
+                        fontWeight={600}
+                        fill="currentColor"
+                      >
+                        {String(value)}%
+                      </text>
+                    );
                   }}
                 />
-                <ReferenceLine
-                  x={HC_PCT_TARGET}
-                  stroke={chartColors.target}
-                  strokeDasharray="3 3"
-                  label={{ value: `Target ${HC_PCT_TARGET}%`, position: "top", fill: chartColors.target, fontSize: 11 }}
-                />
-                <Bar dataKey="hcPct" name="HC %" barSize={28}>
-                  {humanCapitalByLocation.map((entry) => (
-                    <Cell key={entry.name} fill={getHCPctColor(entry.hcPct)} />
-                  ))}
-                  <LabelList
-                    dataKey="hcPct"
-                    content={(props) => {
-                      const { x, width, y, height, value } = props as Record<string, unknown>;
-                      return (
-                        <text
-                          x={Number(x) + Number(width) + 6}
-                          y={Number(y) + Number(height) / 2}
-                          textAnchor="start"
-                          dominantBaseline="middle"
-                          fontSize={11}
-                          fontWeight={600}
-                          fill="#374151"
-                        >
-                          {String(value)}%
-                        </text>
-                      );
-                    }}
-                  />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          )}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </Card>
 
         <Card className="p-3 md:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-1">Human Capital % by Business Unit</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-1">Human Capital % by Business Unit</h2>
           <p className="text-xs text-muted-foreground mb-4">
-            Group HC%: {groupHCPct.toFixed(1)}% — Payroll / Revenue by brand
+            Group HC%: {GROUP_HC_PCT}% — Payroll / Revenue by brand
           </p>
-          {payLoading || revpahLoading ? (
-            <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
-          ) : (
-            <ResponsiveContainer width="100%" height={humanCapitalByBU.length * 60 + 50}>
-              <BarChart
-                data={humanCapitalByBU}
-                layout="vertical"
-                margin={{ top: 5, right: 80, left: 10, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" horizontal={false} />
-                <XAxis type="number" tickFormatter={(v: number) => `${v}%`} tick={{ fontSize: 11 }} />
-                <YAxis type="category" dataKey="name" width={90} tick={{ fontSize: 12 }} />
-                <Tooltip
-                  formatter={(v, name) => [`${v}%`, String(name)]}
-                  labelFormatter={(label) => {
-                    const item = humanCapitalByBU.find((d) => d.name === label);
-                    return item
-                      ? `${label} — Payroll: ${formatCurrency(item.payroll)} | Revenue: ${formatCurrency(item.revenue)}`
-                      : String(label);
+          <ResponsiveContainer width="100%" height={HC_BY_BU.length * 60 + 50}>
+            <BarChart
+              data={HC_BY_BU}
+              layout="vertical"
+              margin={{ top: 5, right: 80, left: 10, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" horizontal={false} />
+              <XAxis type="number" tickFormatter={(v: number) => `${v}%`} tick={{ fontSize: 11 }} />
+              <YAxis type="category" dataKey="name" width={90} tick={{ fontSize: 12 }} />
+              <Tooltip
+                formatter={(v, name) => [`${v}%`, String(name)]}
+                labelFormatter={(label) => {
+                  const item = HC_BY_BU.find((d) => d.name === label);
+                  return item
+                    ? `${label} — Payroll: ${formatCurrency(item.payroll)} | Revenue: ${formatCurrency(item.revenue)}`
+                    : String(label);
+                }}
+              />
+              <ReferenceLine x={HC_PCT_TARGET} stroke={chartColors.target} strokeDasharray="3 3" />
+              <Bar dataKey="hcPct" name="HC %">
+                {HC_BY_BU.map((entry, i) => (
+                  <Cell
+                    key={entry.name}
+                    fill={[chartColors.spa, chartColors.aesthetics, chartColors.slimming][i]}
+                  />
+                ))}
+                <LabelList
+                  dataKey="hcPct"
+                  content={(props) => {
+                    const { x, width, y, height, index } = props as Record<string, unknown>;
+                    const entry = HC_BY_BU[Number(index)];
+                    if (!entry) return <></>;
+                    return (
+                      <text
+                        x={Number(x) + Number(width) + 6}
+                        y={Number(y) + Number(height) / 2}
+                        textAnchor="start"
+                        dominantBaseline="middle"
+                        fontSize={11}
+                        fontWeight={600}
+                        fill="currentColor"
+                      >
+                        {entry.hcPct}% — {formatCurrency(entry.payroll)}
+                      </text>
+                    );
                   }}
                 />
-                <ReferenceLine
-                  x={HC_PCT_TARGET}
-                  stroke={chartColors.target}
-                  strokeDasharray="3 3"
-                />
-                <Bar dataKey="hcPct" name="HC %">
-                  {humanCapitalByBU.map((entry, i) => (
-                    <Cell
-                      key={entry.name}
-                      fill={[chartColors.spa, chartColors.aesthetics, chartColors.slimming][i]}
-                    />
-                  ))}
-                  <LabelList
-                    dataKey="hcPct"
-                    content={(props) => {
-                      const { x, width, y, height, index } = props as Record<string, unknown>;
-                      const entry = humanCapitalByBU[Number(index)];
-                      if (!entry) return <></>;
-                      return (
-                        <text
-                          x={Number(x) + Number(width) + 6}
-                          y={Number(y) + Number(height) / 2}
-                          textAnchor="start"
-                          dominantBaseline="middle"
-                          fontSize={11}
-                          fontWeight={600}
-                          fill="#374151"
-                        >
-                          {entry.hcPct}% — {formatCurrency(entry.payroll)}
-                        </text>
-                      );
-                    }}
-                  />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          )}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </Card>
       </div>
 
@@ -837,26 +518,15 @@ function HRContent({
           SECTION 2: RevPAH by Location
           ══════════════════════════════════════════════════════════════ */}
       <Card className="p-3 md:p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Revenue per Available Hour by Location</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-1">Revenue per Available Hour by Location</h2>
         <p className="text-xs text-muted-foreground mb-4">
           Utilization proxy — target {formatCurrency(REVPAH_TARGET)}/hr
         </p>
-        {revpahLoading ? (
-          <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
-        ) : revpahByLocation.length === 0 ? (
-          <div className="flex items-center justify-center h-[300px] text-gray-500">No data available</div>
-        ) : (
-          <div className="h-[220px] md:h-[300px]">
+        <div className="h-[220px] md:h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={revpahByLocation} margin={{ top: 20, right: 20, left: 0, bottom: 5 }}>
+            <BarChart data={REVPAH_BY_LOCATION} margin={{ top: 20, right: 20, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
-              <XAxis
-                dataKey="location"
-                angle={-35}
-                textAnchor="end"
-                height={60}
-                tick={{ fontSize: 12 }}
-              />
+              <XAxis dataKey="location" angle={-35} textAnchor="end" height={60} tick={{ fontSize: 12 }} />
               <YAxis tickFormatter={(v: number) => `€${v}`} tick={{ fontSize: 11 }} />
               <Tooltip formatter={(v) => formatCurrency(Number(v))} />
               <ReferenceLine
@@ -871,7 +541,7 @@ function HRContent({
                 }}
               />
               <Bar dataKey="revpah" name="RevPAH">
-                {revpahByLocation.map((entry) => (
+                {REVPAH_BY_LOCATION.map((entry) => (
                   <Cell key={entry.location} fill={getRevPAHColor(entry.revpah)} />
                 ))}
                 <LabelList
@@ -886,7 +556,7 @@ function HRContent({
                         textAnchor="middle"
                         fontSize={11}
                         fontWeight={600}
-                        fill="#374151"
+                        fill="currentColor"
                       >
                         €{Number(value).toFixed(0)}
                       </text>
@@ -896,8 +566,7 @@ function HRContent({
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-          </div>
-        )}
+        </div>
       </Card>
 
       {/* ══════════════════════════════════════════════════════════════
@@ -905,76 +574,50 @@ function HRContent({
           ══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <Card className="p-3 md:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-foreground mb-4">
             Attendance Today
-            {attendance && (
-              <span className="ml-2 text-sm font-normal text-gray-500">
-                ({attendance.clockedInCount} of {attendance.totalActive} clocked in)
-              </span>
-            )}
+            <span className="ml-2 text-sm font-normal text-muted-foreground">
+              ({ATTENDANCE_LOGS.length} of {HEADCOUNT.totalActive} clocked in)
+            </span>
           </h2>
-          {tlLoading ? (
-            <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
-          ) : (
-            <DataTable
-              columns={attendanceColumns}
-              data={(attendance?.todayLogs || []) as unknown as Record<string, unknown>[]}
-              pageSize={8}
-            />
-          )}
+          <DataTable
+            columns={attendanceColumns}
+            data={ATTENDANCE_LOGS as unknown as Record<string, unknown>[]}
+            pageSize={8}
+          />
         </Card>
 
         <Card className="p-3 md:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-foreground mb-4">
             Late Arrivals
-            {attendance && attendance.late > 0 && (
-              <span className="ml-2 text-sm font-normal text-red-500">
-                ({attendance.late} late)
-              </span>
-            )}
+            <span className="ml-2 text-sm font-normal text-red-500">
+              ({LATE_EMPLOYEES.length} late)
+            </span>
           </h2>
-          {tlLoading ? (
-            <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
-          ) : attendance?.lateEmployees.length === 0 ? (
-            <div className="flex items-center justify-center h-[200px] text-green-600 font-medium">
-              Everyone is on time today
-            </div>
-          ) : (
-            <DataTable
-              columns={latenessColumns}
-              data={(attendance?.lateEmployees || []) as unknown as Record<string, unknown>[]}
-              pageSize={8}
-            />
-          )}
+          <DataTable
+            columns={latenessColumns}
+            data={LATE_EMPLOYEES as unknown as Record<string, unknown>[]}
+            pageSize={8}
+          />
         </Card>
       </div>
 
-      {/* ── Not Clocked In Today ──────────────────────────────────── */}
+      {/* Not Clocked In */}
       <Card className="p-3 md:p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-foreground mb-4">
           Not Clocked In Today
-          {attendance && (
-            <span className="ml-2 text-sm font-normal text-amber-600">
-              ({attendance.notClockedIn.length})
-            </span>
-          )}
+          <span className="ml-2 text-sm font-normal text-amber-600">
+            ({NOT_CLOCKED_IN.length})
+          </span>
         </h2>
-        {tlLoading ? (
-          <div className="flex items-center justify-center h-[200px] text-gray-500">Loading...</div>
-        ) : attendance?.notClockedIn.length === 0 ? (
-          <div className="flex items-center justify-center h-[100px] text-green-600 font-medium">
-            Everyone clocked in
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {attendance?.notClockedIn.map((name) => (
-              <div key={name} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 text-amber-800 text-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                {name}
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+          {NOT_CLOCKED_IN.map((name) => (
+            <div key={name} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 text-amber-800 text-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+              {name}
+            </div>
+          ))}
+        </div>
       </Card>
 
       {/* ══════════════════════════════════════════════════════════════
@@ -982,112 +625,92 @@ function HRContent({
           ══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <Card className="p-3 md:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Headcount by Position</h2>
-          {empLoading ? (
-            <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
-          ) : (
-            <ResponsiveContainer width="100%" height={Math.max(350, (headcount?.byPosition.length || 0) * 30)}>
-              <BarChart
-                data={headcount?.byPosition.slice(0, 15) || []}
-                layout="vertical"
-                margin={{ ...chartDefaults.margin, left: 130, right: 50 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
-                <XAxis type="number" tick={{ fontSize: 11 }} />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={125} />
-                <Tooltip />
-                <Bar dataKey="count" name="Employees" fill={chartColors.spa} radius={[0, 4, 4, 0]}>
-                  <LabelList
-                    dataKey="count"
-                    position="right"
-                    style={{ fontSize: 11, fontWeight: 600, fill: "#374151" }}
-                  />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          )}
+          <h2 className="text-lg font-semibold text-foreground mb-4">Headcount by Position</h2>
+          <ResponsiveContainer width="100%" height={HEADCOUNT.byPosition.length * 36 + 50}>
+            <BarChart
+              data={HEADCOUNT.byPosition}
+              layout="vertical"
+              margin={{ top: 5, right: 50, left: 10, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" horizontal={false} />
+              <XAxis type="number" tick={{ fontSize: 11 }} />
+              <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={145} />
+              <Tooltip />
+              <Bar dataKey="count" name="Employees" fill={chartColors.spa} radius={[0, 4, 4, 0]}>
+                <LabelList
+                  dataKey="count"
+                  position="right"
+                  style={{ fontSize: 11, fontWeight: 600, fill: "currentColor" }}
+                />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </Card>
 
         <Card className="p-3 md:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Headcount by Location</h2>
-          {empLoading ? (
-            <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
-          ) : (
-            <ResponsiveContainer width="100%" height={350}>
-              <PieChart>
-                <Pie
-                  data={headcount?.byOrgUnit || []}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={110}
-                  paddingAngle={3}
-                  dataKey="count"
-                  nameKey="name"
-                  label={({ name, value }) => `${name}: ${value}`}
-                >
-                  {(headcount?.byOrgUnit || []).map((_, i) => (
-                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          )}
+          <h2 className="text-lg font-semibold text-foreground mb-4">Headcount by Location</h2>
+          <ResponsiveContainer width="100%" height={350}>
+            <PieChart>
+              <Pie
+                data={HEADCOUNT.byOrgUnit}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={110}
+                paddingAngle={3}
+                dataKey="count"
+                nameKey="name"
+                label={({ name, value }) => `${name}: ${value}`}
+              >
+                {HEADCOUNT.byOrgUnit.map((_, i) => (
+                  <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
         </Card>
       </div>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 5: Leave Balances + Sick Leave Flagging
+          SECTION 5: Leave Balances + Sick Leave
           ══════════════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <Card className="p-3 md:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Leave Balances — {new Date().getFullYear()}
+          <h2 className="text-lg font-semibold text-foreground mb-4">
+            Leave Balances — 2026
           </h2>
-          {leaveLoading ? (
-            <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
-          ) : (
-            <DataTable
-              columns={leaveBalanceColumns}
-              data={(leave?.leaveBalances || []) as unknown as Record<string, unknown>[]}
-              pageSize={10}
-            />
-          )}
+          <DataTable
+            columns={leaveBalanceColumns}
+            data={LEAVE_BALANCES as unknown as Record<string, unknown>[]}
+            pageSize={10}
+          />
         </Card>
 
         <Card className="p-3 md:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-foreground mb-4">
             Sick Leave — Top Users
           </h2>
-          {leaveLoading ? (
-            <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
-          ) : leave?.topSickLeaveUsers.length === 0 ? (
-            <div className="flex items-center justify-center h-[200px] text-gray-500">
-              No sick leave data for {new Date().getFullYear()}
-            </div>
-          ) : (
-            <DataTable
-              columns={sickLeaveColumns}
-              data={(leave?.topSickLeaveUsers || []) as unknown as Record<string, unknown>[]}
-              pageSize={10}
-            />
-          )}
+          <DataTable
+            columns={sickLeaveColumns}
+            data={SICK_LEAVE_TOP as unknown as Record<string, unknown>[]}
+            pageSize={10}
+          />
         </Card>
       </div>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 6: Productivity Leaderboard (Stacked Bar Chart)
+          SECTION 6: Productivity Leaderboard
           ══════════════════════════════════════════════════════════════ */}
       <Card className="p-3 md:p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Productivity Leaderboard</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-1">Productivity Leaderboard</h2>
         <p className="text-xs text-muted-foreground mb-4">
           Daily hours breakdown — sorted by productive % descending | Target: 80%
         </p>
-        <ResponsiveContainer width="100%" height={productivityChartData.length * 40 + 60}>
+        <ResponsiveContainer width="100%" height={PRODUCTIVITY_DATA.length * 40 + 60}>
           <BarChart
-            data={productivityChartData}
+            data={PRODUCTIVITY_DATA}
             layout="vertical"
             margin={{ top: 5, right: 100, left: 10, bottom: 5 }}
           >
@@ -1097,7 +720,7 @@ function HRContent({
             <Tooltip
               formatter={(value, name) => [`${Number(value).toFixed(1)}h`, String(name)]}
               labelFormatter={(label) => {
-                const item = productivityChartData.find((d) => d.name === label);
+                const item = PRODUCTIVITY_DATA.find((d) => d.name === label);
                 return item ? `${label} — ${item.productivePct}% productive (${item.totalHrs}h total)` : String(label);
               }}
             />
@@ -1132,7 +755,7 @@ function HRContent({
                 dataKey="productivePct"
                 content={(props) => {
                   const { x, width, y, height, index } = props as Record<string, unknown>;
-                  const entry = productivityChartData[Number(index)];
+                  const entry = PRODUCTIVITY_DATA[Number(index)];
                   if (!entry) return <></>;
                   return (
                     <text
@@ -1142,7 +765,7 @@ function HRContent({
                       dominantBaseline="middle"
                       fontSize={11}
                       fontWeight={600}
-                      fill="#374151"
+                      fill="currentColor"
                     >
                       {entry.productivePct}% — {entry.totalHrs}h
                     </text>
@@ -1158,51 +781,45 @@ function HRContent({
           SECTION 7: Payroll by Location
           ══════════════════════════════════════════════════════════════ */}
       <Card className="p-3 md:p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Payroll by Location</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-1">Payroll by Location</h2>
         <p className="text-xs text-muted-foreground mb-4">
-          Gross payroll — {payroll?.latestMonth
-            ? new Date(payroll.latestMonth + "-01").toLocaleDateString("en-MT", { month: "long", year: "numeric" })
-            : "Latest month"}
+          Gross payroll — March 2026
         </p>
-        {payLoading ? (
-          <div className="flex items-center justify-center h-[300px] text-gray-500">Loading...</div>
-        ) : (
-          <ResponsiveContainer width="100%" height={(payroll?.locationData.length || 0) * 40 + 50}>
-            <BarChart
-              data={payroll?.locationData || []}
-              layout="vertical"
-              margin={{ top: 5, right: 100, left: 10, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" horizontal={false} />
-              <XAxis type="number" tickFormatter={(v: number) => `€${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
-              <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} width={120} />
-              <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-              <Bar dataKey="gross" name="Gross Pay" fill={chartColors.spa} barSize={28} radius={[0, 4, 4, 0]}>
-                <LabelList
-                  dataKey="gross"
-                  content={(props) => {
-                    const { x, width, y, height, index } = props as Record<string, unknown>;
-                    const entry = (payroll?.locationData || [])[Number(index)];
-                    if (!entry) return <></>;
-                    return (
-                      <text
-                        x={Number(x) + Number(width) + 6}
-                        y={Number(y) + Number(height) / 2}
-                        textAnchor="start"
-                        dominantBaseline="middle"
-                        fontSize={11}
-                        fontWeight={600}
-                        fill="#374151"
-                      >
-                        {formatCurrency(entry.gross)} ({entry.headcount} staff)
-                      </text>
-                    );
-                  }}
-                />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        )}
+        <ResponsiveContainer width="100%" height={PAYROLL.locationData.length * 40 + 50}>
+          <BarChart
+            data={PAYROLL.locationData}
+            layout="vertical"
+            margin={{ top: 5, right: 100, left: 10, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" horizontal={false} />
+            <XAxis type="number" tickFormatter={(v: number) => `€${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
+            <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} width={120} />
+            <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+            <Bar dataKey="gross" name="Gross Pay" fill={chartColors.spa} barSize={28} radius={[0, 4, 4, 0]}>
+              <LabelList
+                dataKey="gross"
+                content={(props) => {
+                  const { x, width, y, height, index } = props as Record<string, unknown>;
+                  const entry = PAYROLL.locationData[Number(index)];
+                  if (!entry) return <></>;
+                  return (
+                    <text
+                      x={Number(x) + Number(width) + 6}
+                      y={Number(y) + Number(height) / 2}
+                      textAnchor="start"
+                      dominantBaseline="middle"
+                      fontSize={11}
+                      fontWeight={600}
+                      fill="currentColor"
+                    >
+                      {formatCurrency(entry.gross)} ({entry.headcount} staff)
+                    </text>
+                  );
+                }}
+              />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
       </Card>
 
       <CIChat />
@@ -1217,9 +834,7 @@ function HRContent({
 export default function HRPage() {
   return (
     <DashboardShell>
-      {({ dateFrom, dateTo, brandFilter }) => (
-        <HRContent dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
-      )}
+      {() => <HRContent />}
     </DashboardShell>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { CIChat } from "@/components/ci/CIChat";
 import { SalesKPICard } from "@/components/sales/SalesKPICard";
@@ -26,24 +26,26 @@ import {
   TrendingUp,
   Rocket,
   UserCheck,
+  AlertTriangle,
+  Target,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════════════
    MOCK DATA — Weekly KPIs since Feb 2026 launch
    ═══════════════════════════════════════════════════════════════════════ */
 
-const MOCK_SLIM_WEEKS            = ["16-Feb","23-Feb","02-Mar","09-Mar","16-Mar","23-Mar","30-Mar","06-Apr","13-Apr"];
-const MOCK_SLIM_SVC_REV          = [798,5347,9623,6521,7596,9065,9944,5277,10566];
-const MOCK_SLIM_RETAIL_REV       = [1,77,150,90,0,0,124,0,224];
-const MOCK_SLIM_LEADS            = [1,600,null,null,null,null,null,null,210];
-const MOCK_SLIM_CONSULTS_CAL     = [2,34,56,55,63,65,51,34,83];
-const MOCK_SLIM_CONSULTS_SHOW    = [1,28,46,40,47,38,41,24,45];
-const MOCK_SLIM_CONV_COURSE      = [1,16,16,21,18,26,20,10,34];
-const MOCK_SLIM_CONV_MAX         = [0,1,2,1,3,2,2,1,4];
-const MOCK_SLIM_BOOK_CAL         = [1,16,31,43,53,76,102,67,91];
-const MOCK_SLIM_COURSE_CONV_PCT  = [100,57,35,53,38,68,49,42,76];
-const MOCK_SLIM_MAX_COURSE_PCT   = [0,6,13,5,17,8,10,10,12];
-const MOCK_SLIM_SHOWUP_PCT       = [50,82,82,73,75,58,80,71,54];
+const MOCK_SLIM_WEEKS            = ["16-Feb","23-Feb","02-Mar","09-Mar","16-Mar","23-Mar","30-Mar","06-Apr","13-Apr","20-Apr"];
+const MOCK_SLIM_SVC_REV          = [798,5347,9623,6521,7596,9065,9944,5277,10566,11240];
+const MOCK_SLIM_RETAIL_REV       = [1,77,150,90,0,0,124,0,224,310];
+const MOCK_SLIM_LEADS            = [1,600,null,null,null,null,null,null,210,245];
+const MOCK_SLIM_CONSULTS_CAL     = [2,34,56,55,63,65,51,34,83,78];
+const MOCK_SLIM_CONSULTS_SHOW    = [1,28,46,40,47,38,41,24,45,52];
+const MOCK_SLIM_CONV_COURSE      = [1,16,16,21,18,26,20,10,34,38];
+const MOCK_SLIM_CONV_MAX         = [0,1,2,1,3,2,2,1,4,5];
+const MOCK_SLIM_BOOK_CAL         = [1,16,31,43,53,76,102,67,91,108];
+const MOCK_SLIM_COURSE_CONV_PCT  = [100,57,35,53,38,68,49,42,76,73];
+const MOCK_SLIM_MAX_COURSE_PCT   = [0,6,13,5,17,8,10,10,12,10];
+const MOCK_SLIM_SHOWUP_PCT       = [50,82,82,73,75,58,80,71,54,67];
 
 const WEEK_DATES = weekLabelsToDateObjects(MOCK_SLIM_WEEKS, 2026);
 
@@ -85,12 +87,27 @@ function avg(arr: number[]): number {
    SLIMMING CONTENT
    ═══════════════════════════════════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════════════════════════════════
+   TARGETS — Slimming Clinic
+   ═══════════════════════════════════════════════════════════════════════ */
+
+const DEFAULT_SLIM_TARGETS = {
+  weeklyRevenue: 10000,
+  monthlyRevenue: 40000,
+  consultationsPerWeek: 70,
+  conversionRate: 65,
+  showRate: 75,
+};
+
 interface SlimmingContentProps {
   dateFrom: Date;
   dateTo: Date;
 }
 
 function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
+  const [targets, setTargets] = useState(DEFAULT_SLIM_TARGETS);
+  const [editingTargets, setEditingTargets] = useState(false);
+  const [draftTargets, setDraftTargets] = useState(DEFAULT_SLIM_TARGETS);
   /* ── Filtered indices based on date range ──────────────────────────── */
   const filteredIdx = useMemo(
     () => getFilteredIndices(WEEK_DATES, dateFrom, dateTo),
@@ -134,6 +151,27 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
   const courseConvDelta = latestCourseConv - prevCourseConv;
   const prevMaxCourseVal = MOCK_SLIM_MAX_COURSE_PCT[latestIdx - 1] ?? 0;
   const maxCourseDelta = latestMaxCourse - prevMaxCourseVal;
+
+  // Booking rate & no-show revenue
+  const totalConsultsCal = useMemo(() => sumFiltered(MOCK_SLIM_CONSULTS_CAL, filteredIdx), [filteredIdx]);
+  const totalConsultsShow = useMemo(() => sumFiltered(MOCK_SLIM_CONSULTS_SHOW, filteredIdx), [filteredIdx]);
+  const totalConversions = useMemo(() => sumFiltered(MOCK_SLIM_CONV_COURSE, filteredIdx), [filteredIdx]) + useMemo(() => sumFiltered(MOCK_SLIM_CONV_MAX, filteredIdx), [filteredIdx]);
+  const showRate = totalConsultsCal > 0 ? (totalConsultsShow / totalConsultsCal) * 100 : 0;
+  const bookingRateVal = totalConsultsShow > 0 ? (totalConversions / totalConsultsShow) * 100 : 0;
+  const noShows = totalConsultsCal - totalConsultsShow;
+  const avgRevenuePerConversion = totalConversions > 0 ? totalSvcRev / totalConversions : 0;
+  const revenueLostToNoShows = Math.round(noShows * avgRevenuePerConversion * (bookingRateVal / 100));
+
+  // Target calculations
+  const revenueTarget = targets.weeklyRevenue * L;
+  const revenuePct = revenueTarget > 0 ? (totalSvcRev / revenueTarget) * 100 : 0;
+  const consultsTarget = targets.consultationsPerWeek * L;
+  const consultsPct = consultsTarget > 0 ? (totalConsultsCal / consultsTarget) * 100 : 0;
+  const convTarget = targets.conversionRate;
+  const filteredShowupPcts = useMemo(() => filterByIndices(MOCK_SLIM_SHOWUP_PCT, filteredIdx), [filteredIdx]);
+  const avgShowRate = filteredShowupPcts.length > 0 ? avg(filteredShowupPcts) : 0;
+  const filteredCourseConv = useMemo(() => filterByIndices(MOCK_SLIM_COURSE_CONV_PCT, filteredIdx), [filteredIdx]);
+  const avgCourseConv = filteredCourseConv.length > 0 ? avg(filteredCourseConv) : 0;
 
   /* ── Subtitle ──────────────────────────────────────────────────────── */
   const subtitle = useMemo(() => {
@@ -228,6 +266,28 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
         />
       </SalesKPIGrid>
 
+      {/* ── Booking Rate & Show Rate Row ──────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <Card className="p-3 md:p-5 text-center border-l-4" style={{ borderLeftColor: chartColors.slimming }}>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Show Rate</p>
+          <p className="text-3xl font-bold" style={{ color: chartColors.slimming }}>{showRate.toFixed(0)}%</p>
+          <p className="text-xs text-muted-foreground mt-1">{totalConsultsShow} showed of {totalConsultsCal} calendared</p>
+        </Card>
+        <Card className="p-3 md:p-5 text-center border-l-4" style={{ borderLeftColor: "#059669" }}>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">Booking Rate</p>
+          <p className="text-3xl font-bold text-emerald-600">{bookingRateVal.toFixed(0)}%</p>
+          <p className="text-xs text-muted-foreground mt-1">{totalConversions} booked of {totalConsultsShow} showed</p>
+        </Card>
+        <Card className="p-3 md:p-5 text-center border-l-4 border-red-400 bg-red-50/50">
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <AlertTriangle className="h-4 w-4 text-red-500" />
+            <p className="text-xs uppercase tracking-wider text-red-600 font-medium">Revenue Lost to No-Shows</p>
+          </div>
+          <p className="text-3xl font-bold text-red-600">{formatCurrency(revenueLostToNoShows)}</p>
+          <p className="text-xs text-muted-foreground mt-1">{noShows} no-shows &times; {formatCurrency(Math.round(avgRevenuePerConversion * (bookingRateVal / 100)))} est. per conversion</p>
+        </Card>
+      </div>
+
       {/* ── Conversion Rates (matching Aesthetics style) ────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <Card className="p-3 md:p-6 flex flex-col items-center justify-center text-center bg-gradient-to-br from-[#8EB093]/10 to-white">
@@ -297,6 +357,83 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
         data={SLIMMING_SERVICE_BREAKDOWN}
         color={chartColors.slimming}
       />
+
+      {/* ── Targets Section ─────────────────────────────────────────── */}
+      <Card className="p-3 md:p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Target className="h-5 w-5" style={{ color: chartColors.slimming }} />
+            <h2 className="text-lg font-semibold text-foreground">Targets vs Actual</h2>
+          </div>
+          <button
+            onClick={() => {
+              if (editingTargets) {
+                setTargets(draftTargets);
+                setEditingTargets(false);
+              } else {
+                setDraftTargets(targets);
+                setEditingTargets(true);
+              }
+            }}
+            className="text-xs font-medium px-3 py-1.5 rounded-lg border hover:bg-muted transition-colors"
+          >
+            {editingTargets ? "Save Targets" : "Edit Targets"}
+          </button>
+        </div>
+
+        {editingTargets && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 p-4 bg-muted/50 rounded-lg">
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">Weekly Revenue Target</label>
+              <input type="number" value={draftTargets.weeklyRevenue} onChange={(e) => setDraftTargets({ ...draftTargets, weeklyRevenue: Number(e.target.value) })} className="w-full border rounded px-2 py-1 text-sm" />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">Consultations / Week</label>
+              <input type="number" value={draftTargets.consultationsPerWeek} onChange={(e) => setDraftTargets({ ...draftTargets, consultationsPerWeek: Number(e.target.value) })} className="w-full border rounded px-2 py-1 text-sm" />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">Conversion Rate %</label>
+              <input type="number" value={draftTargets.conversionRate} onChange={(e) => setDraftTargets({ ...draftTargets, conversionRate: Number(e.target.value) })} className="w-full border rounded px-2 py-1 text-sm" />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">Show Rate %</label>
+              <input type="number" value={draftTargets.showRate} onChange={(e) => setDraftTargets({ ...draftTargets, showRate: Number(e.target.value) })} className="w-full border rounded px-2 py-1 text-sm" />
+            </div>
+          </div>
+        )}
+
+        <p className="text-xs text-muted-foreground mb-4">
+          Performance against targets for {L} week{L !== 1 ? "s" : ""} selected. Targets scale proportionally with date range.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: "Revenue", actual: totalSvcRev, target: revenueTarget, format: (v: number) => formatCurrency(v), pct: revenuePct },
+            { label: "Consultations", actual: totalConsultsCal, target: consultsTarget, format: (v: number) => String(v), pct: consultsPct },
+            { label: "Conversion Rate", actual: avgCourseConv, target: convTarget, format: (v: number) => `${v.toFixed(0)}%`, pct: convTarget > 0 ? (avgCourseConv / convTarget) * 100 : 0 },
+            { label: "Show Rate", actual: avgShowRate, target: targets.showRate, format: (v: number) => `${v.toFixed(0)}%`, pct: targets.showRate > 0 ? (avgShowRate / targets.showRate) * 100 : 0 },
+          ].map((item) => {
+            const isOnTrack = item.pct >= 90;
+            const isWarning = item.pct >= 70 && item.pct < 90;
+            const barColor = isOnTrack ? "#059669" : isWarning ? "#d97706" : "#dc2626";
+            return (
+              <div key={item.label} className="space-y-2 p-3 rounded-lg border">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{item.label}</p>
+                  <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${isOnTrack ? "bg-green-50 text-green-700" : isWarning ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"}`}>
+                    {item.pct.toFixed(0)}%
+                  </span>
+                </div>
+                <p className="text-xl font-bold text-foreground">{item.format(item.actual)}</p>
+                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(item.pct, 100)}%`, backgroundColor: barColor }} />
+                </div>
+                <p className="text-[11px] text-muted-foreground">Target: {item.format(item.target)}</p>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
 
       <CIChat />
     </>
