@@ -113,10 +113,21 @@ export function BookingMix({
           .map(([name, value]) => ({ name, value }))
           .sort((a, b) => b.value - a.value);
 
-        // Use dummy data if no real treatment data or if data looks like
-        // person names (ETL not yet mapping treatment_name correctly)
-        const looksLikeNames = items.length > 0 && items.every((t) => !t.name.includes(" ") || /^[A-Z][a-z]+ [A-Z]?[a-z]+$/.test(t.name));
-        const isDummy = items.length === 0 || looksLikeNames;
+        // Use dummy data if no real treatment data or if data doesn't
+        // contain recognisable treatment keywords (ETL currently returns
+        // person names instead of treatment names for some brands)
+        const TREATMENT_KEYWORDS = [
+          "massage", "therapy", "facial", "wrap", "peel", "filler", "botox",
+          "laser", "contouring", "sculpt", "cavitation", "drainage", "consult",
+          "prp", "needling", "tightening", "freez", "rf ", "skinbooster",
+          "aromatherapy", "reflexology", "hair removal", "anti-aging",
+          "body", "deep tissue", "hot stone", "couples", "prenatal",
+          "weight", "slimming", "fat", "cellulite", "nutritional",
+        ];
+        const looksLikeTreatments = items.some((t) =>
+          TREATMENT_KEYWORDS.some((kw) => t.name.toLowerCase().includes(kw))
+        );
+        const isDummy = items.length === 0 || !looksLikeTreatments;
         if (isDummy) {
           items = DUMMY_BOOKING_MIX[brand.slug] ?? [];
         }
