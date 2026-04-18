@@ -41,10 +41,10 @@ interface LocationData {
 
 const MOCK_LOCATIONS: LocationData[] = [
   { name: "InterContinental", shortName: "Inter",    avgScore: 4.5, cumulative: [159,162,162,163,166,168,173,176,181,186,189,190], color: "#1B3A4B" },
-  { name: "Hugo's",           shortName: "Hugos",    avgScore: 4.8, cumulative: [109,112,114,115,119,122,129,132,137,142,146,151], color: "#2A8A7A" },
-  { name: "Hyatt",            shortName: "Hyatt",    avgScore: 4.8, cumulative: [44,47,54,55,56,56,58,60,60,61,62,64],            color: "#B8943E" },
+  { name: "Hugo's",           shortName: "Hugos",    avgScore: 4.8, cumulative: [109,112,114,115,119,122,129,132,137,142,146,151], color: "#96B2B2" },
+  { name: "Hyatt",            shortName: "Hyatt",    avgScore: 4.8, cumulative: [44,47,54,55,56,56,58,60,60,61,62,64],            color: "#B79E61" },
   { name: "Ramla Bay",        shortName: "Ramla",    avgScore: 4.9, cumulative: [47,55,65,68,72,77,82,85,88,90,98,99],            color: "#E07A5F" },
-  { name: "Riviera",          shortName: "Riviera",  avgScore: 4.9, cumulative: [12,12,15,17,19,21,23,27,28,30,32,32],            color: "#6B9080" },
+  { name: "Riviera",          shortName: "Riviera",  avgScore: 4.9, cumulative: [12,12,15,17,19,21,23,27,28,30,32,32],            color: "#8EB093" },
   { name: "Odycy",            shortName: "Odycy",    avgScore: 4.8, cumulative: [21,25,30,35,38,43,50,54,61,69,72,76],            color: "#7C3AED" },
   { name: "Excelsior",        shortName: "Excel",    avgScore: 4.8, cumulative: [35,37,38,40,41,43,45,46,48,49,51,52],            color: "#DC2626" },
   { name: "Novotel",          shortName: "Novo",     avgScore: 4.8, cumulative: [28,30,31,33,34,36,37,39,40,42,43,45],            color: "#0EA5E9" },

@@ -25,7 +25,7 @@ import {
 
 /* ---------- constants ---------- */
 
-const BRAND_COLOR = "#B8943E";
+const BRAND_COLOR = "#B79E61";
 
 /* ---------- mock data ---------- */
 

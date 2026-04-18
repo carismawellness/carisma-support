@@ -19,10 +19,10 @@ import { format } from "date-fns";
 
 const LOCATION_COLORS: Record<string, string> = {
   Inter: "#1B3A4B",
-  Hugos: "#2A8A7A",
-  Hyatt: "#B8943E",
+  Hugos: "#96B2B2",
+  Hyatt: "#B79E61",
   Ramla: "#E07A5F",
-  Labranda: "#6B9080",
+  Labranda: "#8EB093",
   Sunny: "#7C3AED",
   Excelsior: "#DC2626",
   Novotel: "#0EA5E9",

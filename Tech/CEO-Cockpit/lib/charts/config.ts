@@ -1,9 +1,9 @@
 export const chartColors = {
-  spa: "#B8943E",
-  aesthetics: "#2A8A7A",
-  slimming: "#6B9080",
-  target: "#E07A5F",
-  budget: "#9CA3AF",
+  spa: "#B79E61",        // warm gold — carismaspa.com
+  aesthetics: "#96B2B2", // muted teal-blue — carismaaesthetics.com
+  slimming: "#8EB093",   // sage green — carismaslimming.com
+  target: "#E07A5F",     // coral — shared accent
+  budget: "#9CA3AF",     // neutral gray
 } as const;
 
 export const chartDefaults = {

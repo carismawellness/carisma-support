@@ -39,35 +39,15 @@ const MOCK_SLIM_SHOWUP_PCT       = [50,82,82,73,75,58,80,71,54];
    MOCK DATA — Therapist Performance
    ═══════════════════════════════════════════════════════════════════════ */
 
-const MOCK_THERAPIST_SERVICE = [
-  { name: "Maria Vella", revenue: 3240 },
-  { name: "Katya Borg", revenue: 2890 },
-  { name: "Daniela Camilleri", revenue: 2450 },
-  { name: "Joanne Grech", revenue: 1980 },
-  { name: "Lara Zammit", revenue: 1650 },
-  { name: "Nadia Farrugia", revenue: 1420 },
-  { name: "Christine Attard", revenue: 890 },
-].sort((a, b) => b.revenue - a.revenue);
-
-const MOCK_THERAPIST_RETAIL = [
-  { name: "Katya Borg", revenue: 420 },
-  { name: "Maria Vella", revenue: 380 },
-  { name: "Daniela Camilleri", revenue: 290 },
-  { name: "Joanne Grech", revenue: 210 },
-  { name: "Christine Attard", revenue: 180 },
-  { name: "Lara Zammit", revenue: 120 },
-  { name: "Nadia Farrugia", revenue: 85 },
-].sort((a, b) => b.revenue - a.revenue);
-
-const MOCK_THERAPIST_PACKAGES = [
-  { name: "Maria Vella", revenue: 4800 },
-  { name: "Katya Borg", revenue: 4200 },
-  { name: "Joanne Grech", revenue: 3600 },
-  { name: "Daniela Camilleri", revenue: 3100 },
-  { name: "Lara Zammit", revenue: 2700 },
-  { name: "Nadia Farrugia", revenue: 2100 },
-  { name: "Christine Attard", revenue: 1500 },
-].sort((a, b) => b.revenue - a.revenue);
+const THERAPIST_DATA = [
+  { name: "Maria Vella", serviceRevenue: 3240, retailRevenue: 380 },
+  { name: "Katya Borg", serviceRevenue: 2890, retailRevenue: 420 },
+  { name: "Daniela Camilleri", serviceRevenue: 2450, retailRevenue: 290 },
+  { name: "Joanne Grech", serviceRevenue: 1980, retailRevenue: 210 },
+  { name: "Lara Zammit", serviceRevenue: 1650, retailRevenue: 120 },
+  { name: "Nadia Farrugia", serviceRevenue: 1420, retailRevenue: 85 },
+  { name: "Christine Attard", serviceRevenue: 890, retailRevenue: 180 },
+];
 
 /* ═══════════════════════════════════════════════════════════════════════
    HELPERS
@@ -139,8 +119,8 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
       {/* ── Header ──────────────────────────────────────────────────── */}
       <div className="space-y-1">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#6B9080]/10 border border-[#6B9080]/20">
-            <Rocket className="h-6 w-6 text-[#6B9080]" />
+          <div className="p-2.5 rounded-xl bg-[#8EB093]/10 border border-[#8EB093]/20">
+            <Rocket className="h-6 w-6 text-[#8EB093]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground tracking-tight">
@@ -154,10 +134,10 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
       </div>
 
       {/* ── Ramp-up Banner ──────────────────────────────────────────── */}
-      <Card className="border-[#6B9080]/30 bg-gradient-to-r from-[#6B9080]/5 via-transparent to-[#B8943E]/5 p-5">
+      <Card className="border-[#8EB093]/30 bg-gradient-to-r from-[#8EB093]/5 via-transparent to-[#B79E61]/5 p-5">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
-            <TrendingUp className="h-5 w-5 text-[#6B9080]" />
+            <TrendingUp className="h-5 w-5 text-[#8EB093]" />
             <div>
               <p className="text-sm font-semibold text-foreground">
                 Revenue grew {((latestSvcRev / MOCK_SLIM_SVC_REV[0]) * 100 / 100).toFixed(0)}x from launch week to week {L}
@@ -169,11 +149,11 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
           </div>
           <div className="flex gap-6 text-center">
             <div>
-              <p className="text-lg font-bold text-[#6B9080]">{formatCurrency(totalSvcRev)}</p>
+              <p className="text-lg font-bold text-[#8EB093]">{formatCurrency(totalSvcRev)}</p>
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Total Revenue</p>
             </div>
             <div>
-              <p className="text-lg font-bold text-[#B8943E]">{avg(MOCK_SLIM_COURSE_CONV_PCT).toFixed(0)}%</p>
+              <p className="text-lg font-bold text-[#B79E61]">{avg(MOCK_SLIM_COURSE_CONV_PCT).toFixed(0)}%</p>
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Avg Conv Rate</p>
             </div>
             <div>
@@ -226,9 +206,9 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
 
       {/* ── Sales Funnel ────────────────────────────────────────────── */}
       <FunnelChart
-        title={`Sales Funnel — Week of ${MOCK_SLIM_WEEKS[latestIdx]}`}
+        title="Sales Funnel"
         subtitle="Lead to booking conversion with course-type breakdown"
-        color="#6B9080"
+        color={chartColors.slimming}
         stages={[
           { label: "Leads", value: leads },
           { label: "Consults Calendared", value: consultsCal, conversionRate: (consultsCal / leads) * 100 },
@@ -236,21 +216,19 @@ function SlimmingContent({ dateFrom, dateTo }: SlimmingContentProps) {
           { label: "Bookings", value: totalBookings, conversionRate: (totalBookings / consultsShow) * 100 },
         ]}
         split={[
-          { label: "Regular Course", value: regularCourse, conversionRate: MOCK_SLIM_COURSE_CONV_PCT[latestIdx], color: "#6B9080", description: "Standard slimming programme" },
-          { label: "Max Course", value: maxCourse, conversionRate: MOCK_SLIM_MAX_COURSE_PCT[latestIdx], color: "#B8943E", description: "Premium intensive programme (target: 10-15%)" },
+          { label: "Regular Course", value: regularCourse, conversionRate: MOCK_SLIM_COURSE_CONV_PCT[latestIdx], color: chartColors.slimming, description: "Standard slimming programme" },
+          { label: "Max Course", value: maxCourse, conversionRate: MOCK_SLIM_MAX_COURSE_PCT[latestIdx], color: chartColors.spa, description: "Premium intensive programme (target: 10-15%)" },
         ]}
       />
 
       {/* ── Therapist Performance ──────────────────────────────────── */}
       <StaffPerformanceChart
         title="Therapist Performance"
-        subtitle="Latest period (EUR)"
-        tabs={[
-          { key: "service", label: "Service Sales", data: MOCK_THERAPIST_SERVICE, color: chartColors.slimming },
-          { key: "retail", label: "Retail Sales", data: MOCK_THERAPIST_RETAIL, color: chartColors.spa },
-          { key: "packages", label: "Package Sales", data: MOCK_THERAPIST_PACKAGES, color: chartColors.target },
-        ]}
-        icon={<UserCheck className="h-5 w-5 text-[#6B9080]" />}
+        subtitle="Service + Retail revenue (EUR)"
+        data={THERAPIST_DATA}
+        serviceColor={chartColors.slimming}
+        retailColor={chartColors.spa}
+        icon={<UserCheck className="h-5 w-5 text-[#8EB093]" />}
       />
 
       <CIChat />

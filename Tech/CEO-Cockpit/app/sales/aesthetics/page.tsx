@@ -56,34 +56,14 @@ const SERVICE_BREAKDOWN = [
    THERAPIST PERFORMANCE DATA (mock — sorted descending)
    ═══════════════════════════════════════════════════════════════════════ */
 
-const THERAPIST_SERVICE_REV = [
-  { name: "Dr. Elisa Grech", revenue: 14200 },
-  { name: "Dr. Martina Vella", revenue: 11850 },
-  { name: "Kyra Camilleri", revenue: 9400 },
-  { name: "Daniela Borg", revenue: 7600 },
-  { name: "Leanne Farrugia", revenue: 5900 },
-  { name: "Anthea Zammit", revenue: 4350 },
-  { name: "Jade Attard", revenue: 3100 },
-];
-
-const THERAPIST_RETAIL_REV = [
-  { name: "Kyra Camilleri", revenue: 2850 },
-  { name: "Daniela Borg", revenue: 2200 },
-  { name: "Leanne Farrugia", revenue: 1750 },
-  { name: "Anthea Zammit", revenue: 1400 },
-  { name: "Jade Attard", revenue: 980 },
-  { name: "Dr. Elisa Grech", revenue: 620 },
-  { name: "Dr. Martina Vella", revenue: 410 },
-];
-
-const THERAPIST_PACKAGE_REV = [
-  { name: "Dr. Elisa Grech", revenue: 8600 },
-  { name: "Kyra Camilleri", revenue: 6900 },
-  { name: "Dr. Martina Vella", revenue: 5400 },
-  { name: "Leanne Farrugia", revenue: 4200 },
-  { name: "Daniela Borg", revenue: 3800 },
-  { name: "Anthea Zammit", revenue: 2100 },
-  { name: "Jade Attard", revenue: 1500 },
+const THERAPIST_DATA = [
+  { name: "Dr. Elisa Grech", serviceRevenue: 14200, retailRevenue: 620 },
+  { name: "Dr. Martina Vella", serviceRevenue: 11850, retailRevenue: 410 },
+  { name: "Kyra Camilleri", serviceRevenue: 9400, retailRevenue: 2850 },
+  { name: "Daniela Borg", serviceRevenue: 7600, retailRevenue: 2200 },
+  { name: "Leanne Farrugia", serviceRevenue: 5900, retailRevenue: 1750 },
+  { name: "Anthea Zammit", serviceRevenue: 4350, retailRevenue: 1400 },
+  { name: "Jade Attard", serviceRevenue: 3100, retailRevenue: 980 },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -159,7 +139,7 @@ function AestheticsContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date 
       <FunnelChart
         title="Sales Funnel"
         subtitle={`Consultation show rate: ${consultShowRate.toFixed(0)}% | Booking show rate: ${bookShowRate.toFixed(0)}%`}
-        color="#2A8A7A"
+        color={chartColors.aesthetics}
         stages={[
           { label: "New Leads", value: funnelLeads, showRate: consultShowRate },
           {
@@ -223,7 +203,7 @@ function AestheticsContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date 
                     className="h-full rounded-full"
                     style={{
                       width: `${svc.pct}%`,
-                      background: `linear-gradient(90deg, #2A8A7A, #3db5a0)`,
+                      background: `linear-gradient(90deg, ${chartColors.aesthetics}, ${chartColors.aesthetics}cc)`,
                     }}
                   />
                 </div>
@@ -239,12 +219,10 @@ function AestheticsContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date 
       {/* ── Therapist Performance (tabbed) ───────────────────────── */}
       <StaffPerformanceChart
         title="Therapist Performance"
-        subtitle="Sorted by revenue descending (EUR)"
-        tabs={[
-          { key: "service", label: "Service", data: THERAPIST_SERVICE_REV, color: chartColors.aesthetics },
-          { key: "retail", label: "Retail", data: THERAPIST_RETAIL_REV, color: chartColors.spa },
-          { key: "packages", label: "Packages", data: THERAPIST_PACKAGE_REV, color: chartColors.target },
-        ]}
+        subtitle="Service + Retail revenue (EUR)"
+        data={THERAPIST_DATA}
+        serviceColor={chartColors.aesthetics}
+        retailColor={chartColors.spa}
       />
 
       <CIChat />

@@ -75,7 +75,7 @@ function hexToHsl(hex: string): { h: number; s: number; l: number } {
 export function FunnelChart({
   stages,
   title,
-  color = "#B8943E",
+  color = "#B79E61",
   subtitle,
   split,
   showRates,

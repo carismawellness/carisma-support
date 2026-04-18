@@ -16,7 +16,7 @@ import {
 /*  Constants                                                          */
 /* ------------------------------------------------------------------ */
 
-const PIE_COLORS = ["#B8943E", "#2A8A7A", "#6B9080", "#E07A5F", "#4A90D9", "#9CA3AF"];
+const PIE_COLORS = ["#B79E61", "#96B2B2", "#8EB093", "#E07A5F", "#4A90D9", "#9CA3AF"];
 
 const BRANDS = [
   { slug: "spa", label: "Spa" },

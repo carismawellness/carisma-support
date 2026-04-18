@@ -195,30 +195,17 @@ function SpaContent() {
   ];
 
   /* ── Visualization 3: Staff Performance ────────────────────────── */
-  const staffServiceRev = [
-    { name: "Maria Vella", revenue: 14820 },
-    { name: "Carmen Borg", revenue: 13450 },
-    { name: "Joanne Camilleri", revenue: 12680 },
-    { name: "Daniela Farrugia", revenue: 11970 },
-    { name: "Charlene Grech", revenue: 11340 },
-    { name: "Nicole Zammit", revenue: 10890 },
-    { name: "Stephanie Galea", revenue: 10250 },
-    { name: "Christine Spiteri", revenue: 9830 },
-    { name: "Lorraine Debono", revenue: 9420 },
-    { name: "Anthea Calleja", revenue: 8750 },
-  ];
-
-  const staffRetailRev = [
-    { name: "Charlene Grech", revenue: 2840 },
-    { name: "Maria Vella", revenue: 2560 },
-    { name: "Daniela Farrugia", revenue: 2310 },
-    { name: "Joanne Camilleri", revenue: 1980 },
-    { name: "Nicole Zammit", revenue: 1870 },
-    { name: "Carmen Borg", revenue: 1720 },
-    { name: "Stephanie Galea", revenue: 1650 },
-    { name: "Anthea Calleja", revenue: 1480 },
-    { name: "Christine Spiteri", revenue: 1350 },
-    { name: "Lorraine Debono", revenue: 1120 },
+  const staffData = [
+    { name: "Maria Vella", serviceRevenue: 14820, retailRevenue: 2560 },
+    { name: "Carmen Borg", serviceRevenue: 13450, retailRevenue: 1720 },
+    { name: "Joanne Camilleri", serviceRevenue: 12680, retailRevenue: 1980 },
+    { name: "Daniela Farrugia", serviceRevenue: 11970, retailRevenue: 2310 },
+    { name: "Charlene Grech", serviceRevenue: 11340, retailRevenue: 2840 },
+    { name: "Nicole Zammit", serviceRevenue: 10890, retailRevenue: 1870 },
+    { name: "Stephanie Galea", serviceRevenue: 10250, retailRevenue: 1650 },
+    { name: "Christine Spiteri", serviceRevenue: 9830, retailRevenue: 1350 },
+    { name: "Lorraine Debono", serviceRevenue: 9420, retailRevenue: 1120 },
+    { name: "Anthea Calleja", serviceRevenue: 8750, retailRevenue: 1480 },
   ];
 
   return (
@@ -446,11 +433,10 @@ function SpaContent() {
       {/* ── Viz 3: Staff Performance ─────────────────────────────── */}
       <StaffPerformanceChart
         title="Staff Performance"
-        subtitle="Top 10 therapists — last 4 weeks (EUR)"
-        tabs={[
-          { key: "service", label: "Service Revenue", data: staffServiceRev, color: chartColors.spa },
-          { key: "retail", label: "Retail Revenue", data: staffRetailRev, color: chartColors.aesthetics },
-        ]}
+        subtitle="Top 10 therapists (EUR)"
+        data={staffData}
+        serviceColor={chartColors.spa}
+        retailColor={chartColors.aesthetics}
       />
 
       <CIChat />

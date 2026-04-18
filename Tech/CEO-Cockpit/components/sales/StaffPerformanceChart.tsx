@@ -1,116 +1,61 @@
 "use client";
 
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { formatCurrency } from "@/lib/charts/config";
 import {
   BarChart,
   Bar,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
+  LabelList,
 } from "recharts";
 
-interface StaffEntry {
+interface StaffMember {
   name: string;
-  revenue: number;
-}
-
-interface StaffTab {
-  key: string;
-  label: string;
-  data: StaffEntry[];
-  color: string;
+  serviceRevenue: number;
+  retailRevenue: number;
 }
 
 interface StaffPerformanceChartProps {
   title?: string;
   subtitle?: string;
-  tabs: StaffTab[];
+  data: StaffMember[];
+  serviceColor: string;
+  retailColor: string;
   icon?: React.ReactNode;
-}
-
-/** Gradient palette: top performer is full color, lower performers fade */
-function gradientColor(hex: string, ratio: number): string {
-  // Parse hex
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-
-  // Blend toward white based on ratio (1.0 = full color, 0.0 = white)
-  const t = 0.35 + ratio * 0.65; // range from 35% to 100% intensity
-  const nr = Math.round(r * t + 255 * (1 - t));
-  const ng = Math.round(g * t + 255 * (1 - t));
-  const nb = Math.round(b * t + 255 * (1 - t));
-
-  return `rgb(${nr}, ${ng}, ${nb})`;
-}
-
-function StaffBarChart({ data, color }: { data: StaffEntry[]; color: string }) {
-  const maxRev = data[0]?.revenue ?? 1;
-
-  return (
-    <ResponsiveContainer width="100%" height={data.length * 48 + 40}>
-      <BarChart
-        data={data}
-        layout="vertical"
-        margin={{ top: 5, right: 60, left: 10, bottom: 5 }}
-      >
-        <CartesianGrid
-          strokeDasharray="3 3"
-          stroke="#f0ede8"
-          horizontal={false}
-        />
-        <XAxis
-          type="number"
-          tickFormatter={(v: number) => formatCurrency(v)}
-          tick={{ fontSize: 11 }}
-        />
-        <YAxis
-          type="category"
-          dataKey="name"
-          width={140}
-          tick={{ fontSize: 12 }}
-        />
-        <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-        <Bar
-          dataKey="revenue"
-          radius={[0, 4, 4, 0]}
-          barSize={28}
-          label={{
-            position: "right",
-            formatter: (v: unknown) => formatCurrency(Number(v)),
-            fontSize: 11,
-            fill: "#6b7280",
-          }}
-        >
-          {data.map((entry, i) => (
-            <Cell
-              key={i}
-              fill={gradientColor(color, entry.revenue / maxRev)}
-            />
-          ))}
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
-  );
 }
 
 export function StaffPerformanceChart({
   title = "Staff Performance",
   subtitle,
-  tabs,
+  data,
+  serviceColor,
+  retailColor,
   icon,
 }: StaffPerformanceChartProps) {
-  const [activeTab, setActiveTab] = useState(tabs[0]?.key ?? "");
+  if (data.length === 0) return null;
 
-  if (tabs.length === 0) return null;
-
-  const currentTab = tabs.find((t) => t.key === activeTab) ?? tabs[0];
+  // Sort by total descending, compute retail %
+  const chartData = [...data]
+    .map((d) => {
+      const total = d.serviceRevenue + d.retailRevenue;
+      return {
+        name: d.name,
+        "Service Revenue": d.serviceRevenue,
+        "Retail Revenue": d.retailRevenue,
+        retailPct: total > 0 ? ((d.retailRevenue / total) * 100).toFixed(0) : "0",
+      };
+    })
+    .sort(
+      (a, b) =>
+        b["Service Revenue"] +
+        b["Retail Revenue"] -
+        (a["Service Revenue"] + a["Retail Revenue"])
+    );
 
   return (
     <Card className="p-6">
@@ -122,23 +67,72 @@ export function StaffPerformanceChart({
         <p className="text-xs text-muted-foreground mb-4 ml-8">{subtitle}</p>
       )}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          {tabs.map((tab) => (
-            <TabsTrigger key={tab.key} value={tab.key}>
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {tabs.map((tab) => (
-          <TabsContent key={tab.key} value={tab.key} className="mt-4">
-            <StaffBarChart data={tab.data} color={tab.color} />
-          </TabsContent>
-        ))}
-      </Tabs>
+      <ResponsiveContainer width="100%" height={chartData.length * 48 + 50}>
+        <BarChart
+          data={chartData}
+          layout="vertical"
+          margin={{ top: 5, right: 60, left: 10, bottom: 5 }}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="#f0ede8"
+            horizontal={false}
+          />
+          <XAxis
+            type="number"
+            tickFormatter={(v: number) => formatCurrency(v)}
+            tick={{ fontSize: 11 }}
+          />
+          <YAxis
+            type="category"
+            dataKey="name"
+            width={140}
+            tick={{ fontSize: 12 }}
+          />
+          <Tooltip
+            formatter={(value: unknown) => formatCurrency(Number(value))}
+          />
+          <Legend wrapperStyle={{ fontSize: 12 }} />
+          <Bar
+            dataKey="Service Revenue"
+            stackId="total"
+            fill={serviceColor}
+            radius={[0, 0, 0, 0]}
+            barSize={28}
+          />
+          <Bar
+            dataKey="Retail Revenue"
+            stackId="total"
+            fill={retailColor}
+            radius={[0, 4, 4, 0]}
+            barSize={28}
+          >
+            <LabelList
+              dataKey="retailPct"
+              content={(props) => {
+                const { x, width, y, height, value } = props as Record<string, unknown>;
+                const w = Number(width);
+                if (!value || w < 20) return <></>;
+                return (
+                  <text
+                    x={Number(x) + w / 2}
+                    y={Number(y) + Number(height) / 2}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize={9}
+                    fontWeight={700}
+                    fill="white"
+                  >
+                    {String(value)}%
+                  </text>
+                );
+              }}
+            />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </Card>
   );
 }
 
-export type { StaffEntry, StaffTab, StaffPerformanceChartProps };
+export type { StaffMember, StaffPerformanceChartProps };
