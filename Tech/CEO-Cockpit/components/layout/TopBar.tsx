@@ -36,7 +36,7 @@ export function TopBar({
   return (
     <header
       className={cn(
-        "h-14 bg-card border-b border-border flex items-center justify-between px-3 md:px-6 fixed top-0 right-0 z-30 transition-all duration-200",
+        "h-14 bg-card/80 backdrop-blur-md border-b border-border flex items-center justify-between px-3 md:px-6 fixed top-0 right-0 z-30 transition-all duration-200",
         "left-0",
         sidebarCollapsed ? "lg:left-[4.5rem]" : "lg:left-60"
       )}

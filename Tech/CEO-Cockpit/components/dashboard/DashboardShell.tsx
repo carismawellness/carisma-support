@@ -36,7 +36,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
       />
       <main
         className={cn(
-          "pt-14 p-3 md:p-6 space-y-4 md:space-y-6 transition-all duration-200",
+          "pt-[4.25rem] px-3 pb-3 md:pt-[4.25rem] md:px-6 md:pb-6 space-y-4 md:space-y-6 transition-all duration-200",
           "ml-0",
           collapsed ? "lg:ml-[4.5rem]" : "lg:ml-60"
         )}
