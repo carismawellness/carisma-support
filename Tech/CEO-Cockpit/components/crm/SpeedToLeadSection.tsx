@@ -470,64 +470,6 @@ export function SpeedToLeadSection({
         </div>
       </Card>
 
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/*  SECTION 3: General Speed to Lead (compact overview)          */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      <Card className="p-4 md:p-5">
-        <h3 className="text-base font-semibold text-foreground mb-3">Overall Speed to Lead</h3>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-          <div className="text-center p-3 rounded-lg bg-gray-50">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Median</p>
-            <p className={`text-xl font-black ${stlColor(overallMedian)}`}>
-              {overallMedian > 0 ? formatMinutes(overallMedian) : "-"}
-            </p>
-          </div>
-          <div className="text-center p-3 rounded-lg bg-gray-50">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Mean</p>
-            <p className={`text-xl font-black ${stlColor(overallMean)}`}>
-              {overallMean > 0 ? formatMinutes(overallMean) : "-"}
-            </p>
-          </div>
-          <div className="text-center p-3 rounded-lg bg-gray-50">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Under 5min</p>
-            <p className={`text-xl font-black ${pctUnder5(allDist) >= 80 ? "text-emerald-600" : pctUnder5(allDist) >= 50 ? "text-amber-500" : "text-red-500"}`}>
-              {formatPercent(pctUnder5(allDist))}
-            </p>
-          </div>
-          <div className="text-center p-3 rounded-lg bg-gray-50">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Total Leads</p>
-            <p className="text-xl font-black text-foreground">{totalLeads.toLocaleString()}</p>
-          </div>
-        </div>
-
-        {/* Overall distribution bar */}
-        <DistributionBar dist={allDist} height="h-7" showCounts />
-
-        {/* Benchmarks (compact) */}
-        <div className="mt-4 pt-3 border-t">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Benchmarks</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
-            {[
-              { time: "<1min", grade: "A+", note: "391% higher conv", color: "#16A34A" },
-              { time: "1-3min", grade: "A", note: "Lead still engaged", color: "#22C55E" },
-              { time: "3-5min", grade: "B", note: "Industry best practice", color: "#86EFAC" },
-              { time: "5-10min", grade: "C", note: "10x drop in contact", color: "#FDE047" },
-              { time: "10-15min", grade: "D", note: "Lead comparing options", color: "#FB923C" },
-              { time: "15min+", grade: "F", note: "80% unreachable", color: "#DC2626" },
-            ].map((b) => (
-              <div key={b.grade} className="p-2 rounded-lg border text-center">
-                <div className="flex items-center justify-center gap-1.5 mb-1">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: b.color }} />
-                  <span className="text-xs font-bold text-foreground">{b.time}</span>
-                </div>
-                <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${gradeColor(b.grade)}`}>{b.grade}</span>
-                <p className="text-[9px] text-muted-foreground mt-1 leading-tight">{b.note}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Card>
     </>
   );
 }
