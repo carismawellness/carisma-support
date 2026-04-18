@@ -7,8 +7,6 @@ import {
   Users,
   Settings,
   Activity,
-  ClipboardCheck,
-  ShieldAlert,
   TrendingUp,
   Sparkles,
   Heart,
@@ -80,10 +78,5 @@ export const departments: Department[] = [
     label: "Operations",
     icon: Settings,
     path: "/operations",
-    children: [
-      { slug: "master", label: "Master", path: "/operations", icon: Settings },
-      { slug: "diligence", label: "Diligence Audit", path: "/operations/diligence", icon: ShieldAlert },
-      { slug: "brand-standards", label: "Brand Standards", path: "/brand-standards", icon: ClipboardCheck },
-    ],
   },
 ];
