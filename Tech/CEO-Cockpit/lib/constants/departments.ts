@@ -63,7 +63,7 @@ export const departments: Department[] = [
     icon: Megaphone,
     path: "/marketing",
     children: [
-      { slug: "overview", label: "Overview", path: "/marketing", icon: Megaphone },
+      { slug: "master", label: "Master", path: "/marketing", icon: Megaphone },
       { slug: "spa", label: "Spa", path: "/marketing/spa", icon: Sparkles },
       { slug: "aesthetics", label: "Aesthetics", path: "/marketing/aesthetics", icon: Heart },
       { slug: "slimming", label: "Slimming", path: "/marketing/slimming", icon: Activity },
@@ -75,7 +75,6 @@ export const departments: Department[] = [
     icon: PiggyBank,
     path: "/finance",
     children: [
-      { slug: "master", label: "Master", path: "/finance", icon: PiggyBank },
       { slug: "ebitda", label: "EBITDA Overview", path: "/finance/ebitda", icon: TrendingUp },
       { slug: "ebitda-spa", label: "EBITDA Spa", path: "/finance/ebitda/spa", icon: Sparkles },
       { slug: "ebitda-aesthetics", label: "EBITDA Aesthetics", path: "/finance/ebitda/aesthetics", icon: Heart },
