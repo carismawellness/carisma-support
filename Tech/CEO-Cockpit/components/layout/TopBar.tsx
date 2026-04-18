@@ -5,14 +5,11 @@ import { Bell, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { DateRangePicker } from "./DateRangePicker";
-import { BrandFilter } from "./BrandFilter";
 
 interface TopBarProps {
   dateFrom: Date;
   dateTo: Date;
   onDateChange: (from: Date, to: Date) => void;
-  brandFilter: string | null;
-  onBrandChange: (brand: string | null) => void;
   alertCount?: number;
 }
 
@@ -20,8 +17,6 @@ export function TopBar({
   dateFrom,
   dateTo,
   onDateChange,
-  brandFilter,
-  onBrandChange,
   alertCount = 0,
 }: TopBarProps) {
   const router = useRouter();
@@ -39,7 +34,6 @@ export function TopBar({
         <DateRangePicker from={dateFrom} to={dateTo} onChange={onDateChange} />
       </div>
       <div className="flex items-center gap-4">
-        <BrandFilter selected={brandFilter} onChange={onBrandChange} />
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5 text-gray-500" />
           {alertCount > 0 && (

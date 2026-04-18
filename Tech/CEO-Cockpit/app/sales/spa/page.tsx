@@ -22,8 +22,8 @@ import {
   Legend,
   ResponsiveContainer,
   Line,
+  LabelList,
 } from "recharts";
-import { TrendingUp, TrendingDown } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════════════
    REAL DATA — Weekly KPI Sheet 2025 (EUR ex VAT)
@@ -61,25 +61,6 @@ function sum(arr: number[]): number {
 }
 function last(arr: number[], n: number): number[] {
   return arr.slice(-n);
-}
-
-/* ── YoY Badge (used inline in hotel revenue badges below chart) ───── */
-
-function YoYBadge({ value, suffix = "%" }: { value: number; suffix?: string }) {
-  if (value >= 0) {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">
-        <TrendingUp className="h-3 w-3" />
-        +{value.toFixed(1)}{suffix}
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-600">
-      <TrendingDown className="h-3 w-3" />
-      {value.toFixed(1)}{suffix}
-    </span>
-  );
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -199,6 +180,7 @@ function SpaContent() {
       "Last Year Total": lyTotal,
       total: total4w,
       yoy: ((total4w - lyTotal) / lyTotal) * 100,
+      retailPct: (HOTEL_RETAIL_PCTS[h.name] * 100).toFixed(1),
     };
   }).sort((a, b) => b.total - a.total);
 
@@ -349,13 +331,53 @@ function SpaContent() {
               stackId="rev"
               fill={chartColors.aesthetics}
               radius={[0, 0, 0, 0]}
-            />
+            >
+              <LabelList
+                dataKey="retailPct"
+                content={({ x, width, y, height, value }: any) => {
+                  if (!value) return null;
+                  return (
+                    <text
+                      x={Number(x) + Number(width) / 2}
+                      y={Number(y) + Number(height) / 2}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fontSize={9}
+                      fontWeight={600}
+                      fill="white"
+                    >
+                      {value}%
+                    </text>
+                  );
+                }}
+              />
+            </Bar>
             <Bar
               dataKey="Add-on"
               stackId="rev"
               fill={chartColors.slimming}
               radius={[3, 3, 0, 0]}
-            />
+            >
+              <LabelList
+                dataKey="yoy"
+                content={({ x, width, y, value }: any) => {
+                  if (value === undefined) return null;
+                  const isPositive = Number(value) >= 0;
+                  return (
+                    <text
+                      x={Number(x) + Number(width) / 2}
+                      y={Number(y) - 8}
+                      textAnchor="middle"
+                      fontSize={11}
+                      fontWeight={600}
+                      fill={isPositive ? "#059669" : "#dc2626"}
+                    >
+                      {isPositive ? "+" : ""}{Number(value).toFixed(1)}%
+                    </text>
+                  );
+                }}
+              />
+            </Bar>
             <Line
               type="monotone"
               dataKey="Last Year Total"
@@ -366,18 +388,6 @@ function SpaContent() {
             />
           </ComposedChart>
         </ResponsiveContainer>
-        {/* YoY badges below chart */}
-        <div className="mt-3 flex flex-wrap gap-3">
-          {hotelRevenueData.map((h) => (
-            <div
-              key={h.hotel}
-              className="flex items-center gap-2 text-xs text-muted-foreground"
-            >
-              <span className="font-medium text-foreground">{h.hotel}</span>
-              <YoYBadge value={h.yoy} />
-            </div>
-          ))}
-        </div>
       </Card>
 
       {/* ── Viz 2: Average Order Value by Location ────────────────── */}

@@ -4,7 +4,6 @@ import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { SalesKPICard } from "@/components/sales/SalesKPICard";
 import { SalesKPIGrid } from "@/components/sales/SalesKPIGrid";
-import { StaffPerformanceChart } from "@/components/sales/StaffPerformanceChart";
 import { Card } from "@/components/ui/card";
 import {
   chartColors,
@@ -25,103 +24,44 @@ import {
 
 /* ═══════════════════════════════════════════════════════════════════════
    MOCK DATA — Company-wide aggregated from all brands
-   Realistic EUR values based on existing weekly spa data + AES + SLIM
    ═══════════════════════════════════════════════════════════════════════ */
 
-// Current period totals (rolling 4 weeks)
 const KPI_DATA = {
   totalNetRevenue: { value: 218_640, yoy: 4.2 },
   servicesRevenue: { value: 199_430, yoy: 3.8 },
   retailRevenue: { value: 12_180, pctOfTotal: 5.6, yoy: 8.1 },
-  addonRevenue: { value: 7_030, pctOfTotal: 3.2, yoy: -2.4 },
-  avgRevenuePerHour: { value: 34.7, yoy: 6.3 },
-  spaClubMembers: { value: 142, yoy: 12.7 },
-  hotelGuestCapture: { value: 5.8, yoy: 1.2 },
-  localGuestPct: { value: 38.4, yoy: -2.6 },
+  spaMembers: { value: 847, yoy: 8.3 },
+  aestheticsMembers: { value: 86, yoy: 14.2 },
+  slimmingMembers: { value: 480 },
 };
 
-// Revenue by Hotel — stacked breakdown (current period)
-const HOTEL_REVENUE_DATA = [
+// Revenue by Brand
+const BRAND_REVENUE_DATA = [
   {
-    hotel: "InterContinental",
-    services: 42_890,
-    retail: 3_620,
-    addon: 1_840,
-    lastYearTotal: 51_200,
+    brand: "Spa",
+    services: 172_340,
+    retail: 10_420,
+    lastYearTotal: 168_900,
   },
   {
-    hotel: "Hugo's",
-    services: 48_370,
-    retail: 3_150,
-    addon: 1_680,
-    lastYearTotal: 49_800,
+    brand: "Aesthetics",
+    services: 40_880,
+    retail: 783,
+    lastYearTotal: 35_200,
   },
   {
-    hotel: "Hyatt",
-    services: 22_940,
-    retail: 1_280,
-    addon: 920,
-    lastYearTotal: 27_100,
-  },
-  {
-    hotel: "Ramla Bay",
-    services: 27_160,
-    retail: 1_840,
-    addon: 1_350,
-    lastYearTotal: 25_900,
-  },
-  {
-    hotel: "Labranda",
-    services: 15_090,
-    retail: 980,
-    addon: 620,
-    lastYearTotal: 18_400,
-  },
-  {
-    hotel: "Odycy",
-    services: 16_240,
-    retail: 1_310,
-    addon: 620,
-    lastYearTotal: 15_200,
+    brand: "Slimming",
+    services: 65_737,
+    retail: 666,
+    lastYearTotal: 0,
   },
 ];
 
-// AOV by location
+// AOV by Brand
 const AOV_DATA = [
-  { hotel: "InterContinental", aov: 78, lastYearAov: 82 },
-  { hotel: "Hugo's", aov: 72, lastYearAov: 68 },
-  { hotel: "Hyatt", aov: 65, lastYearAov: 69 },
-  { hotel: "Ramla Bay", aov: 58, lastYearAov: 54 },
-  { hotel: "Labranda", aov: 52, lastYearAov: 55 },
-  { hotel: "Odycy", aov: 61, lastYearAov: 57 },
-];
-
-// Staff performance — Service revenue (top 10)
-const STAFF_SERVICE_REV = [
-  { name: "Maria Camilleri", revenue: 14_820 },
-  { name: "Josef Borg", revenue: 13_540 },
-  { name: "Daniela Vella", revenue: 12_970 },
-  { name: "Claire Galea", revenue: 11_680 },
-  { name: "Anna Zammit", revenue: 10_930 },
-  { name: "Lara Farrugia", revenue: 10_210 },
-  { name: "Stefan Micallef", revenue: 9_870 },
-  { name: "Rachel Attard", revenue: 9_340 },
-  { name: "Josianne Spiteri", revenue: 8_760 },
-  { name: "Noel Grech", revenue: 8_420 },
-];
-
-// Staff performance — Retail revenue (top 10)
-const STAFF_RETAIL_REV = [
-  { name: "Claire Galea", revenue: 2_180 },
-  { name: "Maria Camilleri", revenue: 1_940 },
-  { name: "Lara Farrugia", revenue: 1_620 },
-  { name: "Anna Zammit", revenue: 1_410 },
-  { name: "Daniela Vella", revenue: 1_280 },
-  { name: "Josianne Spiteri", revenue: 1_150 },
-  { name: "Rachel Attard", revenue: 980 },
-  { name: "Stefan Micallef", revenue: 740 },
-  { name: "Josef Borg", revenue: 520 },
-  { name: "Noel Grech", revenue: 360 },
+  { brand: "Spa", aov: 82, lastYearAov: 76 },
+  { brand: "Aesthetics", aov: 234, lastYearAov: 218 },
+  { brand: "Slimming", aov: 156, lastYearAov: 0 },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -133,23 +73,37 @@ function yoyPct(current: number, lastYear: number): number {
   return ((current - lastYear) / lastYear) * 100;
 }
 
-const hotelChartData = HOTEL_REVENUE_DATA.map((h) => {
-  const currentTotal = h.services + h.retail + h.addon;
+const brandColorMap: Record<string, string> = {
+  Spa: chartColors.spa,
+  Aesthetics: chartColors.aesthetics,
+  Slimming: chartColors.slimming,
+};
+
+const brandChartData = BRAND_REVENUE_DATA.map((b) => {
+  const currentTotal = b.services + b.retail;
   return {
-    hotel: h.hotel,
-    Services: h.services,
-    Retail: h.retail,
-    "Add-ons": h.addon,
-    "Last Year Total": h.lastYearTotal,
-    yoyPct: yoyPct(currentTotal, h.lastYearTotal),
+    brand: b.brand,
+    "Service Revenue": b.services,
+    "Retail Revenue": b.retail,
+    "Last Year Total": b.lastYearTotal > 0 ? b.lastYearTotal : null,
+    yoyPct: b.lastYearTotal > 0 ? yoyPct(currentTotal, b.lastYearTotal) : null,
+    fill: brandColorMap[b.brand],
   };
 });
 
+const aovChartData = AOV_DATA.map((b) => ({
+  brand: b.brand,
+  AOV: b.aov,
+  "Last Year AOV": b.lastYearAov > 0 ? b.lastYearAov : null,
+  yoyPct: b.lastYearAov > 0 ? yoyPct(b.aov, b.lastYearAov) : null,
+  fill: brandColorMap[b.brand],
+}));
+
 /* ═══════════════════════════════════════════════════════════════════════
-   CUSTOM TOOLTIP
+   CUSTOM TOOLTIPS
    ═══════════════════════════════════════════════════════════════════════ */
 
-function HotelRevenueTooltip({
+function BrandRevenueTooltip({
   active,
   payload,
   label,
@@ -181,24 +135,58 @@ function HotelRevenueTooltip({
   );
 }
 
+function AovTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: Array<{ name: string; value: number; color: string }>;
+  label?: string;
+}) {
+  if (!active || !payload || !payload.length) return null;
+  return (
+    <div className="rounded-lg border bg-white px-4 py-3 shadow-lg">
+      <p className="text-sm font-semibold text-foreground mb-2">{label}</p>
+      {payload.map((entry) => (
+        <div
+          key={entry.name}
+          className="flex items-center justify-between gap-6 text-xs"
+        >
+          <span className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-sm"
+              style={{ backgroundColor: entry.color }}
+            />
+            {entry.name}
+          </span>
+          <span className="font-medium">
+            {entry.value != null ? `€${entry.value}` : "N/A"}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
-   YOY LABEL ON BARS
+   YOY LABEL RENDERERS
    ═══════════════════════════════════════════════════════════════════════ */
 
-interface BarLabelProps {
+interface LabelProps {
   x?: string | number;
   width?: string | number;
   y?: string | number;
   index?: number;
 }
 
-function renderYoYLabel(props: BarLabelProps) {
+function renderBrandYoYLabel(props: LabelProps) {
   const { x: rawX = 0, width: rawW = 0, y: rawY = 0, index = 0 } = props;
   const x = Number(rawX);
   const width = Number(rawW);
   const y = Number(rawY);
-  const entry = hotelChartData[index];
-  if (!entry) return null;
+  const entry = brandChartData[index];
+  if (!entry || entry.yoyPct === null) return null;
   const pct = entry.yoyPct;
   const isPositive = pct >= 0;
   return (
@@ -216,18 +204,14 @@ function renderYoYLabel(props: BarLabelProps) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   AOV LABEL
-   ═══════════════════════════════════════════════════════════════════════ */
-
-function renderAovLabel(props: BarLabelProps) {
+function renderAovYoYLabel(props: LabelProps) {
   const { x: rawX = 0, width: rawW = 0, y: rawY = 0, index = 0 } = props;
   const x = Number(rawX);
   const width = Number(rawW);
   const y = Number(rawY);
-  const entry = AOV_DATA[index];
-  if (!entry) return null;
-  const pct = yoyPct(entry.aov, entry.lastYearAov);
+  const entry = aovChartData[index];
+  if (!entry || entry.yoyPct === null) return null;
+  const pct = entry.yoyPct;
   const isPositive = pct >= 0;
   return (
     <text
@@ -259,13 +243,13 @@ export default function SalesPage() {
               Sales Overview
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              Company-wide performance across all brands and locations | All
-              figures EUR ex VAT
+              Company-wide performance across all brands | All figures EUR ex
+              VAT
             </p>
           </div>
 
-          {/* ── KPI Summary Cards (8 cards, 4 per row) ──────────────── */}
-          <SalesKPIGrid>
+          {/* ── KPI Summary Cards (6 cards, 3 per row) ──────────────── */}
+          <SalesKPIGrid columns={6}>
             <SalesKPICard
               label="Total Net Revenue"
               value={formatCurrency(KPI_DATA.totalNetRevenue.value)}
@@ -283,86 +267,59 @@ export default function SalesPage() {
               yoyChange={KPI_DATA.retailRevenue.yoy}
             />
             <SalesKPICard
-              label="Add-on Revenue"
-              value={formatCurrency(KPI_DATA.addonRevenue.value)}
-              subtitle={`${KPI_DATA.addonRevenue.pctOfTotal}% of total`}
-              yoyChange={KPI_DATA.addonRevenue.yoy}
+              label="Spa Members"
+              value={KPI_DATA.spaMembers.value.toLocaleString()}
+              yoyChange={KPI_DATA.spaMembers.yoy}
             />
             <SalesKPICard
-              label="Avg Revenue / Available Hour"
-              value={`\u20AC${KPI_DATA.avgRevenuePerHour.value.toFixed(1)}`}
-              yoyChange={KPI_DATA.avgRevenuePerHour.yoy}
+              label="Aesthetics Members"
+              value={KPI_DATA.aestheticsMembers.value.toLocaleString()}
+              yoyChange={KPI_DATA.aestheticsMembers.yoy}
             />
             <SalesKPICard
-              label="Spa Club Memberships"
-              value={KPI_DATA.spaClubMembers.value.toLocaleString()}
-              yoyChange={KPI_DATA.spaClubMembers.yoy}
-            />
-            <SalesKPICard
-              label="Hotel Guest Capture Rate"
-              value={formatPercent(KPI_DATA.hotelGuestCapture.value)}
-              yoyChange={KPI_DATA.hotelGuestCapture.yoy}
-              yoyIsDelta
-            />
-            <SalesKPICard
-              label="Local Guest %"
-              value={formatPercent(KPI_DATA.localGuestPct.value)}
-              yoyChange={KPI_DATA.localGuestPct.yoy}
-              yoyIsDelta
+              label="Slimming Members"
+              value={KPI_DATA.slimmingMembers.value.toLocaleString()}
+              subtitle="Since Feb 2026"
             />
           </SalesKPIGrid>
 
-          {/* ── Revenue by Hotel (Stacked Bar + Line) ────────────────── */}
+          {/* ── Revenue by Brand (Stacked Bar + Line) ───────────────── */}
           <Card className="p-6">
             <h2 className="text-lg font-semibold text-foreground mb-1">
-              Revenue by Hotel
+              Revenue by Brand
             </h2>
             <p className="text-xs text-muted-foreground mb-5">
-              Stacked current period vs last year total line overlay | YoY delta
+              Service + Retail revenue per brand vs last year total | YoY delta
               shown above each bar
             </p>
             <ResponsiveContainer width="100%" height={380}>
               <ComposedChart
-                data={hotelChartData}
+                data={brandChartData}
                 margin={{ top: 24, right: 30, left: 20, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
-                <XAxis
-                  dataKey="hotel"
-                  tick={{ fontSize: 11 }}
-                  angle={-20}
-                  textAnchor="end"
-                  height={60}
-                />
+                <XAxis dataKey="brand" tick={{ fontSize: 12 }} />
                 <YAxis
-                  tickFormatter={(v: number) =>
-                    `${(v / 1000).toFixed(0)}k`
-                  }
+                  tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
                   tick={{ fontSize: 11 }}
                 />
-                <Tooltip content={<HotelRevenueTooltip />} />
+                <Tooltip content={<BrandRevenueTooltip />} />
                 <Legend
                   wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
                   iconType="square"
                 />
                 <Bar
-                  dataKey="Services"
+                  dataKey="Service Revenue"
                   stackId="revenue"
                   fill={chartColors.spa}
                   radius={[0, 0, 0, 0]}
                 />
                 <Bar
-                  dataKey="Retail"
+                  dataKey="Retail Revenue"
                   stackId="revenue"
                   fill={chartColors.aesthetics}
-                  radius={[0, 0, 0, 0]}
-                />
-                <Bar
-                  dataKey="Add-ons"
-                  stackId="revenue"
-                  fill={chartColors.slimming}
                   radius={[3, 3, 0, 0]}
-                  label={renderYoYLabel}
+                  label={renderBrandYoYLabel}
                 />
                 <Line
                   type="monotone"
@@ -371,74 +328,54 @@ export default function SalesPage() {
                   strokeWidth={2}
                   strokeDasharray="6 3"
                   dot={{ r: 4, fill: chartColors.target }}
+                  connectNulls={false}
                 />
               </ComposedChart>
             </ResponsiveContainer>
           </Card>
 
-          {/* ── Average Order Value by Location ─────────────────────── */}
+          {/* ── Average Order Value by Brand ────────────────────────── */}
           <Card className="p-6">
             <h2 className="text-lg font-semibold text-foreground mb-1">
-              Average Order Value by Location
+              Average Order Value by Brand
             </h2>
             <p className="text-xs text-muted-foreground mb-5">
               Current period AOV vs last year | YoY delta shown above each bar
             </p>
             <ResponsiveContainer width="100%" height={340}>
               <ComposedChart
-                data={AOV_DATA}
+                data={aovChartData}
                 margin={{ top: 24, right: 30, left: 20, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
-                <XAxis
-                  dataKey="hotel"
-                  tick={{ fontSize: 11 }}
-                  angle={-20}
-                  textAnchor="end"
-                  height={60}
-                />
+                <XAxis dataKey="brand" tick={{ fontSize: 12 }} />
                 <YAxis
-                  tickFormatter={(v: number) => `\u20AC${v}`}
+                  tickFormatter={(v: number) => `€${v}`}
                   tick={{ fontSize: 11 }}
-                  domain={[0, 100]}
+                  domain={[0, 280]}
                 />
-                <Tooltip
-                  formatter={(v, name) =>
-                    [`\u20AC${v}`, name === "aov" ? "Current AOV" : "Last Year AOV"]
-                  }
-                />
-                <Legend
-                  wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
-                />
+                <Tooltip content={<AovTooltip />} />
+                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
                 <Bar
-                  dataKey="aov"
+                  dataKey="AOV"
                   name="Current AOV"
                   fill={chartColors.spa}
                   radius={[3, 3, 0, 0]}
-                  label={renderAovLabel}
+                  label={renderAovYoYLabel}
                 />
                 <Line
                   type="monotone"
-                  dataKey="lastYearAov"
+                  dataKey="Last Year AOV"
                   name="Last Year AOV"
                   stroke={chartColors.target}
                   strokeWidth={2}
                   strokeDasharray="6 3"
                   dot={{ r: 4, fill: chartColors.target }}
+                  connectNulls={false}
                 />
               </ComposedChart>
             </ResponsiveContainer>
           </Card>
-
-          {/* ── Staff Performance ────────────────────────────────── */}
-          <StaffPerformanceChart
-            title="Staff Performance"
-            subtitle="Top 10 — current period (EUR)"
-            tabs={[
-              { key: "service", label: "Service Revenue", data: STAFF_SERVICE_REV, color: chartColors.spa },
-              { key: "retail", label: "Retail Revenue", data: STAFF_RETAIL_REV, color: chartColors.aesthetics },
-            ]}
-          />
 
           <CIChat />
         </>
