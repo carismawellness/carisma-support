@@ -17,11 +17,11 @@ import type { CrmDailyRow } from "@/lib/types/crm";
 
 const DUMMY_BRAND_DATA: Record<
   string,
-  { totalSales: number; dailyAvg: number; depositPct: number; stlMedian: number; stlMean: number }
+  { totalSales: number; dailyAvg: number; depositPct: number; conversionPct: number; stlMedian: number; stlMean: number }
 > = {
-  spa: { totalSales: 18420, dailyAvg: 1316, depositPct: 72.5, stlMedian: 3.2, stlMean: 4.1 },
-  aesthetics: { totalSales: 34850, dailyAvg: 2489, depositPct: 68.1, stlMedian: 4.8, stlMean: 6.3 },
-  slimming: { totalSales: 22100, dailyAvg: 1579, depositPct: 74.3, stlMedian: 6.1, stlMean: 8.4 },
+  spa: { totalSales: 18420, dailyAvg: 1316, depositPct: 72.5, conversionPct: 35.8, stlMedian: 3.2, stlMean: 4.1 },
+  aesthetics: { totalSales: 34850, dailyAvg: 2489, depositPct: 68.1, conversionPct: 34.8, stlMedian: 4.8, stlMean: 6.3 },
+  slimming: { totalSales: 22100, dailyAvg: 1579, depositPct: 74.3, conversionPct: 40.7, stlMedian: 6.1, stlMean: 8.4 },
 };
 
 /* ------------------------------------------------------------------ */
@@ -108,6 +108,7 @@ export function SalesPerformance({
         totalSales: dummy.totalSales,
         dailyAvg: dummy.dailyAvg,
         depositPct: dummy.depositPct,
+        conversionPct: dummy.conversionPct,
         stlMedian: dummy.stlMedian,
         stlMean: dummy.stlMean,
         isDummy: true,
@@ -129,6 +130,17 @@ export function SalesPerformance({
     }
     const depositPct = depWeightTotal > 0 ? depWeightedSum / depWeightTotal : 0;
 
+    // Conversion rate — weighted average
+    let convWeightedSum = 0;
+    let convWeightTotal = 0;
+    for (const r of brandDaily) {
+      if (r.conversion_rate_pct !== null && r.total_leads !== null && r.total_leads > 0) {
+        convWeightedSum += r.conversion_rate_pct * r.total_leads;
+        convWeightTotal += r.total_leads;
+      }
+    }
+    const conversionPct = convWeightTotal > 0 ? convWeightedSum / convWeightTotal : 0;
+
     // Speed to lead — median of daily medians
     const stlValues = brandDaily
       .map((r) => r.speed_to_lead_median_min)
@@ -142,6 +154,7 @@ export function SalesPerformance({
       totalSales,
       dailyAvg: Math.round(dailyAvg),
       depositPct,
+      conversionPct,
       stlMedian,
       stlMean,
       isDummy: false,
@@ -184,6 +197,12 @@ export function SalesPerformance({
               <span className="text-sm text-text-secondary">Deposit %</span>
               <span className={`text-sm font-bold ${depositColor(b.depositPct)}`}>
                 {formatPercent(b.depositPct)}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-text-secondary">Conversion / Leads</span>
+              <span className={`text-sm font-bold ${b.conversionPct >= 35 ? "text-emerald-600" : b.conversionPct >= 25 ? "text-amber-500" : "text-red-600"}`}>
+                {formatPercent(b.conversionPct)}
               </span>
             </div>
             <div className="mt-2 pt-3 border-t border-dashed">
