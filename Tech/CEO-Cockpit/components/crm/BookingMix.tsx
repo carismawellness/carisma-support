@@ -4,19 +4,16 @@ import { Card } from "@/components/ui/card";
 import { useKPIData } from "@/lib/hooks/useKPIData";
 import { useLookups } from "@/lib/hooks/useLookups";
 import { BookingMixRow } from "@/lib/types/crm";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { chartColors } from "@/lib/charts/config";
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
 /* ------------------------------------------------------------------ */
 
-const PIE_COLORS = ["#B79E61", "#96B2B2", "#8EB093", "#E07A5F", "#4A90D9", "#9CA3AF"];
+const PIE_COLORS = [
+  "#B79E61", "#96B2B2", "#8EB093", "#E07A5F", "#4A90D9",
+  "#9CA3AF", "#C084FC", "#F472B6", "#34D399", "#FBBF24",
+];
 
 const BRANDS = [
   { slug: "spa", label: "Spa" },
@@ -25,35 +22,37 @@ const BRANDS = [
 ] as const;
 
 /* ------------------------------------------------------------------ */
-/*  Custom label                                                       */
+/*  Dummy data for brands without real booking mix                     */
 /* ------------------------------------------------------------------ */
 
-function renderLabel({
-  name,
-  value,
-  cx,
-  x,
-  y,
-}: {
-  name?: string;
-  value?: number;
-  cx?: number;
-  x?: number;
-  y?: number;
-}) {
-  const anchor = (x ?? 0) > (cx ?? 0) ? "start" : "end";
-  return (
-    <text
-      x={x}
-      y={y}
-      textAnchor={anchor}
-      dominantBaseline="central"
-      className="text-[10px] fill-current text-text-secondary"
-    >
-      {name}: {value}
-    </text>
-  );
-}
+const DUMMY_BOOKING_MIX: Record<string, { name: string; value: number }[]> = {
+  spa: [
+    { name: "Deep Tissue Massage", value: 42 },
+    { name: "Hot Stone Therapy", value: 28 },
+    { name: "Aromatherapy", value: 22 },
+    { name: "Facial Treatment", value: 18 },
+    { name: "Body Wrap", value: 14 },
+    { name: "Couples Massage", value: 11 },
+    { name: "Reflexology", value: 8 },
+  ],
+  aesthetics: [
+    { name: "Filler", value: 45 },
+    { name: "Skinbooster", value: 38 },
+    { name: "Botox", value: 32 },
+    { name: "PRP", value: 18 },
+    { name: "Laser Hair Removal", value: 15 },
+    { name: "Chemical Peel", value: 12 },
+    { name: "Microneedling", value: 9 },
+  ],
+  slimming: [
+    { name: "Body Contouring", value: 35 },
+    { name: "Fat Freezing", value: 28 },
+    { name: "Cavitation", value: 22 },
+    { name: "Lymphatic Drainage", value: 16 },
+    { name: "Consultation", value: 12 },
+    { name: "RF Skin Tightening", value: 10 },
+  ],
+};
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
@@ -79,7 +78,11 @@ export function BookingMix({
 
   if (loading) {
     return (
-      <div className="animate-pulse text-text-secondary">Loading...</div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-64 rounded-xl bg-gray-100 animate-pulse" />
+        ))}
+      </div>
     );
   }
 
@@ -98,7 +101,6 @@ export function BookingMix({
       (byBrand[slug][row.treatment_name] ?? 0) + row.count;
   }
 
-  // Determine which brands to show
   const visibleBrands = brandFilter
     ? BRANDS.filter((b) => b.slug === brandFilter)
     : BRANDS;
@@ -107,43 +109,61 @@ export function BookingMix({
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {visibleBrands.map((brand) => {
         const treatments = byBrand[brand.slug] ?? {};
-        const pieData = Object.entries(treatments)
+        let items = Object.entries(treatments)
           .map(([name, value]) => ({ name, value }))
           .sort((a, b) => b.value - a.value);
 
+        const isDummy = items.length === 0;
+        if (isDummy) {
+          items = DUMMY_BOOKING_MIX[brand.slug] ?? [];
+        }
+
+        const total = items.reduce((s, t) => s + t.value, 0);
+
         return (
-          <Card key={brand.slug} className="p-6">
+          <Card key={brand.slug} className="p-6 relative">
+            {isDummy && (
+              <span className="absolute top-2 right-3 text-[10px] uppercase tracking-wider text-text-secondary bg-gray-100 px-1.5 py-0.5 rounded">
+                sample
+              </span>
+            )}
             <h3 className="text-base font-semibold text-foreground mb-4">
-              Booking Mix &mdash; {brand.label}
+              {brand.label}
             </h3>
-            {pieData.length === 0 ? (
+            {items.length === 0 ? (
               <p className="text-sm text-text-secondary text-center py-8">
                 No data
               </p>
             ) : (
-              <ResponsiveContainer width="100%" height={280}>
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={55}
-                    outerRadius={100}
-                    paddingAngle={2}
-                    label={renderLabel}
-                  >
-                    {pieData.map((_, i) => (
-                      <Cell
-                        key={`cell-${i}`}
-                        fill={PIE_COLORS[i % PIE_COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              <div className="space-y-3">
+                {items.slice(0, 8).map((item, i) => {
+                  const pct = total > 0 ? (item.value / total) * 100 : 0;
+                  return (
+                    <div key={item.name}>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-text-secondary truncate mr-2">{item.name}</span>
+                        <span className="font-semibold text-foreground flex-shrink-0">
+                          {item.value} ({pct.toFixed(0)}%)
+                        </span>
+                      </div>
+                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all"
+                          style={{
+                            width: `${pct}%`,
+                            backgroundColor: PIE_COLORS[i % PIE_COLORS.length],
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+                {items.length > 8 && (
+                  <p className="text-xs text-text-secondary text-center mt-2">
+                    +{items.length - 8} more treatments
+                  </p>
+                )}
+              </div>
             )}
           </Card>
         );

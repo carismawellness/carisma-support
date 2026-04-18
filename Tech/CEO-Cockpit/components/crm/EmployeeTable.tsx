@@ -23,7 +23,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import type { CrmByRepRow } from "@/lib/types/crm";
 
 /* ------------------------------------------------------------------ */
@@ -46,8 +46,12 @@ function statusBadge(
   );
 }
 
+/* ------------------------------------------------------------------ */
+/*  Dummy data                                                         */
+/* ------------------------------------------------------------------ */
+
 interface AggregatedRep {
-  staff_id: number;
+  name: string;
   brand: string;
   team_type: string;
   total_sales: number;
@@ -56,6 +60,34 @@ interface AggregatedRep {
   conversion_rate_pct: number;
   deposit_pct: number;
   missed_pct: number;
+}
+
+const DUMMY_EMPLOYEES: AggregatedRep[] = [
+  { name: "Maria Vella", brand: "aesthetics", team_type: "SDR", total_sales: 12480, dials: 342, bookings: 42, conversion_rate_pct: 34.2, deposit_pct: 78.5, missed_pct: 8.2 },
+  { name: "Katrina Borg", brand: "slimming", team_type: "SDR", total_sales: 10950, dials: 298, bookings: 38, conversion_rate_pct: 31.5, deposit_pct: 72.1, missed_pct: 10.4 },
+  { name: "Sarah Camilleri", brand: "spa", team_type: "Chat", total_sales: 9870, dials: 0, bookings: 35, conversion_rate_pct: 28.9, deposit_pct: 75.3, missed_pct: 5.1 },
+  { name: "Anna Grech", brand: "aesthetics", team_type: "SDR", total_sales: 8640, dials: 267, bookings: 31, conversion_rate_pct: 26.1, deposit_pct: 69.8, missed_pct: 11.7 },
+  { name: "Elena Farrugia", brand: "slimming", team_type: "Chat", total_sales: 7820, dials: 0, bookings: 28, conversion_rate_pct: 24.8, deposit_pct: 81.2, missed_pct: 6.3 },
+  { name: "Julia Zammit", brand: "spa", team_type: "SDR", total_sales: 6950, dials: 215, bookings: 25, conversion_rate_pct: 22.3, deposit_pct: 66.4, missed_pct: 14.8 },
+  { name: "Lisa Galea", brand: "aesthetics", team_type: "Chat", total_sales: 6210, dials: 0, bookings: 22, conversion_rate_pct: 20.7, deposit_pct: 73.6, missed_pct: 7.5 },
+  { name: "Diane Attard", brand: "slimming", team_type: "SDR", total_sales: 5480, dials: 189, bookings: 19, conversion_rate_pct: 19.2, deposit_pct: 64.1, missed_pct: 16.2 },
+  { name: "Nicole Mifsud", brand: "spa", team_type: "Chat", total_sales: 4720, dials: 0, bookings: 17, conversion_rate_pct: 17.4, deposit_pct: 71.9, missed_pct: 9.8 },
+  { name: "Claire Spiteri", brand: "aesthetics", team_type: "SDR", total_sales: 3890, dials: 156, bookings: 14, conversion_rate_pct: 15.8, deposit_pct: 58.3, missed_pct: 18.5 },
+];
+
+function generateDummyDailyData(name: string): { date: string; Sales: number; Bookings: number; "Conv %": number; "Deposit %": number; "Missed %": number }[] {
+  const baseDate = new Date("2026-04-05");
+  const emp = DUMMY_EMPLOYEES.find((e) => e.name === name);
+  if (!emp) return [];
+  const dailyAvg = emp.total_sales / 14;
+  return Array.from({ length: 14 }, (_, i) => ({
+    date: format(addDays(baseDate, i), "MMM dd"),
+    Sales: Math.round(dailyAvg * (0.6 + Math.random() * 0.8)),
+    Bookings: Math.round((emp.bookings / 14) * (0.5 + Math.random())),
+    "Conv %": emp.conversion_rate_pct * (0.8 + Math.random() * 0.4),
+    "Deposit %": emp.deposit_pct * (0.85 + Math.random() * 0.3),
+    "Missed %": emp.missed_pct * (0.7 + Math.random() * 0.6),
+  }));
 }
 
 /* ------------------------------------------------------------------ */
@@ -72,7 +104,7 @@ export function EmployeeTable({
   brandFilter: string | null;
 }) {
   const { brandMap } = useLookups();
-  const [selectedAgent, setSelectedAgent] = useState<number | null>(null);
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
 
   const { data, loading } = useKPIData<CrmByRepRow>({
     table: "crm_by_rep",
@@ -95,7 +127,7 @@ export function EmployeeTable({
     brandIdToSlug[id] = slug;
   }
 
-  // --- Aggregate by staff_id ---
+  // --- Aggregate real data by staff_id ---
   const repMap: Record<
     number,
     {
@@ -149,8 +181,8 @@ export function EmployeeTable({
     }
   }
 
-  const tableData: AggregatedRep[] = Object.values(repMap).map((r) => ({
-    staff_id: r.staffId,
+  const realTableData: AggregatedRep[] = Object.values(repMap).map((r) => ({
+    name: `Rep ${r.staffId}`,
     brand: brandIdToSlug[r.brandId] ?? `brand_${r.brandId}`,
     team_type: r.teamType === "sdr" ? "SDR" : r.teamType === "chat" ? "Chat" : r.teamType,
     total_sales: r.totalSales,
@@ -161,8 +193,15 @@ export function EmployeeTable({
     missed_pct: r.missedCount > 0 ? r.missedSum / r.missedCount : 0,
   }));
 
+  const hasRealData = realTableData.length > 0;
+  const tableData = hasRealData
+    ? realTableData
+    : brandFilter
+    ? DUMMY_EMPLOYEES.filter((e) => e.brand === brandFilter)
+    : DUMMY_EMPLOYEES;
+
   const columns = [
-    { key: "staff_id", label: "Name" },
+    { key: "name", label: "Name" },
     {
       key: "brand",
       label: "Brand",
@@ -216,33 +255,38 @@ export function EmployeeTable({
     },
   ];
 
-  // --- Agent detail chart ---
+  // --- Agent detail chart (dummy daily) ---
   const agentDailyData = selectedAgent
-    ? data
-        .filter((r) => r.staff_id === selectedAgent)
-        .sort((a, b) => a.date.localeCompare(b.date))
-        .map((r) => ({
-          date: format(new Date(r.date), "MMM dd"),
-          Sales: r.total_sales ?? 0,
-          Bookings: r.bookings ?? 0,
-          "Conv %": r.conversion_rate_pct ?? 0,
-          "Deposit %": r.deposit_pct ?? 0,
-          "Missed %": r.missed_pct ?? 0,
-        }))
+    ? hasRealData
+      ? data
+          .filter((r) => `Rep ${r.staff_id}` === selectedAgent)
+          .sort((a, b) => a.date.localeCompare(b.date))
+          .map((r) => ({
+            date: format(new Date(r.date), "MMM dd"),
+            Sales: r.total_sales ?? 0,
+            Bookings: r.bookings ?? 0,
+            "Conv %": r.conversion_rate_pct ?? 0,
+            "Deposit %": r.deposit_pct ?? 0,
+            "Missed %": r.missed_pct ?? 0,
+          }))
+      : generateDummyDailyData(selectedAgent)
     : [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {!hasRealData && (
+        <div className="absolute top-0 right-0 text-[10px] uppercase tracking-wider text-text-secondary bg-gray-100 px-1.5 py-0.5 rounded z-10">
+          sample data
+        </div>
+      )}
+
       <Card className="p-6">
-        <h3 className="text-base font-semibold text-foreground mb-4">
-          Employee Performance
-        </h3>
         <DataTable
           columns={columns}
           data={tableData as unknown as Record<string, unknown>[]}
           onRowClick={(row) => {
-            const id = row.staff_id as number;
-            setSelectedAgent(selectedAgent === id ? null : id);
+            const name = row.name as string;
+            setSelectedAgent(selectedAgent === name ? null : name);
           }}
         />
       </Card>
@@ -252,7 +296,7 @@ export function EmployeeTable({
         <Card className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold text-foreground">
-              Agent #{selectedAgent} - Daily Breakdown
+              {selectedAgent} — Daily Breakdown
             </h3>
             <button
               className="text-sm text-text-secondary hover:text-foreground"

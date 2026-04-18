@@ -5,18 +5,6 @@ import { useKPIData } from "@/lib/hooks/useKPIData";
 import { useLookups } from "@/lib/hooks/useLookups";
 import { LeadReconRow } from "@/lib/types/crm";
 import { chartColors } from "@/lib/charts/config";
-import { format } from "date-fns";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  ReferenceLine,
-} from "recharts";
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
@@ -27,6 +15,42 @@ const BRANDS = [
   { slug: "aesthetics", label: "Aesthetics" },
   { slug: "slimming", label: "Slimming" },
 ] as const;
+
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+function syncPct(crm: number, meta: number): number {
+  if (meta === 0 && crm === 0) return 100;
+  const max = Math.max(crm, meta);
+  if (max === 0) return 100;
+  const min = Math.min(crm, meta);
+  return (min / max) * 100;
+}
+
+function syncColor(pct: number): string {
+  if (pct >= 95) return "#16A34A"; // green
+  if (pct >= 80) return "#F59E0B"; // amber
+  return "#DC2626"; // red
+}
+
+function syncTextColor(pct: number): string {
+  if (pct >= 95) return "text-emerald-600";
+  if (pct >= 80) return "text-amber-600";
+  return "text-red-600";
+}
+
+function syncBgColor(pct: number): string {
+  if (pct >= 95) return "bg-emerald-100 text-emerald-800";
+  if (pct >= 80) return "bg-amber-100 text-amber-700";
+  return "bg-red-100 text-red-700";
+}
+
+function syncLabel(pct: number): string {
+  if (pct >= 95) return "Synced";
+  if (pct >= 80) return "Minor Gap";
+  return "Out of Sync";
+}
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
@@ -52,7 +76,11 @@ export function LeadReconciliation({
 
   if (loading) {
     return (
-      <div className="animate-pulse text-text-secondary">Loading...</div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-48 rounded-xl bg-gray-100 animate-pulse" />
+        ))}
+      </div>
     );
   }
 
@@ -62,84 +90,46 @@ export function LeadReconciliation({
     brandIdToSlug[id] = slug;
   }
 
-  // --- Per-brand summaries ---
-  const brandTotals: Record<
-    string,
-    { crmLeads: number; metaLeads: number; delta: number }
-  > = {};
-
+  // Aggregate per brand
+  const brandTotals: Record<string, { crmLeads: number; metaLeads: number }> = {};
   for (const brand of BRANDS) {
-    brandTotals[brand.slug] = { crmLeads: 0, metaLeads: 0, delta: 0 };
+    brandTotals[brand.slug] = { crmLeads: 0, metaLeads: 0 };
   }
-
   for (const row of data) {
     const slug = brandIdToSlug[row.brand_id];
     if (slug && brandTotals[slug]) {
       brandTotals[slug].crmLeads += row.leads_crm;
       brandTotals[slug].metaLeads += row.leads_meta;
-      brandTotals[slug].delta += row.delta;
     }
   }
 
-  // --- Alert: days with delta > 5 ---
-  const daysOverThreshold = data.filter((r) => Math.abs(r.delta) > 5).length;
-  const uniqueDaysOver = new Set(
-    data.filter((r) => Math.abs(r.delta) > 5).map((r) => r.date)
-  ).size;
+  // Alert: any brand badly out of sync?
+  const alertBrands = BRANDS.filter((b) => {
+    const t = brandTotals[b.slug];
+    return syncPct(t.crmLeads, t.metaLeads) < 80;
+  });
 
-  // --- Daily trend chart data ---
-  const dailyByDate: Record<
-    string,
-    { crm: number; meta: number; delta: number }
-  > = {};
-
-  for (const row of data) {
-    if (!dailyByDate[row.date]) {
-      dailyByDate[row.date] = { crm: 0, meta: 0, delta: 0 };
-    }
-    dailyByDate[row.date].crm += row.leads_crm;
-    dailyByDate[row.date].meta += row.leads_meta;
-    dailyByDate[row.date].delta += row.delta;
-  }
-
-  const trendData = Object.entries(dailyByDate)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, vals]) => ({
-      date: format(new Date(date), "MMM dd"),
-      "CRM Leads": vals.crm,
-      "Meta Leads": vals.meta,
-      Delta: vals.delta,
-    }));
-
-  // Visible brands for summary cards
   const visibleBrands = brandFilter
     ? BRANDS.filter((b) => b.slug === brandFilter)
     : BRANDS;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Alert banner */}
-      {uniqueDaysOver > 0 && (
-        <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          <span className="font-semibold">Sync issue detected:</span>{" "}
-          {uniqueDaysOver} day{uniqueDaysOver !== 1 ? "s" : ""} with delta &gt; 5
+      {alertBrands.length > 0 && (
+        <div className="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
+          <span className="font-semibold">Sync issue:</span>{" "}
+          {alertBrands.map((b) => b.label).join(", ")} —
+          CRM and Meta lead counts are significantly mismatched. Investigate missing leads.
         </div>
       )}
 
-      {/* Summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {visibleBrands.map((brand) => {
-          const totals = brandTotals[brand.slug];
-          const delta = totals.delta;
-          let deltaColor = "text-emerald-600";
-          let deltaLabel = "Synced";
-          if (delta > 0) {
-            deltaColor = "text-amber-600";
-            deltaLabel = "Missing in CRM";
-          } else if (delta < 0) {
-            deltaColor = "text-red-600";
-            deltaLabel = "Orphaned";
-          }
+          const t = brandTotals[brand.slug];
+          const pct = syncPct(t.crmLeads, t.metaLeads);
+          const delta = t.crmLeads - t.metaLeads;
+          const max = Math.max(t.crmLeads, t.metaLeads, 1);
 
           return (
             <Card
@@ -150,40 +140,78 @@ export function LeadReconciliation({
                   chartColors[brand.slug as keyof typeof chartColors] ?? "#888",
               }}
             >
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-text-secondary mb-3">
-                {brand.label}
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-text-secondary">
+                  {brand.label}
+                </h3>
+                <span className={`text-xs font-bold px-2 py-1 rounded ${syncBgColor(pct)}`}>
+                  {syncLabel(pct)}
+                </span>
+              </div>
+
+              {/* Sync ring / percentage */}
+              <div className="flex items-center gap-4 mb-4">
+                <div className="relative w-16 h-16 flex-shrink-0">
+                  <svg viewBox="0 0 36 36" className="w-16 h-16 -rotate-90">
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="#E5E7EB"
+                      strokeWidth="3"
+                    />
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke={syncColor(pct)}
+                      strokeWidth="3"
+                      strokeDasharray={`${pct}, 100`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${syncTextColor(pct)}`}>
+                    {pct.toFixed(0)}%
+                  </span>
+                </div>
+                <div className="flex-1 text-sm text-text-secondary">
+                  {delta === 0
+                    ? "Perfectly synced"
+                    : delta > 0
+                    ? `${Math.abs(delta)} more in CRM`
+                    : `${Math.abs(delta)} missing from CRM`}
+                </div>
+              </div>
+
+              {/* Bar comparison */}
               <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-text-secondary">CRM Leads</span>
-                  <span className="text-sm font-semibold text-foreground">
-                    {totals.crmLeads.toLocaleString()}
-                  </span>
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-text-secondary">CRM Leads</span>
+                    <span className="font-semibold text-foreground">{t.crmLeads}</span>
+                  </div>
+                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${(t.crmLeads / max) * 100}%`,
+                        backgroundColor: chartColors[brand.slug as keyof typeof chartColors] ?? "#888",
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-text-secondary">Meta Leads</span>
-                  <span className="text-sm font-semibold text-foreground">
-                    {totals.metaLeads.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-text-secondary">Delta</span>
-                  <div className="text-right">
-                    <span className={`text-sm font-bold ${deltaColor}`}>
-                      {delta > 0 ? "+" : ""}
-                      {delta}
-                    </span>
-                    <span
-                      className={`ml-2 text-xs px-2 py-0.5 rounded ${
-                        delta === 0
-                          ? "bg-emerald-100 text-emerald-700"
-                          : delta > 0
-                          ? "bg-amber-100 text-amber-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {deltaLabel}
-                    </span>
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-text-secondary">Meta Leads</span>
+                    <span className="font-semibold text-foreground">{t.metaLeads}</span>
+                  </div>
+                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${(t.metaLeads / max) * 100}%`,
+                        backgroundColor: chartColors[brand.slug as keyof typeof chartColors] ?? "#888",
+                        opacity: 0.5,
+                      }}
+                    />
                   </div>
                 </div>
               </div>
@@ -191,34 +219,6 @@ export function LeadReconciliation({
           );
         })}
       </div>
-
-      {/* Daily trend chart */}
-      <Card className="p-6">
-        <h3 className="text-base font-semibold text-foreground mb-4">
-          Daily Lead Reconciliation
-        </h3>
-        {trendData.length === 0 ? (
-          <p className="text-sm text-text-secondary text-center py-8">
-            No data
-          </p>
-        ) : (
-          <ResponsiveContainer width="100%" height={320}>
-            <BarChart
-              data={trendData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="date" tick={{ fontSize: 11 }} interval="preserveStartEnd" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <ReferenceLine y={0} stroke="#9CA3AF" />
-              <Bar dataKey="CRM Leads" fill={chartColors.aesthetics} />
-              <Bar dataKey="Meta Leads" fill={chartColors.spa} />
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-      </Card>
     </div>
   );
 }

@@ -1,9 +1,7 @@
 "use client";
 
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import { CRMKPICards } from "@/components/crm/CRMKPICards";
 import { SalesPerformance } from "@/components/crm/SalesPerformance";
-import { TeamSplit } from "@/components/crm/TeamSplit";
 import { EmployeeTable } from "@/components/crm/EmployeeTable";
 import { MessageQueueHealth } from "@/components/crm/MessageQueueHealth";
 import { BookingMix } from "@/components/crm/BookingMix";
@@ -25,25 +23,10 @@ function CRMContent({
     <>
       <h1 className="text-2xl font-bold text-foreground">CRM Master</h1>
 
-      {/* KPI Summary Cards */}
-      <CRMKPICards dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
-
       {/* Sales Performance by Brand */}
       <section>
         <h2 className="text-lg font-semibold text-foreground mb-3">Sales Performance</h2>
         <SalesPerformance dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
-      </section>
-
-      {/* SDR vs Chat Team Split */}
-      <section>
-        <h2 className="text-lg font-semibold text-foreground mb-3">Team Breakdown</h2>
-        <TeamSplit dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
-      </section>
-
-      {/* Employee Detail Table */}
-      <section>
-        <h2 className="text-lg font-semibold text-foreground mb-3">Employee Performance</h2>
-        <EmployeeTable dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
       </section>
 
       {/* Message Queue Health */}
@@ -58,7 +41,7 @@ function CRMContent({
         <STLByBrand dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
       </section>
 
-      {/* CRM & Meta Leads Reconciliation */}
+      {/* Lead Reconciliation */}
       <section>
         <h2 className="text-lg font-semibold text-foreground mb-3">Lead Reconciliation</h2>
         <LeadReconciliation dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
@@ -74,6 +57,12 @@ function CRMContent({
       <section>
         <h2 className="text-lg font-semibold text-foreground mb-3">Rep Leaderboard</h2>
         <RepLeaderboard dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
+      </section>
+
+      {/* Employee Performance */}
+      <section>
+        <h2 className="text-lg font-semibold text-foreground mb-3">Employee Performance</h2>
+        <EmployeeTable dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
       </section>
 
       <CIChat />
