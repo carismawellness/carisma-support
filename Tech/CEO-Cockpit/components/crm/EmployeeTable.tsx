@@ -347,9 +347,28 @@ export function EmployeeTable({
                   <span className="text-xs text-muted-foreground">Avg/day/rep</span>
                   <span className={`text-sm font-bold ${loadColor}`}>{b.avgTasksPerDay.toFixed(1)}</span>
                 </div>
-                <div className="mt-1.5">
+                <div className="mt-1.5 flex items-center justify-between">
                   <span className={`inline-block text-[10px] font-semibold uppercase px-2 py-0.5 rounded border ${loadBg}`}>{loadLevel} Load</span>
                 </div>
+                {/* Recommended reps */}
+                {(() => {
+                  const OPTIMAL_TASKS_PER_DAY = 15; // outbound calling sweet spot
+                  const totalDailyTasks = b.avgTasksPerDay * b.totalReps;
+                  const recommendedReps = Math.ceil(totalDailyTasks / OPTIMAL_TASKS_PER_DAY);
+                  const delta = recommendedReps - b.totalReps;
+                  return (
+                    <div className="mt-2 pt-2 border-t border-dashed">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-muted-foreground">Recommended</span>
+                        <span className={`text-xs font-bold ${delta > 0 ? "text-red-600" : delta < 0 ? "text-emerald-600" : "text-foreground"}`}>
+                          {recommendedReps} rep{recommendedReps !== 1 ? "s" : ""}
+                          {delta > 0 && ` (+${delta})`}
+                          {delta < 0 && ` (${delta})`}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             );
           })}
@@ -364,6 +383,71 @@ export function EmployeeTable({
               <span className="text-sm font-bold text-foreground">{companyAvgTasksPerDay.toFixed(1)}</span>
             </div>
           </div>
+        </div>
+
+        {/* Outbound Calling Capacity Benchmarks */}
+        <div className="mt-5 p-4 bg-gray-50 rounded-lg border">
+          <h4 className="text-sm font-semibold text-foreground mb-2">Staffing Guidelines — Outbound Calling Benchmarks</h4>
+          <p className="text-xs text-muted-foreground mb-3">
+            Based on industry benchmarks for outbound SDR teams (BRIDGE Group, Salesforce, AA-ISP). Tasks include follow-up calls, lead qualification, appointment setting, and re-engagement.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+            <div className="p-3 rounded-lg border bg-white text-center">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Optimal Daily Tasks</p>
+              <p className="text-xl font-black text-foreground">12–18</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">tasks per rep per day</p>
+            </div>
+            <div className="p-3 rounded-lg border bg-white text-center">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Dial-to-Connect Rate</p>
+              <p className="text-xl font-black text-foreground">15–25%</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">avg for outbound calling</p>
+            </div>
+            <div className="p-3 rounded-lg border bg-white text-center">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Avg Call Duration</p>
+              <p className="text-xl font-black text-foreground">4–6 min</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">connected calls only</p>
+            </div>
+            <div className="p-3 rounded-lg border bg-white text-center">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Productive Hours</p>
+              <p className="text-xl font-black text-foreground">5–6 hrs</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">of 8-hour shift</p>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-1.5 px-2 font-semibold text-muted-foreground">Tasks/Day/Rep</th>
+                  <th className="text-center py-1.5 px-2 font-semibold text-muted-foreground">Load Level</th>
+                  <th className="text-left py-1.5 px-2 font-semibold text-muted-foreground">Guidance</th>
+                  <th className="text-left py-1.5 px-2 font-semibold text-muted-foreground">Impact</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { range: "< 10", level: "Under-utilized", levelColor: "bg-blue-50 text-blue-700 border-blue-200", guidance: "Rep has capacity — consider assigning cross-brand tasks or additional responsibilities", impact: "Idle time reduces ROI on headcount" },
+                  { range: "10–15", level: "Optimal", levelColor: "bg-emerald-50 text-emerald-700 border-emerald-200", guidance: "Sweet spot for quality outbound calls with proper CRM notes, follow-ups, and lead nurturing", impact: "Highest conversion rates; reps have time for personalized engagement" },
+                  { range: "15–20", level: "Medium", levelColor: "bg-amber-50 text-amber-700 border-amber-200", guidance: "Manageable but quality may slip — monitor conversion rates and call quality scores", impact: "Call duration shortens; missed follow-ups increase by ~20%" },
+                  { range: "20–25", level: "High", levelColor: "bg-orange-50 text-orange-700 border-orange-200", guidance: "Overloaded — assign an additional rep or redistribute tasks across brands", impact: "Conversion drops 30–40%; burnout risk; CRM hygiene deteriorates" },
+                  { range: "25+", level: "Critical", levelColor: "bg-red-50 text-red-700 border-red-200", guidance: "Unsustainable — leads are being missed. Hire or reassign immediately", impact: "Speed-to-lead degrades; 50%+ of leads go cold before contact" },
+                ].map((row) => (
+                  <tr key={row.range} className="border-b border-gray-100">
+                    <td className="py-2 px-2 font-bold text-foreground">{row.range}</td>
+                    <td className="py-2 px-2 text-center">
+                      <span className={`inline-block px-2 py-0.5 rounded border text-[10px] font-semibold ${row.levelColor}`}>{row.level}</span>
+                    </td>
+                    <td className="py-2 px-2 text-muted-foreground">{row.guidance}</td>
+                    <td className="py-2 px-2 text-muted-foreground">{row.impact}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p className="text-[10px] text-muted-foreground mt-3 italic">
+            Formula: Recommended Reps = Total Daily Tasks ÷ 15 (optimal). Each outbound task includes dialing, CRM logging, and follow-up scheduling (~20min total cycle time). Sources: BRIDGE Group SDR Metrics Report, AA-ISP Inside Sales Benchmarks, Salesforce State of Sales.
+          </p>
         </div>
       </Card>
 
