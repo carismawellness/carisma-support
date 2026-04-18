@@ -1,20 +1,20 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { DataTable } from "@/components/dashboard/DataTable";
 import { useKPIData } from "@/lib/hooks/useKPIData";
 import { useLookups } from "@/lib/hooks/useLookups";
 import { CrmByRepRow } from "@/lib/types/crm";
-import { chartColors, formatCurrency } from "@/lib/charts/config";
+import { chartColors, formatCurrency, formatPercent } from "@/lib/charts/config";
 import {
-  BarChart,
+  ComposedChart,
   Bar,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
-  Cell,
 } from "recharts";
 
 /* ------------------------------------------------------------------ */
@@ -24,25 +24,50 @@ import {
 interface RepRow {
   name: string;
   brandSlug: string;
-  totalSales: number;
   avgDaily: number;
-  totalBookings: number;
   salesPerBooking: number;
   conversionPct: number;
+  depositPct: number;
+  missedPct: number;
+  totalSales: number;
+  totalBookings: number;
 }
 
 const DUMMY_REPS: RepRow[] = [
-  { name: "Maria Vella", brandSlug: "aesthetics", totalSales: 12480, avgDaily: 891, totalBookings: 42, salesPerBooking: 297, conversionPct: 34.2 },
-  { name: "Katrina Borg", brandSlug: "slimming", totalSales: 10950, avgDaily: 782, totalBookings: 38, salesPerBooking: 288, conversionPct: 31.5 },
-  { name: "Sarah Camilleri", brandSlug: "spa", totalSales: 9870, avgDaily: 705, totalBookings: 35, salesPerBooking: 282, conversionPct: 28.9 },
-  { name: "Anna Grech", brandSlug: "aesthetics", totalSales: 8640, avgDaily: 617, totalBookings: 31, salesPerBooking: 279, conversionPct: 26.1 },
-  { name: "Elena Farrugia", brandSlug: "slimming", totalSales: 7820, avgDaily: 559, totalBookings: 28, salesPerBooking: 279, conversionPct: 24.8 },
-  { name: "Julia Zammit", brandSlug: "spa", totalSales: 6950, avgDaily: 496, totalBookings: 25, salesPerBooking: 278, conversionPct: 22.3 },
-  { name: "Lisa Galea", brandSlug: "aesthetics", totalSales: 6210, avgDaily: 443, totalBookings: 22, salesPerBooking: 282, conversionPct: 20.7 },
-  { name: "Diane Attard", brandSlug: "slimming", totalSales: 5480, avgDaily: 391, totalBookings: 19, salesPerBooking: 288, conversionPct: 19.2 },
-  { name: "Nicole Mifsud", brandSlug: "spa", totalSales: 4720, avgDaily: 337, totalBookings: 17, salesPerBooking: 278, conversionPct: 17.4 },
-  { name: "Claire Spiteri", brandSlug: "aesthetics", totalSales: 3890, avgDaily: 278, totalBookings: 14, salesPerBooking: 278, conversionPct: 15.8 },
+  { name: "Maria V.", brandSlug: "aesthetics", avgDaily: 891, salesPerBooking: 297, conversionPct: 34.2, depositPct: 78.5, missedPct: 8.2, totalSales: 12480, totalBookings: 42 },
+  { name: "Katrina B.", brandSlug: "slimming", avgDaily: 782, salesPerBooking: 288, conversionPct: 31.5, depositPct: 72.1, missedPct: 10.4, totalSales: 10950, totalBookings: 38 },
+  { name: "Sarah C.", brandSlug: "spa", avgDaily: 705, salesPerBooking: 282, conversionPct: 28.9, depositPct: 75.3, missedPct: 5.1, totalSales: 9870, totalBookings: 35 },
+  { name: "Anna G.", brandSlug: "aesthetics", avgDaily: 617, salesPerBooking: 279, conversionPct: 26.1, depositPct: 69.8, missedPct: 11.7, totalSales: 8640, totalBookings: 31 },
+  { name: "Elena F.", brandSlug: "slimming", avgDaily: 559, salesPerBooking: 279, conversionPct: 24.8, depositPct: 81.2, missedPct: 6.3, totalSales: 7820, totalBookings: 28 },
+  { name: "Julia Z.", brandSlug: "spa", avgDaily: 496, salesPerBooking: 278, conversionPct: 22.3, depositPct: 66.4, missedPct: 14.8, totalSales: 6950, totalBookings: 25 },
+  { name: "Lisa G.", brandSlug: "aesthetics", avgDaily: 443, salesPerBooking: 282, conversionPct: 20.7, depositPct: 73.6, missedPct: 7.5, totalSales: 6210, totalBookings: 22 },
+  { name: "Diane A.", brandSlug: "slimming", avgDaily: 391, salesPerBooking: 288, conversionPct: 19.2, depositPct: 64.1, missedPct: 16.2, totalSales: 5480, totalBookings: 19 },
+  { name: "Nicole M.", brandSlug: "spa", avgDaily: 337, salesPerBooking: 278, conversionPct: 17.4, depositPct: 71.9, missedPct: 9.8, totalSales: 4720, totalBookings: 17 },
+  { name: "Claire S.", brandSlug: "aesthetics", avgDaily: 278, salesPerBooking: 278, conversionPct: 15.8, depositPct: 58.3, missedPct: 18.5, totalSales: 3890, totalBookings: 14 },
 ];
+
+/* ------------------------------------------------------------------ */
+/*  Custom tooltip                                                     */
+/* ------------------------------------------------------------------ */
+
+function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string }) {
+  if (!active || !payload) return null;
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3 text-xs">
+      <p className="font-semibold text-foreground mb-1.5">{label}</p>
+      {payload.map((entry) => (
+        <div key={entry.name} className="flex justify-between gap-4" style={{ color: entry.color }}>
+          <span>{entry.name}</span>
+          <span className="font-semibold">
+            {entry.name.includes("%")
+              ? formatPercent(entry.value)
+              : formatCurrency(entry.value)}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
@@ -68,7 +93,7 @@ export function RepLeaderboard({
 
   if (loading) {
     return (
-      <div className="animate-pulse text-text-secondary">Loading...</div>
+      <div className="h-96 rounded-xl bg-gray-100 animate-pulse" />
     );
   }
 
@@ -87,6 +112,12 @@ export function RepLeaderboard({
       totalSales: number;
       activeDays: Set<string>;
       totalBookings: number;
+      convSum: number;
+      convCount: number;
+      depSum: number;
+      depCount: number;
+      missedSum: number;
+      missedCount: number;
     }
   > = {};
 
@@ -98,6 +129,9 @@ export function RepLeaderboard({
         totalSales: 0,
         activeDays: new Set(),
         totalBookings: 0,
+        convSum: 0, convCount: 0,
+        depSum: 0, depCount: 0,
+        missedSum: 0, missedCount: 0,
       };
     }
     const agg = repAgg[row.staff_id];
@@ -106,6 +140,9 @@ export function RepLeaderboard({
     if (row.total_sales !== null && row.total_sales > 0) {
       agg.activeDays.add(row.date);
     }
+    if (row.conversion_rate_pct !== null) { agg.convSum += row.conversion_rate_pct; agg.convCount++; }
+    if (row.deposit_pct !== null) { agg.depSum += row.deposit_pct; agg.depCount++; }
+    if (row.missed_pct !== null) { agg.missedSum += row.missed_pct; agg.missedCount++; }
   }
 
   const realData: RepRow[] = Object.values(repAgg)
@@ -114,11 +151,13 @@ export function RepLeaderboard({
       return {
         name: `Rep ${r.staffId}`,
         brandSlug: brandIdToSlug[r.brandId] ?? "spa",
+        avgDaily: Math.round(r.totalSales / days),
+        salesPerBooking: r.totalBookings > 0 ? Math.round(r.totalSales / r.totalBookings) : 0,
+        conversionPct: r.convCount > 0 ? r.convSum / r.convCount : 0,
+        depositPct: r.depCount > 0 ? r.depSum / r.depCount : 0,
+        missedPct: r.missedCount > 0 ? r.missedSum / r.missedCount : 0,
         totalSales: r.totalSales,
-        avgDaily: r.totalSales / days,
         totalBookings: r.totalBookings,
-        salesPerBooking: r.totalBookings > 0 ? r.totalSales / r.totalBookings : 0,
-        conversionPct: 0,
       };
     })
     .filter((r) => r.totalSales > 0)
@@ -131,48 +170,15 @@ export function RepLeaderboard({
     ? DUMMY_REPS.filter((r) => r.brandSlug === brandFilter)
     : DUMMY_REPS;
 
-  // Chart data (top 10)
-  const chartData = repData.slice(0, 10).map((r) => ({
+  // Chart data — sorted by total sales desc
+  const chartData = repData.map((r) => ({
     name: r.name,
-    totalSales: r.totalSales,
-    brandSlug: r.brandSlug,
+    "Avg Daily": r.avgDaily,
+    "Sales/Booking": r.salesPerBooking,
+    "Conv %": Number(r.conversionPct.toFixed(1)),
+    "Deposit %": Number(r.depositPct.toFixed(1)),
+    "Missed %": Number(r.missedPct.toFixed(1)),
   }));
-
-  // Table columns
-  const columns = [
-    { key: "name", label: "Name" },
-    {
-      key: "brandSlug",
-      label: "Brand",
-      render: (v: unknown) => <span className="capitalize">{String(v)}</span>,
-    },
-    {
-      key: "totalSales",
-      label: "Total Sales",
-      sortable: true,
-      align: "right" as const,
-      render: (v: unknown) => formatCurrency(Number(v) || 0),
-    },
-    {
-      key: "avgDaily",
-      label: "Avg Daily",
-      sortable: true,
-      align: "right" as const,
-      render: (v: unknown) => formatCurrency(Math.round(Number(v)) || 0),
-    },
-    {
-      key: "totalBookings",
-      label: "Bookings",
-      sortable: true,
-      align: "right" as const,
-    },
-    {
-      key: "salesPerBooking",
-      label: "Sales/Booking",
-      align: "right" as const,
-      render: (v: unknown) => formatCurrency(Math.round(Number(v)) || 0),
-    },
-  ];
 
   return (
     <div className="space-y-6 relative">
@@ -182,42 +188,96 @@ export function RepLeaderboard({
         </div>
       )}
 
-      {/* Horizontal bar chart */}
+      {/* Combo chart: bars for sales metrics, lines for percentages */}
       <Card className="p-6">
         <h3 className="text-base font-semibold text-foreground mb-4">
-          Top Reps by Total Sales
+          Rep Performance Overview
         </h3>
-        <ResponsiveContainer width="100%" height={Math.max(chartData.length * 40, 200)}>
-          <BarChart
+        <ResponsiveContainer width="100%" height={420}>
+          <ComposedChart
             data={chartData}
-            layout="vertical"
-            margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+            margin={{ top: 10, right: 20, left: 10, bottom: 60 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-            <XAxis type="number" tickFormatter={(v) => formatCurrency(v)} />
-            <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} width={95} />
-            <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-            <Bar dataKey="totalSales" name="Total Sales" barSize={22} radius={[0, 4, 4, 0]}>
-              {chartData.map((entry, i) => (
-                <Cell
-                  key={`cell-${i}`}
-                  fill={
-                    chartColors[entry.brandSlug as keyof typeof chartColors] ??
-                    chartColors.spa
-                  }
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </Card>
+            <XAxis
+              dataKey="name"
+              tick={{ fontSize: 11 }}
+              angle={-35}
+              textAnchor="end"
+              height={60}
+            />
+            {/* Left Y axis — EUR for sales bars */}
+            <YAxis
+              yAxisId="sales"
+              orientation="left"
+              tickFormatter={(v) => `€${v}`}
+              tick={{ fontSize: 11 }}
+              label={{ value: "EUR", angle: -90, position: "insideLeft", style: { fontSize: 10 } }}
+            />
+            {/* Right Y axis — % for rate lines */}
+            <YAxis
+              yAxisId="pct"
+              orientation="right"
+              tickFormatter={(v) => `${v}%`}
+              tick={{ fontSize: 11 }}
+              domain={[0, 100]}
+              label={{ value: "%", angle: 90, position: "insideRight", style: { fontSize: 10 } }}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend wrapperStyle={{ paddingTop: 12 }} />
 
-      {/* Data table */}
-      <Card className="p-6">
-        <DataTable
-          columns={columns}
-          data={repData as unknown as Record<string, unknown>[]}
-        />
+            {/* Bars — stacked sales metrics */}
+            <Bar
+              yAxisId="sales"
+              dataKey="Avg Daily"
+              name="Avg Daily"
+              fill={chartColors.spa}
+              stackId="sales"
+              radius={[0, 0, 0, 0]}
+              barSize={28}
+            />
+            <Bar
+              yAxisId="sales"
+              dataKey="Sales/Booking"
+              name="Sales/Booking"
+              fill={chartColors.aesthetics}
+              stackId="sales"
+              radius={[4, 4, 0, 0]}
+              barSize={28}
+            />
+
+            {/* Lines — percentage metrics */}
+            <Line
+              yAxisId="pct"
+              type="monotone"
+              dataKey="Conv %"
+              name="Conv %"
+              stroke="#16A34A"
+              strokeWidth={2}
+              dot={{ r: 4, fill: "#16A34A" }}
+            />
+            <Line
+              yAxisId="pct"
+              type="monotone"
+              dataKey="Deposit %"
+              name="Deposit %"
+              stroke={chartColors.spa}
+              strokeWidth={2}
+              dot={{ r: 4, fill: chartColors.spa }}
+              strokeDasharray="5 3"
+            />
+            <Line
+              yAxisId="pct"
+              type="monotone"
+              dataKey="Missed %"
+              name="Missed %"
+              stroke={chartColors.target}
+              strokeWidth={2}
+              dot={{ r: 4, fill: chartColors.target }}
+              strokeDasharray="3 3"
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
       </Card>
     </div>
   );

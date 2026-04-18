@@ -7,7 +7,6 @@ import { MessageQueueHealth } from "@/components/crm/MessageQueueHealth";
 import { BookingMix } from "@/components/crm/BookingMix";
 import { RepLeaderboard } from "@/components/crm/RepLeaderboard";
 import { LeadReconciliation } from "@/components/crm/LeadReconciliation";
-import { STLByBrand } from "@/components/crm/STLByBrand";
 import { CIChat } from "@/components/ci/CIChat";
 
 function CRMContent({
@@ -33,12 +32,6 @@ function CRMContent({
       <section>
         <h2 className="text-lg font-semibold text-foreground mb-3">Message Queue Health</h2>
         <MessageQueueHealth dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
-      </section>
-
-      {/* Speed to Lead by Brand */}
-      <section>
-        <h2 className="text-lg font-semibold text-foreground mb-3">Speed to Lead</h2>
-        <STLByBrand dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
       </section>
 
       {/* Lead Reconciliation */}

@@ -8,9 +8,7 @@ import {
   Settings,
   Activity,
   ClipboardCheck,
-  Timer,
   ShieldAlert,
-  BarChart3,
   TrendingUp,
   Sparkles,
   Heart,
@@ -46,17 +44,7 @@ export const departments: Department[] = [
       { slug: "slimming", label: "Slimming", path: "/sales/slimming", icon: Activity },
     ],
   },
-  {
-    slug: "crm",
-    label: "CRM",
-    icon: Headphones,
-    path: "/crm",
-    children: [
-      { slug: "master", label: "Master", path: "/crm", icon: Headphones },
-      { slug: "speed-to-lead", label: "Speed to Lead", path: "/crm/speed-to-lead", icon: Timer },
-      { slug: "team-kpis", label: "Team KPIs", path: "/crm/team-kpis", icon: BarChart3 },
-    ],
-  },
+  { slug: "crm", label: "CRM", icon: Headphones, path: "/crm" },
   {
     slug: "marketing",
     label: "Marketing",
