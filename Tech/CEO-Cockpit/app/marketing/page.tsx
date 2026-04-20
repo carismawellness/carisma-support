@@ -6,21 +6,16 @@ import { Card } from "@/components/ui/card";
 import { CIChat } from "@/components/ci/CIChat";
 import { formatCurrency } from "@/lib/charts/config";
 import { formatDateRangeLabel } from "@/lib/utils/mock-date-filter";
-
-/* ---------- date-scale helpers ---------- */
-
-const MOCK_DATA_PERIOD_DAYS = 30;
-
-function scaleValue(value: number, scale: number): number {
-  return Math.round(value * scale);
-}
+import { useMetaCampaigns, useGoogleCampaigns } from "@/lib/hooks/useAdsCampaigns";
+import { useKlaviyoData } from "@/lib/hooks/useKlaviyoData";
+import type { CampaignData } from "@/lib/types/ads";
 
 /* ---------- brand colours ---------- */
 
 const BRAND = {
-  spa:        { name: "Spa",        color: "#B79E61" },
+  spa: { name: "Spa", color: "#B79E61" },
   aesthetics: { name: "Aesthetics", color: "#96B2B2" },
-  slimming:   { name: "Slimming",   color: "#8EB093" },
+  slimming: { name: "Slimming", color: "#8EB093" },
 } as const;
 
 type BrandKey = keyof typeof BRAND;
@@ -43,91 +38,21 @@ function roasColor(value: number): string {
   return "text-red-600";
 }
 
-/* ---------- Section 1 – Cross-Brand KPI data ---------- */
+/* ---------- reusable brand table component ---------- */
 
-interface KPIRow {
+interface TableRow {
   metric: string;
   spa: string;
   aesthetics: string;
   slimming: string;
-}
-
-const CROSS_BRAND_KPIS: KPIRow[] = [
-  { metric: "Revenue",      spa: formatCurrency(9847),  aesthetics: formatCurrency(4280),  slimming: formatCurrency(1480) },
-  { metric: "Total Spend",  spa: formatCurrency(2760),  aesthetics: formatCurrency(3735),  slimming: formatCurrency(1737) },
-  { metric: "Blended ROAS", spa: "5.2x",                aesthetics: "4.6x",                slimming: "2.8x" },
-  { metric: "CPL",          spa: "€7.80",               aesthetics: "€14.20",              slimming: "€18.50" },
-  { metric: "CPC",          spa: "€1.85",               aesthetics: "€3.80",               slimming: "€2.60" },
-];
-
-/* ---------- Section 2 – Creative fatigue data ---------- */
-
-interface FatigueSummary {
-  brand: BrandKey;
-  fatigued: number;
-  watch: number;
-  healthy: number;
-}
-
-const FATIGUE_DATA: FatigueSummary[] = [
-  { brand: "spa",        fatigued: 1, watch: 1, healthy: 4 },
-  { brand: "aesthetics", fatigued: 0, watch: 1, healthy: 5 },
-  { brand: "slimming",   fatigued: 0, watch: 1, healthy: 4 },
-];
-
-/* ---------- Section 3 – Channel data by brand ---------- */
-
-interface ChannelRow {
-  metric: string;
-  spa: string;
-  aesthetics: string;
-  slimming: string;
-  /** numeric ROAS values for color-coding (only for ROAS rows) */
   roasValues?: { spa: number; aesthetics: number; slimming: number };
 }
-
-interface ChannelSection {
-  channel: string;
-  rows: ChannelRow[];
-}
-
-const CHANNEL_BY_BRAND: ChannelSection[] = [
-  {
-    channel: "Meta Ads",
-    rows: [
-      { metric: "Expected Revenue", spa: formatCurrency(15064), aesthetics: formatCurrency(45441), slimming: formatCurrency(24323) },
-      { metric: "Ad Spend",         spa: formatCurrency(2760),  aesthetics: formatCurrency(3735),  slimming: formatCurrency(1737) },
-      { metric: "Expected ROAS",    spa: "5.5x",                aesthetics: "12.2x",               slimming: "14.0x",
-        roasValues: { spa: 5.5, aesthetics: 12.2, slimming: 14.0 } },
-    ],
-  },
-  {
-    channel: "Google Ads",
-    rows: [
-      { metric: "Expected Revenue", spa: formatCurrency(10604), aesthetics: formatCurrency(10707), slimming: formatCurrency(11385) },
-      { metric: "Ad Spend",         spa: formatCurrency(1087),  aesthetics: formatCurrency(586),   slimming: formatCurrency(575) },
-      { metric: "Expected ROAS",    spa: "9.8x",                aesthetics: "18.3x",               slimming: "19.8x",
-        roasValues: { spa: 9.8, aesthetics: 18.3, slimming: 19.8 } },
-    ],
-  },
-  {
-    channel: "Email",
-    rows: [
-      { metric: "Revenue",     spa: formatCurrency(9960), aesthetics: formatCurrency(5310), slimming: formatCurrency(1920) },
-      { metric: "Subscribers", spa: "4,527",               aesthetics: "2,814",              slimming: "812" },
-      { metric: "ROAS",        spa: "42x",                 aesthetics: "38x",                slimming: "28x",
-        roasValues: { spa: 42, aesthetics: 38, slimming: 28 } },
-    ],
-  },
-];
-
-/* ---------- reusable brand table component ---------- */
 
 function BrandTable({
   rows,
   colorCodeRoas,
 }: {
-  rows: { metric: string; spa: string; aesthetics: string; slimming: string; roasValues?: { spa: number; aesthetics: number; slimming: number } }[];
+  rows: TableRow[];
   colorCodeRoas?: boolean;
 }) {
   return (
@@ -167,17 +92,188 @@ function BrandTable({
   );
 }
 
+/* ---------- loading skeleton ---------- */
+
+function LoadingSkeleton() {
+  return (
+    <div className="space-y-6 md:space-y-10 animate-pulse">
+      <div className="h-8 bg-muted rounded w-64" />
+      <Card className="p-6"><div className="h-48 bg-muted rounded" /></Card>
+      <Card className="p-6"><div className="h-36 bg-muted rounded" /></Card>
+      <Card className="p-6"><div className="h-48 bg-muted rounded" /></Card>
+    </div>
+  );
+}
+
 /* ---------- content component ---------- */
 
 function MarketingMasterContent({
   dateFrom,
   dateTo,
-  brandFilter,
 }: {
   dateFrom: Date;
   dateTo: Date;
   brandFilter: string | null;
 }) {
+  /* Fetch real Meta + Google data for all 3 brands */
+  const metaSpa = useMetaCampaigns("spa", dateFrom, dateTo);
+  const metaAes = useMetaCampaigns("aesthetics", dateFrom, dateTo);
+  const metaSlim = useMetaCampaigns("slimming", dateFrom, dateTo);
+  const googleSpa = useGoogleCampaigns("spa", dateFrom, dateTo);
+  const googleAes = useGoogleCampaigns("aesthetics", dateFrom, dateTo);
+  const googleSlim = useGoogleCampaigns("slimming", dateFrom, dateTo);
+  const { overview: klavSpa, loading: klavSpaLoading, tokenMissing: klavSpaTokenMissing } = useKlaviyoData({ brand: "spa", dateFrom, dateTo });
+  const { overview: klavAes, loading: klavAesLoading, tokenMissing: klavAesTokenMissing } = useKlaviyoData({ brand: "aesthetics", dateFrom, dateTo });
+  const { overview: klavSlim, loading: klavSlimLoading, tokenMissing: klavSlimTokenMissing } = useKlaviyoData({ brand: "slimming", dateFrom, dateTo });
+
+  const isLoading =
+    metaSpa.isLoading || metaAes.isLoading || metaSlim.isLoading ||
+    googleSpa.isLoading || googleAes.isLoading || googleSlim.isLoading ||
+    klavSpaLoading || klavAesLoading || klavSlimLoading;
+  const anyTokenExpired =
+    metaSpa.data?.tokenExpired || metaAes.data?.tokenExpired || metaSlim.data?.tokenExpired ||
+    googleSpa.data?.tokenExpired || googleAes.data?.tokenExpired || googleSlim.data?.tokenExpired;
+  const anyError =
+    metaSpa.data?.error || metaAes.data?.error || metaSlim.data?.error ||
+    googleSpa.data?.error || googleAes.data?.error || googleSlim.data?.error;
+
+  /* ---- Compute cross-brand KPIs ---- */
+  const crossBrandKpis = useMemo(() => {
+    function brandTotals(meta: CampaignData[], google: CampaignData[]) {
+      const all = [...meta, ...google];
+      const spend = all.reduce((s, c) => s + c.totalSpend, 0);
+      const revenue = all.reduce((s, c) => s + c.attributedRevenue, 0);
+      const metaLeads = meta.reduce((s, c) => s + c.totalLeads, 0);
+      const metaSpend = meta.reduce((s, c) => s + c.totalSpend, 0);
+      const googleLeads = google.reduce((s, c) => s + c.totalLeads, 0);
+      const googleSpend = google.reduce((s, c) => s + c.totalSpend, 0);
+      return {
+        revenue: formatCurrency(revenue),
+        spend: formatCurrency(spend),
+        roas: spend > 0 ? `${(revenue / spend).toFixed(1)}x` : "—",
+        roasNum: spend > 0 ? revenue / spend : 0,
+        cpl: metaLeads > 0 ? `€${(metaSpend / metaLeads).toFixed(2)}` : "—",
+        cpc: googleLeads > 0 ? `€${(googleSpend / googleLeads).toFixed(2)}` : "—",
+      };
+    }
+
+    const spa = brandTotals(metaSpa.data?.campaigns ?? [], googleSpa.data?.campaigns ?? []);
+    const aes = brandTotals(metaAes.data?.campaigns ?? [], googleAes.data?.campaigns ?? []);
+    const slim = brandTotals(metaSlim.data?.campaigns ?? [], googleSlim.data?.campaigns ?? []);
+
+    return [
+      { metric: "Revenue", spa: spa.revenue, aesthetics: aes.revenue, slimming: slim.revenue },
+      { metric: "Total Spend", spa: spa.spend, aesthetics: aes.spend, slimming: slim.spend },
+      {
+        metric: "Blended ROAS",
+        spa: spa.roas, aesthetics: aes.roas, slimming: slim.roas,
+        roasValues: { spa: spa.roasNum, aesthetics: aes.roasNum, slimming: slim.roasNum },
+      },
+      { metric: "CPL", spa: spa.cpl, aesthetics: aes.cpl, slimming: slim.cpl },
+      { metric: "CPC", spa: spa.cpc, aesthetics: aes.cpc, slimming: slim.cpc },
+    ];
+  }, [metaSpa.data, metaAes.data, metaSlim.data, googleSpa.data, googleAes.data, googleSlim.data]);
+
+  /* ---- Compute fatigue data ---- */
+  const fatigueData = useMemo(() => {
+    function countFatigue(campaigns: CampaignData[]) {
+      let healthy = 0, watch = 0, fatigued = 0;
+      for (const c of campaigns) {
+        const ctrDrop = c.peakCtr > 0 ? (c.peakCtr - c.ctr) / c.peakCtr : 0;
+        if (c.frequency > 3.0 && ctrDrop > 0.2) fatigued++;
+        else if (c.frequency >= 2.0 && ctrDrop >= 0.1) watch++;
+        else healthy++;
+      }
+      return { healthy, watch, fatigued };
+    }
+
+    const allSpa = [...(metaSpa.data?.campaigns ?? []), ...(googleSpa.data?.campaigns ?? [])];
+    const allAes = [...(metaAes.data?.campaigns ?? []), ...(googleAes.data?.campaigns ?? [])];
+    const allSlim = [...(metaSlim.data?.campaigns ?? []), ...(googleSlim.data?.campaigns ?? [])];
+
+    return [
+      { brand: "spa" as const, ...countFatigue(allSpa) },
+      { brand: "aesthetics" as const, ...countFatigue(allAes) },
+      { brand: "slimming" as const, ...countFatigue(allSlim) },
+    ];
+  }, [metaSpa.data, metaAes.data, metaSlim.data, googleSpa.data, googleAes.data, googleSlim.data]);
+
+  /* ---- Compute channel performance ---- */
+  const channelByBrand = useMemo(() => {
+    function channelMetrics(campaigns: CampaignData[]) {
+      const spend = campaigns.reduce((s, c) => s + c.totalSpend, 0);
+      const revenue = campaigns.reduce((s, c) => s + c.attributedRevenue, 0);
+      const expectedRevenue = Math.round(revenue * 1.15);
+      const roas = spend > 0 ? expectedRevenue / spend : 0;
+      return {
+        expectedRevenue: formatCurrency(expectedRevenue),
+        spend: formatCurrency(spend),
+        roas: `${roas.toFixed(1)}x`,
+        roasNum: roas,
+      };
+    }
+
+    const metaSpaM = channelMetrics(metaSpa.data?.campaigns ?? []);
+    const metaAesM = channelMetrics(metaAes.data?.campaigns ?? []);
+    const metaSlimM = channelMetrics(metaSlim.data?.campaigns ?? []);
+    const googleSpaM = channelMetrics(googleSpa.data?.campaigns ?? []);
+    const googleAesM = channelMetrics(googleAes.data?.campaigns ?? []);
+    const googleSlimM = channelMetrics(googleSlim.data?.campaigns ?? []);
+
+    const fmtSubs = (n: number) => n > 0 ? n.toLocaleString() : "—";
+    const fmtPct = (n: number) => n > 0 ? `${(n * 100).toFixed(1)}%` : "—";
+
+    return [
+      {
+        channel: "Meta Ads",
+        rows: [
+          { metric: "Expected Revenue", spa: metaSpaM.expectedRevenue, aesthetics: metaAesM.expectedRevenue, slimming: metaSlimM.expectedRevenue },
+          { metric: "Ad Spend", spa: metaSpaM.spend, aesthetics: metaAesM.spend, slimming: metaSlimM.spend },
+          {
+            metric: "Expected ROAS", spa: metaSpaM.roas, aesthetics: metaAesM.roas, slimming: metaSlimM.roas,
+            roasValues: { spa: metaSpaM.roasNum, aesthetics: metaAesM.roasNum, slimming: metaSlimM.roasNum },
+          },
+        ] as TableRow[],
+      },
+      {
+        channel: "Google Ads",
+        rows: [
+          { metric: "Expected Revenue", spa: googleSpaM.expectedRevenue, aesthetics: googleAesM.expectedRevenue, slimming: googleSlimM.expectedRevenue },
+          { metric: "Ad Spend", spa: googleSpaM.spend, aesthetics: googleAesM.spend, slimming: googleSlimM.spend },
+          {
+            metric: "Expected ROAS", spa: googleSpaM.roas, aesthetics: googleAesM.roas, slimming: googleSlimM.roas,
+            roasValues: { spa: googleSpaM.roasNum, aesthetics: googleAesM.roasNum, slimming: googleSlimM.roasNum },
+          },
+        ] as TableRow[],
+      },
+      {
+        channel: "Email (Klaviyo)",
+        rows: [
+          { metric: "Subscribers", spa: fmtSubs(klavSpa.totalSubscribers), aesthetics: fmtSubs(klavAes.totalSubscribers), slimming: fmtSubs(klavSlim.totalSubscribers) },
+          { metric: "Campaigns Sent", spa: fmtSubs(klavSpa.totalCampaignsSent), aesthetics: fmtSubs(klavAes.totalCampaignsSent), slimming: fmtSubs(klavSlim.totalCampaignsSent) },
+          { metric: "Open Rate", spa: fmtPct(klavSpa.overallOpenRate), aesthetics: fmtPct(klavAes.overallOpenRate), slimming: fmtPct(klavSlim.overallOpenRate) },
+          { metric: "Click Rate", spa: fmtPct(klavSpa.overallClickRate), aesthetics: fmtPct(klavAes.overallClickRate), slimming: fmtPct(klavSlim.overallClickRate) },
+          { metric: "Revenue", spa: "—", aesthetics: "—", slimming: "—" },
+          { metric: "ROAS", spa: "—", aesthetics: "—", slimming: "—" },
+        ] as TableRow[],
+      },
+    ];
+  }, [metaSpa.data, metaAes.data, metaSlim.data, googleSpa.data, googleAes.data, googleSlim.data, klavSpa, klavAes, klavSlim]);
+
+  /* ---- Check if any data loaded ---- */
+  const totalCampaigns =
+    (metaSpa.data?.campaigns?.length ?? 0) + (metaAes.data?.campaigns?.length ?? 0) +
+    (metaSlim.data?.campaigns?.length ?? 0) + (googleSpa.data?.campaigns?.length ?? 0) +
+    (googleAes.data?.campaigns?.length ?? 0) + (googleSlim.data?.campaigns?.length ?? 0);
+  const hasKlaviyoData =
+    klavSpa.totalCampaignsSent > 0 || klavSpa.totalActiveFlows > 0 || klavSpa.totalRecipients > 0 ||
+    klavAes.totalCampaignsSent > 0 || klavAes.totalActiveFlows > 0 || klavAes.totalRecipients > 0 ||
+    klavSlim.totalCampaignsSent > 0 || klavSlim.totalActiveFlows > 0 || klavSlim.totalRecipients > 0;
+  const hasAnyData = totalCampaigns > 0 || hasKlaviyoData;
+  const anyKlaviyoTokenMissing = klavSpaTokenMissing || klavAesTokenMissing || klavSlimTokenMissing;
+
+  if (isLoading) return <LoadingSkeleton />;
+
   return (
     <div className="space-y-6 md:space-y-10">
       {/* -- Page header -- */}
@@ -188,93 +284,126 @@ function MarketingMasterContent({
         </p>
       </div>
 
-      {/* -- Section 1: Cross-Brand KPI Table -- */}
-      <section>
-        <Card className="p-3 md:p-6">
-          <h2 className="text-lg font-semibold mb-4">Cross-Brand KPIs</h2>
-          <BrandTable rows={CROSS_BRAND_KPIS} />
+      {/* -- Token / error warnings -- */}
+      {anyTokenExpired && (
+        <Card className="p-4 border-amber-300 bg-amber-50 dark:bg-amber-950/20">
+          <p className="text-sm text-amber-800 dark:text-amber-200">
+            One or more ad platform tokens have expired. Some data may be incomplete.
+            Re-authenticate in Settings to restore full data.
+          </p>
         </Card>
-      </section>
+      )}
 
-      {/* -- Section 2: Creative Fatigue by Brand (Prominent) -- */}
-      <section>
-        <Card className="p-3 md:p-6">
-          <h2 className="text-lg font-semibold mb-4 md:mb-6 text-center">Creative Fatigue by Brand</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {FATIGUE_DATA.map((f) => {
-              const b = BRAND[f.brand];
-              const total = f.healthy + f.watch + f.fatigued;
-              const healthyPct = (f.healthy / total) * 100;
-              const watchPct = (f.watch / total) * 100;
-              const fatiguedPct = (f.fatigued / total) * 100;
-
-              return (
-                <div key={f.brand} className="flex flex-col items-center gap-4">
-                  {/* Brand label */}
-                  <div className="flex items-center gap-2">
-                    <BrandDot brand={f.brand} />
-                    <span className="font-semibold text-base">{b.name}</span>
-                  </div>
-
-                  {/* Stacked horizontal bar */}
-                  <div className="w-full h-6 rounded-full overflow-hidden flex bg-muted">
-                    {healthyPct > 0 && (
-                      <div
-                        className="h-full bg-green-500 transition-all"
-                        style={{ width: `${healthyPct}%` }}
-                        title={`${f.healthy} Healthy`}
-                      />
-                    )}
-                    {watchPct > 0 && (
-                      <div
-                        className="h-full bg-amber-400 transition-all"
-                        style={{ width: `${watchPct}%` }}
-                        title={`${f.watch} Watch`}
-                      />
-                    )}
-                    {fatiguedPct > 0 && (
-                      <div
-                        className="h-full bg-red-500 transition-all"
-                        style={{ width: `${fatiguedPct}%` }}
-                        title={`${f.fatigued} Fatigued`}
-                      />
-                    )}
-                  </div>
-
-                  {/* Counts */}
-                  <div className="flex items-center gap-3 text-xs font-medium flex-wrap justify-center">
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
-                      {f.healthy} Healthy
-                    </span>
-                    <span className="text-muted-foreground">|</span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-                      {f.watch} Watch
-                    </span>
-                    <span className="text-muted-foreground">|</span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
-                      {f.fatigued} Fatigued
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+      {anyError && !anyTokenExpired && (
+        <Card className="p-4 border-red-300 bg-red-50 dark:bg-red-950/20">
+          <p className="text-sm text-red-800 dark:text-red-200">
+            Error loading ad data: {anyError}
+          </p>
         </Card>
-      </section>
+      )}
 
-      {/* -- Section 3: Channel Aggregates by Brand -- */}
-      <section className="space-y-4 md:space-y-6">
-        <h2 className="text-lg font-semibold">Channel Performance by Brand</h2>
-        {CHANNEL_BY_BRAND.map((ch) => (
-          <Card key={ch.channel} className="p-3 md:p-6">
-            <h3 className="font-semibold mb-4">{ch.channel}</h3>
-            <BrandTable rows={ch.rows} colorCodeRoas />
-          </Card>
-        ))}
-      </section>
+      {anyKlaviyoTokenMissing && (
+        <Card className="p-4 border-amber-300 bg-amber-50 dark:bg-amber-950/20">
+          <p className="text-sm text-amber-800 dark:text-amber-200">
+            Klaviyo API key is missing for one or more brands. Email data may be incomplete.
+          </p>
+        </Card>
+      )}
+
+      {!hasAnyData && (
+        <Card className="p-6 text-center">
+          <p className="text-muted-foreground">No campaign data available for the selected date range.</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {anyTokenExpired
+              ? "Refresh your ad platform tokens to restore live data."
+              : "Data is fetched directly from Meta Ads, Google Ads, and Klaviyo APIs."}
+          </p>
+        </Card>
+      )}
+
+      {hasAnyData && (
+        <>
+          {/* -- Section 1: Cross-Brand KPI Table -- */}
+          <section>
+            <Card className="p-3 md:p-6">
+              <h2 className="text-lg font-semibold mb-4">Cross-Brand KPIs</h2>
+              <BrandTable rows={crossBrandKpis} colorCodeRoas />
+            </Card>
+          </section>
+
+          {/* -- Section 2: Creative Fatigue by Brand -- */}
+          <section>
+            <Card className="p-3 md:p-6">
+              <h2 className="text-lg font-semibold mb-4 md:mb-6 text-center">Creative Fatigue by Brand</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                {fatigueData.map((f) => {
+                  const b = BRAND[f.brand];
+                  const total = f.healthy + f.watch + f.fatigued;
+                  if (total === 0) return (
+                    <div key={f.brand} className="flex flex-col items-center gap-2">
+                      <div className="flex items-center gap-2">
+                        <BrandDot brand={f.brand} />
+                        <span className="font-semibold text-base">{b.name}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">No ads tracked</p>
+                    </div>
+                  );
+                  const healthyPct = (f.healthy / total) * 100;
+                  const watchPct = (f.watch / total) * 100;
+                  const fatiguedPct = (f.fatigued / total) * 100;
+
+                  return (
+                    <div key={f.brand} className="flex flex-col items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <BrandDot brand={f.brand} />
+                        <span className="font-semibold text-base">{b.name}</span>
+                      </div>
+                      <div className="w-full h-6 rounded-full overflow-hidden flex bg-muted">
+                        {healthyPct > 0 && (
+                          <div className="h-full bg-green-500 transition-all" style={{ width: `${healthyPct}%` }} title={`${f.healthy} Healthy`} />
+                        )}
+                        {watchPct > 0 && (
+                          <div className="h-full bg-amber-400 transition-all" style={{ width: `${watchPct}%` }} title={`${f.watch} Watch`} />
+                        )}
+                        {fatiguedPct > 0 && (
+                          <div className="h-full bg-red-500 transition-all" style={{ width: `${fatiguedPct}%` }} title={`${f.fatigued} Fatigued`} />
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 text-xs font-medium flex-wrap justify-center">
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
+                          {f.healthy} Healthy
+                        </span>
+                        <span className="text-muted-foreground">|</span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                          {f.watch} Watch
+                        </span>
+                        <span className="text-muted-foreground">|</span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
+                          {f.fatigued} Fatigued
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+          </section>
+
+          {/* -- Section 3: Channel Performance by Brand -- */}
+          <section className="space-y-4 md:space-y-6">
+            <h2 className="text-lg font-semibold">Channel Performance by Brand</h2>
+            {channelByBrand.map((ch) => (
+              <Card key={ch.channel} className="p-3 md:p-6">
+                <h3 className="font-semibold mb-4">{ch.channel}</h3>
+                <BrandTable rows={ch.rows} colorCodeRoas />
+              </Card>
+            ))}
+          </section>
+        </>
+      )}
 
       {/* -- Section 4: CIChat -- */}
       <section>
