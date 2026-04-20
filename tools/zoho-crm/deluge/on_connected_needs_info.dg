@@ -1,0 +1,57 @@
+// on_connected_needs_info
+// Blueprint transition: Connected - Needs Info
+// Creates Post-Interest Follow-up task due tomorrow, Priority_Score = 75.
+
+task = zoho.crm.getRecordById("Tasks", taskId.toLong());
+if(task == null)
+{
+	return {"status":"error","message":"Task not found"};
+}
+
+whoId = ifnull(task.get("Who_Id"), null);
+firstName = ifnull(task.get("Contact_First_Name"), "");
+lastName = ifnull(task.get("Contact_Last_Name"), "");
+
+// DUPLICATE GUARD
+if(whoId != null)
+{
+	leadId = whoId.get("id");
+	dupeSearch = zoho.crm.searchRecords("Tasks", "(Who_Id:equals:" + leadId + ")and(Status:not_equal:Completed)and(Status:not_equal:Deferred)");
+	if(dupeSearch.size() > 0)
+	{
+		taskUpdate = Map();
+		taskUpdate.put("Task_Outcome", "Connected - Needs Info");
+		taskUpdate.put("Status", "Completed");
+		taskUpdate.put("Closed_Time", zoho.currenttime);
+		zoho.crm.updateRecord("Tasks", taskId.toLong(), taskUpdate);
+		return Map();
+	}
+}
+
+// Create follow-up task
+newTask = Map();
+newTask.put("Subject", "Post-Interest Follow-up - " + firstName + " " + lastName);
+newTask.put("Task_Type", "Post-Interest Follow-up");
+newTask.put("Due_Date", zoho.currentdate.addDay(1));
+newTask.put("Status", "Not Started");
+newTask.put("Priority_Score", 75);
+newTask.put("Who_Id", whoId);
+newTask.put("Contact_First_Name", firstName);
+newTask.put("Contact_Last_Name", lastName);
+newTask.put("Contact_Phone", ifnull(task.get("Contact_Phone"), ""));
+newTask.put("Interested_Treatment", ifnull(task.get("Interested_Treatment"), ""));
+newTask.put("Lead_Temperature", ifnull(task.get("Lead_Temperature"), ""));
+newTask.put("Lead_Source_Mirror", ifnull(task.get("Lead_Source_Mirror"), ""));
+newTask.put("Last_Contacted", ifnull(task.get("Last_Contacted"), ""));
+newTask.put("Brand", ifnull(task.get("Brand"), ""));
+
+zoho.crm.createRecord("Tasks", newTask);
+
+// Mark current task completed
+taskUpdate = Map();
+taskUpdate.put("Task_Outcome", "Connected - Needs Info");
+taskUpdate.put("Status", "Completed");
+taskUpdate.put("Closed_Time", zoho.currenttime);
+zoho.crm.updateRecord("Tasks", taskId.toLong(), taskUpdate);
+
+return Map();

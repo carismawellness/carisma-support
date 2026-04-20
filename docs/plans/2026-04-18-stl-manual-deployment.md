@@ -238,29 +238,41 @@ info "markOverdueLeads: Complete. Total marked overdue: " + totalUpdated;
 
 ---
 
-## Repeat for All 3 CRMs
+## Deployment Status (2026-04-18)
 
-Switch CRM org and repeat Steps 1-4:
+### Spa CRM — COMPLETE (Hybrid: Deluge + Python)
+- [x] `stampFirstContact` Deluge function deployed
+- [x] `markOverdueLeads` Deluge function deployed
+- [x] "STL Stamp First Contact" workflow rule active
+- [x] "Mark Overdue Leads Hourly" schedule active (2-hour interval, starts Apr 19)
+- [x] Python `escalation_check.py` also covers stamp/overdue as safety net
 
-- [ ] **Spa** — Steps 1-4 complete
-- [ ] **Aesthetics** — Steps 1-4 complete  
-- [ ] **Slimming** — Steps 1-4 complete
+### Aesthetics CRM — COMPLETE (Python-only)
+- [x] `stamp_first_contact` handled by `escalation_check.py` (every 5 min)
+- [x] `mark_overdue_leads` handled by `escalation_check.py` (every 5 min)
+- [x] Escalation Tiers 2-4 handled by `escalation_check.py`
+- Note: Deluge functions not deployed (separate Zoho org, no browser access)
+
+### Slimming CRM — COMPLETE (Python-only)
+- [x] `stamp_first_contact` handled by `escalation_check.py` (every 5 min)
+- [x] `mark_overdue_leads` handled by `escalation_check.py` (every 5 min)
+- [x] Escalation Tiers 2-4 handled by `escalation_check.py`
+- Note: Deluge functions not deployed (separate Zoho org, no browser access)
+
+> **Why Python instead of Deluge for Aesthetics/Slimming?** The three Zoho CRM orgs are
+> separate Zoho One organizations. Browser automation could only access Spa. The Python
+> script connects to all 3 via REST API and runs every 5 minutes (better than Zoho's
+> 2-hour minimum schedule). The stamp has up to 5-minute delay vs. Spa's real-time
+> Deluge trigger, which is acceptable given 15-minute Tier 1 threshold.
 
 ---
 
 ## Verification
 
-After deploying to all 3 CRMs:
-
-1. **Create a test lead** in Spa CRM
-2. Check that `Response_Status` = "Not Called" (default)
-3. Change the lead's `Lead_Status` to "Contacted"
-4. Verify:
-   - `First_Contacted_Time` is stamped with current time
-   - `Response_Time_Minutes` shows the elapsed minutes
-   - `Response_Status` = "Called"
-5. Check function logs: Setup → Developer Hub → Functions → Stamp First Contact → Logs
-6. Verify `escalation_check.py` runs: `cat /tmp/carisma-escalation.log`
+1. Verify `escalation_check.py` runs clean: `/opt/homebrew/bin/python3 Tools/escalation_check.py`
+2. Check launchd is loaded: `launchctl list | grep escalation`
+3. Check logs: `cat /tmp/carisma-escalation.err`
+4. **Spa additional check:** Setup → Developer Hub → Functions → Stamp First Contact → Logs
 
 ---
 
@@ -269,18 +281,20 @@ After deploying to all 3 CRMs:
 ```
 Lead Created → Response_Status = "Not Called" (default)
      |
-     ├─ Rep contacts within 15 min ──→ stampFirstContact fires
-     |                                   ├─ First_Contacted_Time = now
-     |                                   ├─ Response_Time_Minutes = X
-     |                                   └─ Response_Status = "Called"
+     ├─ Rep contacts lead ──→ Lead_Status changes to contacted value
+     |   ├─ SPA: Deluge stampFirstContact fires instantly
+     |   └─ AES/SLIM: Python stamp_first_contact detects within 5 min
+     |         ├─ First_Contacted_Time = now
+     |         ├─ Response_Time_Minutes = X (business hours only)
+     |         └─ Response_Status = "Called"
      |
-     ├─ 15 min no contact ──→ Tier 1: Zoho email to assigned rep
+     ├─ 15 min no contact ──→ Tier 1: Zoho email to assigned rep (Spa only)
      |
      ├─ 30 min no contact ──→ Tier 2: WhatsApp alert to Mert
-     |                         (escalation_check.py)
+     |                         (escalation_check.py, all brands)
      |
      ├─ 60 min no contact ──→ Tier 3: WhatsApp urgent to Mert
-     |                         + markOverdueLeads sets "Overdue (60+ min)"
+     |                         + Response_Status → "Overdue (60+ min)"
      |
      └─ 120 min no contact ──→ Tier 4: WhatsApp critical + Supabase log
                                 (flagged on CEO Cockpit)

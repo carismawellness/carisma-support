@@ -1,0 +1,114 @@
+// on_no_answer
+// Blueprint transition: No Answer
+// Determines next task in follow-up ladder, creates it, marks current Completed.
+
+task = zoho.crm.getRecordById("Tasks", taskId.toLong());
+if(task == null)
+{
+	return {"status":"error","message":"Task not found"};
+}
+
+taskType = ifnull(task.get("Task_Type"), "");
+whoId = ifnull(task.get("Who_Id"), null);
+firstName = ifnull(task.get("Contact_First_Name"), "");
+lastName = ifnull(task.get("Contact_Last_Name"), "");
+attemptNum = ifnull(task.get("Attempt_Number"), 0).toLong();
+
+// Determine next step in follow-up ladder
+nextType = "";
+daysAdd = 0;
+hoursAdd = 0;
+nextScore = 0;
+
+if(taskType == "First Contact")
+{
+	nextType = "Follow-up 1";
+	hoursAdd = 4;
+	nextScore = 60;
+}
+else if(taskType == "Follow-up 1")
+{
+	nextType = "Follow-up 2";
+	daysAdd = 1;
+	nextScore = 50;
+}
+else if(taskType == "Follow-up 2")
+{
+	nextType = "Follow-up 3";
+	daysAdd = 2;
+	nextScore = 40;
+}
+else if(taskType == "Follow-up 3")
+{
+	nextType = "Final Attempt";
+	daysAdd = 3;
+	nextScore = 30;
+}
+else if(taskType == "Final Attempt")
+{
+	// No new task — update Lead to Contact in Future
+	if(whoId != null)
+	{
+		leadId = whoId.get("id");
+		if(leadId != null)
+		{
+			leadUpdate = Map();
+			leadUpdate.put("Lead_Status", "Contact in Future");
+			zoho.crm.updateRecord("Leads", leadId.toLong(), leadUpdate);
+		}
+	}
+}
+
+// Mark current task completed
+taskUpdate = Map();
+taskUpdate.put("Task_Outcome", "No Answer");
+taskUpdate.put("Status", "Completed");
+taskUpdate.put("Closed_Time", zoho.currenttime);
+taskUpdate.put("Attempt_Number", attemptNum + 1);
+zoho.crm.updateRecord("Tasks", taskId.toLong(), taskUpdate);
+
+// Create next task if applicable
+if(nextType != "")
+{
+	// DUPLICATE GUARD
+	if(whoId != null)
+	{
+		leadId = whoId.get("id");
+		dupeSearch = zoho.crm.searchRecords("Tasks", "(Who_Id:equals:" + leadId + ")and(Status:not_equal:Completed)and(Status:not_equal:Deferred)");
+		if(dupeSearch.size() > 0)
+		{
+			return Map();
+		}
+	}
+
+	dueDate = zoho.currentdate;
+	if(daysAdd > 0)
+	{
+		dueDate = zoho.currentdate.addDay(daysAdd);
+	}
+	if(hoursAdd > 0)
+	{
+		dueDate = zoho.currenttime.addHour(hoursAdd);
+	}
+
+	newTask = Map();
+	newTask.put("Subject", nextType + " - " + firstName + " " + lastName);
+	newTask.put("Task_Type", nextType);
+	newTask.put("Due_Date", dueDate);
+	newTask.put("Status", "Not Started");
+	newTask.put("Priority_Score", nextScore);
+	newTask.put("Attempt_Number", attemptNum + 1);
+	newTask.put("Who_Id", whoId);
+	newTask.put("Contact_First_Name", firstName);
+	newTask.put("Contact_Last_Name", lastName);
+	newTask.put("Contact_Phone", ifnull(task.get("Contact_Phone"), ""));
+	newTask.put("Interested_Treatment", ifnull(task.get("Interested_Treatment"), ""));
+	newTask.put("Lead_Temperature", ifnull(task.get("Lead_Temperature"), ""));
+	newTask.put("Lead_Source_Mirror", ifnull(task.get("Lead_Source_Mirror"), ""));
+	newTask.put("Last_Contacted", ifnull(task.get("Last_Contacted"), ""));
+	newTask.put("Brand", ifnull(task.get("Brand"), ""));
+
+	zoho.crm.createRecord("Tasks", newTask);
+}
+
+return Map();

@@ -69,7 +69,28 @@
       "mcp__whatsapp__list_messages",
       "mcp__whatsapp__search_contacts",
       "mcp__whatsapp__get_chat",
-      "mcp__playwright__browser_handle_dialog"
+      "mcp__playwright__browser_handle_dialog",
+      "mcp__playwright__browser_resize",
+      "mcp__google-workspace__sheets_append_values",
+      "mcp__playwright__browser_console_messages",
+      "mcp__zoho-crm-spa__zoho_get_custom_views",
+      "mcp__zoho-crm-aesthetics__zoho_get_custom_views",
+      "mcp__zoho-crm-slimming__zoho_get_custom_views",
+      "mcp__zoho-analytics__get_workspaces_list",
+      "mcp__zoho-analytics__search_views",
+      "mcp__zoho-analytics__query_data",
+      "mcp__klaviyo__klaviyo_get_account_details",
+      "mcp__meta-ads__get_insights",
+      "mcp__klaviyo__klaviyo_get_campaigns",
+      "mcp__klaviyo__klaviyo_get_campaign_report",
+      "mcp__klaviyo__klaviyo_get_flow_report",
+      "mcp__meta-ads__get_campaigns",
+      "mcp__trello__get_board_lists",
+      "mcp__trello__get_board_cards",
+      "mcp__trello__get_list_cards",
+      "mcp__trello__get_card_attachments",
+      "mcp__google-workspace__docs_create_document",
+      "mcp__google-workspace__docs_read_document"
     ],
     "defaultMode": "bypassPermissions"
   },
@@ -78,7 +99,6 @@
     "PostToolUse": [
       {
         "matcher": "Bash",
-        "if": "Bash(git commit*)",
         "hooks": [
           {
             "type": "command",
@@ -95,8 +115,8 @@
             "type": "command",
             "command": "jq -r '.tool_input.file_path // empty' | { read -r f; echo \"$f\" | grep -q 'Tech/CEO-Cockpit/' && cd \"/Users/mertgulen/Library/CloudStorage/GoogleDrive-mertgulen98@gmail.com/My Drive/Carisma Wellness Group/Carisma AI /Carisma AI/Tech/CEO-Cockpit\" && npx vercel --prod --yes 2>&1 | tail -5; } 2>/dev/null || true",
             "timeout": 120,
-            "async": true,
-            "statusMessage": "Deploying cockpit to production..."
+            "statusMessage": "Deploying cockpit to production...",
+            "async": true
           }
         ]
       }

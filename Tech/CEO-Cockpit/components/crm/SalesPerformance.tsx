@@ -17,12 +17,20 @@ import type { CrmDailyRow } from "@/lib/types/crm";
 
 const DUMMY_BRAND_DATA: Record<
   string,
-  { totalSales: number; dailyAvg: number; depositPct: number; conversionPct: number; stlMedian: number; stlMean: number }
+  { totalSales: number; dailyAvg: number; depositPct: number; conversionPct: number; stlMedian: number; stlMean: number; totalLeads: number; totalBookings: number }
 > = {
-  spa: { totalSales: 18420, dailyAvg: 1316, depositPct: 72.5, conversionPct: 35.8, stlMedian: 3.2, stlMean: 4.1 },
-  aesthetics: { totalSales: 34850, dailyAvg: 2489, depositPct: 68.1, conversionPct: 34.8, stlMedian: 4.8, stlMean: 6.3 },
-  slimming: { totalSales: 22100, dailyAvg: 1579, depositPct: 74.3, conversionPct: 40.7, stlMedian: 6.1, stlMean: 8.4 },
+  spa: { totalSales: 18420, dailyAvg: 1316, depositPct: 72.5, conversionPct: 35.8, stlMedian: 3.2, stlMean: 4.1, totalLeads: 140, totalBookings: 35 },
+  aesthetics: { totalSales: 34850, dailyAvg: 2489, depositPct: 68.1, conversionPct: 34.8, stlMedian: 4.8, stlMean: 6.3, totalLeads: 180, totalBookings: 42 },
+  slimming: { totalSales: 22100, dailyAvg: 1579, depositPct: 74.3, conversionPct: 40.7, stlMedian: 6.1, stlMean: 8.4, totalLeads: 120, totalBookings: 28 },
 };
+
+/* ------------------------------------------------------------------ */
+/*  Booking benchmark config                                           */
+/* ------------------------------------------------------------------ */
+
+const BOOKING_CONVERSION_TARGET = 0.20; // 20% lead-to-booking conversion
+const DAILY_BOOKING_MIN = 8;
+const DAILY_BOOKING_MAX = 10;
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
@@ -102,6 +110,8 @@ export function SalesPerformance({
 
     if (!hasData) {
       const dummy = DUMMY_BRAND_DATA[slug];
+      const dummyBookingTarget = Math.round(dummy.totalLeads * BOOKING_CONVERSION_TARGET);
+      const dummyDays = 14;
       return {
         slug,
         label: BRAND_LABELS[slug],
@@ -111,6 +121,11 @@ export function SalesPerformance({
         conversionPct: dummy.conversionPct,
         stlMedian: dummy.stlMedian,
         stlMean: dummy.stlMean,
+        totalBookings: dummy.totalBookings,
+        totalLeads: dummy.totalLeads,
+        bookingTarget: Math.max(dummyBookingTarget, dummyDays * DAILY_BOOKING_MIN),
+        dailyBookingRate: dummy.totalBookings / dummyDays,
+        numDays: dummyDays,
         isDummy: true,
       };
     }
@@ -148,6 +163,14 @@ export function SalesPerformance({
     const stlMedian = median(stlValues);
     const stlMean = stlValues.length > 0 ? stlValues.reduce((a, b) => a + b, 0) / stlValues.length : 0;
 
+    // Bookings & target
+    const totalLeads = brandDaily.reduce((sum, r) => sum + (r.total_leads ?? 0), 0);
+    const totalBookings = brandDaily.reduce((sum, r) => sum + (r.appointments_booked ?? 0), 0);
+    const leadBasedTarget = Math.round(totalLeads * BOOKING_CONVERSION_TARGET);
+    const dailyFloorTarget = distinctDays * DAILY_BOOKING_MIN;
+    const bookingTarget = Math.max(leadBasedTarget, dailyFloorTarget);
+    const dailyBookingRate = distinctDays > 0 ? totalBookings / distinctDays : 0;
+
     return {
       slug,
       label: BRAND_LABELS[slug],
@@ -157,6 +180,11 @@ export function SalesPerformance({
       conversionPct,
       stlMedian,
       stlMean,
+      totalBookings,
+      totalLeads,
+      bookingTarget,
+      dailyBookingRate,
+      numDays: distinctDays,
       isDummy: false,
     };
   });
@@ -205,6 +233,35 @@ export function SalesPerformance({
                 {formatPercent(b.conversionPct)}
               </span>
             </div>
+
+            {/* Booking Benchmark */}
+            <div className="mt-2 pt-3 border-t border-dashed">
+              <p className="text-[10px] uppercase tracking-wider text-text-secondary font-medium mb-2">Appointments Booked</p>
+              <div className="flex justify-between items-baseline mb-1">
+                <span className={`text-lg font-bold ${b.totalBookings >= b.bookingTarget ? "text-emerald-600" : b.totalBookings >= b.bookingTarget * 0.8 ? "text-amber-500" : "text-red-600"}`}>
+                  {b.totalBookings}
+                </span>
+                <span className="text-xs text-text-secondary">
+                  / {b.bookingTarget} target
+                </span>
+              </div>
+              {/* Progress bar */}
+              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-1.5">
+                <div
+                  className={`h-full rounded-full transition-all ${
+                    b.totalBookings >= b.bookingTarget ? "bg-emerald-500" : b.totalBookings >= b.bookingTarget * 0.8 ? "bg-amber-500" : "bg-red-500"
+                  }`}
+                  style={{ width: `${Math.min((b.totalBookings / b.bookingTarget) * 100, 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-text-secondary">
+                <span>{b.dailyBookingRate.toFixed(1)}/day avg</span>
+                <span className={b.dailyBookingRate >= DAILY_BOOKING_MIN ? "text-emerald-600 font-semibold" : "text-red-500 font-semibold"}>
+                  {DAILY_BOOKING_MIN}–{DAILY_BOOKING_MAX}/day benchmark
+                </span>
+              </div>
+            </div>
+
             <div className="mt-2 pt-3 border-t border-dashed">
               <p className="text-[10px] uppercase tracking-wider text-text-secondary font-medium mb-2">Speed to Lead</p>
               <div className="grid grid-cols-2 gap-2">

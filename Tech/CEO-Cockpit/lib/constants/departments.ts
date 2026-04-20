@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Sparkles,
   Heart,
+  Filter,
   type LucideIcon,
 } from "lucide-react";
 
@@ -30,6 +31,7 @@ export interface Department {
 
 export const departments: Department[] = [
   { slug: "ceo", label: "CEO", icon: LayoutDashboard, path: "/ceo" },
+  { slug: "funnel", label: "Funnel", icon: Filter, path: "/funnel" },
   {
     slug: "sales",
     label: "Sales",

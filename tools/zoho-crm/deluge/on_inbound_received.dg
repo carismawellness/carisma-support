@@ -1,0 +1,17 @@
+// on_inbound_received
+// Blueprint transition: Inbound Received
+// Simple outcome — marks task Completed with outcome.
+
+task = zoho.crm.getRecordById("Tasks", taskId.toLong());
+if(task == null)
+{
+	return {"status":"error","message":"Task not found"};
+}
+
+taskUpdate = Map();
+taskUpdate.put("Task_Outcome", "Inbound Received");
+taskUpdate.put("Status", "Completed");
+taskUpdate.put("Closed_Time", zoho.currenttime);
+zoho.crm.updateRecord("Tasks", taskId.toLong(), taskUpdate);
+
+return Map();

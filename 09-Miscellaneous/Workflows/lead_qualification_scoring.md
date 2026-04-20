@@ -28,56 +28,76 @@ Automatically score every lead (0–105) across all three CRMs and display a con
 | 30–59 | **Warm** | Standard cadence |
 | <30 | **Nurture** | Nurture sequence |
 
-## Fields Created (all 3 CRMs)
+## Architecture
 
-| Field | API Name | Type | Purpose |
-|-------|----------|------|---------|
-| Qualification Score | `Qualification_Score` | Integer | The numeric score (0–105) |
-| Lead Temperature | `Lead_Temperature` | Picklist | Hot / Warm / Nurture |
-| Response Time (Minutes) | `Response_Time_Minutes` | Double | Minutes from lead creation to first contact |
+The scoring system uses **two layers** for full automation:
 
-All fields are visible on the Standard lead layout in the "Lead Information" section.
+### Layer 1: Native Zoho Scoring Rules (auto-scores new leads)
+- **Deployed via**: `Tools/deploy_scoring_rules.py` (Zoho CRM v8 API)
+- **Field updated**: `Positive_Score` (Zoho system field)
+- **Trigger**: Automatic on every lead create/edit
+- **No manual action required** — Zoho evaluates all 12 field rules automatically
 
-## Auto-Scoring New Leads
+### Layer 2: Temperature Workflow Rules (sets Hot/Warm/Nurture)
+- **Deployed via**: `Tools/deploy_temperature_rules.py` (Zoho CRM v8 API)
+- **3 rules per CRM**: one each for Hot (≥60), Warm (30–59), Nurture (<30)
+- **Trigger**: create_or_edit on Leads
+- **Criteria**: checks `Positive_Score` thresholds
+- **Action**: field_update → sets `Lead_Temperature` picklist
 
-### Deploy the Deluge Function
+### Legacy: Bulk Scoring Script (backfill + custom field)
+- **Script**: `Tools/setup_lead_scoring.py`
+- **Field updated**: `Qualification_Score` (custom integer field)
+- **Use**: One-time backfill of existing leads, or re-scoring after model changes
+- **Also sets**: `Lead_Temperature` directly
 
-Repeat these steps in each CRM (Spa, Aesthetics, Slimming):
+## Fields (all 3 CRMs)
 
-1. Go to **Settings → Automation → Workflow Rules**
-2. Click **+ Create Rule**, select module **Leads**
-3. Name: `Auto Lead Qualification Score`
-4. Execute on: **Create or Edit**
-5. Condition: **All Leads** (no filter)
-6. Under **Instant Actions**, click **Custom Function**
-7. Name: `calculateLeadScore`
-8. Argument: `leadId` → mapped to **Lead Id**
-9. Paste the code from `Tools/deluge_lead_scoring_function.dg`
-10. Save & activate
+| Field | API Name | Type | Source |
+|-------|----------|------|--------|
+| Positive Score | `Positive_Score` | System | Native scoring rules (auto) |
+| Qualification Score | `Qualification_Score` | Integer (custom) | Bulk script (backfill) |
+| Lead Temperature | `Lead_Temperature` | Picklist (custom) | Workflow rules (auto) |
+| Response Time (Minutes) | `Response_Time_Minutes` | Double (custom) | Speed-to-Lead system |
 
-### What the function does
-- Reads the 5 scoring factors from the lead
-- Calculates total score (0–105)
-- Sets `Qualification_Score` and `Lead_Temperature`
-- Runs on every lead create/edit
+## Scoring Rule IDs
 
-## Bulk Scoring Script
+| Brand | Scoring Rule | Temp Hot Rule | Temp Warm Rule | Temp Nurture Rule |
+|-------|-------------|---------------|----------------|-------------------|
+| Spa | 189957000060763091 | 189957000060754051 | 189957000060779001 | 189957000060741017 |
+| Aesthetics | 524228000043990049 | 524228000043982010 | 524228000043970035 | 524228000043954046 |
+| Slimming | 956933000004073068 | 956933000004126033 | 956933000004105015 | 956933000004118010 |
 
-For re-scoring all existing leads (e.g. after changing the model):
+## Deployment
 
+### Deploy scoring rules (one-time)
 ```bash
-python3 Tools/setup_lead_scoring.py           # All brands
-python3 Tools/setup_lead_scoring.py spa        # Single brand
+python3 Tools/deploy_scoring_rules.py           # All brands
+python3 Tools/deploy_scoring_rules.py spa        # Single brand
 ```
 
-The script:
-- Creates any missing fields
-- Uses COQL to find unscored leads
-- Batch-updates scores in groups of 100
-- Handles Zoho API rate limits
+### Deploy temperature workflow rules (one-time)
+```bash
+python3 Tools/deploy_temperature_rules.py        # All brands
+python3 Tools/deploy_temperature_rules.py spa    # Single brand
+```
+
+### Bulk score existing leads (backfill)
+```bash
+python3 Tools/setup_lead_scoring.py              # All brands
+python3 Tools/setup_lead_scoring.py spa           # Single brand
+```
+
+## How It Works for SDRs
+
+1. **New lead comes in** → Native scoring rule calculates `Positive_Score` automatically
+2. **Workflow rules fire** → `Lead_Temperature` set to Hot/Warm/Nurture based on score
+3. **SDR sees on lead card**: score number + temperature label
+4. **No manual action needed** — everything is automated
 
 ## Maintenance
 
-- **Changing score weights**: Update both `Tools/setup_lead_scoring.py` and `Tools/deluge_lead_scoring_function.dg`, then re-run the bulk script
-- **Adding new factors**: Add the field to the CRM, update both scoring files, deploy updated Deluge function
-- **Re-scoring**: Run `python3 Tools/setup_lead_scoring.py` — it will re-score all leads with null scores. To force re-score all, temporarily set scores to null via COQL
+- **Changing score weights**: Update `Tools/deploy_scoring_rules.py` field_rules, delete old scoring rule via API, redeploy
+- **Adding new factors**: Add the field to CRM, add a new field_rule to the scoring rule
+- **Re-scoring existing leads**: Run `python3 Tools/deploy_scoring_rules.py` (includes execute step)
+- **Backfill Qualification_Score**: Run `python3 Tools/setup_lead_scoring.py`

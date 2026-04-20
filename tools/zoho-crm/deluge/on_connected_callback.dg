@@ -1,0 +1,68 @@
+// on_connected_callback
+// Blueprint transition: Connected - Call Back
+// Sets outcome, creates Scheduled Callback task, marks current Completed.
+
+task = zoho.crm.getRecordById("Tasks", taskId.toLong());
+if(task == null)
+{
+	return {"status":"error","message":"Task not found"};
+}
+
+whoId = ifnull(task.get("Who_Id"), null);
+firstName = ifnull(task.get("Contact_First_Name"), "");
+lastName = ifnull(task.get("Contact_Last_Name"), "");
+cbdt = ifnull(task.get("Callback_Date_Time"), "");
+
+// DUPLICATE GUARD: check for open task with same Who_Id
+if(whoId != null)
+{
+	leadId = whoId.get("id");
+	dupeSearch = zoho.crm.searchRecords("Tasks", "(Who_Id:equals:" + leadId + ")and(Status:not_equal:Completed)and(Status:not_equal:Deferred)");
+	if(dupeSearch.size() > 0)
+	{
+		// Already has an open task — skip creation
+		taskUpdate = Map();
+		taskUpdate.put("Task_Outcome", "Connected - Call Back");
+		taskUpdate.put("Status", "Completed");
+		taskUpdate.put("Closed_Time", zoho.currenttime);
+		zoho.crm.updateRecord("Tasks", taskId.toLong(), taskUpdate);
+		return Map();
+	}
+}
+
+// Determine due date from Callback_Date_Time
+dueDate = zoho.currentdate.addDay(1);
+if(cbdt != "")
+{
+	dueDate = cbdt.toDate();
+}
+
+// Create new Scheduled Callback task
+newTask = Map();
+newTask.put("Subject", "Scheduled Callback - " + firstName + " " + lastName);
+newTask.put("Task_Type", "Scheduled Callback");
+newTask.put("Due_Date", dueDate);
+newTask.put("Status", "Not Started");
+newTask.put("Priority_Score", 95);
+newTask.put("Callback_Date_Time", cbdt);
+newTask.put("Who_Id", whoId);
+// Copy mirror fields
+newTask.put("Contact_First_Name", firstName);
+newTask.put("Contact_Last_Name", lastName);
+newTask.put("Contact_Phone", ifnull(task.get("Contact_Phone"), ""));
+newTask.put("Interested_Treatment", ifnull(task.get("Interested_Treatment"), ""));
+newTask.put("Lead_Temperature", ifnull(task.get("Lead_Temperature"), ""));
+newTask.put("Lead_Source_Mirror", ifnull(task.get("Lead_Source_Mirror"), ""));
+newTask.put("Last_Contacted", ifnull(task.get("Last_Contacted"), ""));
+newTask.put("Brand", ifnull(task.get("Brand"), ""));
+
+zoho.crm.createRecord("Tasks", newTask);
+
+// Mark current task completed
+taskUpdate = Map();
+taskUpdate.put("Task_Outcome", "Connected - Call Back");
+taskUpdate.put("Status", "Completed");
+taskUpdate.put("Closed_Time", zoho.currenttime);
+zoho.crm.updateRecord("Tasks", taskId.toLong(), taskUpdate);
+
+return Map();

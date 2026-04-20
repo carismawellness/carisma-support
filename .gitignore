@@ -23,3 +23,8 @@ __pycache__/
 
 # Playwright logs
 .playwright-mcp/
+
+# Dev/debug screenshots at repo root
+/*.png
+/*.jpg
+/*.jpeg

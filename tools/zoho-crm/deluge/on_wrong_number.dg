@@ -1,0 +1,31 @@
+// on_wrong_number
+// Blueprint transition: Wrong Number
+// Updates Lead to Junk Lead, no follow-up, marks task Completed.
+
+task = zoho.crm.getRecordById("Tasks", taskId.toLong());
+if(task == null)
+{
+	return {"status":"error","message":"Task not found"};
+}
+
+// Update task
+taskUpdate = Map();
+taskUpdate.put("Task_Outcome", "Wrong Number");
+taskUpdate.put("Status", "Completed");
+taskUpdate.put("Closed_Time", zoho.currenttime);
+zoho.crm.updateRecord("Tasks", taskId.toLong(), taskUpdate);
+
+// Update parent Lead
+whoId = ifnull(task.get("Who_Id"), null);
+if(whoId != null)
+{
+	leadId = whoId.get("id");
+	if(leadId != null)
+	{
+		leadUpdate = Map();
+		leadUpdate.put("Lead_Status", "Junk Lead");
+		zoho.crm.updateRecord("Leads", leadId.toLong(), leadUpdate);
+	}
+}
+
+return Map();

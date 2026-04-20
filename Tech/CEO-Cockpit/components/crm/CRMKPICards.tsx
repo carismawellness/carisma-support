@@ -68,6 +68,17 @@ export function CRMKPICards({
     0,
   );
 
+  // --- Booking Target (dynamic: 20% conversion of total leads) ---
+  const BOOKING_CONVERSION_TARGET = 0.20;
+  const DAILY_BOOKING_MIN = 8;
+  const DAILY_BOOKING_MAX = 10;
+  const numDays = sortedDates.length || 1;
+  const leadBasedTarget = Math.round(totalLeads * BOOKING_CONVERSION_TARGET);
+  const dailyFloorTarget = numDays * DAILY_BOOKING_MIN;
+  // Use the higher of lead-based or daily-floor target
+  const bookingTarget = Math.max(leadBasedTarget, dailyFloorTarget);
+  const dailyBookingRate = numDays > 0 ? totalBookings / numDays : 0;
+
   // --- Deposit % (weighted average: sum(deposit_pct * total_sales) / sum(total_sales)) ---
   let depositWeightedSum = 0;
   let depositWeightTotal = 0;
@@ -99,7 +110,10 @@ export function CRMKPICards({
     },
     {
       label: "Total Bookings",
-      value: totalBookings.toLocaleString(),
+      value: `${totalBookings.toLocaleString()} (${dailyBookingRate.toFixed(1)}/day)`,
+      target: `${bookingTarget} (${DAILY_BOOKING_MIN}–${DAILY_BOOKING_MAX}/day · 20% conv)`,
+      targetValue: bookingTarget,
+      currentValue: totalBookings,
     },
     {
       label: "Deposit %",

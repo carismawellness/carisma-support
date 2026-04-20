@@ -20,7 +20,10 @@ INSERT INTO kpi_targets (department, metric_name, target_value, comparison, bran
 INSERT INTO kpi_targets (department, metric_name, target_value, comparison) VALUES
   ('crm', 'speed_to_lead_min', 5.0, 'lt'),
   ('crm', 'conversion_rate_pct', 25.0, 'gt'),
-  ('crm', 'workable_leads_per_sdr', 60.0, 'gt');
+  ('crm', 'workable_leads_per_sdr', 60.0, 'gt'),
+  ('crm', 'daily_appointments_booked_min', 8.0, 'gt'),
+  ('crm', 'daily_appointments_booked_max', 10.0, 'gt'),
+  ('crm', 'lead_to_booking_conversion_pct', 20.0, 'gt');
 
 -- HR targets
 INSERT INTO kpi_targets (department, metric_name, target_value, comparison) VALUES

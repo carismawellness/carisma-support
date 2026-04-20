@@ -1,0 +1,46 @@
+// populate_mirror_fields
+// Input: taskId (string)
+// Reads Who_Id (Lead), copies key fields to Task mirror fields.
+
+task = zoho.crm.getRecordById("Tasks", taskId.toLong());
+if(task == null)
+{
+	return;
+}
+
+whoId = ifnull(task.get("Who_Id"), null);
+if(whoId == null)
+{
+	return;
+}
+
+leadId = whoId.get("id");
+if(leadId == null)
+{
+	return;
+}
+
+lead = zoho.crm.getRecordById("Leads", leadId.toLong());
+if(lead == null)
+{
+	return;
+}
+
+// Determine phone: prefer Phone, fallback to Mobile
+phone = ifnull(lead.get("Phone"), "");
+if(phone == "")
+{
+	phone = ifnull(lead.get("Mobile"), "");
+}
+
+updateMap = Map();
+updateMap.put("Contact_First_Name", ifnull(lead.get("First_Name"), ""));
+updateMap.put("Contact_Last_Name", ifnull(lead.get("Last_Name"), ""));
+updateMap.put("Contact_Phone", phone);
+updateMap.put("Interested_Treatment", ifnull(lead.get("What_are_you_mainly_looking_to_treat"), ""));
+updateMap.put("Lead_Temperature", ifnull(lead.get("Lead_Temperature"), ""));
+updateMap.put("Lead_Source_Mirror", ifnull(lead.get("Lead_Source"), ""));
+updateMap.put("Last_Contacted", ifnull(lead.get("Last_Activity_Time"), ""));
+updateMap.put("Brand", ifnull(lead.get("Brand"), ""));
+
+zoho.crm.updateRecord("Tasks", taskId.toLong(), updateMap);

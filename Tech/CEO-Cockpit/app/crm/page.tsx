@@ -1,6 +1,7 @@
 "use client";
 
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { CRMKPICards } from "@/components/crm/CRMKPICards";
 import { SalesPerformance } from "@/components/crm/SalesPerformance";
 import { SpeedToLeadSection } from "@/components/crm/SpeedToLeadSection";
 import { EmployeeTable } from "@/components/crm/EmployeeTable";
@@ -29,6 +30,11 @@ function CRMContent({
           {formatDateRangeLabel(dateFrom, dateTo)} · Cross-brand CRM performance
         </p>
       </div>
+
+      {/* KPI Summary Cards */}
+      <section>
+        <CRMKPICards dateFrom={dateFrom} dateTo={dateTo} brandFilter={brandFilter} />
+      </section>
 
       {/* Sales Performance by Brand */}
       <section>

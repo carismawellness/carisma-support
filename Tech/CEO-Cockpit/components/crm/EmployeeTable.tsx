@@ -50,6 +50,8 @@ function statusBadge(
 /*  Dummy data                                                         */
 /* ------------------------------------------------------------------ */
 
+const BOOKING_CONVERSION_TARGET = 0.20; // 20% lead-to-booking conversion
+
 interface AggregatedRep {
   name: string;
   brand: string;
@@ -57,6 +59,8 @@ interface AggregatedRep {
   total_sales: number;
   dials: number;
   bookings: number;
+  leads_assigned: number;
+  booking_target: number;
   conversion_rate_pct: number;
   deposit_pct: number;
   missed_pct: number;
@@ -65,16 +69,16 @@ interface AggregatedRep {
 }
 
 const DUMMY_EMPLOYEES: AggregatedRep[] = [
-  { name: "Maria Vella", brand: "aesthetics", team_type: "SDR", total_sales: 12480, dials: 342, bookings: 42, conversion_rate_pct: 34.2, deposit_pct: 78.5, missed_pct: 8.2, total_tasks: 312, avg_tasks_per_day: 22.3 },
-  { name: "Katrina Borg", brand: "slimming", team_type: "SDR", total_sales: 10950, dials: 298, bookings: 38, conversion_rate_pct: 31.5, deposit_pct: 72.1, missed_pct: 10.4, total_tasks: 274, avg_tasks_per_day: 19.6 },
-  { name: "Sarah Camilleri", brand: "spa", team_type: "Chat", total_sales: 9870, dials: 0, bookings: 35, conversion_rate_pct: 28.9, deposit_pct: 75.3, missed_pct: 5.1, total_tasks: 245, avg_tasks_per_day: 17.5 },
-  { name: "Anna Grech", brand: "aesthetics", team_type: "SDR", total_sales: 8640, dials: 267, bookings: 31, conversion_rate_pct: 26.1, deposit_pct: 69.8, missed_pct: 11.7, total_tasks: 238, avg_tasks_per_day: 17.0 },
-  { name: "Elena Farrugia", brand: "slimming", team_type: "Chat", total_sales: 7820, dials: 0, bookings: 28, conversion_rate_pct: 24.8, deposit_pct: 81.2, missed_pct: 6.3, total_tasks: 196, avg_tasks_per_day: 14.0 },
-  { name: "Julia Zammit", brand: "spa", team_type: "SDR", total_sales: 6950, dials: 215, bookings: 25, conversion_rate_pct: 22.3, deposit_pct: 66.4, missed_pct: 14.8, total_tasks: 203, avg_tasks_per_day: 14.5 },
-  { name: "Lisa Galea", brand: "aesthetics", team_type: "Chat", total_sales: 6210, dials: 0, bookings: 22, conversion_rate_pct: 20.7, deposit_pct: 73.6, missed_pct: 7.5, total_tasks: 182, avg_tasks_per_day: 13.0 },
-  { name: "Diane Attard", brand: "slimming", team_type: "SDR", total_sales: 5480, dials: 189, bookings: 19, conversion_rate_pct: 19.2, deposit_pct: 64.1, missed_pct: 16.2, total_tasks: 168, avg_tasks_per_day: 12.0 },
-  { name: "Nicole Mifsud", brand: "spa", team_type: "Chat", total_sales: 4720, dials: 0, bookings: 17, conversion_rate_pct: 17.4, deposit_pct: 71.9, missed_pct: 9.8, total_tasks: 154, avg_tasks_per_day: 11.0 },
-  { name: "Claire Spiteri", brand: "aesthetics", team_type: "SDR", total_sales: 3890, dials: 156, bookings: 14, conversion_rate_pct: 15.8, deposit_pct: 58.3, missed_pct: 18.5, total_tasks: 126, avg_tasks_per_day: 9.0 },
+  { name: "Maria Vella", brand: "aesthetics", team_type: "SDR", total_sales: 12480, dials: 342, bookings: 42, leads_assigned: 120, booking_target: 24, conversion_rate_pct: 34.2, deposit_pct: 78.5, missed_pct: 8.2, total_tasks: 312, avg_tasks_per_day: 22.3 },
+  { name: "Katrina Borg", brand: "slimming", team_type: "SDR", total_sales: 10950, dials: 298, bookings: 38, leads_assigned: 110, booking_target: 22, conversion_rate_pct: 31.5, deposit_pct: 72.1, missed_pct: 10.4, total_tasks: 274, avg_tasks_per_day: 19.6 },
+  { name: "Sarah Camilleri", brand: "spa", team_type: "Chat", total_sales: 9870, dials: 0, bookings: 35, leads_assigned: 100, booking_target: 20, conversion_rate_pct: 28.9, deposit_pct: 75.3, missed_pct: 5.1, total_tasks: 245, avg_tasks_per_day: 17.5 },
+  { name: "Anna Grech", brand: "aesthetics", team_type: "SDR", total_sales: 8640, dials: 267, bookings: 31, leads_assigned: 105, booking_target: 21, conversion_rate_pct: 26.1, deposit_pct: 69.8, missed_pct: 11.7, total_tasks: 238, avg_tasks_per_day: 17.0 },
+  { name: "Elena Farrugia", brand: "slimming", team_type: "Chat", total_sales: 7820, dials: 0, bookings: 28, leads_assigned: 95, booking_target: 19, conversion_rate_pct: 24.8, deposit_pct: 81.2, missed_pct: 6.3, total_tasks: 196, avg_tasks_per_day: 14.0 },
+  { name: "Julia Zammit", brand: "spa", team_type: "SDR", total_sales: 6950, dials: 215, bookings: 25, leads_assigned: 90, booking_target: 18, conversion_rate_pct: 22.3, deposit_pct: 66.4, missed_pct: 14.8, total_tasks: 203, avg_tasks_per_day: 14.5 },
+  { name: "Lisa Galea", brand: "aesthetics", team_type: "Chat", total_sales: 6210, dials: 0, bookings: 22, leads_assigned: 85, booking_target: 17, conversion_rate_pct: 20.7, deposit_pct: 73.6, missed_pct: 7.5, total_tasks: 182, avg_tasks_per_day: 13.0 },
+  { name: "Diane Attard", brand: "slimming", team_type: "SDR", total_sales: 5480, dials: 189, bookings: 19, leads_assigned: 80, booking_target: 16, conversion_rate_pct: 19.2, deposit_pct: 64.1, missed_pct: 16.2, total_tasks: 168, avg_tasks_per_day: 12.0 },
+  { name: "Nicole Mifsud", brand: "spa", team_type: "Chat", total_sales: 4720, dials: 0, bookings: 17, leads_assigned: 75, booking_target: 15, conversion_rate_pct: 17.4, deposit_pct: 71.9, missed_pct: 9.8, total_tasks: 154, avg_tasks_per_day: 11.0 },
+  { name: "Claire Spiteri", brand: "aesthetics", team_type: "SDR", total_sales: 3890, dials: 156, bookings: 14, leads_assigned: 70, booking_target: 14, conversion_rate_pct: 15.8, deposit_pct: 58.3, missed_pct: 18.5, total_tasks: 126, avg_tasks_per_day: 9.0 },
 ];
 
 const BRAND_LABELS: Record<string, string> = {
@@ -145,6 +149,7 @@ export function EmployeeTable({
       totalSales: number;
       dials: number;
       bookings: number;
+      leadsAssigned: number;
       convSum: number;
       convCount: number;
       depSum: number;
@@ -163,6 +168,7 @@ export function EmployeeTable({
         totalSales: 0,
         dials: 0,
         bookings: 0,
+        leadsAssigned: 0,
         convSum: 0,
         convCount: 0,
         depSum: 0,
@@ -175,6 +181,7 @@ export function EmployeeTable({
     agg.totalSales += row.total_sales ?? 0;
     agg.dials += row.dials ?? 0;
     agg.bookings += row.bookings ?? 0;
+    agg.leadsAssigned += row.leads_assigned ?? 0;
     if (row.conversion_rate_pct !== null) {
       agg.convSum += row.conversion_rate_pct;
       agg.convCount++;
@@ -189,19 +196,24 @@ export function EmployeeTable({
     }
   }
 
-  const realTableData: AggregatedRep[] = Object.values(repMap).map((r) => ({
-    name: `Rep ${r.staffId}`,
-    brand: brandIdToSlug[r.brandId] ?? `brand_${r.brandId}`,
-    team_type: r.teamType === "sdr" ? "SDR" : r.teamType === "chat" ? "Chat" : r.teamType,
-    total_sales: r.totalSales,
-    dials: r.dials,
-    bookings: r.bookings,
-    conversion_rate_pct: r.convCount > 0 ? r.convSum / r.convCount : 0,
-    deposit_pct: r.depCount > 0 ? r.depSum / r.depCount : 0,
-    missed_pct: r.missedCount > 0 ? r.missedSum / r.missedCount : 0,
-    total_tasks: 0,
-    avg_tasks_per_day: 0,
-  }));
+  const realTableData: AggregatedRep[] = Object.values(repMap).map((r) => {
+    const bookingTarget = Math.max(Math.round(r.leadsAssigned * BOOKING_CONVERSION_TARGET), 1);
+    return {
+      name: `Rep ${r.staffId}`,
+      brand: brandIdToSlug[r.brandId] ?? `brand_${r.brandId}`,
+      team_type: r.teamType === "sdr" ? "SDR" : r.teamType === "chat" ? "Chat" : r.teamType,
+      total_sales: r.totalSales,
+      dials: r.dials,
+      bookings: r.bookings,
+      leads_assigned: r.leadsAssigned,
+      booking_target: bookingTarget,
+      conversion_rate_pct: r.convCount > 0 ? r.convSum / r.convCount : 0,
+      deposit_pct: r.depCount > 0 ? r.depSum / r.depCount : 0,
+      missed_pct: r.missedCount > 0 ? r.missedSum / r.missedCount : 0,
+      total_tasks: 0,
+      avg_tasks_per_day: 0,
+    };
+  });
 
   const hasRealData = realTableData.length > 0;
   const tableData = hasRealData
@@ -238,6 +250,20 @@ export function EmployeeTable({
       label: "Bookings",
       align: "right" as const,
       sortable: true,
+      render: (v: unknown, row: Record<string, unknown>) => {
+        const bookings = Number(v) || 0;
+        const target = Number(row.booking_target) || 0;
+        const hitTarget = bookings >= target;
+        const nearTarget = bookings >= target * 0.8;
+        return (
+          <span className="inline-flex items-center gap-1.5">
+            <span className={`font-bold ${hitTarget ? "text-emerald-700" : nearTarget ? "text-amber-600" : "text-red-600"}`}>
+              {bookings}
+            </span>
+            <span className="text-[10px] text-muted-foreground">/ {target}</span>
+          </span>
+        );
+      },
     },
     {
       key: "conversion_rate_pct",

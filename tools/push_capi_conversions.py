@@ -12,7 +12,7 @@ Purpose:
 
     Two events are tracked:
     - ConsultationBooked: when a deal reaches consultation-won stage
-    - AppointmentMade: when a deal reaches booking-closed-won stage
+    - Schedule: when a deal reaches booking-closed-won stage (standard Meta event)
 
 Inputs:
     --brand         Specific brand_id to process (e.g. carisma_aesthetics)

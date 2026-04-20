@@ -1,0 +1,32 @@
+// on_connected_not_interested
+// Blueprint transition: Connected - Not Interested
+// Updates Lead to Lost Lead / Nurture, marks task Completed.
+
+task = zoho.crm.getRecordById("Tasks", taskId.toLong());
+if(task == null)
+{
+	return {"status":"error","message":"Task not found"};
+}
+
+// Update task
+taskUpdate = Map();
+taskUpdate.put("Task_Outcome", "Connected - Not Interested");
+taskUpdate.put("Status", "Completed");
+taskUpdate.put("Closed_Time", zoho.currenttime);
+zoho.crm.updateRecord("Tasks", taskId.toLong(), taskUpdate);
+
+// Update parent Lead
+whoId = ifnull(task.get("Who_Id"), null);
+if(whoId != null)
+{
+	leadId = whoId.get("id");
+	if(leadId != null)
+	{
+		leadUpdate = Map();
+		leadUpdate.put("Lead_Status", "Lost Lead");
+		leadUpdate.put("Lead_Temperature", "Nurture");
+		zoho.crm.updateRecord("Leads", leadId.toLong(), leadUpdate);
+	}
+}
+
+return Map();

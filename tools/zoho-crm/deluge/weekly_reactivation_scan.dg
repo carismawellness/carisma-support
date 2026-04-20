@@ -1,0 +1,86 @@
+// weekly_reactivation_scan
+// Scheduled function — runs weekly.
+// Queries Leads with "Contact in Future" status and creates Reactivation tasks.
+
+now = zoho.currenttime;
+cutoff90 = now.subDay(90);
+cutoff180 = now.subDay(180);
+
+// 90-day reactivation leads: last activity between 90 and 180 days ago
+leads90 = zoho.crm.searchRecords("Leads", "(Lead_Status:equals:Contact in Future)and(Last_Activity_Time:less_than:" + cutoff90.toString("yyyy-MM-dd") + ")and(Last_Activity_Time:greater_than:" + cutoff180.toString("yyyy-MM-dd") + ")");
+
+for each lead in leads90
+{
+	leadId = lead.get("id");
+	firstName = ifnull(lead.get("First_Name"), "");
+	lastName = ifnull(lead.get("Last_Name"), "");
+
+	// DUPLICATE GUARD
+	dupeSearch = zoho.crm.searchRecords("Tasks", "(Who_Id:equals:" + leadId + ")and(Status:not_equal:Completed)and(Status:not_equal:Deferred)");
+	if(dupeSearch.size() > 0)
+	{
+		continue;
+	}
+
+	phone = ifnull(lead.get("Phone"), "");
+	if(phone == "")
+	{
+		phone = ifnull(lead.get("Mobile"), "");
+	}
+
+	newTask = Map();
+	newTask.put("Subject", "Reactivation - " + firstName + " " + lastName);
+	newTask.put("Task_Type", "Reactivation");
+	newTask.put("Due_Date", zoho.currentdate);
+	newTask.put("Status", "Not Started");
+	newTask.put("Priority_Score", 25);
+	newTask.put("Who_Id", leadId);
+	newTask.put("Contact_First_Name", firstName);
+	newTask.put("Contact_Last_Name", lastName);
+	newTask.put("Contact_Phone", phone);
+	newTask.put("Interested_Treatment", ifnull(lead.get("What_are_you_mainly_looking_to_treat"), ""));
+	newTask.put("Lead_Temperature", ifnull(lead.get("Lead_Temperature"), ""));
+	newTask.put("Lead_Source_Mirror", ifnull(lead.get("Lead_Source"), ""));
+	newTask.put("Brand", ifnull(lead.get("Brand"), ""));
+
+	zoho.crm.createRecord("Tasks", newTask);
+}
+
+// 180-day reactivation leads: last activity older than 180 days
+leads180 = zoho.crm.searchRecords("Leads", "(Lead_Status:equals:Contact in Future)and(Last_Activity_Time:less_than:" + cutoff180.toString("yyyy-MM-dd") + ")");
+
+for each lead in leads180
+{
+	leadId = lead.get("id");
+	firstName = ifnull(lead.get("First_Name"), "");
+	lastName = ifnull(lead.get("Last_Name"), "");
+
+	dupeSearch = zoho.crm.searchRecords("Tasks", "(Who_Id:equals:" + leadId + ")and(Status:not_equal:Completed)and(Status:not_equal:Deferred)");
+	if(dupeSearch.size() > 0)
+	{
+		continue;
+	}
+
+	phone = ifnull(lead.get("Phone"), "");
+	if(phone == "")
+	{
+		phone = ifnull(lead.get("Mobile"), "");
+	}
+
+	newTask = Map();
+	newTask.put("Subject", "Reactivation - " + firstName + " " + lastName);
+	newTask.put("Task_Type", "Reactivation");
+	newTask.put("Due_Date", zoho.currentdate);
+	newTask.put("Status", "Not Started");
+	newTask.put("Priority_Score", 15);
+	newTask.put("Who_Id", leadId);
+	newTask.put("Contact_First_Name", firstName);
+	newTask.put("Contact_Last_Name", lastName);
+	newTask.put("Contact_Phone", phone);
+	newTask.put("Interested_Treatment", ifnull(lead.get("What_are_you_mainly_looking_to_treat"), ""));
+	newTask.put("Lead_Temperature", ifnull(lead.get("Lead_Temperature"), ""));
+	newTask.put("Lead_Source_Mirror", ifnull(lead.get("Lead_Source"), ""));
+	newTask.put("Brand", ifnull(lead.get("Brand"), ""));
+
+	zoho.crm.createRecord("Tasks", newTask);
+}

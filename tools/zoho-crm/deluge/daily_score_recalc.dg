@@ -1,0 +1,117 @@
+// daily_score_recalc
+// Scheduled function — runs daily.
+// Recalculates Priority_Score for all open tasks.
+
+page = 1;
+perPage = 200;
+hasMore = true;
+
+while(hasMore)
+{
+	tasks = zoho.crm.searchRecords("Tasks", "(Status:not_equal:Completed)and(Status:not_equal:Deferred)", page, perPage);
+	if(tasks.size() == 0)
+	{
+		hasMore = false;
+		break;
+	}
+
+	updateList = List();
+	for each t in tasks
+	{
+		tid = t.get("id");
+		taskType = ifnull(t.get("Task_Type"), "");
+		dueDate = ifnull(t.get("Due_Date"), "");
+		temp = ifnull(t.get("Lead_Temperature"), "");
+
+		// Base score
+		baseScore = 0;
+		if(taskType == "First Contact")
+		{
+			baseScore = 100;
+		}
+		else if(taskType == "Scheduled Callback")
+		{
+			baseScore = 95;
+		}
+		else if(taskType == "Post-Interest Follow-up")
+		{
+			baseScore = 70;
+		}
+		else if(taskType == "Follow-up 1")
+		{
+			baseScore = 60;
+		}
+		else if(taskType == "Follow-up 2")
+		{
+			baseScore = 50;
+		}
+		else if(taskType == "Follow-up 3")
+		{
+			baseScore = 40;
+		}
+		else if(taskType == "Final Attempt")
+		{
+			baseScore = 30;
+		}
+		else if(taskType == "Reactivation")
+		{
+			baseScore = 20;
+		}
+
+		// Bonuses
+		bonus = 0;
+		now = zoho.currenttime;
+		if(dueDate != "")
+		{
+			due = dueDate.toDate();
+			if(due < now)
+			{
+				bonus = bonus + 15;
+			}
+			else if(due.toString("yyyy-MM-dd") == now.toString("yyyy-MM-dd"))
+			{
+				bonus = bonus + 3;
+			}
+		}
+		if(taskType == "Scheduled Callback")
+		{
+			cbdt = ifnull(t.get("Callback_Date_Time"), "");
+			if(cbdt != "")
+			{
+				if(cbdt.toTime() <= now)
+				{
+					bonus = bonus + 10;
+				}
+			}
+		}
+		if(temp == "Hot")
+		{
+			bonus = bonus + 5;
+		}
+		else if(temp == "Warm")
+		{
+			bonus = bonus + 2;
+		}
+
+		finalScore = baseScore + bonus;
+		rec = Map();
+		rec.put("id", tid);
+		rec.put("Priority_Score", finalScore);
+		updateList.add(rec);
+	}
+
+	// Bulk update this batch
+	if(updateList.size() > 0)
+	{
+		zoho.crm.bulkUpdate("Tasks", updateList);
+	}
+
+	if(tasks.size() < perPage)
+	{
+		hasMore = false;
+	}
+	else
+	{
+		page = page + 1;
+	}
+}

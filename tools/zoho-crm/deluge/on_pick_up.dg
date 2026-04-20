@@ -1,0 +1,15 @@
+// on_pick_up
+// Blueprint transition: "Pick Up" (Not Started -> In Progress)
+// Stamps First_Contacted_At with current datetime.
+
+task = zoho.crm.getRecordById("Tasks", taskId.toLong());
+if(task != null)
+{
+	updateMap = Map();
+	updateMap.put("First_Contacted_At", zoho.currenttime);
+	zoho.crm.updateRecord("Tasks", taskId.toLong(), updateMap);
+}
+
+// Return map for blueprint
+returnMap = Map();
+return returnMap;

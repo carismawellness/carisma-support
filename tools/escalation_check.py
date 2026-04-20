@@ -48,7 +48,7 @@ TIERS = [
     (120, 4, "Tier 4"),
     (60, 3, "Tier 3"),
     (30, 2, "Tier 2"),
-    # Tier 1 handled by Zoho email — not in this script
+    (15, 1, "Tier 1"),
 ]
 
 TIER_RANK = {"None": 0, "Tier 1": 1, "Tier 2": 2, "Tier 3": 3, "Tier 4": 4}
@@ -200,7 +200,16 @@ def format_message(tier: int, brand: str, lead: dict, minutes: float) -> str:
     campaign = lead.get("Ad_Campaign", "N/A")
     rep = lead.get("Owner", {}).get("name", "Unassigned") if isinstance(lead.get("Owner"), dict) else "Unassigned"
 
-    if tier == 2:
+    if tier == 1:
+        return (
+            f"📞 SPEED TO LEAD — {brand.upper()}\n"
+            f"Lead: {name} ({phone})\n"
+            f"Campaign: {campaign}\n"
+            f"Waiting: {int(minutes)} min — no contact yet\n"
+            f"Rep: {rep}\n"
+            f"Please follow up."
+        )
+    elif tier == 2:
         return (
             f"⏰ SPEED TO LEAD — {brand.upper()}\n"
             f"Lead: {name} ({phone})\n"
@@ -433,8 +442,8 @@ def check_brand(brand: str, client: ZohoClient, now: datetime) -> int:
                 target_tier = tier_num
                 break
 
-        if target_tier < 2:
-            # Below Tier 2 threshold or only Tier 1 (handled by Zoho email)
+        if target_tier < 1:
+            # Below Tier 1 threshold
             continue
 
         # Check current escalation level

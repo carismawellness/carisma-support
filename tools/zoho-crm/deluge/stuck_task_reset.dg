@@ -1,0 +1,27 @@
+// stuck_task_reset
+// Scheduled function — runs every 2 hours (or as configured).
+// Resets tasks stuck in "In Progress" for more than 2 hours back to "Not Started".
+
+cutoff = zoho.currenttime.subHour(2);
+cutoffStr = cutoff.toString("yyyy-MM-dd'T'HH:mm:ssZ");
+
+stuckTasks = zoho.crm.searchRecords("Tasks", "(Status:equals:In Progress)and(Modified_Time:less_than:" + cutoffStr + ")");
+
+if(stuckTasks.size() == 0)
+{
+	return;
+}
+
+updateList = List();
+for each t in stuckTasks
+{
+	rec = Map();
+	rec.put("id", t.get("id"));
+	rec.put("Status", "Not Started");
+	updateList.add(rec);
+}
+
+if(updateList.size() > 0)
+{
+	zoho.crm.bulkUpdate("Tasks", updateList);
+}

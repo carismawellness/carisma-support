@@ -1,0 +1,97 @@
+// calculate_priority_score
+// Input: taskId (string)
+// Reads task, calculates Priority_Score from Task_Type + bonuses, updates field.
+
+task = zoho.crm.getRecordById("Tasks", taskId.toLong());
+if(task == null)
+{
+	return;
+}
+
+taskType = ifnull(task.get("Task_Type"), "");
+dueDate = ifnull(task.get("Due_Date"), "");
+temp = ifnull(task.get("Lead_Temperature"), "");
+
+// Base score by Task_Type
+baseScore = 0;
+if(taskType == "First Contact")
+{
+	baseScore = 100;
+}
+else if(taskType == "Scheduled Callback")
+{
+	baseScore = 95;
+}
+else if(taskType == "Post-Interest Follow-up")
+{
+	baseScore = 70;
+}
+else if(taskType == "Follow-up 1")
+{
+	baseScore = 60;
+}
+else if(taskType == "Follow-up 2")
+{
+	baseScore = 50;
+}
+else if(taskType == "Follow-up 3")
+{
+	baseScore = 40;
+}
+else if(taskType == "Final Attempt")
+{
+	baseScore = 30;
+}
+else if(taskType == "Reactivation")
+{
+	baseScore = 20;
+}
+
+// Bonus modifiers
+bonus = 0;
+now = zoho.currenttime;
+
+// Overdue bonus
+if(dueDate != "")
+{
+	due = dueDate.toDate();
+	if(due < now)
+	{
+		bonus = bonus + 15;
+	}
+	else if(due.toString("yyyy-MM-dd") == now.toString("yyyy-MM-dd"))
+	{
+		bonus = bonus + 3;
+	}
+}
+
+// Callback time passed bonus
+if(taskType == "Scheduled Callback")
+{
+	cbdt = ifnull(task.get("Callback_Date_Time"), "");
+	if(cbdt != "")
+	{
+		cbTime = cbdt.toTime();
+		if(cbTime <= now)
+		{
+			bonus = bonus + 10;
+		}
+	}
+}
+
+// Temperature bonus
+if(temp == "Hot")
+{
+	bonus = bonus + 5;
+}
+else if(temp == "Warm")
+{
+	bonus = bonus + 2;
+}
+
+finalScore = baseScore + bonus;
+
+// Update the task
+updateMap = Map();
+updateMap.put("Priority_Score", finalScore);
+zoho.crm.updateRecord("Tasks", taskId.toLong(), updateMap);
