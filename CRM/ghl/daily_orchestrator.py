@@ -13,9 +13,8 @@ Usage:
 
 import argparse
 import logging
-import os
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -34,7 +33,6 @@ from .config import (
     CUSTOM_FIELD_FOLLOWUP_COUNT,
     DORMANT_THRESHOLD_DAYS,
     MAX_FOLLOWUPS,
-    TERMINAL_STAGES,
 )
 from .task_engine import (
     create_next_task,
@@ -82,20 +80,20 @@ def _days_since_str(dt_str: Optional[str]) -> Optional[int]:
 
 def force_close_stale_leads(client: GHLClient, pipeline_stage_map: dict, dry_run: bool) -> int:
     """
-    Move contacts that are in 'New Lead' with followup_count >= MAX_FOLLOWUPS
-    to 'Consultation Lost'.
+    Move contacts in '🌱 New Leads' stage with followup_count >= MAX_FOLLOWUPS
+    to '❌ Booking Lost'.
     """
     log.info("Checking for stale New Leads (followup_count >= %d)...", MAX_FOLLOWUPS)
     closed = 0
 
-    # Find the "new lead" stage — handles both English and Spanish names
+    # Find the "🌱 New Leads" stage (matches on "lead" in stage name)
     new_lead_stage_id = next(
-        (v for k, v in pipeline_stage_map.items() if "lead" in k.lower() and "nuevo" in k.lower() or k.lower() == "new lead"),
+        (v for k, v in pipeline_stage_map.items() if k != "_pipeline_id" and "lead" in k.lower()),
         None
     )
-    # Find any lost/closed terminal stage
+    # Find the "❌ Booking Lost" terminal stage (matches on "lost" in stage name)
     lost_stage_id = next(
-        (v for k, v in pipeline_stage_map.items() if "lost" in k.lower() or "perdid" in k.lower()),
+        (v for k, v in pipeline_stage_map.items() if k != "_pipeline_id" and "lost" in k.lower()),
         None
     )
     pipeline_id = pipeline_stage_map.get("_pipeline_id")
@@ -154,6 +152,13 @@ def fill_missing_tasks(
 ) -> tuple[int, int, int]:
     """
     Find active opportunities with no open tasks and create the correct next task.
+
+    Stage → task type mapping (via get_task_config):
+      🌱 New Leads   → First Contact (count=0) or Follow-up N
+      📞 Contacted   → Follow-up N
+      🚫 No Show     → Reschedule Call (score 95)
+      🌿 Nurturing   → Nurturing Re-engagement (score 20)
+
     Returns (created, skipped, errors).
     """
     log.info("Finding active opportunities with no open tasks...")
@@ -214,8 +219,7 @@ def fill_missing_tasks(
                 else:
                     errors += 1
 
-            meta = resp.get("meta", {})
-            if not meta.get("nextPageUrl") and not meta.get("startAfterRowNumber"):
+            if len(opps) < 100:
                 break
             last_id = opps[-1].get("id") if opps else None
             if not last_id:
@@ -233,8 +237,6 @@ def run_reactivation(client: GHLClient, dry_run: bool) -> tuple[int, int, int]:
     Returns (found, created, skipped).
     """
     log.info("Searching for dormant contacts (no activity > %d days)...", DORMANT_THRESHOLD_DAYS)
-    cutoff_date = (datetime.now(timezone.utc) - timedelta(days=DORMANT_THRESHOLD_DAYS)).strftime("%Y-%m-%d")
-
     found = created = skipped = 0
     last_id: Optional[str] = None
 
@@ -325,7 +327,7 @@ def run(dry_run: bool = False, skip_reactivation: bool = False) -> None:
     print("=" * 60)
 
     client = GHLClient()
-    pipeline_stage_map = build_pipeline_stage_map(client, pipeline_name="setter")
+    pipeline_stage_map = build_pipeline_stage_map(client, pipeline_name="Call")
 
     if not pipeline_stage_map:
         log.error("Cannot proceed without pipeline stage map.")

@@ -144,3 +144,51 @@ class GHLClient:
     def get_pipelines(self) -> list[dict]:
         data = self.get("/opportunities/pipelines", params={"locationId": self.location_id})
         return data.get("pipelines", [])
+
+    def create_opportunity(
+        self,
+        contact_id: str,
+        pipeline_id: str,
+        stage_id: str,
+        name: str,
+        monetary_value: int = 0,
+        assigned_to: str = "",
+    ) -> dict:
+        body: dict = {
+            "pipelineId":      pipeline_id,
+            "pipelineStageId": stage_id,
+            "contactId":       contact_id,
+            "locationId":      self.location_id,
+            "name":            name,
+            "status":          "open",
+        }
+        if monetary_value:
+            body["monetaryValue"] = monetary_value
+        if assigned_to:
+            body["assignedTo"] = assigned_to
+        return self.post("/opportunities/", body)
+
+    def patch_opportunity_value(self, opp_id: str, monetary_value: int) -> dict:
+        """Set the monetary value on an existing opportunity."""
+        return self.put(f"/opportunities/{opp_id}", {"monetaryValue": monetary_value})
+
+    def get_contact_opportunities(self, contact_id: str) -> list[dict]:
+        """Return all opportunities linked to a contact (most recent first)."""
+        data = self.get(f"/contacts/{contact_id}/opportunities")
+        return data.get("opportunities", [])
+
+    # ── Users / Assignment ────────────────────────────────────────────────────
+
+    def count_open_tasks_for_user(self, user_id: str) -> int:
+        """Return the number of open (pending/in-progress) tasks assigned to a user."""
+        try:
+            data = self.get("/tasks/search", params={
+                "locationId": self.location_id,
+                "assignedTo": user_id,
+                "status": "pending",
+                "limit": 100,
+            })
+            tasks = data.get("tasks", [])
+            return len(tasks)
+        except Exception:
+            return 0

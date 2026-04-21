@@ -5,6 +5,7 @@ This module is the single source of truth for:
   - What task to create given a pipeline stage + followup count
   - What task to create given a completed task outcome
   - Whether a contact already has an open task
+  - New-lead supersede (create_first_contact_task)
 """
 
 import logging
@@ -12,8 +13,10 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from .client import GHLClient
+from .roster import pick_assignee
 from .config import (
     ACTIVE_STAGES,
+    CUSTOM_FIELD_FIRST_CONTACT_DATE,
     CUSTOM_FIELD_FOLLOWUP_COUNT,
     CUSTOM_FIELD_PRIORITY_SCORE,
     CUSTOM_FIELD_TASK_OUTCOME,
@@ -21,6 +24,9 @@ from .config import (
     MAX_FOLLOWUPS,
     OPEN_TASK_STATUSES,
     PRIORITY_SCORES,
+    STAGE_ID_BOOKING_LOST,
+    STAGE_ID_BOOKING_WON,
+    STAGE_ID_NURTURING,
     STAGE_TASK_MAP,
     TASK_SUBJECTS,
     TERMINAL_STAGES,
@@ -44,6 +50,31 @@ def _subject(task_type: str, contact_name: str) -> str:
     return template.format(name=contact_name)
 
 
+# ── Follow-up sequence config ─────────────────────────────────────────────────
+# Maps followup_count (before incrementing) → (task_type, due_days_out)
+_FOLLOWUP_SEQUENCE = [
+    (0, "Follow-up 1", 1),
+    (1, "Follow-up 2", 2),
+    (2, "Follow-up 3", 3),
+    (3, "Follow-up 4", 7),
+]
+
+
+def _followup_config(followup_count: int) -> Optional[dict]:
+    """
+    Return {task_type, priority_score, due_date} for the next follow-up step,
+    or None if followup_count >= MAX_FOLLOWUPS (should be treated as Lost).
+    """
+    for threshold, task_type, days in _FOLLOWUP_SEQUENCE:
+        if followup_count == threshold:
+            return {
+                "task_type":      task_type,
+                "priority_score": PRIORITY_SCORES[task_type],
+                "due_date":       _days_out(days),
+            }
+    return None  # followup_count >= MAX_FOLLOWUPS
+
+
 # ── Stage → task config ───────────────────────────────────────────────────────
 
 def get_task_config(stage: str, followup_count: int) -> Optional[dict]:
@@ -57,57 +88,204 @@ def get_task_config(stage: str, followup_count: int) -> Optional[dict]:
     logical = STAGE_TASK_MAP.get(stage)
 
     if logical == "New Lead":
-        fn = min(followup_count, MAX_FOLLOWUPS)
-        rules = [
-            (0, "First Contact",  _today()),
-            (1, "Follow-up 1",    _days_out(1)),
-            (2, "Follow-up 2",    _days_out(1)),
-            (3, "Follow-up 3",    _days_out(4)),
-            (4, "Final Attempt",  _today()),
-        ]
-        for threshold, task_type, due in rules:
-            if fn <= threshold:
-                return {"task_type": task_type, "priority_score": PRIORITY_SCORES[task_type], "due_date": due}
-        task_type = "Final Attempt"
-        return {"task_type": task_type, "priority_score": PRIORITY_SCORES[task_type], "due_date": _today()}
+        if followup_count == 0:
+            task_type = "First Contact"
+            return {
+                "task_type":      task_type,
+                "priority_score": PRIORITY_SCORES[task_type],
+                "due_date":       _today(),
+            }
+        return _followup_config(followup_count)
 
     if logical == "Contacted":
-        task_type = "Post-Contact Follow-up"
-        return {"task_type": task_type, "priority_score": PRIORITY_SCORES[task_type], "due_date": _days_out(1)}
+        # Contacted stage: use follow-up sequence based on followup_count
+        if followup_count == 0:
+            task_type = "Follow-up 1"
+            return {
+                "task_type":      task_type,
+                "priority_score": PRIORITY_SCORES[task_type],
+                "due_date":       _days_out(1),
+            }
+        return _followup_config(followup_count)
 
     if logical == "No Show":
         task_type = "Reschedule Call"
-        return {"task_type": task_type, "priority_score": PRIORITY_SCORES[task_type], "due_date": _today()}
+        return {
+            "task_type":      task_type,
+            "priority_score": PRIORITY_SCORES[task_type],
+            "due_date":       _today(),
+        }
+
+    if logical == "Nurturing":
+        task_type = "Nurturing Re-engagement"
+        return {
+            "task_type":      task_type,
+            "priority_score": PRIORITY_SCORES[task_type],
+            "due_date":       _today(),
+        }
 
     return None
 
 
 # ── Outcome → next task ───────────────────────────────────────────────────────
 
-# Maps (outcome, current_task_type) → next_task_type.
-# Use "*" as a wildcard for current_task_type.
-_OUTCOME_CHAIN: dict[tuple[str, str], Optional[str]] = {
-    ("No Answer", "First Contact"):          "Follow-up 1",
-    ("No Answer", "Follow-up 1"):            "Follow-up 2",
-    ("No Answer", "Follow-up 2"):            "Follow-up 3",
-    ("No Answer", "Follow-up 3"):            "Final Attempt",
-    ("No Answer", "Final Attempt"):          None,          # mark lost
-    ("Connected - Call Back",     "*"):      "Scheduled Callback",
-    ("Connected - Interested",    "*"):      "Post-Contact Follow-up",
-    ("Connected - Reschedule",    "*"):      "Reschedule Call",
-    ("Connected - Booked",        "*"):      None,          # won
-    ("Connected - Not Interested","*"):      None,          # lost
-}
+def handle_task_outcome(
+    client: GHLClient,
+    outcome: str,
+    current_task_type: str,
+    contact_id: str,
+    contact_name: str,
+    followup_count: int,
+    assignee_id: Optional[str] = None,
+    opp_id: Optional[str] = None,
+    callback_date: Optional[str] = None,
+    dry_run: bool = False,
+) -> Optional[str]:
+    """
+    Given the outcome of a completed task, take the correct action:
+      - "Follow Up"    → chain next follow-up task (based on followup_count)
+      - "Booking"      → move opp to Booking Won / won
+      - "Booking Lost" → move opp to Booking Lost / lost
+      - "Lost"         → move opp to Booking Lost / lost (used when followup_count >= 4)
+      - "Nurture"      → move opp to Nurturing stage (GHL workflow handles wait)
 
+    Returns the new task ID if a task was created, else None.
+    """
+    log.info(
+        "Outcome='%s' (task_type='%s') for contact=%s (followup_count=%d)",
+        outcome, current_task_type, contact_id, followup_count
+    )
 
-def get_next_task_type(outcome: str, current_task_type: str) -> Optional[str]:
-    """Return the next task type for a given outcome+current_task_type, or None."""
-    key = (outcome, current_task_type)
-    if key in _OUTCOME_CHAIN:
-        return _OUTCOME_CHAIN[key]
-    wildcard = (outcome, "*")
-    if wildcard in _OUTCOME_CHAIN:
-        return _OUTCOME_CHAIN[wildcard]
+    # ── Record first_contact_date on the very first call attempt ─────────────
+    if current_task_type == "First Contact" and not dry_run:
+        today = _today()
+        try:
+            client.update_contact(contact_id, {
+                "customFields": [
+                    {"key": CUSTOM_FIELD_FIRST_CONTACT_DATE, "field_value": today},
+                ]
+            })
+            log.info("  Set first_contact_date=%s for contact %s", today, contact_id)
+        except Exception as exc:
+            log.error("  Failed to set first_contact_date for contact %s: %s", contact_id, exc)
+
+    # ── "Follow Up" ────────────────────────────────────────────────────────────
+    if outcome == "Follow Up":
+        if followup_count >= MAX_FOLLOWUPS:
+            # Treat same as Lost
+            log.info(
+                "Follow Up with followup_count=%d >= %d — treating as Lost for contact %s",
+                followup_count, MAX_FOLLOWUPS, contact_id
+            )
+            if not dry_run and opp_id:
+                try:
+                    client.update_opportunity(opp_id, {
+                        "pipelineStageId": STAGE_ID_BOOKING_LOST,
+                        "status": "lost",
+                    })
+                except Exception as exc:
+                    log.error("Failed to move opp %s to Booking Lost: %s", opp_id, exc)
+            return None
+
+        cfg = _followup_config(followup_count)
+        if not cfg:
+            log.warning("No follow-up config for followup_count=%d", followup_count)
+            return None
+
+        new_followup_count = followup_count + 1
+        log.info(
+            "Follow Up %d → %s (due %s, score %d)",
+            followup_count + 1, cfg["task_type"], cfg["due_date"], cfg["priority_score"]
+        )
+
+        if not dry_run:
+            # Increment followup_count on the contact
+            try:
+                client.update_contact(contact_id, {
+                    "customFields": [
+                        {"key": CUSTOM_FIELD_FOLLOWUP_COUNT, "field_value": str(new_followup_count)},
+                    ]
+                })
+            except Exception as exc:
+                log.error("Failed to update followup_count for contact %s: %s", contact_id, exc)
+
+        return create_next_task(
+            client,
+            contact_id=contact_id,
+            contact_name=contact_name,
+            task_type=cfg["task_type"],
+            due_date=cfg["due_date"],
+            assignee_id=assignee_id,
+            opp_id=opp_id,
+            dry_run=dry_run,
+        )
+
+    # ── "Booking" ──────────────────────────────────────────────────────────────
+    if outcome == "Booking":
+        log.info("Booking won for contact %s — moving opp to Booking Won", contact_id)
+        if not dry_run and opp_id:
+            try:
+                client.update_opportunity(opp_id, {
+                    "pipelineStageId": STAGE_ID_BOOKING_WON,
+                    "status": "won",
+                })
+            except Exception as exc:
+                log.error("Failed to move opp %s to Booking Won: %s", opp_id, exc)
+        return None
+
+    # ── "Booking Lost" ─────────────────────────────────────────────────────────
+    if outcome == "Booking Lost":
+        log.info("Booking lost for contact %s — moving opp to Booking Lost", contact_id)
+        if not dry_run and opp_id:
+            try:
+                client.update_opportunity(opp_id, {
+                    "pipelineStageId": STAGE_ID_BOOKING_LOST,
+                    "status": "lost",
+                })
+            except Exception as exc:
+                log.error("Failed to move opp %s to Booking Lost: %s", opp_id, exc)
+        return None
+
+    # ── "Lost" ─────────────────────────────────────────────────────────────────
+    if outcome == "Lost":
+        log.info("Lost for contact %s — moving opp to Booking Lost", contact_id)
+        if not dry_run and opp_id:
+            try:
+                client.update_opportunity(opp_id, {
+                    "pipelineStageId": STAGE_ID_BOOKING_LOST,
+                    "status": "lost",
+                })
+            except Exception as exc:
+                log.error("Failed to move opp %s to Booking Lost: %s", opp_id, exc)
+        return None
+
+    # ── "Nurture" ──────────────────────────────────────────────────────────────
+    if outcome == "Nurture":
+        log.info("Nurture for contact %s — moving opp to Nurturing stage", contact_id)
+        if not dry_run and opp_id:
+            try:
+                client.update_opportunity(opp_id, {
+                    "pipelineStageId": STAGE_ID_NURTURING,
+                })
+            except Exception as exc:
+                log.error("Failed to move opp %s to Nurturing: %s", opp_id, exc)
+        return None
+
+    # ── Scheduled Callback (legacy / direct) ──────────────────────────────────
+    if outcome == "Scheduled Callback":
+        due_date = callback_date or _today()
+        return create_next_task(
+            client,
+            contact_id=contact_id,
+            contact_name=contact_name,
+            task_type="Scheduled Callback",
+            due_date=due_date,
+            assignee_id=assignee_id,
+            opp_id=opp_id,
+            dry_run=dry_run,
+        )
+
+    log.warning("Unrecognised outcome '%s' for contact %s — ignoring", outcome, contact_id)
     return None
 
 
@@ -144,8 +322,15 @@ def create_next_task(
     subject = _subject(task_type, contact_name)
     priority_score = PRIORITY_SCORES.get(task_type, 50)
 
+    # Smart assignment: if no assignee given, pick the least-loaded on-duty SDR
+    if not assignee_id and not dry_run:
+        try:
+            assignee_id = pick_assignee(client)
+        except Exception as exc:
+            log.warning("Smart assignment failed, leaving unassigned: %s", exc)
+
     if dry_run:
-        log.info("[DRY RUN] Would create: '%s' | score=%d | due=%s", subject, priority_score, due_date)
+        log.info("[DRY RUN] Would create: '%s' | score=%d | due=%s | assignee=%s", subject, priority_score, due_date, assignee_id or "unassigned")
         return "dry-run"
 
     payload: dict = {
@@ -176,41 +361,63 @@ def create_next_task(
         return None
 
 
-# ── Outcome handler (called by webhook) ──────────────────────────────────────
+# ── New Lead Supersede ────────────────────────────────────────────────────────
 
-def handle_task_outcome(
+def create_first_contact_task(
     client: GHLClient,
-    outcome: str,
-    current_task_type: str,
     contact_id: str,
     contact_name: str,
-    followup_count: int,
     assignee_id: Optional[str] = None,
     opp_id: Optional[str] = None,
-    callback_date: Optional[str] = None,
     dry_run: bool = False,
 ) -> Optional[str]:
     """
-    Given the outcome of a completed task, create the correct next task.
-    Returns the new task ID, or None if no task should be created.
+    New Lead Supersede — ensures a new lead always gets immediate priority.
+
+    1. Gets all open tasks for the contact and marks every incomplete task complete.
+    2. Resets followup_count to 0 on the contact.
+    3. Creates a new "First Contact" task due today with priority_score=100.
+    4. Returns the new task ID.
     """
-    next_type = get_next_task_type(outcome, current_task_type)
-    log.info(
-        "Outcome='%s' on '%s' → next task: %s",
-        outcome, current_task_type, next_type or "(none)"
-    )
+    log.info("create_first_contact_task: superseding tasks for contact %s (%s)", contact_id, contact_name)
 
-    if next_type is None:
-        if outcome in ("Connected - Not Interested", "No Answer") and current_task_type == "Final Attempt":
-            log.info("Final Attempt exhausted for contact %s — mark as lost", contact_id)
-        return None
+    if not dry_run:
+        # Step 1: Complete all open tasks
+        try:
+            tasks = client.get_tasks(contact_id)
+            for task in tasks:
+                if not task.get("completed", False):
+                    task_id = task.get("id")
+                    if task_id:
+                        try:
+                            client.complete_task(contact_id, task_id)
+                            log.info("  Completed existing task %s for contact %s", task_id, contact_id)
+                        except Exception as exc:
+                            log.error("  Failed to complete task %s: %s", task_id, exc)
+        except Exception as exc:
+            log.error("  Failed to fetch tasks for contact %s: %s", contact_id, exc)
 
-    # Use callback_date for Scheduled Callback if provided
-    due_date = callback_date if (next_type == "Scheduled Callback" and callback_date) else _today()
-    if next_type == "Post-Contact Follow-up":
-        due_date = _days_out(1)
+        # Step 2: Reset followup_count to 0
+        try:
+            client.update_contact(contact_id, {
+                "customFields": [
+                    {"key": CUSTOM_FIELD_FOLLOWUP_COUNT, "field_value": "0"},
+                ]
+            })
+            log.info("  Reset followup_count=0 for contact %s", contact_id)
+        except Exception as exc:
+            log.error("  Failed to reset followup_count for contact %s: %s", contact_id, exc)
+    else:
+        log.info("[DRY RUN] Would complete all open tasks and reset followup_count for contact %s", contact_id)
 
+    # Step 3: Create First Contact task due today
     return create_next_task(
-        client, contact_id, contact_name, next_type, due_date,
-        assignee_id=assignee_id, opp_id=opp_id, dry_run=dry_run,
+        client,
+        contact_id=contact_id,
+        contact_name=contact_name,
+        task_type="First Contact",
+        due_date=_today(),
+        assignee_id=assignee_id,
+        opp_id=opp_id,
+        dry_run=dry_run,
     )
