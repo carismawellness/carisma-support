@@ -113,6 +113,12 @@ class LeadOptinPayload(BaseModel):
     contact_id:     Optional[str] = None
     contactName:    Optional[str] = None
     contact_name:   Optional[str] = None
+    email:          Optional[str] = None          # {{contact.email}} in GHL workflow
+    phone:          Optional[str] = None          # {{contact.phone}} in GHL workflow
+    firstName:      Optional[str] = None
+    first_name:     Optional[str] = None
+    lastName:       Optional[str] = None
+    last_name:      Optional[str] = None
     opportunityId:  Optional[str] = None
     opportunity_id: Optional[str] = None
     assignedTo:     Optional[str] = None
@@ -125,6 +131,8 @@ class LeadOptinPayload(BaseModel):
     form_name:      Optional[str] = None
     # brand override — if omitted uses GHL_BRAND env var
     brand:          Optional[str] = None
+    # Klaviyo list override — if omitted uses KLAVIYO_LIST_ID env var
+    klaviyoListId:  Optional[str] = None
 
     class Config:
         extra = "allow"
@@ -313,6 +321,41 @@ async def lead_optin(
         opp_id=opp_id,
     )
 
+    # ── Klaviyo: subscribe lead to email list ─────────────────────────────────
+    klaviyo_ok = False
+    try:
+        from klaviyo.client import KlaviyoClient
+
+        # Resolve email — use payload field if GHL workflow sends it,
+        # otherwise fall back to a contact fetch (one extra API call).
+        email = payload.email
+        first_name = payload.firstName or payload.first_name or ""
+        last_name  = payload.lastName  or payload.last_name  or ""
+        phone      = payload.phone or ""
+
+        if not email and contact_id:
+            contact_data = client.get_contact(contact_id)
+            email      = contact_data.get("email", "")
+            first_name = first_name or contact_data.get("firstName", "")
+            last_name  = last_name  or contact_data.get("lastName", "")
+            phone      = phone      or contact_data.get("phone", "")
+
+        if email:
+            kv = KlaviyoClient()
+            klaviyo_ok = kv.subscribe_to_list(
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                phone=phone,
+                list_id=payload.klaviyoListId or None,
+                custom_properties={"ghl_brand": brand, "utm_content": utm_content, "form_name": form_name},
+            )
+            log.info("klaviyo sync for contact %s (%s): %s", contact_id, email, "ok" if klaviyo_ok else "failed")
+        else:
+            log.warning("klaviyo sync: no email for contact %s — skipped", contact_id)
+    except Exception as exc:
+        log.error("klaviyo sync error for contact %s: %s", contact_id, exc)
+
     return {
         "status":         "ok",
         "contact_id":     contact_id,
@@ -321,6 +364,7 @@ async def lead_optin(
         "brand":          brand,
         "monetary_value": monetary_value,
         "signal":         signal_text.strip(),
+        "klaviyo_synced": klaviyo_ok,
     }
 
 
