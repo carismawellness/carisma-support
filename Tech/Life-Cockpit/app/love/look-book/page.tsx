@@ -40,14 +40,14 @@ export default function LookBookPage() {
         <StatCard label="Underused (<2 in 90d)" value={underused} status="amber" />
       </div>
 
-      <div className="border-b border-border flex gap-1">
+      <div className="border-b border-border flex gap-1 overflow-x-auto -mx-1 px-1">
         {TABS.map((t) => (
           <button
             key={t}
             type="button"
             onClick={() => setTab(t)}
             className={cn(
-              "px-4 py-2 text-sm border-b-2 -mb-px transition-colors",
+              "px-4 py-2 text-sm border-b-2 -mb-px transition-colors min-h-[44px]",
               t === tab ? "border-pink-600 text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"
             )}
           >

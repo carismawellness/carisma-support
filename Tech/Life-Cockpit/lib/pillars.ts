@@ -21,6 +21,7 @@ import {
   BookOpen,
   Target,
   PenLine,
+  Apple,
 } from "lucide-react";
 
 export type ModuleId = string;
@@ -55,6 +56,7 @@ export const PILLARS: PillarDef[] = [
     bgClass: "bg-emerald-50",
     modules: [
       { id: "stack", slug: "stack", name: "Health Stack", blurb: "Supplements, protocols, regimens", icon: Beaker },
+      { id: "food-stack", slug: "food-stack", name: "Food Stack", blurb: "Daily food checklist — hit every box", icon: Apple },
       { id: "records", slug: "records", name: "Health Records", blurb: "Labs, imaging, screening calendar, meds", icon: HeartPulse },
       { id: "whoop", slug: "whoop", name: "WHOOP Live", blurb: "Recovery, sleep, strain, HRV", icon: Activity },
       { id: "body", slug: "body", name: "Body Composition", blurb: "DEXA, weight, BP, CGM, nutrition", icon: Scale },

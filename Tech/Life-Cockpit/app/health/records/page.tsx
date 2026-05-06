@@ -39,7 +39,7 @@ export default function HealthRecordsPage() {
             type="button"
             onClick={() => setTab(t)}
             className={cn(
-              "px-3 py-2 text-sm whitespace-nowrap border-b-2 -mb-px transition-colors",
+              "px-3 py-2 text-sm whitespace-nowrap border-b-2 -mb-px transition-colors min-h-[44px]",
               t === tab ? "border-emerald-600 text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"
             )}
           >
@@ -50,9 +50,9 @@ export default function HealthRecordsPage() {
 
       {tab === "Bloodwork" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <Card className="p-4 lg:col-span-2">
+          <Card className="p-4 lg:col-span-2 overflow-x-auto">
             <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-3">Bloodwork Vault — optimal vs reference</p>
-            <table className="w-full text-sm">
+            <table className="w-full text-sm whitespace-nowrap">
               <thead className="text-[11px] uppercase tracking-wide text-muted-foreground">
                 <tr className="border-b border-border">
                   <th className="text-left py-2">Marker</th>
@@ -90,8 +90,8 @@ export default function HealthRecordsPage() {
       )}
 
       {tab === "Imaging" && (
-        <Card className="p-4">
-          <table className="w-full text-sm">
+        <Card className="p-4 overflow-x-auto">
+          <table className="w-full text-sm whitespace-nowrap">
             <thead className="text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr className="border-b border-border">
                 <th className="text-left py-2">Date</th>
@@ -117,8 +117,8 @@ export default function HealthRecordsPage() {
       )}
 
       {tab === "Screenings" && (
-        <Card className="p-4">
-          <table className="w-full text-sm">
+        <Card className="p-4 overflow-x-auto">
+          <table className="w-full text-sm whitespace-nowrap">
             <thead className="text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr className="border-b border-border">
                 <th className="text-left py-2">Test</th>
@@ -153,8 +153,8 @@ export default function HealthRecordsPage() {
       )}
 
       {tab === "Vaccines" && (
-        <Card className="p-4">
-          <table className="w-full text-sm">
+        <Card className="p-4 overflow-x-auto">
+          <table className="w-full text-sm whitespace-nowrap">
             <thead className="text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr className="border-b border-border"><th className="text-left py-2">Vaccine</th><th className="text-left py-2">Last dose</th><th className="text-left py-2">Next due</th></tr>
             </thead>
@@ -183,8 +183,8 @@ export default function HealthRecordsPage() {
       )}
 
       {tab === "Providers" && (
-        <Card className="p-4">
-          <table className="w-full text-sm">
+        <Card className="p-4 overflow-x-auto">
+          <table className="w-full text-sm whitespace-nowrap">
             <thead className="text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr className="border-b border-border"><th className="text-left py-2">Name</th><th className="text-left py-2">Specialty</th><th className="text-left py-2">Clinic</th><th className="text-left py-2">Last visit</th></tr>
             </thead>

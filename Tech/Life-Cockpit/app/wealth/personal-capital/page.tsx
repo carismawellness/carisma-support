@@ -49,9 +49,9 @@ export default function PersonalCapitalPage() {
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card className="p-4">
+        <Card className="p-4 overflow-x-auto">
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-3">Asset breakdown</p>
-          <table className="w-full text-sm">
+          <table className="w-full text-sm whitespace-nowrap">
             <thead className="text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr className="border-b border-border">
                 <th className="text-left py-2">Category</th>

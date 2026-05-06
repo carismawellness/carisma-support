@@ -58,7 +58,7 @@ export default function BusinessPage() {
         src={src}
         title="CEO Cockpit"
         className="w-full border border-border rounded-md bg-white"
-        style={{ height: "calc(100vh - 320px)", minHeight: 600 }}
+        style={{ height: "clamp(420px, calc(100dvh - 280px), 1400px)" }}
       />
 
       <p className="text-[11px] text-muted-foreground">

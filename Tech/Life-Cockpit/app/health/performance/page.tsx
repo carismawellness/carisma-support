@@ -24,9 +24,9 @@ export default function PerformancePage() {
         <TrendLine data={s.vo2.trend} color="#10b981" optimalBand={{ low: 47, high: 55 }} unit=" ml/kg/min" height={200} />
       </Card>
 
-      <Card className="p-4">
+      <Card className="p-4 overflow-x-auto">
         <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-3">The 5 lifts</p>
-        <table className="w-full text-sm">
+        <table className="w-full text-sm whitespace-nowrap">
           <thead className="text-[11px] uppercase tracking-wide text-muted-foreground">
             <tr className="border-b border-border">
               <th className="text-left py-2">Lift</th>

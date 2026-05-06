@@ -25,11 +25,11 @@ export default function InnerCirclePage() {
         <StatCard label="Longest gap" value={longestGap} unit="days" status="amber" />
       </div>
 
-      <Card className="p-4">
+      <Card className="p-4 overflow-x-auto">
         <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-3">
           Sorted by days since last contact (descending)
         </p>
-        <table className="w-full text-sm">
+        <table className="w-full text-sm whitespace-nowrap">
           <thead className="text-[11px] uppercase tracking-wide text-muted-foreground">
             <tr className="border-b border-border">
               <th className="text-left py-2">Name</th>

@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { QueryProvider } from "@/lib/query-client";
-import { Sidebar } from "@/components/nav/sidebar";
+import { NavShell } from "@/components/nav/nav-shell";
 import { DummyBanner } from "@/components/dashboard/dummy-banner";
 import "./globals.css";
 
@@ -10,6 +10,13 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Life Cockpit",
   description: "Personal dashboard — Health · Wealth · Love",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
@@ -22,14 +29,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <QueryProvider>
           <DummyBanner />
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <main className="flex-1 min-w-0">
-              <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6">
-                {children}
-              </div>
-            </main>
-          </div>
+          <NavShell>{children}</NavShell>
         </QueryProvider>
       </body>
     </html>
