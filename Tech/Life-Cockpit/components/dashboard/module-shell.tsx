@@ -16,9 +16,15 @@ export function ModuleShell({
 }: {
   pillarId: PillarId;
   moduleSlug: string;
-  decision?: string;
+  /** Required: every module must surface ONE actionable decision. */
+  decision: string;
   children: React.ReactNode;
 }) {
+  if (process.env.NODE_ENV !== "production" && (!decision || decision.trim().length < 10)) {
+    console.warn(
+      `[ModuleShell] ${pillarId}/${moduleSlug}: \`decision\` is missing or too short. Every module must surface one actionable decision.`
+    );
+  }
   const pillar = getPillar(pillarId);
   const mod = pillar.modules.find((m) => m.slug === moduleSlug);
   if (!mod) {

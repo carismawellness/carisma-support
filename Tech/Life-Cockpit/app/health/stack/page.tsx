@@ -1,14 +1,9 @@
 import { ModuleShell } from "@/components/dashboard/module-shell";
 import { StatCard } from "@/components/dashboard/stat-card";
+import { StatusDot } from "@/components/dashboard/status-dot";
 import { Card } from "@/components/ui/card";
 import { stackSeed } from "@/lib/seed/health/stack";
 import { cn } from "@/lib/utils";
-
-const STATUS_DOT: Record<"green" | "amber" | "red", string> = {
-  green: "bg-emerald-500",
-  amber: "bg-amber-500",
-  red: "bg-red-500",
-};
 
 export default function HealthStackPage() {
   const s = stackSeed;
@@ -70,7 +65,7 @@ export default function HealthStackPage() {
             {s.protocols.map((p) => (
               <div key={p.name} className="flex items-center justify-between text-sm border-b border-border/50 pb-2 last:border-0">
                 <div className="flex items-center gap-2">
-                  <span className={cn("inline-block h-2 w-2 rounded-full", STATUS_DOT[p.status])} />
+                  <StatusDot status={p.status} />
                   <span className="font-medium">{p.name}</span>
                 </div>
                 <div className="text-right text-xs text-muted-foreground">

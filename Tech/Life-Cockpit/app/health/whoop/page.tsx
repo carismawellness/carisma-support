@@ -38,6 +38,7 @@ export default async function WhoopPage() {
         <Card className="p-4">
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-2">HRV (30 d)</p>
           <TrendLine data={hrvTrend} color="#10b981" height={200} unit=" ms" />
+          <p className="text-[11px] text-muted-foreground mt-1">Rising HRV indicates improved autonomic recovery. Personal baseline is the reference, not population.</p>
         </Card>
       </div>
 
@@ -49,9 +50,9 @@ export default async function WhoopPage() {
               <th className="text-left py-2">Date</th>
               <th className="text-right py-2">Recovery</th>
               <th className="text-right py-2">HRV</th>
-              <th className="text-right py-2">RHR</th>
+              <th className="hidden sm:table-cell text-right py-2">RHR</th>
               <th className="text-right py-2">Sleep</th>
-              <th className="text-right py-2">Deep</th>
+              <th className="hidden sm:table-cell text-right py-2">Deep</th>
               <th className="text-right py-2">Strain</th>
             </tr>
           </thead>
@@ -61,9 +62,9 @@ export default async function WhoopPage() {
                 <td className="py-2 text-muted-foreground">{d.date.slice(5)}</td>
                 <td className="text-right">{d.recovery}%</td>
                 <td className="text-right">{d.hrv}</td>
-                <td className="text-right">{d.rhr}</td>
+                <td className="hidden sm:table-cell text-right">{d.rhr}</td>
                 <td className="text-right">{d.sleepHours}h</td>
-                <td className="text-right">{d.deepSleepMin}m</td>
+                <td className="hidden sm:table-cell text-right">{d.deepSleepMin}m</td>
                 <td className="text-right">{d.strain}</td>
               </tr>
             ))}

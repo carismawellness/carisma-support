@@ -1,21 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
-type Status = "green" | "amber" | "red" | "neutral";
-
-const STATUS_BG: Record<Status, string> = {
-  green: "bg-emerald-50 border-emerald-200",
-  amber: "bg-amber-50 border-amber-200",
-  red: "bg-red-50 border-red-200",
-  neutral: "border-border",
-};
-
-const STATUS_DOT: Record<Status, string> = {
-  green: "bg-emerald-500",
-  amber: "bg-amber-500",
-  red: "bg-red-500",
-  neutral: "bg-muted-foreground",
-};
+import { STATUS_BG, type Status } from "@/lib/status";
+import { StatusDot } from "@/components/dashboard/status-dot";
 
 export function StatCard({
   label,
@@ -42,7 +28,7 @@ export function StatCard({
         <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
           {label}
         </p>
-        <span className={cn("inline-block h-2 w-2 rounded-full", STATUS_DOT[status])} />
+        <StatusDot status={status} />
       </div>
       <div className="mt-1 flex items-baseline gap-1">
         <span className={cn("font-bold text-foreground", big ? "text-4xl md:text-5xl" : "text-2xl md:text-3xl")}>

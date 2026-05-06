@@ -5,10 +5,9 @@ import { ModuleShell } from "@/components/dashboard/module-shell";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { Card } from "@/components/ui/card";
 import { TrendLine } from "@/components/dashboard/charts";
+import { StatusDot } from "@/components/dashboard/status-dot";
 import { recordsSeed, type LabMarker } from "@/lib/seed/health/records";
 import { cn } from "@/lib/utils";
-
-const STATUS_DOT = { green: "bg-emerald-500", amber: "bg-amber-500", red: "bg-red-500" };
 const TABS = ["Bloodwork", "Imaging", "Screenings", "Meds", "Vaccines", "Family Hx", "Providers"] as const;
 type Tab = (typeof TABS)[number];
 
@@ -69,7 +68,7 @@ export default function HealthRecordsPage() {
                     <td className="text-right">{m.value} <span className="text-xs text-muted-foreground">{m.unit}</span></td>
                     <td className="text-right text-xs text-emerald-700">{m.optimalLow}–{m.optimalHigh}</td>
                     <td className="text-right text-xs text-muted-foreground">{m.refLow}–{m.refHigh}</td>
-                    <td className="text-center"><span className={cn("inline-block h-2 w-2 rounded-full", STATUS_DOT[m.status])} /></td>
+                    <td className="text-center"><StatusDot status={m.status} /></td>
                   </tr>
                 ))}
               </tbody>
@@ -133,7 +132,7 @@ export default function HealthRecordsPage() {
                   <td className="py-2 font-medium">{x.name}</td>
                   <td className="text-muted-foreground">{x.lastDone || "—"}</td>
                   <td className="text-muted-foreground">{x.nextDue}</td>
-                  <td className="text-center"><span className={cn("inline-block h-2 w-2 rounded-full", STATUS_DOT[x.status])} /></td>
+                  <td className="text-center"><StatusDot status={x.status} /></td>
                 </tr>
               ))}
             </tbody>

@@ -12,10 +12,9 @@ export default function BodyCompositionPage() {
       moduleSlug="body"
       decision="Fiber 38g vs target 40g — add 1 cup berries to AM routine for 2 weeks"
     >
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard label="Weight" value={s.weight.current} unit="kg" delta={`target ${s.weight.target} kg`} status="green" />
         <StatCard label="BP" value={`${s.bp.systolic}/${s.bp.diastolic}`} status="green" delta="30d avg" />
-        <StatCard label="Body fat" value={s.dexa.bodyFatPct} unit="%" status="green" delta={`DEXA ${s.dexa.date}`} />
         <StatCard label="ALMI" value={s.dexa.almi} unit="kg/m²" status="green" delta="optimal >8.5" />
         <StatCard label="Avg glucose" value={s.cgm.avgGlucose} unit="mg/dL" status="green" delta={`TIR ${s.cgm.timeInRange}%`} />
       </div>
@@ -53,12 +52,13 @@ export default function BodyCompositionPage() {
       </Card>
 
       <Card className="p-4">
-        <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-2">Latest CGM ({s.cgm.window})</p>
-        <div className="grid grid-cols-4 gap-4 text-sm">
+        <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-2">CGM ({s.cgm.window}) · DEXA ({s.dexa.date})</p>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
           <div><p className="text-muted-foreground text-xs">Time in range</p><p className="text-xl font-bold">{s.cgm.timeInRange}%</p></div>
           <div><p className="text-muted-foreground text-xs">Avg glucose</p><p className="text-xl font-bold">{s.cgm.avgGlucose}<span className="text-xs text-muted-foreground"> mg/dL</span></p></div>
           <div><p className="text-muted-foreground text-xs">Fasting avg</p><p className="text-xl font-bold">{s.cgm.fastingAvg}</p></div>
           <div><p className="text-muted-foreground text-xs">Peak post-meal</p><p className="text-xl font-bold">{s.cgm.peakAfterMeal}</p></div>
+          <div><p className="text-muted-foreground text-xs">Body fat (DEXA)</p><p className="text-xl font-bold">{s.dexa.bodyFatPct}<span className="text-xs text-muted-foreground"> %</span></p></div>
         </div>
       </Card>
     </ModuleShell>

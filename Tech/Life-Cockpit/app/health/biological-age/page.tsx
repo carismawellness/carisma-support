@@ -1,20 +1,10 @@
 import { ModuleShell } from "@/components/dashboard/module-shell";
 import { Card } from "@/components/ui/card";
 import { TrendLine } from "@/components/dashboard/charts";
-import { biologicalAgeSeed, type AgeMetric } from "@/lib/seed/health/biological-age";
+import { StatusDot } from "@/components/dashboard/status-dot";
+import { STATUS_BG } from "@/lib/status";
+import { biologicalAgeSeed } from "@/lib/seed/health/biological-age";
 import { cn } from "@/lib/utils";
-
-const STATUS_BG: Record<AgeMetric["status"], string> = {
-  green: "bg-emerald-50 border-emerald-200",
-  amber: "bg-amber-50 border-amber-200",
-  red: "bg-red-50 border-red-200",
-};
-
-const STATUS_DOT: Record<AgeMetric["status"], string> = {
-  green: "bg-emerald-500",
-  amber: "bg-amber-500",
-  red: "bg-red-500",
-};
 
 export default function BiologicalAgePage() {
   const s = biologicalAgeSeed;
@@ -55,7 +45,7 @@ export default function BiologicalAgePage() {
             <Card key={m.key} className={cn("p-4 border", STATUS_BG[m.status])}>
               <div className="flex items-start justify-between mb-1">
                 <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">{m.label}</p>
-                <span className={cn("inline-block h-2 w-2 rounded-full", STATUS_DOT[m.status])} />
+                <StatusDot status={m.status} />
               </div>
               <div className="flex items-baseline gap-1">
                 <span className="text-2xl font-bold">{m.value}</span>

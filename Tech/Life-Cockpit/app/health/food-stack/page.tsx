@@ -111,10 +111,14 @@ export default function FoodStackPage() {
   const resetDay = () => setState({});
 
   const status = pct >= 90 ? "green" : pct >= 65 ? "amber" : "red";
-  const decision =
-    remaining === 0
-      ? "All boxes hit today — full plate, lock it in."
-      : `${remaining} item${remaining === 1 ? "" : "s"} left — pick one before the next meal.`;
+  const touchedCount = Object.keys(state).length;
+  const decision = !hydrated
+    ? "Loading today's checklist…"
+    : touchedCount === 0
+      ? "Fresh day — start with greens at breakfast and one fermented item."
+      : remaining === 0
+        ? "All boxes hit today — full plate, lock it in."
+        : `${remaining} item${remaining === 1 ? "" : "s"} left — pick one before the next meal.`;
 
   return (
     <ModuleShell pillarId="health" moduleSlug="food-stack" decision={decision}>
@@ -153,6 +157,9 @@ export default function FoodStackPage() {
             );
           })}
         </div>
+        {hydrated && last7.length > 0 && last7.every((d) => d.pct === 0) && (
+          <p className="text-[11px] text-muted-foreground mt-2">Your last 7 days will fill in as you go.</p>
+        )}
       </Card>
 
       {/* Checklist by category */}
