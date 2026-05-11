@@ -6,28 +6,42 @@ import { ModuleShell } from "@/components/dashboard/module-shell";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { Card } from "@/components/ui/card";
 import {
-  foodStackSeed,
-  foodStackCategories,
-  type FoodItem,
+  foodStackBlocks,
+  foodStackAllItems,
+  foodStackPrimaryKPIs,
+  foodStackSecondaryKPIs,
+  type KPITarget,
 } from "@/lib/seed/health/food-stack";
 import { cn } from "@/lib/utils";
 
-type CheckState = Record<string, { checked: boolean; numericValue?: number }>;
+interface DayState {
+  checks: Record<string, boolean>;
+  kpis: Record<string, number>;
+}
 
-const todayKey = () => new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD
+const todayKey = () => new Date().toLocaleDateString("en-CA");
 const storageKey = (date: string) => `food-stack:${date}`;
 
-function loadState(date: string): CheckState {
-  if (typeof window === "undefined") return {};
+function emptyDayState(): DayState {
+  return { checks: {}, kpis: {} };
+}
+
+function loadState(date: string): DayState {
+  if (typeof window === "undefined") return emptyDayState();
   try {
     const raw = window.localStorage.getItem(storageKey(date));
-    return raw ? (JSON.parse(raw) as CheckState) : {};
+    if (!raw) return emptyDayState();
+    const parsed = JSON.parse(raw);
+    return {
+      checks: parsed.checks ?? {},
+      kpis: parsed.kpis ?? {},
+    };
   } catch {
-    return {};
+    return emptyDayState();
   }
 }
 
-function saveState(date: string, state: CheckState) {
+function saveState(date: string, state: DayState) {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(storageKey(date), JSON.stringify(state));
@@ -36,26 +50,32 @@ function saveState(date: string, state: CheckState) {
   }
 }
 
-function isHit(item: FoodItem, entry?: CheckState[string]): boolean {
-  if (!entry) return false;
-  if (item.target) {
-    return (entry.numericValue ?? 0) >= item.target.value;
-  }
-  return !!entry.checked;
+function kpiHit(kpi: KPITarget, value: number): boolean {
+  if (kpi.inverse) return value <= kpi.target;
+  return value >= kpi.target;
 }
 
-/** Last 7 days completion (excluding today) — for the streak/heatmap header. */
+function isItemHit(state: DayState, itemId: string): boolean {
+  return !!state.checks[itemId];
+}
+
+function dayCompletionPct(state: DayState): number {
+  const itemTotal = foodStackAllItems.length;
+  const kpiTotal = foodStackPrimaryKPIs.length;
+  const itemsHit = foodStackAllItems.filter((i) => isItemHit(state, i.id)).length;
+  const kpisHit = foodStackPrimaryKPIs.filter((k) => kpiHit(k, state.kpis[k.id] ?? 0)).length;
+  const total = itemTotal + kpiTotal;
+  return total ? (itemsHit + kpisHit) / total : 0;
+}
+
 function loadLast7(): { date: string; pct: number }[] {
   if (typeof window === "undefined") return [];
   const out: { date: string; pct: number }[] = [];
-  const total = foodStackSeed.length;
   for (let i = 6; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
     const key = d.toLocaleDateString("en-CA");
-    const state = loadState(key);
-    const hits = foodStackSeed.filter((item) => isHit(item, state[item.id])).length;
-    out.push({ date: key, pct: total ? hits / total : 0 });
+    out.push({ date: key, pct: dayCompletionPct(loadState(key)) });
   }
   return out;
 }
@@ -63,7 +83,7 @@ function loadLast7(): { date: string; pct: number }[] {
 export default function FoodStackPage() {
   const [hydrated, setHydrated] = useState(false);
   const [date, setDate] = useState<string>(todayKey());
-  const [state, setState] = useState<CheckState>({});
+  const [state, setState] = useState<DayState>(emptyDayState());
   const [last7, setLast7] = useState<{ date: string; pct: number }[]>([]);
 
   useEffect(() => {
@@ -78,56 +98,109 @@ export default function FoodStackPage() {
     if (hydrated) saveState(date, state);
   }, [date, state, hydrated]);
 
-  const itemsByCat = useMemo(() => {
-    const map = new Map<string, FoodItem[]>();
-    for (const item of foodStackSeed) {
-      const arr = map.get(item.category) ?? [];
-      arr.push(item);
-      map.set(item.category, arr);
-    }
-    return map;
-  }, []);
+  const itemsHit = foodStackAllItems.filter((i) => isItemHit(state, i.id)).length;
+  const itemsTotal = foodStackAllItems.length;
+  const kpisHit = foodStackPrimaryKPIs.filter((k) => kpiHit(k, state.kpis[k.id] ?? 0)).length;
+  const totalHit = itemsHit + kpisHit;
+  const totalSlots = itemsTotal + foodStackPrimaryKPIs.length;
+  const pct = totalSlots ? Math.round((totalHit / totalSlots) * 100) : 0;
+  const remaining = totalSlots - totalHit;
 
-  const total = foodStackSeed.length;
-  const hits = foodStackSeed.filter((i) => isHit(i, state[i.id])).length;
-  const pct = total ? Math.round((hits / total) * 100) : 0;
-  const remaining = total - hits;
+  const last7Avg = useMemo(
+    () => Math.round((last7.reduce((s, d) => s + d.pct, 0) / Math.max(1, last7.length)) * 100),
+    [last7]
+  );
 
-  const toggle = (id: string) => {
+  const toggleItem = (id: string) => {
     setState((prev) => ({
       ...prev,
-      [id]: { ...(prev[id] ?? {}), checked: !(prev[id]?.checked ?? false) },
+      checks: { ...prev.checks, [id]: !prev.checks[id] },
     }));
   };
 
-  const setNumeric = (id: string, raw: string) => {
+  const setKpi = (id: string, raw: string) => {
     const value = raw === "" ? undefined : Number(raw);
-    setState((prev) => ({
-      ...prev,
-      [id]: { ...(prev[id] ?? {}), numericValue: value },
-    }));
+    setState((prev) => {
+      const next = { ...prev.kpis };
+      if (value === undefined) delete next[id];
+      else next[id] = value;
+      return { ...prev, kpis: next };
+    });
   };
 
-  const resetDay = () => setState({});
+  const resetDay = () => setState(emptyDayState());
 
-  const status = pct >= 90 ? "green" : pct >= 65 ? "amber" : "red";
-  const touchedCount = Object.keys(state).length;
+  const status: "green" | "amber" | "red" = pct >= 90 ? "green" : pct >= 65 ? "amber" : "red";
+  const touchedCount = Object.keys(state.checks).length + Object.keys(state.kpis).length;
   const decision = !hydrated
     ? "Loading today's checklist…"
     : touchedCount === 0
-      ? "Fresh day — start with greens at breakfast and one fermented item."
+      ? "Fresh day — start with the AM self-care block, then Superbowl + supplements at 12:00."
       : remaining === 0
-        ? "All boxes hit today — full plate, lock it in."
-        : `${remaining} item${remaining === 1 ? "" : "s"} left — pick one before the next meal.`;
+        ? "Perfect day hit. Lock it in."
+        : `${remaining} item${remaining === 1 ? "" : "s"} left — next: ${nextItemToHit(state)}.`;
 
   return (
     <ModuleShell pillarId="health" moduleSlug="food-stack" decision={decision}>
+      {/* Header stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard label="Today" value={`${hits}/${total}`} status={status} delta={`${pct}% complete`} big />
-        <StatCard label="Remaining" value={remaining} status={remaining === 0 ? "green" : "amber"} />
+        <StatCard label="Today" value={`${totalHit}/${totalSlots}`} status={status} delta={`${pct}% complete`} big />
+        <StatCard label="Items left" value={remaining} status={remaining === 0 ? "green" : "amber"} />
         <StatCard label="Date" value={date.slice(5)} caption={new Date(date).toLocaleDateString("en-GB", { weekday: "long" })} />
-        <StatCard label="7-day avg" value={`${Math.round((last7.reduce((s, d) => s + d.pct, 0) / Math.max(1, last7.length)) * 100)}%`} caption="Rolling completion" />
+        <StatCard label="7-day avg" value={`${last7Avg}%`} caption="Rolling completion" />
       </div>
+
+      {/* Primary KPIs — numeric inputs */}
+      <Card className="p-4">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Daily macros</p>
+          <p className="text-[10px] text-muted-foreground">Targets from your Food Stack tab</p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {foodStackPrimaryKPIs.map((k) => {
+            const value = state.kpis[k.id] ?? 0;
+            const hit = kpiHit(k, value);
+            const targetPct = Math.min(100, (value / k.target) * 100);
+            return (
+              <div key={k.id} className={cn("rounded-md border p-3", hit ? "border-emerald-300 bg-emerald-50" : "border-border bg-card")}>
+                <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{k.label}</p>
+                <div className="mt-1 flex items-baseline gap-2">
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    step="any"
+                    min="0"
+                    value={state.kpis[k.id] ?? ""}
+                    onChange={(e) => setKpi(k.id, e.target.value)}
+                    placeholder="0"
+                    aria-label={`${k.label} (${k.unit})`}
+                    className="w-20 text-2xl font-bold tabular-nums bg-transparent border-b border-border focus:outline-none focus:border-emerald-500 px-0 py-0.5"
+                  />
+                  <span className="text-xs text-muted-foreground">/ {k.target} {k.unit}</span>
+                </div>
+                <div className="h-1.5 bg-muted rounded mt-2">
+                  <div
+                    className={cn("h-full rounded", hit ? "bg-emerald-500" : targetPct > 0 ? "bg-amber-400" : "bg-muted")}
+                    style={{ width: `${targetPct}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Secondary KPIs — reference only */}
+        <div className="mt-4 pt-3 border-t border-border/50">
+          <div className="flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-muted-foreground">
+            {foodStackSecondaryKPIs.map((k) => (
+              <span key={k.id}>
+                <span className="font-medium text-foreground">{k.label}:</span>{" "}
+                {k.inverse ? `< ${k.target} ${k.unit}` : `${k.target} ${k.unit}`}
+              </span>
+            ))}
+          </div>
+        </div>
+      </Card>
 
       {/* Last 7 days strip */}
       <Card className="p-4">
@@ -162,67 +235,34 @@ export default function FoodStackPage() {
         )}
       </Card>
 
-      {/* Checklist by category */}
+      {/* Time-blocked checklist */}
       <div className="space-y-4">
-        {foodStackCategories.map((cat) => {
-          const items = itemsByCat.get(cat) ?? [];
-          if (items.length === 0) return null;
-          const catHits = items.filter((i) => isHit(i, state[i.id])).length;
+        {foodStackBlocks.map((block) => {
+          const blockHits = block.items.filter((i) => isItemHit(state, i.id)).length;
+          const allHit = blockHits === block.items.length;
           return (
-            <Card key={cat} className="p-4">
+            <Card key={block.id} className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold">{cat}</h3>
-                <span className="text-[11px] text-muted-foreground">{catHits}/{items.length}</span>
+                <div className="flex items-baseline gap-2">
+                  <span className={cn("text-xs font-semibold tabular-nums", allHit ? "text-emerald-600" : "text-muted-foreground")}>
+                    {block.time}
+                  </span>
+                  <h3 className="text-sm font-semibold">{block.title}</h3>
+                </div>
+                <span className="text-[11px] text-muted-foreground">{blockHits}/{block.items.length}</span>
               </div>
               <ul className="space-y-2">
-                {items.map((item) => {
-                  const entry = state[item.id];
-                  const hit = isHit(item, entry);
-                  if (item.target) {
-                    const value = entry?.numericValue ?? 0;
-                    const targetPct = Math.min(100, (value / item.target.value) * 100);
-                    return (
-                      <li key={item.id} className="rounded-md border border-border bg-card p-3">
-                        <div className="flex items-baseline justify-between gap-2 flex-wrap">
-                          <div className="min-w-0 flex-1">
-                            <p className="font-medium text-sm">{item.label}</p>
-                            {item.detail && <p className="text-[11px] text-muted-foreground">{item.detail}</p>}
-                          </div>
-                          <div className="flex items-baseline gap-2">
-                            <input
-                              type="number"
-                              inputMode="decimal"
-                              step="any"
-                              min="0"
-                              value={entry?.numericValue ?? ""}
-                              onChange={(e) => setNumeric(item.id, e.target.value)}
-                              placeholder="0"
-                              className="w-20 text-right text-base font-semibold tabular-nums bg-transparent border border-border rounded px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                              aria-label={`${item.label} (${item.target.unit})`}
-                            />
-                            <span className="text-xs text-muted-foreground">/ {item.target.value} {item.target.unit}</span>
-                          </div>
-                        </div>
-                        <div className="h-1.5 bg-muted rounded mt-3">
-                          <div
-                            className={cn("h-full rounded", hit ? "bg-emerald-500" : targetPct > 0 ? "bg-amber-400" : "bg-muted")}
-                            style={{ width: `${targetPct}%` }}
-                          />
-                        </div>
-                      </li>
-                    );
-                  }
+                {block.items.map((item) => {
+                  const hit = isItemHit(state, item.id);
                   return (
                     <li key={item.id}>
                       <button
                         type="button"
-                        onClick={() => toggle(item.id)}
+                        onClick={() => toggleItem(item.id)}
                         aria-pressed={hit}
                         className={cn(
                           "w-full flex items-start gap-3 rounded-md border p-3 text-left transition-colors min-h-[52px]",
-                          hit
-                            ? "border-emerald-300 bg-emerald-50"
-                            : "border-border bg-card hover:bg-accent active:bg-accent"
+                          hit ? "border-emerald-300 bg-emerald-50" : "border-border bg-card hover:bg-accent active:bg-accent"
                         )}
                       >
                         <span
@@ -248,8 +288,24 @@ export default function FoodStackPage() {
       </div>
 
       <p className="text-[11px] text-muted-foreground">
-        Daily state stored locally in this browser (per device). Phase 2 will sync via Supabase across devices and feed Body Composition + Biological Age trends.
+        Sourced from your Food Stack tab in the Health Sheet (last sync 2026-05-11). Daily state stored locally per device; Phase 2 syncs via Supabase and feeds into Body Composition + Biological Age.
       </p>
     </ModuleShell>
   );
+}
+
+function nextItemToHit(state: DayState): string {
+  for (const block of foodStackBlocks) {
+    for (const item of block.items) {
+      if (!state.checks[item.id]) {
+        return `${block.time} · ${item.label}`;
+      }
+    }
+  }
+  for (const kpi of foodStackPrimaryKPIs) {
+    if (!kpiHit(kpi, state.kpis[kpi.id] ?? 0)) {
+      return `${kpi.label} (${state.kpis[kpi.id] ?? 0} / ${kpi.target} ${kpi.unit})`;
+    }
+  }
+  return "all hit";
 }

@@ -1,64 +1,162 @@
 /**
- * Food Stack — daily checklist of foods/macros to hit every day.
+ * Food Stack — daily checklist sourced from Mert's "Food Stack" tab in the
+ * Health Google Sheet (1IGQ9oqzLsktK7re5u8tmZwiKlu2iAG2KMA43Vk9tRkI).
+ * Last sync: 2026-05-11.
  *
- * Phase 1 placeholder — replace with content from the user's "Food Stack" tab
- * in the Health Google Sheet once Google Workspace MCP is re-authenticated.
- *
- * Categories chosen to mirror evidence-based longevity / performance food
- * stacks (Attia, Bryan Johnson Blueprint, Mediterranean baseline). Items are
- * grouped so the checklist reads like a well-formed plate, not a random list.
+ * Title is "Food Stack" but the sheet is actually the user's full "Perfect
+ * Day" — food + supplements + exercise + recovery + self-care + peptides
+ * + sleep hygiene. The cockpit mirrors that structure: numeric KPIs on top,
+ * time-blocked checklist below.
  */
 
-export type FoodCategory = "Protein" | "Greens" | "Fruit" | "Healthy Fats" | "Fermented" | "Hydration" | "Macros";
+export interface KPITarget {
+  id: string;
+  label: string;
+  unit: string;
+  target: number;
+  /** True for "stay below" targets (Sodium, Sugar). */
+  inverse?: boolean;
+  /** Whether the user manually enters a number (true) or just sees a reference (false). */
+  manual: boolean;
+}
 
 export interface FoodItem {
   id: string;
   label: string;
   detail?: string;
-  category: FoodCategory;
-  /** Optional numeric target — when present, item is "hit" only if value reached. */
-  target?: { unit: string; value: number };
 }
 
-export const foodStackSeed: FoodItem[] = [
-  // --- Macros (numeric targets) ---
-  { id: "protein", label: "Protein", detail: "1.6–2.2 g/kg lean mass", category: "Macros", target: { unit: "g", value: 165 } },
-  { id: "fiber", label: "Fiber", detail: "Whole-food sources only", category: "Macros", target: { unit: "g", value: 40 } },
-  { id: "eating-window", label: "Eating window ≤ 10h", detail: "First → last bite", category: "Macros" },
+export interface TimeBlock {
+  id: string;
+  time: string;
+  title: string;
+  items: FoodItem[];
+}
 
-  // --- Protein anchors ---
-  { id: "fatty-fish", label: "Fatty fish OR pasture eggs", detail: "Salmon, sardines, mackerel — or 3 eggs", category: "Protein" },
-  { id: "lean-protein", label: "Lean protein (lunch + dinner)", detail: "Chicken, turkey, tofu, tempeh, lean beef", category: "Protein" },
-
-  // --- Greens & cruciferous ---
-  { id: "leafy-greens", label: "2 servings leafy greens", detail: "Spinach, kale, rocket — 1 raw + 1 cooked", category: "Greens" },
-  { id: "cruciferous", label: "1 serving cruciferous", detail: "Broccoli, cauliflower, brussels sprouts", category: "Greens" },
-  { id: "alliums", label: "Garlic OR onion (cooked)", detail: "Crush, rest 10 min, then cook", category: "Greens" },
-
-  // --- Fruit ---
-  { id: "berries", label: "1 cup berries", detail: "Blueberries, raspberries, blackberries", category: "Fruit" },
-  { id: "citrus-or-kiwi", label: "1 citrus OR 1 kiwi", detail: "Vit C + flavonoids", category: "Fruit" },
-
-  // --- Fats ---
-  { id: "evoo", label: "2 tbsp EVOO", detail: "Cold over salad / drizzle", category: "Healthy Fats" },
-  { id: "nuts-seeds", label: "30 g nuts/seeds", detail: "Walnuts, almonds, chia, flax", category: "Healthy Fats" },
-  { id: "avocado", label: "½ avocado (optional)", detail: "Mono-unsaturated fat boost", category: "Healthy Fats" },
-
-  // --- Fermented ---
-  { id: "fermented", label: "1 fermented item", detail: "Kefir, yogurt, sauerkraut, kimchi", category: "Fermented" },
-
-  // --- Hydration ---
-  { id: "water", label: "Water", detail: "30 ml / kg bodyweight", category: "Hydration", target: { unit: "L", value: 2.5 } },
-  { id: "matcha-or-greentea", label: "Matcha OR green tea", detail: "1 cup before noon", category: "Hydration" },
-  { id: "no-alcohol", label: "Zero alcohol", detail: "Default; flag exceptions", category: "Hydration" },
+/** Primary KPIs the user actually enters (top numeric tiles). */
+export const foodStackPrimaryKPIs: KPITarget[] = [
+  { id: "kcal", label: "Calories", unit: "kcal", target: 2000, manual: true },
+  { id: "protein", label: "Protein", unit: "g", target: 150, manual: true },
+  { id: "fiber", label: "Fiber", unit: "g", target: 35, manual: true },
+  { id: "water", label: "Water", unit: "L", target: 1.5, manual: true },
 ];
 
-export const foodStackCategories: FoodCategory[] = [
-  "Macros",
-  "Protein",
-  "Greens",
-  "Fruit",
-  "Healthy Fats",
-  "Fermented",
-  "Hydration",
+/** Secondary KPIs shown as reference (informational, no input row). */
+export const foodStackSecondaryKPIs: KPITarget[] = [
+  { id: "potassium", label: "Potassium", unit: "mg", target: 4000, manual: false },
+  { id: "sodium", label: "Sodium", unit: "mg", target: 1000, inverse: true, manual: false },
+  { id: "sugar", label: "Sugar", unit: "g", target: 30, inverse: true, manual: false },
 ];
+
+/** Time-blocked checklist — mirrors the Food Stack tab top-to-bottom. */
+export const foodStackBlocks: TimeBlock[] = [
+  {
+    id: "am-self-care",
+    time: "8:30",
+    title: "AM · Self care",
+    items: [
+      { id: "vit-c", label: "Vit C" },
+      { id: "caffeine", label: "Caffeine" },
+      { id: "teeth-am", label: "Teeth" },
+      { id: "eye-am", label: "Eye" },
+      { id: "spf", label: "SPF" },
+      { id: "hair-am", label: "Hair" },
+      { id: "posture-fascia", label: "Posture + Fascia + Eye w/ sunlight" },
+    ],
+  },
+  {
+    id: "lunch",
+    time: "12:00",
+    title: "Lunch",
+    items: [
+      { id: "superbowl", label: "Superbowl (1 portion)" },
+      { id: "sulforaphane", label: "Sulforaphane 30 mg" },
+      { id: "omega-3", label: "Omega-3 (EPA+DHA)", detail: "1–2 g with lunch" },
+    ],
+  },
+  {
+    id: "preworkout",
+    time: "16:00",
+    title: "Pre-workout snack",
+    items: [
+      { id: "whey-creatine", label: "Whey isolate 50 g + Creatine monohydrate 5 g" },
+      { id: "coconut-water", label: "Coconut water" },
+      { id: "glycine", label: "Glycine 3 g" },
+    ],
+  },
+  {
+    id: "exercise",
+    time: "17:30",
+    title: "Exercise",
+    items: [
+      { id: "lifting", label: "Weight lifting", detail: "2 supersets · 3 sets × 10 rep max" },
+      { id: "cardio", label: "Cardio", detail: "30 min · 13 incline · 6 speed" },
+    ],
+  },
+  {
+    id: "recovery",
+    time: "18:30",
+    title: "Recovery",
+    items: [
+      { id: "sauna", label: "Sauna 15 min" },
+      { id: "cold-shower", label: "Cold shower 1 min" },
+    ],
+  },
+  {
+    id: "dinner",
+    time: "19:30",
+    title: "Dinner",
+    items: [
+      { id: "main-meal", label: "Salmon + sweet potatoes + veggies", detail: "200 g each" },
+      { id: "walnuts", label: "Walnuts (unsalted)" },
+      { id: "cucumber-salsa", label: "Cucumbers + salsa dip", detail: "0 salt, 0 sugar" },
+      { id: "yogurt", label: "Greek yogurt 0% + berries / banana / kefir" },
+    ],
+  },
+  {
+    id: "pm-self-care",
+    time: "19:30",
+    title: "PM · Self care",
+    items: [
+      { id: "cleanse", label: "Cleanse" },
+      { id: "tone", label: "Tone" },
+      { id: "tretinoin", label: "Tretinoin 0.25%" },
+      { id: "eye-retinol", label: "Under-eye retinol" },
+      { id: "teeth-pm", label: "Teeth" },
+      { id: "moisturizer", label: "Moisturizer" },
+      { id: "headband", label: "Headbands" },
+    ],
+  },
+  {
+    id: "pm-supplements",
+    time: "23:00",
+    title: "PM · Supplements",
+    items: [
+      { id: "magnesium", label: "Magnesium glycinate 400 mg" },
+      { id: "vitd-k2", label: "Vitamin D + K2 combo" },
+    ],
+  },
+  {
+    id: "peptides",
+    time: "24:00",
+    title: "Peptides",
+    items: [
+      { id: "retatrutide", label: "Retatrutide 1 mg", detail: "1× per week" },
+      { id: "dsip", label: "DSIP" },
+    ],
+  },
+  {
+    id: "sleep",
+    time: "Sleep",
+    title: "Sleep hygiene",
+    items: [
+      { id: "consistent-bedtime", label: "Same bedtime ± 30 min" },
+      { id: "dark-room", label: "Dark room" },
+      { id: "cool-room", label: "Cool room (18–20 °C)" },
+      { id: "no-screens", label: "No screens 1 h before bed" },
+    ],
+  },
+];
+
+/** Convenience: flat list of all checklist items (for total count). */
+export const foodStackAllItems: FoodItem[] = foodStackBlocks.flatMap((b) => b.items);
