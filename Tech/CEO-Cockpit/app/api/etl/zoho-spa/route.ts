@@ -1,20 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { spawn } from "child_process";
-import path from "path";
+import { ZohoBooksClient } from "@/lib/etl/zoho-client";
+import { loadSpaCoaFromSupabase, COA_MAP, runSpaEbitdaMonth } from "@/lib/etl/spa-ebitda";
+import { ETLLogger } from "@/lib/etl/etl-logger";
 
-// Max time we'll wait for the Python ETL before returning a timeout error.
-const ETL_TIMEOUT_MS = 600_000; // 10 minutes
-
-function findPython(): string {
-  // Windows Python launcher is most reliable on Windows systems.
-  return process.platform === "win32" ? "py" : "python3";
-}
+// Requires Vercel Pro plan. Increase to 300 for Pro, 900 for Enterprise.
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
-  let dateFrom: string;
-  let dateTo: string;
-  let force = false;
-
+  let dateFrom: string, dateTo: string, force = false;
   try {
     const body = await req.json();
     dateFrom = body.date_from;
@@ -23,70 +16,47 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
-
   if (!dateFrom || !dateTo) {
     return NextResponse.json({ error: "date_from and date_to are required" }, { status: 400 });
   }
 
-  const scriptPath = path.join(process.cwd(), "etl", "etl_zoho_books_spa_ebitda.py");
-  const etlDir     = path.join(process.cwd(), "etl");
-  const pythonBin  = findPython();
+  const logger = new ETLLogger("zoho_spa_ebitda");
+  await logger.start();
+  const log: string[] = [];
+  let totalRows = 0;
 
-  const args = [
-    scriptPath,
-    "--date-from", dateFrom,
-    "--date-to",   dateTo,
-    ...(force ? ["--force"] : []),
-  ];
+  try {
+    const client = new ZohoBooksClient("spa");
 
-  return new Promise<NextResponse>((resolve) => {
-    const proc = spawn(pythonBin, args, {
-      cwd:   etlDir,
-      stdio: "pipe",
-      env:   { ...process.env },
-    });
+    log.push("Loading COA mapping…");
+    const coaMap = await loadSpaCoaFromSupabase() ?? COA_MAP;
+    log.push(`Loaded ${Object.keys(coaMap).length} accounts.`);
 
-    let stdout = "";
-    let stderr = "";
+    // Iterate months in range
+    const fromD = new Date(dateFrom);
+    const toD   = new Date(dateTo);
+    let d = new Date(fromD.getFullYear(), fromD.getMonth(), 1);
+    while (d <= toD) {
+      const y = d.getFullYear(), m = d.getMonth() + 1;
+      const isFirst = y === fromD.getFullYear() && m === fromD.getMonth() + 1;
+      const isLast  = y === toD  .getFullYear() && m === toD  .getMonth() + 1;
+      const result = await runSpaEbitdaMonth(client, y, m, {
+        force,
+        coaMap,
+        fromDateOverride: isFirst ? dateFrom : undefined,
+        toDateOverride:   isLast  ? dateTo   : undefined,
+      });
+      totalRows += result.rowsUpserted;
+      log.push(...result.log);
+      d = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+    }
 
-    proc.stdout?.on("data", (chunk: Buffer) => { stdout += chunk.toString(); });
-    proc.stderr?.on("data", (chunk: Buffer) => { stderr += chunk.toString(); });
-
-    const timer = setTimeout(() => {
-      proc.kill();
-      resolve(
-        NextResponse.json(
-          { error: "ETL timed out after 10 minutes", stdout, stderr },
-          { status: 504 }
-        )
-      );
-    }, ETL_TIMEOUT_MS);
-
-    proc.on("close", (code: number | null) => {
-      clearTimeout(timer);
-      if (code === 0) {
-        // Parse rows upserted from last stdout line "Done — N total rows upserted."
-        const match = stdout.match(/(\d+)\s+total rows upserted/);
-        const rows  = match ? parseInt(match[1], 10) : null;
-        resolve(NextResponse.json({ status: "ok", rows_upserted: rows, log: stdout }));
-      } else {
-        resolve(
-          NextResponse.json(
-            { error: `ETL exited with code ${code}`, stdout, stderr },
-            { status: 500 }
-          )
-        );
-      }
-    });
-
-    proc.on("error", (err: Error) => {
-      clearTimeout(timer);
-      resolve(
-        NextResponse.json(
-          { error: `Failed to start ETL: ${err.message}. Is Python installed?`, stderr },
-          { status: 500 }
-        )
-      );
-    });
-  });
+    await logger.complete(totalRows);
+    log.push(`Done — ${totalRows} total rows upserted.`);
+    return NextResponse.json({ status: "ok", rows_upserted: totalRows, log: log.join("\n") });
+  } catch (e) {
+    const msg = String(e);
+    await logger.fail(msg);
+    return NextResponse.json({ error: msg, log: log.join("\n") }, { status: 500 });
+  }
 }

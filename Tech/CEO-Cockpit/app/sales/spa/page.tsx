@@ -201,7 +201,7 @@ function SpaContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }) {
               <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
               <XAxis dataKey="name" tick={{ fontSize: 12 }} />
               <YAxis tickFormatter={(v: number) => v >= 1000 ? `€${Math.round(v/1000)}K` : `€${v}`} tick={{ fontSize: 11 }} />
-              <Tooltip formatter={(v: number) => [formatCurrency(v), "Revenue"]} />
+              <Tooltip formatter={(v) => [formatCurrency(Number(v)), "Revenue"]} />
               <Bar dataKey="revenue" radius={[4,4,0,0]} barSize={44}>
                 {hotelChartData.map((h) => <Cell key={h.id} fill={h.color} />)}
                 <LabelList dataKey="revenue" content={(props) => {
@@ -231,7 +231,7 @@ function SpaContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }) {
               <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
               <XAxis dataKey="name" tick={{ fontSize: 12 }} />
               <YAxis tickFormatter={(v: number) => `€${v}`} tick={{ fontSize: 11 }} domain={[0, 200]} />
-              <Tooltip formatter={(v: number) => [`€${v}`, ""]} />
+              <Tooltip formatter={(v) => [`€${Number(v)}`, ""]} />
               <Bar dataKey="Last Year" fill="#e5e7eb" radius={[3,3,0,0]} barSize={20} />
               <Bar dataKey="This Year" radius={[3,3,0,0]} barSize={20}>
                 {aovData.map((d) => <Cell key={d.name} fill={d.color} />)}
