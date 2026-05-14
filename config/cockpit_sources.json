@@ -233,6 +233,29 @@
       },
       "schedule": "every_4h"
     },
+    "zoho_books": {
+      "type": "api",
+      "description": "Zoho Books accounting — Chart of Accounts, P&L reports, per-location EBITDA",
+      "data_centre": "EU",
+      "api_base": "https://www.zohoapis.eu/books/v3",
+      "auth_base": "https://accounts.zoho.eu/oauth/v2",
+      "scopes": ["ZohoBooks.accountants.READ", "ZohoBooks.reports.READ", "ZohoBooks.settings.READ"],
+      "orgs": {
+        "spa": {
+          "env_key": "ZOHO_BOOKS_SPA_ORG_ID",
+          "brand_id": 1,
+          "locations": ["Inter", "Hugos", "Hyatt", "Ramla", "Labranda", "Odycy", "Excelsior", "Novotel"]
+        },
+        "aesthetics": {
+          "env_key": "ZOHO_BOOKS_AESTH_ORG_ID",
+          "brand_ids": [2, 3],
+          "locations": ["Aesthetics Clinic", "Slimming Clinic"]
+        }
+      },
+      "dashboard_categories": ["revenue", "cogs", "wages", "advertising", "rent", "utilities", "sga"],
+      "excluded_categories": ["excluded"],
+      "schedule": "daily_6am"
+    },
     "wix": {
       "type": "mcp",
       "server": "wix",

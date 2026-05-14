@@ -1,0 +1,383 @@
+"""Generate Workflow 05 creative briefs for all approved scripts."""
+import json, sys
+from pathlib import Path
+
+sys.stdout.reconfigure(encoding="utf-8")
+
+BASE = Path(__file__).resolve().parent.parent
+DATE = "20260420"
+
+SPA_SCRIPTS   = BASE / ".tmp" / "scripts" / f"scripts_carisma_spa_{DATE}.json"
+AES_SCRIPTS   = BASE / ".tmp" / "scripts" / f"scripts_carisma_aesthetics_{DATE}.json"
+MANUAL_DIR    = BASE / ".tmp" / "briefs" / "manual"
+AUTO_DIR      = BASE / ".tmp" / "briefs" / "automated"
+BRIEFS_DIR    = BASE / ".tmp" / "briefs"
+
+MANUAL_DIR.mkdir(parents=True, exist_ok=True)
+AUTO_DIR.mkdir(parents=True, exist_ok=True)
+
+
+# ─── helpers ────────────────────────────────────────────────────────────────
+
+def shot_type(section: str) -> str:
+    mapping = {
+        "hook": "Medium close-up",
+        "problem": "Medium / wide",
+        "solution": "B-roll montage",
+        "proof": "Close-up",
+        "cta": "Static end card",
+    }
+    return mapping.get(section.lower(), "Medium")
+
+
+def overlay_timestamp(idx: int, dur_str: str) -> str:
+    """Rough cumulative timestamp string for overlay table."""
+    starts = {0: "0:00", 1: "0:03", 2: "0:09", 3: "0:18", 4: "0:23"}
+    ends   = {0: "0:03", 1: "0:09", 2: "0:18", 3: "0:23", 4: "0:28"}
+    return f"{starts.get(idx,'0:00')}-{ends.get(idx,'0:05')}"
+
+
+# ─── manual video brief ──────────────────────────────────────────────────────
+
+def make_manual_brief(script: dict, brand_name: str, brand_voice: dict) -> str:
+    ad   = script["ad_name"]
+    fmt  = script["format"].replace("_", " ").title()
+    offer= script["offer"]
+    dur  = script["total_duration"]
+    secs = script["script"]
+
+    shot_rows = []
+    overlays  = []
+    sections  = ["hook", "problem", "solution", "proof", "cta"]
+    for i, sec in enumerate(sections):
+        if sec not in secs:
+            continue
+        s = secs[sec]
+        text = s.get("text", "")
+        direction = s.get("direction", "")
+        dur_s = s.get("duration", "—")
+        shot_rows.append(
+            f"| {i+1} | {sec.title()} | {dur_s} | \"{text[:60]}{'...' if len(text)>60 else ''}\" | {direction[:60]}{'...' if len(direction)>60 else ''} | {shot_type(sec)} |"
+        )
+        overlays.append(
+            f"| {overlay_timestamp(i, dur_s)} | {text[:50]}{'...' if len(text)>50 else ''} | {'Bottom third' if sec=='hook' else 'Centre' if sec=='solution' else 'Bottom'} | White, drop shadow |"
+        )
+
+    shot_table = "\n".join(shot_rows)
+    overlay_table = "\n".join(overlays)
+
+    notes = script.get("notes", "")
+    policy = script.get("meta_policy_flag", "")
+    policy_line = f"\n> **Meta Policy Note:** {policy}" if policy else ""
+
+    talent_tone    = brand_voice.get("tone", "warm, genuine")
+    talent_do      = "\n".join("  - " + d for d in brand_voice.get("do", []))
+    talent_dont    = "\n".join("  - " + d for d in brand_voice.get("dont", []))
+
+    return f"""# Creative Brief: {ad}
+## Production Type: Manual Video (CapCut)
+**Date Generated:** 2026-04-20 | **Gate:** Gate 3 — Pending Review
+
+---
+
+### Overview
+| Field | Value |
+|-------|-------|
+| Brand | {brand_name} |
+| Script ID | {script['script_id']} |
+| Format | {fmt} |
+| Offer | {offer} |
+| Total Duration | {dur} |
+| Aspect Ratio | 9:16 primary (Stories / Reels) |
+| Also Export | 1:1 (Feed) |
+| Variation | {script.get('variation', 'A')} |{policy_line}
+
+---
+
+### Shot List
+
+| # | Section | Duration | Script | Visual Direction | Shot Type |
+|---|---------|----------|--------|-----------------|-----------|
+{shot_table}
+
+---
+
+### Talent Direction
+- **Tone:** {talent_tone.title()}
+- **Energy:** Conversational — talking to a friend, not performing
+- **Wardrobe:** Casual and relatable (not glam or clinical)
+- **Setting:** Natural environment first, then cut to brand location / treatment
+
+**Voice guidance (DO):**
+{talent_do}
+
+**Voice guidance (AVOID):**
+{talent_dont}
+
+---
+
+### Text Overlays
+| Timestamp | Text | Position | Style |
+|-----------|------|----------|-------|
+{overlay_table}
+
+> Hook text **must appear** as text overlay within first 3 seconds for silent-scroll viewers.
+
+---
+
+### Music & Audio
+| Element | Spec |
+|---------|------|
+| Style | Lo-fi, calm, uplifting |
+| Volume | 20–30% under talent voice |
+| Source | Royalty-free (Epidemic Sound, Artlist, or CapCut library) |
+| SFX | Soft whoosh transition between major sections |
+
+---
+
+### Brand Elements
+| Element | Spec |
+|---------|------|
+| Logo | End card — bottom right — 3 seconds |
+| Colours | Brand palette for all text overlays |
+| Font | Brand font for on-screen text |
+| Watermark | None required for Meta ads |
+
+---
+
+### Delivery Specs
+| Spec | Value |
+|------|-------|
+| Resolution | 1080 × 1920 (9:16 primary) |
+| Frame Rate | 30 fps |
+| Format | MP4, H.264 |
+| Max File Size | 100 MB |
+| Thumbnail | Extract frame at 0:01 (hook moment) |
+
+---
+
+### Production Notes
+{notes if notes else "No additional notes."}
+
+---
+*Brief generated by Workflow 05 — Creative Brief Generation | {brand_name}*
+"""
+
+
+# ─── automated static brief ──────────────────────────────────────────────────
+
+def make_static_brief(script: dict, brand_name: str, brand_id: str, website_url: str) -> str:
+    ad    = script["ad_name"]
+    offer = script["offer"]
+    secs  = script["script"]
+    notes = script.get("notes", "")
+    policy= script.get("meta_policy_flag", "")
+    link  = secs.get("link", f"{website_url}")
+    policy_line = f"\n> **Meta Policy Note:** {policy}" if policy else ""
+
+    # determine image need
+    visual = secs.get("visual_direction", "")
+    needs_image = "needs_image_swap" if visual else "text_only"
+
+    return f"""# Creative Brief: {ad}
+## Production Type: Automated Static (Figma)
+**Date Generated:** 2026-04-20 | **Gate:** Gate 3 — Pending Review
+
+---
+
+### Overview
+| Field | Value |
+|-------|-------|
+| Brand | {brand_name} |
+| Script ID | {script['script_id']} |
+| Format | Static Offer |
+| Offer | {offer} |
+| Sizes | 1080 × 1080 (Feed), 1080 × 1920 (Story) |
+| Variation | {script.get('variation', 'A')} |{policy_line}
+
+---
+
+### Template
+| Field | Value |
+|-------|-------|
+| Figma File | `MISSING — assign Figma template on integration` |
+| Frame Name | `{ad}_Feed` / `{ad}_Story` |
+| Brand Palette | See brand guidelines |
+
+---
+
+### Text Layers
+| Layer Name | New Text | Font | Max Chars | Notes |
+|-----------|----------|------|-----------|-------|
+| `headline` | {secs.get('headline', '—')} | Brand Bold | 60 | Primary hook |
+| `subheadline` | {secs.get('subheadline', '—')} | Brand Regular | 80 | Offer + price |
+| `body` | {secs.get('body', '—').replace(chr(10), ' / ')} | Brand Light | 160 | Features / proof points |
+| `cta_button` | {secs.get('cta_button', 'Book Now')} | Brand Bold | 30 | CTA |
+| `link_url` | {link} | — | — | Tracking URL to be appended |
+
+---
+
+### Image Layers
+| Layer Name | Required Image | Source | Notes |
+|-----------|---------------|--------|-------|
+| `hero_image` | See visual direction below | Brand photo library | Primary visual |
+| `logo` | Brand logo (PNG transparent) | Brand assets | Bottom right |
+
+**Visual Direction:** {visual if visual else "Standard brand template — no custom image required."}
+
+---
+
+### Automation Classification
+- **This brief:** `{needs_image}`
+{"- **Image required:** Human must source and place hero image before Figma export" if needs_image == "needs_image_swap" else "- **Text-only update:** Can be fully automated via Figma MCP once template is linked"}
+
+---
+
+### Colour Overrides
+| Element | Override | Notes |
+|---------|----------|-------|
+| CTA button | Brand primary colour | Match brand palette |
+| Headline | White or dark — contrast against hero image | Check legibility |
+| Background overlay | Semi-transparent brand colour (30–50% opacity) | Only if hero image used |
+
+---
+
+### Export Checklist
+- [ ] 1080 × 1080 PNG (Feed)
+- [ ] 1080 × 1920 PNG (Story)
+- [ ] Review text legibility at thumbnail size
+- [ ] Confirm no before/after imagery (Meta policy)
+- [ ] Attach UTM link to CTA
+
+---
+
+### Production Notes
+{notes if notes else "No additional notes."}
+
+---
+*Brief generated by Workflow 05 — Creative Brief Generation | {brand_name}*
+"""
+
+
+# ─── process a brand ─────────────────────────────────────────────────────────
+
+def process_brand(script_file: Path, brand_id: str, brand_name: str,
+                  brand_voice: dict, website_url: str) -> list:
+    data    = json.loads(script_file.read_text(encoding="utf-8"))
+    scripts = data["scripts"]
+    index   = []
+
+    for s in scripts:
+        ad_name = s["ad_name"]
+        ptype   = s["production_type"]
+
+        if ptype == "manual":
+            content  = make_manual_brief(s, brand_name, brand_voice)
+            out_path = MANUAL_DIR / f"brief_{ad_name}_{DATE}.md"
+            out_path.write_text(content, encoding="utf-8")
+            index.append({
+                "brief_id":       f"brief_{ad_name}_{DATE}",
+                "script_id":      s["script_id"],
+                "ad_name":        ad_name,
+                "offer":          s["offer"],
+                "format":         s["format"],
+                "production_type":"manual_video",
+                "platform":       "CapCut",
+                "hook":           s.get("hook_text",""),
+                "file":           str(out_path.relative_to(BASE)).replace("\\","/"),
+                "status":         "pending_review",
+            })
+            print(f"  [manual]  {out_path.name}")
+
+        elif ptype == "automated":
+            content  = make_static_brief(s, brand_name, brand_id, website_url)
+            out_path = AUTO_DIR / f"brief_{ad_name}_{DATE}.md"
+            out_path.write_text(content, encoding="utf-8")
+            index.append({
+                "brief_id":       f"brief_{ad_name}_{DATE}",
+                "script_id":      s["script_id"],
+                "ad_name":        ad_name,
+                "offer":          s["offer"],
+                "format":         s["format"],
+                "production_type":"automated_static",
+                "platform":       "Figma",
+                "hook":           s.get("hook_text",""),
+                "file":           str(out_path.relative_to(BASE)).replace("\\","/"),
+                "status":         "pending_review",
+            })
+            print(f"  [static]  {out_path.name}")
+
+    return index
+
+
+# ─── main ────────────────────────────────────────────────────────────────────
+
+brands_meta = {
+    "carisma_spa": {
+        "brand_name": "Carisma Spa",
+        "brand_voice": {
+            "tone": "warm, inviting, luxurious yet approachable",
+            "do": [
+                "Use sensory language (imagine, feel, indulge, unwind)",
+                "Emphasise the experience and transformation",
+                "Speak directly to her needs (you deserve, your moment)",
+                "Reference Malta's beauty and lifestyle",
+            ],
+            "dont": [
+                "Use clinical or overly technical language",
+                "Be pushy or aggressive with sales tactics",
+                "Make unrealistic promises",
+            ],
+        },
+        "website_url": "https://www.carismaspa.com",
+        "script_file": SPA_SCRIPTS,
+    },
+    "carisma_aesthetics": {
+        "brand_name": "Carisma Aesthetics",
+        "brand_voice": {
+            "tone": "confident, professional, reassuring, results-driven",
+            "do": [
+                "Emphasise safety, expertise, and natural-looking results",
+                "Use confident, reassuring language",
+                "Highlight the consultation-first approach",
+                "Share realistic expectations and results",
+            ],
+            "dont": [
+                "Use fear-based marketing or shame language",
+                "Promise miraculous or overnight transformations",
+                "Make before/after claims that violate advertising standards",
+            ],
+        },
+        "website_url": "https://www.carismaaesthetics.com",
+        "script_file": AES_SCRIPTS,
+    },
+}
+
+for brand_id, meta in brands_meta.items():
+    print(f"\nGenerating briefs: {meta['brand_name']}")
+    idx = process_brand(
+        meta["script_file"],
+        brand_id,
+        meta["brand_name"],
+        meta["brand_voice"],
+        meta["website_url"],
+    )
+
+    manual_count = sum(1 for b in idx if b["production_type"] == "manual_video")
+    auto_count   = sum(1 for b in idx if b["production_type"] == "automated_static")
+
+    index_obj = {
+        "brand_id":       brand_id,
+        "brand_name":     meta["brand_name"],
+        "generated_date": "2026-04-20",
+        "total_briefs":   len(idx),
+        "manual":         manual_count,
+        "automated":      auto_count,
+        "briefs":         idx,
+    }
+
+    idx_path = BRIEFS_DIR / f"index_{brand_id}_{DATE}.json"
+    idx_path.write_text(json.dumps(index_obj, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"  Index → {idx_path.name}")
+
+print("\nDone — all briefs generated.")
