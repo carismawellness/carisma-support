@@ -43,13 +43,13 @@ interface LocationConfig {
 }
 
 const LOCATIONS: LocationConfig[] = [
-  { id: "inter",      name: "InterContinental", type: "spa",    color: "#1B3A4B", startIndex: 0 },
+  { id: "inter",      name: "Inter",            type: "spa",    color: "#1B3A4B", startIndex: 0 },
   { id: "hugos",      name: "Hugo's",           type: "spa",    color: "#96B2B2", startIndex: 0 },
   { id: "hyatt",      name: "Hyatt",            type: "spa",    color: "#B79E61", startIndex: 0 },
   { id: "ramla",      name: "Ramla",            type: "spa",    color: "#8EB093", startIndex: 0 },
-  { id: "labranda",   name: "Labranda",         type: "spa",    color: "#E07A5F", startIndex: 0 },
-  { id: "sunny",      name: "Sunny Coast",      type: "spa",    color: "#4A90D9", startIndex: 0 },
   { id: "excelsior",  name: "Excelsior",        type: "spa",    color: "#7C3AED", startIndex: 18 },
+  { id: "labranda",   name: "Reviera",          type: "spa",    color: "#E07A5F", startIndex: 0 },
+  { id: "sunny",      name: "Odycy",            type: "spa",    color: "#4A90D9", startIndex: 0 },
   { id: "novotel",    name: "Novotel",          type: "spa",    color: "#DC2626", startIndex: 21 },
   { id: "aesthetics", name: "Aesthetics",       type: "clinic", color: chartColors.aesthetics, startIndex: 12 },
   { id: "slimming",   name: "Slimming",         type: "clinic", color: chartColors.slimming, startIndex: 12 },
@@ -249,8 +249,6 @@ interface VenueRow {
   revenue: number;
 }
 
-const BRAND_ORDER: Record<Brand, number> = { Spa: 0, Aesthetics: 1, Slimming: 2 };
-
 function venueBrand(locId: string): { brand: Brand; color: string } {
   if (locId === "aesthetics") return { brand: "Aesthetics", color: chartColors.aesthetics };
   if (locId === "slimming") return { brand: "Slimming", color: chartColors.slimming };
@@ -293,12 +291,8 @@ function buildVenueRows(indices: number[]): VenueRow[] {
       ebitda: ebitdaVal,
       revenue: rev,
     };
-  })
-    .filter(r => r.revenue > 0)
-    .sort((a, b) => {
-      const bd = BRAND_ORDER[a.brand] - BRAND_ORDER[b.brand];
-      return bd !== 0 ? bd : b.revenue - a.revenue;
-    });
+  }).filter(r => r.revenue > 0);
+  // Order preserved from LOCATIONS — venue order is set there manually.
 }
 
 function pctOf(part: number, whole: number): number {
@@ -665,8 +659,8 @@ function EBITDAOverviewContent({
                     </span>
                   </th>
                 ))}
-                <th className="text-right py-1.5 px-2 font-semibold text-foreground bg-slate-50 border-l border-border min-w-[80px]" title="Corporate overhead (placeholder)">
-                  Corporate
+                <th className="text-right py-1.5 px-2 font-semibold text-foreground bg-slate-50 border-l border-border min-w-[80px]" title="HQ / corporate overhead (placeholder)">
+                  HQ
                 </th>
                 <th className="text-right py-1.5 px-2 font-semibold text-foreground bg-muted/30 border-l border-border min-w-[80px]">
                   Group
