@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { createClient } from "@supabase/supabase-js";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { rootCauseSchema, checkRateLimit } from "@/lib/validations";
+import { getAdminClient } from "@/lib/supabase/admin";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
-
-const serviceSupabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 const ROOT_CAUSE_PROMPT = `You are Carisma Intelligence (CI). Given a metric that has deviated from its target, perform root cause analysis.
 Consider common causes in the wellness/aesthetics industry: seasonality, staffing changes, marketing spend shifts, competitor activity, operational issues.
@@ -17,6 +12,7 @@ Provide 2-3 likely root causes ranked by probability, and suggest 1-2 actions fo
 Be specific and data-driven.`;
 
 export async function POST(request: NextRequest) {
+  const serviceSupabase = getAdminClient();
   try {
     const authSupabase = await createServerSupabaseClient();
     const {

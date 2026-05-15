@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { createClient } from "@supabase/supabase-js";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { chatSchema, checkRateLimit } from "@/lib/validations";
+import { getAdminClient } from "@/lib/supabase/admin";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
-
-// Service-role client for cross-brand query execution (bypasses RLS)
-const serviceSupabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 const SYSTEM_PROMPT = `You are Carisma Intelligence (CI), the AI analytics assistant for Carisma Wellness Group.
 You have access to the company's business data across three brands (Spa, Aesthetics, Slimming) and five departments (Marketing, Sales/CRM, Finance, HR, Operations).
@@ -46,6 +40,7 @@ type ChatMessage = {
 };
 
 async function loadChatHistory(userId: string): Promise<ChatMessage[]> {
+  const serviceSupabase = getAdminClient();
   const { data } = await serviceSupabase
     .from("ci_chat_history")
     .select("role, message")
@@ -63,6 +58,7 @@ async function loadChatHistory(userId: string): Promise<ChatMessage[]> {
 }
 
 export async function POST(request: NextRequest) {
+  const serviceSupabase = getAdminClient();
   try {
     // Authenticate the user via session cookie
     const authSupabase = await createServerSupabaseClient();
@@ -193,6 +189,7 @@ function createStreamResponse(
 
   const readable = new ReadableStream({
     async start(controller) {
+      const serviceSupabase = getAdminClient();
       try {
         let fullText = "";
 

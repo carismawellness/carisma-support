@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getAdminClient } from "@/lib/supabase/admin";
 
 const ZOHO_AUTH  = "https://accounts.zoho.eu/oauth/v2/token";
 const ZOHO_API   = "https://www.zohoapis.eu/books/v3";
@@ -26,6 +21,7 @@ async function getZohoAccessToken(org: string): Promise<string> {
 }
 
 export async function POST(req: NextRequest) {
+  const supabase = getAdminClient();
   const { org = "spa" } = await req.json().catch(() => ({}));
 
   const clientId     = process.env.ZOHO_BOOKS_CLIENT_ID;

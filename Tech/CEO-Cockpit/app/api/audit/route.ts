@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { auditSchema } from "@/lib/validations";
-
-const serviceSupabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getAdminClient } from "@/lib/supabase/admin";
 
 export async function GET(request: NextRequest) {
+  const serviceSupabase = getAdminClient();
   const authSupabase = await createServerSupabaseClient();
   const {
     data: { user },
@@ -41,6 +37,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const serviceSupabase = getAdminClient();
   const authSupabase = await createServerSupabaseClient();
   const {
     data: { user },

@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { createClient } from "@supabase/supabase-js";
 import { loadTargets, formatTargetsForPrompt } from "@/lib/utils/lookups";
+import { getAdminClient } from "@/lib/supabase/admin";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
-
-const serviceSupabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
 
 /* ------------------------------------------------------------------ */
 /* POST /api/ci/summary                                                */
@@ -16,6 +11,7 @@ const serviceSupabase = createClient(
 /* ------------------------------------------------------------------ */
 
 export async function POST(request: NextRequest) {
+  const serviceSupabase = getAdminClient();
   try {
     // ---- Auth --------------------------------------------------------
     const cronSecret = request.headers.get("x-cron-secret");

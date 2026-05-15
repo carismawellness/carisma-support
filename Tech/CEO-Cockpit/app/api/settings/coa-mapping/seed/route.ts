@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getAdminClient } from "@/lib/supabase/admin";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Full hardcoded COA_MAP: account_code → [split_rule_name, ebitda_line]
 const COA_DEFAULTS: Record<string, [string, string]> = {
@@ -560,6 +556,7 @@ function classifyAestheticsAccount(name: string, accountType: string): string {
 }
 
 async function seedAesthetics(
+  supabase: SupabaseClient,
   org: string,
   ruleByName: Record<string, number>,
 ): Promise<{ updated: number }> {
@@ -603,6 +600,7 @@ async function seedAesthetics(
 }
 
 export async function POST(req: NextRequest) {
+  const supabase = getAdminClient();
   const { org = "spa" } = await req.json().catch(() => ({}));
 
   // Load split rules for this org to resolve names → IDs
@@ -616,7 +614,7 @@ export async function POST(req: NextRequest) {
   // ── Aesthetics & Slimming: auto-classify by name, no SPA defaults applied ──
   if (org !== "spa") {
     try {
-      const { updated } = await seedAesthetics(org, ruleByName);
+      const { updated } = await seedAesthetics(supabase, org, ruleByName);
       return NextResponse.json({ ok: true, updated, inserted: 0, total: updated,
         note: "Auto-classified unmapped accounts by name keywords. Sync from Zoho first if count is 0." });
     } catch (err) {

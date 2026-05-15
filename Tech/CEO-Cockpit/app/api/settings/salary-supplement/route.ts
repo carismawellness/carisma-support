@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getAdminClient } from "@/lib/supabase/admin";
 
 async function lookupTalexioName(empNo: number): Promise<string | null> {
   const token = process.env.TALEXIO_TOKEN;
@@ -30,6 +25,7 @@ async function lookupTalexioName(empNo: number): Promise<string | null> {
 
 // GET ?month=2026-03-01  — list all rows for a month
 export async function GET(req: NextRequest) {
+  const supabase = getAdminClient();
   const month = req.nextUrl.searchParams.get("month");
   if (!month) return NextResponse.json({ error: "month required" }, { status: 400 });
 
@@ -45,6 +41,7 @@ export async function GET(req: NextRequest) {
 
 // PATCH  — freeze a month or update a single row's spa_slug
 export async function PATCH(req: NextRequest) {
+  const supabase = getAdminClient();
   const body = await req.json();
 
   // Freeze or unfreeze entire month: { month, freeze: true | false }

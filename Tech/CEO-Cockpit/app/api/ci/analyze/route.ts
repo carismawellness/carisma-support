@@ -1,19 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import {
   loadTargets,
   getTarget,
   loadBrands,
 } from "@/lib/utils/lookups";
-
-/* ------------------------------------------------------------------ */
-/* Service-role Supabase client (bypasses RLS)                         */
-/* ------------------------------------------------------------------ */
-
-const serviceSupabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+import { getAdminClient } from "@/lib/supabase/admin";
 
 /* ------------------------------------------------------------------ */
 /* POST /api/ci/analyze                                                */
@@ -21,6 +12,7 @@ const serviceSupabase = createClient(
 /* ------------------------------------------------------------------ */
 
 export async function POST(request: NextRequest) {
+  const serviceSupabase = getAdminClient();
   try {
     // ---- Auth: cron secret -------------------------------------------
     const cronSecret = request.headers.get("x-cron-secret");

@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+import { getAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(req: NextRequest) {
+  const supabaseAdmin = getAdminClient();
   try {
     const { token } = await req.json();
 
@@ -91,6 +87,7 @@ export async function POST(req: NextRequest) {
 
 // GET: Check token status
 export async function GET() {
+  const supabaseAdmin = getAdminClient();
   try {
     // Try Supabase first
     const { data } = await supabaseAdmin

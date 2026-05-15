@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getAdminClient } from "@/lib/supabase/admin";
 
 const SHEET_ID = "1AAnfm-SAYso6RpJhbdhJbTbcGDH1Ftlk0FHBPHfN98w";
 
@@ -123,6 +118,7 @@ async function fetchTalexioNameMap(): Promise<Map<number, string>> {
 }
 
 export async function POST(req: NextRequest) {
+  const supabase = getAdminClient();
   const { month } = await req.json(); // "2026-03-01"
   if (!month) return NextResponse.json({ error: "month required" }, { status: 400 });
 

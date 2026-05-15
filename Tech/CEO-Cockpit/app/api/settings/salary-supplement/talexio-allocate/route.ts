@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getAdminClient } from "@/lib/supabase/admin";
 
 const TALEXIO_GQL    = "https://api.talexiohr.com/graphql";
 const TALEXIO_ORIGIN = "https://carismaspawellness.talexiohr.com";
@@ -122,6 +117,7 @@ async function fetchTalexioEmployees(): Promise<TalexioEmployee[]> {
 // force=false (default): only fill in rows where spa_slug is currently null
 // force=true: overwrite all rows
 export async function POST(req: NextRequest) {
+  const supabase = getAdminClient();
   const { month, force = false } = await req.json();
   if (!month) return NextResponse.json({ error: "month required" }, { status: 400 });
 
