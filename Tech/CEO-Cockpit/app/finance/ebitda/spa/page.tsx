@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useCallback } from "react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
 import { Card } from "@/components/ui/card";
@@ -26,11 +27,11 @@ import {
 
 function pctOf(part: number, whole: number): number {
   if (whole === 0) return 0;
-  return Math.round((part / whole) * 1000) / 10;
+  return Math.round((part / whole) * 100);
 }
 
 function fmtPct(val: number): string {
-  return `${val.toFixed(1)}%`;
+  return `${Math.round(val)}%`;
 }
 
 function fmtCurrencyShort(value: number): string {
@@ -525,15 +526,17 @@ function SpaEBITDAContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }
   }, [locations]);
 
   const margin = totals.revenue > 0
-    ? Math.round((totals.ebitda / totals.revenue) * 1000) / 10
+    ? Math.round((totals.ebitda / totals.revenue) * 100)
     : 0;
+
+  const [rentExpanded, setRentExpanded] = useState(false);
 
   /* ---- KPI Cards ---- */
   const kpis: KPIData[] = useMemo(() => [
     { label: "Spa Total Revenue", value: formatCurrency(totals.revenue) },
     { label: "Spa Total EBITDA",  value: formatCurrency(totals.ebitda) },
     {
-      label: "Spa EBITDA Margin", value: `${margin.toFixed(1)}%`,
+      label: "Spa EBITDA Margin", value: `${margin}%`,
       target: "40%", targetValue: 40, currentValue: margin,
     },
   ], [totals, margin]);
@@ -674,38 +677,78 @@ function SpaEBITDAContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }
                       <span className="text-muted-foreground">{fmtPct(pctOf(totals.advertising, totals.revenue))}</span>
                     </td>
                   </tr>
-                  {/* Rent */}
+                  {/* Rent Plus (collapsible: Rent + Utilities) */}
                   <tr className="border-b border-border">
-                    <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">Rent</td>
-                    {locations.map((loc) => (
-                      <td key={loc.id} className="py-1.5 px-3 text-right text-foreground">
-                        {loc.rent > 0
-                          ? <>({fmtCurrencyShort(loc.rent)}){" "}<span className="text-muted-foreground">{fmtPct(pctOf(loc.rent, loc.revenue))}</span></>
-                          : <span className="text-muted-foreground">&mdash;</span>
-                        }
-                      </td>
-                    ))}
+                    <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">
+                      <button
+                        type="button"
+                        onClick={() => setRentExpanded((v) => !v)}
+                        className="flex items-center gap-1.5 hover:text-foreground/70 transition-colors"
+                        aria-expanded={rentExpanded}
+                      >
+                        {rentExpanded ? (
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        ) : (
+                          <ChevronRight className="h-3.5 w-3.5" />
+                        )}
+                        <span>Rent Plus</span>
+                      </button>
+                    </td>
+                    {locations.map((loc) => {
+                      const sum = loc.rent + loc.utilities;
+                      return (
+                        <td key={loc.id} className="py-1.5 px-3 text-right text-foreground">
+                          ({fmtCurrencyShort(sum)}){" "}
+                          <span className="text-muted-foreground">{fmtPct(pctOf(sum, loc.revenue))}</span>
+                        </td>
+                      );
+                    })}
                     <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
-                      {totals.rent > 0
-                        ? <>({fmtCurrencyShort(totals.rent)}){" "}<span className="text-muted-foreground">{fmtPct(pctOf(totals.rent, totals.revenue))}</span></>
-                        : <span className="text-muted-foreground">&mdash;</span>
-                      }
+                      {(() => {
+                        const sum = totals.rent + totals.utilities;
+                        return (
+                          <>
+                            ({fmtCurrencyShort(sum)}){" "}
+                            <span className="text-muted-foreground">{fmtPct(pctOf(sum, totals.revenue))}</span>
+                          </>
+                        );
+                      })()}
                     </td>
                   </tr>
-                  {/* Utilities */}
-                  <tr className="border-b border-border">
-                    <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">Utilities</td>
-                    {locations.map((loc) => (
-                      <td key={loc.id} className="py-1.5 px-3 text-right text-foreground">
-                        ({fmtCurrencyShort(loc.utilities)}){" "}
-                        <span className="text-muted-foreground">{fmtPct(pctOf(loc.utilities, loc.revenue))}</span>
-                      </td>
-                    ))}
-                    <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
-                      ({fmtCurrencyShort(totals.utilities)}){" "}
-                      <span className="text-muted-foreground">{fmtPct(pctOf(totals.utilities, totals.revenue))}</span>
-                    </td>
-                  </tr>
+                  {rentExpanded && (
+                    <>
+                      <tr className="border-b border-border">
+                        <td className="py-1.5 px-3 pl-9 text-muted-foreground sticky left-0 bg-background z-10">Rent</td>
+                        {locations.map((loc) => (
+                          <td key={loc.id} className="py-1.5 px-3 text-right text-foreground">
+                            {loc.rent > 0
+                              ? <>({fmtCurrencyShort(loc.rent)}){" "}<span className="text-muted-foreground">{fmtPct(pctOf(loc.rent, loc.revenue))}</span></>
+                              : <span className="text-muted-foreground">&mdash;</span>
+                            }
+                          </td>
+                        ))}
+                        <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
+                          {totals.rent > 0
+                            ? <>({fmtCurrencyShort(totals.rent)}){" "}<span className="text-muted-foreground">{fmtPct(pctOf(totals.rent, totals.revenue))}</span></>
+                            : <span className="text-muted-foreground">&mdash;</span>
+                          }
+                        </td>
+                      </tr>
+                      <tr className="border-b border-border">
+                        <td className="py-1.5 px-3 pl-9 text-muted-foreground sticky left-0 bg-background z-10">Utilities</td>
+                        {locations.map((loc) => (
+                          <td key={loc.id} className="py-1.5 px-3 text-right text-foreground">
+                            ({fmtCurrencyShort(loc.utilities)}){" "}
+                            <span className="text-muted-foreground">{fmtPct(pctOf(loc.utilities, loc.revenue))}</span>
+                          </td>
+                        ))}
+                        <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
+                          ({fmtCurrencyShort(totals.utilities)}){" "}
+                          <span className="text-muted-foreground">{fmtPct(pctOf(totals.utilities, totals.revenue))}</span>
+                        </td>
+                      </tr>
+                    </>
+                  )}
                   {/* COGS */}
                   <tr className="border-b border-border">
                     <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">COGS</td>
