@@ -486,6 +486,30 @@ function EBITDAOverviewContent({
   const [rentExpanded, setRentExpanded] = useState(false);
   const [adsExpanded, setAdsExpanded] = useState(false);
   const [sgaExpanded, setSgaExpanded] = useState(false);
+  const [spaExpanded, setSpaExpanded] = useState(false);
+
+  /* --- Spa aggregate row for collapsed view ------------------------- */
+  const displayedVenues = useMemo(() => {
+    const spa = venueRows.filter((v) => v.brand === "Spa");
+    const rest = venueRows.filter((v) => v.brand !== "Spa");
+    if (spaExpanded || spa.length === 0) return venueRows;
+    const aggregate: typeof venueRows[number] = {
+      id: "spa-aggregate",
+      name: "Spa",
+      brand: "Spa",
+      brandColor: chartColors.spa,
+      revenue:     spa.reduce((a, v) => a + v.revenue, 0),
+      wages:       spa.reduce((a, v) => a + v.wages, 0),
+      advertising: spa.reduce((a, v) => a + v.advertising, 0),
+      rent:        spa.reduce((a, v) => a + v.rent, 0),
+      utilities:   spa.reduce((a, v) => a + v.utilities, 0),
+      cogs:        spa.reduce((a, v) => a + v.cogs, 0),
+      sga:         spa.reduce((a, v) => a + v.sga, 0),
+      ebitda:      spa.reduce((a, v) => a + v.ebitda, 0),
+    };
+    return [aggregate, ...rest];
+  }, [venueRows, spaExpanded]);
+  const spaVenueCount = useMemo(() => venueRows.filter((v) => v.brand === "Spa").length, [venueRows]);
 
   /* --- Brand cards data -------------------------------------------- */
   const brands = useMemo(() => [
@@ -623,12 +647,6 @@ function EBITDAOverviewContent({
                   {brand.margin}%
                 </span>
               </div>
-              {brand.name === "Spa" && (
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Locations</span>
-                  <span className="text-sm text-foreground">{brand.locations}</span>
-                </div>
-              )}
             </div>
           </Card>
         ))}
@@ -640,22 +658,35 @@ function EBITDAOverviewContent({
           <div>
             <h2 className="text-lg font-semibold text-foreground mb-1">P&amp;L by Venue</h2>
             <p className="text-sm text-muted-foreground">
-              All {venueRows.length} active venues side-by-side. Costs shown as positive values against revenue.
+              {spaExpanded
+                ? <>All {venueRows.length} active venues side-by-side.</>
+                : <>Spa rolled up ({spaVenueCount} venues) — click to expand. Costs shown as positive values against revenue.</>}
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block h-1.5 w-3 rounded-sm" style={{ backgroundColor: chartColors.spa }} />
-              Spa
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block h-1.5 w-3 rounded-sm" style={{ backgroundColor: chartColors.aesthetics }} />
-              Aesthetics
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block h-1.5 w-3 rounded-sm" style={{ backgroundColor: chartColors.slimming }} />
-              Slimming
-            </span>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setSpaExpanded((x) => !x)}
+              className="inline-flex items-center gap-1.5 text-[11px] font-medium text-foreground/80 hover:text-foreground border border-border rounded-md px-2 py-1 transition-colors hover:bg-muted/50"
+              aria-expanded={spaExpanded}
+            >
+              {spaExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+              {spaExpanded ? `Collapse Spa (${spaVenueCount})` : `Expand Spa (${spaVenueCount})`}
+            </button>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="inline-block h-1.5 w-3 rounded-sm" style={{ backgroundColor: chartColors.spa }} />
+                Spa
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="inline-block h-1.5 w-3 rounded-sm" style={{ backgroundColor: chartColors.aesthetics }} />
+                Aesthetics
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="inline-block h-1.5 w-3 rounded-sm" style={{ backgroundColor: chartColors.slimming }} />
+                Slimming
+              </span>
+            </div>
           </div>
         </div>
         <div className="overflow-x-auto -mx-3 md:-mx-6 px-3 md:px-6">
@@ -665,21 +696,42 @@ function EBITDAOverviewContent({
                 <th className="text-left py-2 px-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground sticky left-0 bg-background z-10 min-w-[120px] border-b border-border align-bottom">
                   Line Item
                 </th>
-                {venueRows.map((v) => (
-                  <th
-                    key={v.id}
-                    className="text-right py-2 px-2 font-semibold text-foreground min-w-[88px] border-b border-border align-bottom"
-                  >
-                    <div className="flex flex-col items-end gap-1">
-                      <span
-                        className="block h-[2px] w-6 rounded-full"
-                        style={{ backgroundColor: v.brandColor }}
-                        title={v.brand}
-                      />
-                      <span className="text-foreground">{v.name}</span>
-                    </div>
-                  </th>
-                ))}
+                {displayedVenues.map((v) => {
+                  const isAggregate = v.id === "spa-aggregate";
+                  return (
+                    <th
+                      key={v.id}
+                      className={`text-right py-2 px-2 font-semibold text-foreground min-w-[88px] border-b border-border align-bottom ${isAggregate ? "bg-amber-50/40" : ""}`}
+                    >
+                      {isAggregate ? (
+                        <button
+                          type="button"
+                          onClick={() => setSpaExpanded(true)}
+                          className="flex flex-col items-end gap-1 w-full cursor-pointer group"
+                          title={`Expand to show ${spaVenueCount} individual SPA venues`}
+                        >
+                          <span
+                            className="block h-[2px] w-6 rounded-full"
+                            style={{ backgroundColor: v.brandColor }}
+                          />
+                          <span className="inline-flex items-center gap-1 text-foreground group-hover:text-foreground/70 transition-colors">
+                            <ChevronRight className="h-3 w-3" />
+                            {v.name}
+                          </span>
+                        </button>
+                      ) : (
+                        <div className="flex flex-col items-end gap-1">
+                          <span
+                            className="block h-[2px] w-6 rounded-full"
+                            style={{ backgroundColor: v.brandColor }}
+                            title={v.brand}
+                          />
+                          <span className="text-foreground">{v.name}</span>
+                        </div>
+                      )}
+                    </th>
+                  );
+                })}
                 <th
                   className="text-right py-2 px-2 font-semibold text-foreground bg-slate-50/60 border-l-2 border-border/80 border-b border-border min-w-[88px] align-bottom"
                   title="HQ / corporate overhead (placeholder)"
@@ -703,7 +755,7 @@ function EBITDAOverviewContent({
                 <td className="py-2 px-2 text-[13px] font-semibold text-foreground sticky left-0 bg-slate-50/40 group-hover:bg-slate-50/80 z-10 border-b border-border transition-colors">
                   Net Revenue
                 </td>
-                {venueRows.map((v) => (
+                {displayedVenues.map((v) => (
                   <td key={v.id} className="py-2 px-2 text-right text-[13px] font-semibold text-foreground tabular-nums border-b border-border">
                     {fmtCurrencyShort(v.revenue)}
                   </td>
@@ -720,7 +772,7 @@ function EBITDAOverviewContent({
                 <td className="py-1.5 px-2 text-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/60 transition-colors">
                   Wages &amp; Salaries
                 </td>
-                {venueRows.map((v) => (
+                {displayedVenues.map((v) => (
                   <td key={v.id} className="py-1.5 px-2 text-right text-foreground tabular-nums border-b border-border/60">
                     {fmtCurrencyShort(v.wages)} <span className="text-muted-foreground/80">· {fmtPct(pctOf(v.wages, v.revenue))}</span>
                   </td>
@@ -747,7 +799,7 @@ function EBITDAOverviewContent({
                     <span>Advertising</span>
                   </button>
                 </td>
-                {venueRows.map((v) => (
+                {displayedVenues.map((v) => (
                   <td key={v.id} className="py-1.5 px-2 text-right text-foreground tabular-nums border-b border-border/60">
                     {fmtCurrencyShort(v.advertising)} <span className="text-muted-foreground/80">· {fmtPct(pctOf(v.advertising, v.revenue))}</span>
                   </td>
@@ -778,7 +830,7 @@ function EBITDAOverviewContent({
                           <span className="inline-flex items-center rounded-sm border border-border/60 px-1 py-px text-[9px] font-medium text-muted-foreground/70">api pending</span>
                         </span>
                       </td>
-                      {venueRows.map((v) => {
+                      {displayedVenues.map((v) => {
                         const part = Math.round(v.advertising * pct);
                         return (
                           <td key={v.id} className="py-1 px-2 text-right text-muted-foreground tabular-nums border-b border-border/40">
@@ -809,7 +861,7 @@ function EBITDAOverviewContent({
                     <span>SG&amp;A</span>
                   </button>
                 </td>
-                {venueRows.map((v) => (
+                {displayedVenues.map((v) => (
                   <td key={v.id} className="py-1.5 px-2 text-right text-foreground tabular-nums border-b border-border/60">
                     {fmtCurrencyShort(v.sga)} <span className="text-muted-foreground/80">· {fmtPct(pctOf(v.sga, v.revenue))}</span>
                   </td>
@@ -831,7 +883,7 @@ function EBITDAOverviewContent({
                       <span className="inline-flex items-center rounded-sm border border-border/60 px-1 py-px text-[9px] font-medium text-muted-foreground/70">allocated</span>
                     </span>
                   </td>
-                  {venueRows.map((v) => {
+                  {displayedVenues.map((v) => {
                     const part = sgaShare(v.sga, weight);
                     return (
                       <td key={v.id} className="py-1 px-2 text-right text-muted-foreground tabular-nums border-b border-border/40">
@@ -851,7 +903,7 @@ function EBITDAOverviewContent({
               {/* COGS */}
               <tr className="group hover:bg-muted/30 transition-colors">
                 <td className="py-1.5 px-2 text-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/60 transition-colors">COGS</td>
-                {venueRows.map((v) => (
+                {displayedVenues.map((v) => (
                   <td key={v.id} className="py-1.5 px-2 text-right text-foreground tabular-nums border-b border-border/60">
                     {fmtCurrencyShort(v.cogs)} <span className="text-muted-foreground/80">· {fmtPct(pctOf(v.cogs, v.revenue))}</span>
                   </td>
@@ -878,7 +930,7 @@ function EBITDAOverviewContent({
                     <span>Rent Plus</span>
                   </button>
                 </td>
-                {venueRows.map((v) => {
+                {displayedVenues.map((v) => {
                   const sum = v.rent + v.utilities;
                   return (
                     <td key={v.id} className="py-1.5 px-2 text-right text-foreground tabular-nums border-b border-border/60">
@@ -904,7 +956,7 @@ function EBITDAOverviewContent({
                     <td className="py-1 px-2 text-muted-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/40 transition-colors">
                       <span className="inline-flex items-center pl-5 border-l border-border/60 ml-1">Rent</span>
                     </td>
-                    {venueRows.map((v) => (
+                    {displayedVenues.map((v) => (
                       <td key={v.id} className="py-1 px-2 text-right text-muted-foreground tabular-nums border-b border-border/40">
                         {v.rent > 0
                           ? <>{fmtCurrencyShort(v.rent)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(v.rent, v.revenue))}</span></>
@@ -928,7 +980,7 @@ function EBITDAOverviewContent({
                     <td className="py-1 px-2 text-muted-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/40 transition-colors">
                       <span className="inline-flex items-center pl-5 border-l border-border/60 ml-1">Utilities</span>
                     </td>
-                    {venueRows.map((v) => (
+                    {displayedVenues.map((v) => (
                       <td key={v.id} className="py-1 px-2 text-right text-muted-foreground tabular-nums border-b border-border/40">
                         {fmtCurrencyShort(v.utilities)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(v.utilities, v.revenue))}</span>
                       </td>
@@ -949,7 +1001,7 @@ function EBITDAOverviewContent({
                 <td className="py-2 px-2 text-[13px] font-semibold text-foreground sticky left-0 bg-slate-50/40 group-hover:bg-slate-50/80 z-10 border-t-2 border-foreground/15 border-b border-border transition-colors">
                   EBITDA
                 </td>
-                {venueRows.map((v) => (
+                {displayedVenues.map((v) => (
                   <td
                     key={v.id}
                     className={`py-2 px-2 text-right text-[13px] font-semibold tabular-nums border-t-2 border-foreground/15 border-b border-border ${v.ebitda >= 0 ? "text-emerald-700" : "text-red-600"}`}
@@ -983,7 +1035,7 @@ function EBITDAOverviewContent({
                 <td className="py-2 px-2 text-[13px] font-semibold text-foreground sticky left-0 bg-slate-50/40 group-hover:bg-slate-50/80 z-10 transition-colors">
                   EBITDA %
                 </td>
-                {venueRows.map((v) => {
+                {displayedVenues.map((v) => {
                   const m = pctOf(v.ebitda, v.revenue);
                   const badge = m >= 50 ? "border-emerald-200 text-emerald-700 bg-emerald-50/60"
                               : m >= 30 ? "border-amber-200 text-amber-700 bg-amber-50/60"

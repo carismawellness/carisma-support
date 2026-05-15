@@ -1,9 +1,18 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { format, subDays, startOfMonth, startOfYear, startOfQuarter, isSameDay } from "date-fns";
+import {
+  format,
+  subDays,
+  startOfWeek,
+  endOfWeek,
+  subWeeks,
+  startOfMonth,
+  endOfMonth,
+  subMonths,
+  isSameDay,
+} from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
@@ -15,13 +24,41 @@ interface DateRangePickerProps {
 }
 
 const presets = [
-  { label: "7d", fn: () => ({ from: subDays(new Date(), 7), to: new Date() }) },
-  { label: "30d", fn: () => ({ from: subDays(new Date(), 30), to: new Date() }) },
-  { label: "90d", fn: () => ({ from: subDays(new Date(), 90), to: new Date() }) },
-  { label: "MTD", fn: () => ({ from: startOfMonth(new Date()), to: new Date() }) },
-  { label: "QTD", fn: () => ({ from: startOfQuarter(new Date()), to: new Date() }) },
-  { label: "YTD", fn: () => ({ from: startOfYear(new Date()), to: new Date() }) },
-];
+  {
+    key: "7d",
+    label: "7 days",
+    fn: () => ({ from: subDays(new Date(), 7), to: new Date() }),
+  },
+  {
+    key: "30d",
+    label: "30 days",
+    fn: () => ({ from: subDays(new Date(), 30), to: new Date() }),
+  },
+  {
+    key: "90d",
+    label: "90 days",
+    fn: () => ({ from: subDays(new Date(), 90), to: new Date() }),
+  },
+  {
+    key: "lw",
+    label: "Last week",
+    fn: () => {
+      const lastWeek = subWeeks(new Date(), 1);
+      return {
+        from: startOfWeek(lastWeek, { weekStartsOn: 1 }),
+        to: endOfWeek(lastWeek, { weekStartsOn: 1 }),
+      };
+    },
+  },
+  {
+    key: "lm",
+    label: "Last month",
+    fn: () => {
+      const lastMonth = subMonths(new Date(), 1);
+      return { from: startOfMonth(lastMonth), to: endOfMonth(lastMonth) };
+    },
+  },
+] as const;
 
 function isPresetActive(preset: (typeof presets)[number], from: Date, to: Date) {
   const range = preset.fn();
@@ -31,68 +68,80 @@ function isPresetActive(preset: (typeof presets)[number], from: Date, to: Date) 
 export function DateRangePicker({ from, to, onChange }: DateRangePickerProps) {
   const [open, setOpen] = useState(false);
 
-  const activePreset = useMemo(
-    () => presets.find((p) => isPresetActive(p, from, to))?.label ?? null,
+  const activeKey = useMemo(
+    () => presets.find((p) => isPresetActive(p, from, to))?.key ?? null,
     [from, to]
   );
 
+  const applyPreset = (preset: (typeof presets)[number]) => {
+    const range = preset.fn();
+    onChange(range.from, range.to);
+  };
+
   return (
-    <div className="flex items-center gap-0.5">
-      <div className="hidden md:flex items-center bg-muted/60 rounded-lg p-0.5 gap-0.5">
-        {presets.map((preset) => (
-          <button
-            key={preset.label}
-            className={cn(
-              "px-2.5 py-1 rounded-md text-xs font-medium transition-all duration-150",
-              activePreset === preset.label
-                ? "bg-white text-gold-dark shadow-sm"
-                : "text-muted-foreground hover:text-foreground hover:bg-white/60"
-            )}
-            onClick={() => {
-              const range = preset.fn();
-              onChange(range.from, range.to);
-            }}
-          >
-            {preset.label}
-          </button>
-        ))}
+    <div className="flex items-center gap-2">
+      {/* Preset chips (desktop) */}
+      <div className="hidden md:inline-flex items-center bg-muted/50 rounded-full p-1 gap-1 border border-border/60">
+        {presets.map((preset) => {
+          const active = activeKey === preset.key;
+          return (
+            <button
+              key={preset.key}
+              onClick={() => applyPreset(preset)}
+              aria-pressed={active}
+              className={cn(
+                "px-3 py-1 rounded-full text-[12px] font-medium transition-all duration-150",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40",
+                active
+                  ? "bg-white text-gold-dark shadow-sm ring-1 ring-gold/30"
+                  : "text-text-secondary hover:text-foreground hover:bg-white/70"
+              )}
+            >
+              {preset.label}
+            </button>
+          );
+        })}
       </div>
+
+      {/* Calendar trigger */}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
           className={cn(
-            "inline-flex items-center justify-start gap-2 rounded-lg border px-2.5 md:px-3 py-1.5",
+            "inline-flex items-center justify-start gap-2 rounded-full px-3 py-1.5",
             "text-left text-xs md:text-sm font-medium transition-all duration-150",
-            "bg-white shadow-sm hover:shadow",
-            "border-border hover:border-gold/40",
+            "bg-white border border-border shadow-sm hover:shadow hover:border-gold/40",
             "text-foreground",
-            "md:ml-1.5"
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
           )}
         >
           <CalendarIcon className="h-3.5 w-3.5 text-gold shrink-0" />
-          <span className="truncate">
+          <span className="truncate tabular-nums">
             {format(from, "MMM d")} – {format(to, "MMM d, yyyy")}
           </span>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <div className="flex gap-1 p-2 border-b border-border md:hidden">
-            {presets.map((preset) => (
-              <button
-                key={preset.label}
-                className={cn(
-                  "flex-1 px-2 py-1.5 rounded-md text-xs font-medium transition-all duration-150",
-                  activePreset === preset.label
-                    ? "bg-gold/10 text-gold-dark"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                )}
-                onClick={() => {
-                  const range = preset.fn();
-                  onChange(range.from, range.to);
-                  setOpen(false);
-                }}
-              >
-                {preset.label}
-              </button>
-            ))}
+        <PopoverContent className="w-auto p-0 rounded-xl shadow-lg border-border/80" align="end">
+          {/* Preset list inside popover (mobile + desktop quick-pick) */}
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-1 p-2 border-b border-border bg-muted/30 rounded-t-xl">
+            {presets.map((preset) => {
+              const active = activeKey === preset.key;
+              return (
+                <button
+                  key={preset.key}
+                  onClick={() => {
+                    applyPreset(preset);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "px-2 py-1.5 rounded-md text-[11px] font-medium transition-all duration-150 whitespace-nowrap",
+                    active
+                      ? "bg-white text-gold-dark shadow-sm ring-1 ring-gold/30"
+                      : "text-text-secondary hover:text-foreground hover:bg-white/70"
+                  )}
+                >
+                  {preset.label}
+                </button>
+              );
+            })}
           </div>
           <Calendar
             mode="range"
