@@ -636,71 +636,107 @@ function EBITDAOverviewContent({
 
       {/* P&L by Venue */}
       <Card className="p-3 md:p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-1">P&amp;L by Venue</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          All {venueRows.length} active venues side-by-side. Color dots indicate brand.
-        </p>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs whitespace-nowrap">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-5">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground mb-1">P&amp;L by Venue</h2>
+            <p className="text-sm text-muted-foreground">
+              All {venueRows.length} active venues side-by-side. Costs shown as positive values against revenue.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-1.5 w-3 rounded-sm" style={{ backgroundColor: chartColors.spa }} />
+              Spa
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-1.5 w-3 rounded-sm" style={{ backgroundColor: chartColors.aesthetics }} />
+              Aesthetics
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-1.5 w-3 rounded-sm" style={{ backgroundColor: chartColors.slimming }} />
+              Slimming
+            </span>
+          </div>
+        </div>
+        <div className="overflow-x-auto -mx-3 md:-mx-6 px-3 md:px-6">
+          <table className="w-full text-xs whitespace-nowrap border-separate border-spacing-0">
             <thead>
               <tr>
-                <th className="text-left py-1.5 px-2 font-semibold text-muted-foreground sticky left-0 bg-background z-10 min-w-[110px]">
+                <th className="text-left py-2 px-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground sticky left-0 bg-background z-10 min-w-[120px] border-b border-border align-bottom">
                   Line Item
                 </th>
                 {venueRows.map((v) => (
-                  <th key={v.id} className="text-right py-1.5 px-2 font-semibold text-foreground min-w-[78px]">
-                    <span className="inline-flex items-center gap-1">
+                  <th
+                    key={v.id}
+                    className="text-right py-2 px-2 font-semibold text-foreground min-w-[88px] border-b border-border align-bottom"
+                  >
+                    <div className="flex flex-col items-end gap-1">
                       <span
-                        className="inline-block h-2 w-2 rounded-full flex-shrink-0"
+                        className="block h-[2px] w-6 rounded-full"
                         style={{ backgroundColor: v.brandColor }}
                         title={v.brand}
                       />
-                      {v.name}
-                    </span>
+                      <span className="text-foreground">{v.name}</span>
+                    </div>
                   </th>
                 ))}
-                <th className="text-right py-1.5 px-2 font-semibold text-foreground bg-slate-50 border-l border-border min-w-[80px]" title="HQ / corporate overhead (placeholder)">
-                  HQ
+                <th
+                  className="text-right py-2 px-2 font-semibold text-foreground bg-slate-50/60 border-l-2 border-border/80 border-b border-border min-w-[88px] align-bottom"
+                  title="HQ / corporate overhead (placeholder)"
+                >
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="block h-[2px] w-6 rounded-full bg-slate-300" />
+                    <span>HQ</span>
+                  </div>
                 </th>
-                <th className="text-right py-1.5 px-2 font-semibold text-foreground bg-muted/30 border-l border-border min-w-[80px]">
-                  Group
+                <th className="text-right py-2 px-2 font-bold text-foreground bg-slate-100/70 border-l-2 border-border border-b border-border min-w-[92px] align-bottom">
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="block h-[2px] w-6 rounded-full bg-slate-500" />
+                    <span>Group</span>
+                  </div>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {/* Net Revenue */}
-              <tr className="border-b border-border">
-                <td className="py-1 px-2 font-bold text-foreground sticky left-0 bg-background z-10">Net Revenue</td>
+              {/* Net Revenue — anchor row */}
+              <tr className="group bg-slate-50/40 hover:bg-slate-50/80 transition-colors">
+                <td className="py-2 px-2 text-[13px] font-semibold text-foreground sticky left-0 bg-slate-50/40 group-hover:bg-slate-50/80 z-10 border-b border-border transition-colors">
+                  Net Revenue
+                </td>
                 {venueRows.map((v) => (
-                  <td key={v.id} className="py-1 px-2 text-right font-bold text-foreground">
+                  <td key={v.id} className="py-2 px-2 text-right text-[13px] font-semibold text-foreground tabular-nums border-b border-border">
                     {fmtCurrencyShort(v.revenue)}
                   </td>
                 ))}
-                <td className="py-1 px-2 text-right text-muted-foreground bg-slate-50 border-l border-border">&mdash;</td>
-                <td className="py-1 px-2 text-right font-bold text-foreground bg-muted/30 border-l border-border">
+                <td className="py-2 px-2 text-right text-muted-foreground bg-slate-50/60 border-l-2 border-border/80 border-b border-border">
+                  &mdash;
+                </td>
+                <td className="py-2 px-2 text-right text-[13px] font-bold text-foreground tabular-nums bg-slate-100/70 border-l-2 border-border border-b border-border">
                   {fmtCurrencyShort(venueTotals.revenue + CORPORATE.revenue)}
                 </td>
               </tr>
               {/* Wages & Salaries */}
-              <tr className="border-b border-border">
-                <td className="py-1 px-2 text-foreground sticky left-0 bg-background z-10">Wages &amp; Salaries</td>
+              <tr className="group hover:bg-muted/30 transition-colors">
+                <td className="py-1.5 px-2 text-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/60 transition-colors">
+                  Wages &amp; Salaries
+                </td>
                 {venueRows.map((v) => (
-                  <td key={v.id} className="py-1 px-2 text-right text-foreground">
-                    ({fmtCurrencyShort(v.wages)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.wages, v.revenue))}</span>
+                  <td key={v.id} className="py-1.5 px-2 text-right text-foreground tabular-nums border-b border-border/60">
+                    {fmtCurrencyShort(v.wages)} <span className="text-muted-foreground/80">· {fmtPct(pctOf(v.wages, v.revenue))}</span>
                   </td>
                 ))}
-                <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                <td className="py-1.5 px-2 text-right text-foreground tabular-nums bg-slate-50/60 border-l-2 border-border/80 border-b border-border/60">
                   {CORPORATE.wages > 0
-                    ? <>({fmtCurrencyShort(CORPORATE.wages)})</>
+                    ? fmtCurrencyShort(CORPORATE.wages)
                     : <span className="text-muted-foreground">&mdash;</span>}
                 </td>
-                <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
-                  ({fmtCurrencyShort(venueTotals.wages + CORPORATE.wages)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.wages + CORPORATE.wages, venueTotals.revenue))}</span>
+                <td className="py-1.5 px-2 text-right font-medium text-foreground tabular-nums bg-slate-100/70 border-l-2 border-border border-b border-border/60">
+                  {fmtCurrencyShort(venueTotals.wages + CORPORATE.wages)} <span className="text-muted-foreground/80 font-normal">· {fmtPct(pctOf(venueTotals.wages + CORPORATE.wages, venueTotals.revenue))}</span>
                 </td>
               </tr>
               {/* Advertising Plus (collapsible: Meta / Google / Klaviyo) */}
-              <tr className="border-b border-border">
-                <td className="py-1 px-2 text-foreground sticky left-0 bg-background z-10">
+              <tr className="group hover:bg-muted/30 transition-colors">
+                <td className="py-1.5 px-2 text-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/60 transition-colors">
                   <button
                     type="button"
                     onClick={() => setAdsExpanded((x) => !x)}
@@ -712,17 +748,17 @@ function EBITDAOverviewContent({
                   </button>
                 </td>
                 {venueRows.map((v) => (
-                  <td key={v.id} className="py-1 px-2 text-right text-foreground">
-                    ({fmtCurrencyShort(v.advertising)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.advertising, v.revenue))}</span>
+                  <td key={v.id} className="py-1.5 px-2 text-right text-foreground tabular-nums border-b border-border/60">
+                    {fmtCurrencyShort(v.advertising)} <span className="text-muted-foreground/80">· {fmtPct(pctOf(v.advertising, v.revenue))}</span>
                   </td>
                 ))}
-                <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                <td className="py-1.5 px-2 text-right text-foreground tabular-nums bg-slate-50/60 border-l-2 border-border/80 border-b border-border/60">
                   {CORPORATE.advertising > 0
-                    ? <>({fmtCurrencyShort(CORPORATE.advertising)})</>
+                    ? fmtCurrencyShort(CORPORATE.advertising)
                     : <span className="text-muted-foreground">&mdash;</span>}
                 </td>
-                <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
-                  ({fmtCurrencyShort(venueTotals.advertising + CORPORATE.advertising)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.advertising + CORPORATE.advertising, venueTotals.revenue))}</span>
+                <td className="py-1.5 px-2 text-right font-medium text-foreground tabular-nums bg-slate-100/70 border-l-2 border-border border-b border-border/60">
+                  {fmtCurrencyShort(venueTotals.advertising + CORPORATE.advertising)} <span className="text-muted-foreground/80 font-normal">· {fmtPct(pctOf(venueTotals.advertising + CORPORATE.advertising, venueTotals.revenue))}</span>
                 </td>
               </tr>
               {adsExpanded && (() => {
@@ -735,31 +771,34 @@ function EBITDAOverviewContent({
                     { label: "Klaviyo", pct: 0.10 },
                   ];
                   return channels.map(({ label, pct }) => (
-                    <tr key={label} className="border-b border-border">
-                      <td className="py-1 px-2 pl-7 text-muted-foreground sticky left-0 bg-background z-10">
-                        {label} <span className="text-[9px] uppercase tracking-wider opacity-60">(api pending)</span>
+                    <tr key={label} className="group hover:bg-muted/30 transition-colors">
+                      <td className="py-1 px-2 text-muted-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/40 transition-colors">
+                        <span className="inline-flex items-center gap-1.5 pl-5 border-l border-border/60 ml-1">
+                          <span>{label}</span>
+                          <span className="inline-flex items-center rounded-sm border border-border/60 px-1 py-px text-[9px] font-medium text-muted-foreground/70">api pending</span>
+                        </span>
                       </td>
                       {venueRows.map((v) => {
                         const part = Math.round(v.advertising * pct);
                         return (
-                          <td key={v.id} className="py-1 px-2 text-right text-foreground">
-                            ({fmtCurrencyShort(part)}) <span className="text-muted-foreground">{fmtPct(pctOf(part, v.revenue))}</span>
+                          <td key={v.id} className="py-1 px-2 text-right text-muted-foreground tabular-nums border-b border-border/40">
+                            {fmtCurrencyShort(part)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(part, v.revenue))}</span>
                           </td>
                         );
                       })}
-                      <td className="py-1 px-2 text-right text-muted-foreground bg-slate-50 border-l border-border">&mdash;</td>
-                      <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                      <td className="py-1 px-2 text-right text-muted-foreground bg-slate-50/60 border-l-2 border-border/80 border-b border-border/40">&mdash;</td>
+                      <td className="py-1 px-2 text-right text-muted-foreground tabular-nums bg-slate-100/70 border-l-2 border-border border-b border-border/40">
                         {(() => {
                           const part = Math.round(venueTotals.advertising * pct);
-                          return <>({fmtCurrencyShort(part)}) <span className="text-muted-foreground">{fmtPct(pctOf(part, venueTotals.revenue))}</span></>;
+                          return <>{fmtCurrencyShort(part)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(part, venueTotals.revenue))}</span></>;
                         })()}
                       </td>
                     </tr>
                   ));
                 })()}
               {/* SG&A (collapsible: category breakdown) */}
-              <tr className="border-b border-border">
-                <td className="py-1 px-2 text-foreground sticky left-0 bg-background z-10">
+              <tr className="group hover:bg-muted/30 transition-colors">
+                <td className="py-1.5 px-2 text-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/60 transition-colors">
                   <button
                     type="button"
                     onClick={() => setSgaExpanded((x) => !x)}
@@ -771,61 +810,64 @@ function EBITDAOverviewContent({
                   </button>
                 </td>
                 {venueRows.map((v) => (
-                  <td key={v.id} className="py-1 px-2 text-right text-foreground">
-                    ({fmtCurrencyShort(v.sga)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.sga, v.revenue))}</span>
+                  <td key={v.id} className="py-1.5 px-2 text-right text-foreground tabular-nums border-b border-border/60">
+                    {fmtCurrencyShort(v.sga)} <span className="text-muted-foreground/80">· {fmtPct(pctOf(v.sga, v.revenue))}</span>
                   </td>
                 ))}
-                <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                <td className="py-1.5 px-2 text-right text-foreground tabular-nums bg-slate-50/60 border-l-2 border-border/80 border-b border-border/60">
                   {CORPORATE.sga > 0
-                    ? <>({fmtCurrencyShort(CORPORATE.sga)})</>
+                    ? fmtCurrencyShort(CORPORATE.sga)
                     : <span className="text-muted-foreground">&mdash;</span>}
                 </td>
-                <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
-                  ({fmtCurrencyShort(venueTotals.sga + CORPORATE.sga)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.sga + CORPORATE.sga, venueTotals.revenue))}</span>
+                <td className="py-1.5 px-2 text-right font-medium text-foreground tabular-nums bg-slate-100/70 border-l-2 border-border border-b border-border/60">
+                  {fmtCurrencyShort(venueTotals.sga + CORPORATE.sga)} <span className="text-muted-foreground/80 font-normal">· {fmtPct(pctOf(venueTotals.sga + CORPORATE.sga, venueTotals.revenue))}</span>
                 </td>
               </tr>
               {sgaExpanded && SGA_CATEGORIES.map(({ label, weight }) => (
-                <tr key={label} className="border-b border-border">
-                  <td className="py-1 px-2 pl-7 text-muted-foreground sticky left-0 bg-background z-10">
-                    {label} <span className="text-[9px] uppercase tracking-wider opacity-60">(allocated)</span>
+                <tr key={label} className="group hover:bg-muted/30 transition-colors">
+                  <td className="py-1 px-2 text-muted-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/40 transition-colors">
+                    <span className="inline-flex items-center gap-1.5 pl-5 border-l border-border/60 ml-1">
+                      <span>{label}</span>
+                      <span className="inline-flex items-center rounded-sm border border-border/60 px-1 py-px text-[9px] font-medium text-muted-foreground/70">allocated</span>
+                    </span>
                   </td>
                   {venueRows.map((v) => {
                     const part = sgaShare(v.sga, weight);
                     return (
-                      <td key={v.id} className="py-1 px-2 text-right text-foreground">
-                        ({fmtCurrencyShort(part)}) <span className="text-muted-foreground">{fmtPct(pctOf(part, v.revenue))}</span>
+                      <td key={v.id} className="py-1 px-2 text-right text-muted-foreground tabular-nums border-b border-border/40">
+                        {fmtCurrencyShort(part)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(part, v.revenue))}</span>
                       </td>
                     );
                   })}
-                  <td className="py-1 px-2 text-right text-muted-foreground bg-slate-50 border-l border-border">&mdash;</td>
-                  <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                  <td className="py-1 px-2 text-right text-muted-foreground bg-slate-50/60 border-l-2 border-border/80 border-b border-border/40">&mdash;</td>
+                  <td className="py-1 px-2 text-right text-muted-foreground tabular-nums bg-slate-100/70 border-l-2 border-border border-b border-border/40">
                     {(() => {
                       const part = sgaShare(venueTotals.sga, weight);
-                      return <>({fmtCurrencyShort(part)}) <span className="text-muted-foreground">{fmtPct(pctOf(part, venueTotals.revenue))}</span></>;
+                      return <>{fmtCurrencyShort(part)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(part, venueTotals.revenue))}</span></>;
                     })()}
                   </td>
                 </tr>
               ))}
               {/* COGS */}
-              <tr className="border-b border-border">
-                <td className="py-1 px-2 text-foreground sticky left-0 bg-background z-10">COGS</td>
+              <tr className="group hover:bg-muted/30 transition-colors">
+                <td className="py-1.5 px-2 text-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/60 transition-colors">COGS</td>
                 {venueRows.map((v) => (
-                  <td key={v.id} className="py-1 px-2 text-right text-foreground">
-                    ({fmtCurrencyShort(v.cogs)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.cogs, v.revenue))}</span>
+                  <td key={v.id} className="py-1.5 px-2 text-right text-foreground tabular-nums border-b border-border/60">
+                    {fmtCurrencyShort(v.cogs)} <span className="text-muted-foreground/80">· {fmtPct(pctOf(v.cogs, v.revenue))}</span>
                   </td>
                 ))}
-                <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                <td className="py-1.5 px-2 text-right text-foreground tabular-nums bg-slate-50/60 border-l-2 border-border/80 border-b border-border/60">
                   {CORPORATE.cogs > 0
-                    ? <>({fmtCurrencyShort(CORPORATE.cogs)})</>
+                    ? fmtCurrencyShort(CORPORATE.cogs)
                     : <span className="text-muted-foreground">&mdash;</span>}
                 </td>
-                <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
-                  ({fmtCurrencyShort(venueTotals.cogs + CORPORATE.cogs)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.cogs + CORPORATE.cogs, venueTotals.revenue))}</span>
+                <td className="py-1.5 px-2 text-right font-medium text-foreground tabular-nums bg-slate-100/70 border-l-2 border-border border-b border-border/60">
+                  {fmtCurrencyShort(venueTotals.cogs + CORPORATE.cogs)} <span className="text-muted-foreground/80 font-normal">· {fmtPct(pctOf(venueTotals.cogs + CORPORATE.cogs, venueTotals.revenue))}</span>
                 </td>
               </tr>
               {/* Rent Plus (collapsible: Rent + Utilities) */}
-              <tr className="border-b border-border">
-                <td className="py-1 px-2 text-foreground sticky left-0 bg-background z-10">
+              <tr className="group hover:bg-muted/30 transition-colors">
+                <td className="py-1.5 px-2 text-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/60 transition-colors">
                   <button
                     type="button"
                     onClick={() => setRentExpanded((x) => !x)}
@@ -839,77 +881,88 @@ function EBITDAOverviewContent({
                 {venueRows.map((v) => {
                   const sum = v.rent + v.utilities;
                   return (
-                    <td key={v.id} className="py-1 px-2 text-right text-foreground">
-                      ({fmtCurrencyShort(sum)}) <span className="text-muted-foreground">{fmtPct(pctOf(sum, v.revenue))}</span>
+                    <td key={v.id} className="py-1.5 px-2 text-right text-foreground tabular-nums border-b border-border/60">
+                      {fmtCurrencyShort(sum)} <span className="text-muted-foreground/80">· {fmtPct(pctOf(sum, v.revenue))}</span>
                     </td>
                   );
                 })}
-                <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                <td className="py-1.5 px-2 text-right text-foreground tabular-nums bg-slate-50/60 border-l-2 border-border/80 border-b border-border/60">
                   {(CORPORATE.rent + CORPORATE.utilities) > 0
-                    ? <>({fmtCurrencyShort(CORPORATE.rent + CORPORATE.utilities)})</>
+                    ? fmtCurrencyShort(CORPORATE.rent + CORPORATE.utilities)
                     : <span className="text-muted-foreground">&mdash;</span>}
                 </td>
-                <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                <td className="py-1.5 px-2 text-right font-medium text-foreground tabular-nums bg-slate-100/70 border-l-2 border-border border-b border-border/60">
                   {(() => {
                     const sum = venueTotals.rent + venueTotals.utilities + CORPORATE.rent + CORPORATE.utilities;
-                    return <>({fmtCurrencyShort(sum)}) <span className="text-muted-foreground">{fmtPct(pctOf(sum, venueTotals.revenue))}</span></>;
+                    return <>{fmtCurrencyShort(sum)} <span className="text-muted-foreground/80 font-normal">· {fmtPct(pctOf(sum, venueTotals.revenue))}</span></>;
                   })()}
                 </td>
               </tr>
               {rentExpanded && (
                 <>
-                  <tr className="border-b border-border">
-                    <td className="py-1 px-2 pl-7 text-muted-foreground sticky left-0 bg-background z-10">Rent</td>
+                  <tr className="group hover:bg-muted/30 transition-colors">
+                    <td className="py-1 px-2 text-muted-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/40 transition-colors">
+                      <span className="inline-flex items-center pl-5 border-l border-border/60 ml-1">Rent</span>
+                    </td>
                     {venueRows.map((v) => (
-                      <td key={v.id} className="py-1 px-2 text-right text-foreground">
+                      <td key={v.id} className="py-1 px-2 text-right text-muted-foreground tabular-nums border-b border-border/40">
                         {v.rent > 0
-                          ? <>({fmtCurrencyShort(v.rent)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.rent, v.revenue))}</span></>
+                          ? <>{fmtCurrencyShort(v.rent)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(v.rent, v.revenue))}</span></>
                           : <span className="text-muted-foreground">&mdash;</span>
                         }
                       </td>
                     ))}
-                    <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                    <td className="py-1 px-2 text-right text-muted-foreground tabular-nums bg-slate-50/60 border-l-2 border-border/80 border-b border-border/40">
                       {CORPORATE.rent > 0
-                        ? <>({fmtCurrencyShort(CORPORATE.rent)})</>
+                        ? fmtCurrencyShort(CORPORATE.rent)
                         : <span className="text-muted-foreground">&mdash;</span>}
                     </td>
-                    <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                    <td className="py-1 px-2 text-right text-muted-foreground tabular-nums bg-slate-100/70 border-l-2 border-border border-b border-border/40">
                       {(venueTotals.rent + CORPORATE.rent) > 0
-                        ? <>({fmtCurrencyShort(venueTotals.rent + CORPORATE.rent)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.rent + CORPORATE.rent, venueTotals.revenue))}</span></>
+                        ? <>{fmtCurrencyShort(venueTotals.rent + CORPORATE.rent)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(venueTotals.rent + CORPORATE.rent, venueTotals.revenue))}</span></>
                         : <span className="text-muted-foreground">&mdash;</span>
                       }
                     </td>
                   </tr>
-                  <tr className="border-b border-border">
-                    <td className="py-1 px-2 pl-7 text-muted-foreground sticky left-0 bg-background z-10">Utilities</td>
+                  <tr className="group hover:bg-muted/30 transition-colors">
+                    <td className="py-1 px-2 text-muted-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/40 transition-colors">
+                      <span className="inline-flex items-center pl-5 border-l border-border/60 ml-1">Utilities</span>
+                    </td>
                     {venueRows.map((v) => (
-                      <td key={v.id} className="py-1 px-2 text-right text-foreground">
-                        ({fmtCurrencyShort(v.utilities)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.utilities, v.revenue))}</span>
+                      <td key={v.id} className="py-1 px-2 text-right text-muted-foreground tabular-nums border-b border-border/40">
+                        {fmtCurrencyShort(v.utilities)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(v.utilities, v.revenue))}</span>
                       </td>
                     ))}
-                    <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                    <td className="py-1 px-2 text-right text-muted-foreground tabular-nums bg-slate-50/60 border-l-2 border-border/80 border-b border-border/40">
                       {CORPORATE.utilities > 0
-                        ? <>({fmtCurrencyShort(CORPORATE.utilities)})</>
+                        ? fmtCurrencyShort(CORPORATE.utilities)
                         : <span className="text-muted-foreground">&mdash;</span>}
                     </td>
-                    <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
-                      ({fmtCurrencyShort(venueTotals.utilities + CORPORATE.utilities)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.utilities + CORPORATE.utilities, venueTotals.revenue))}</span>
+                    <td className="py-1 px-2 text-right text-muted-foreground tabular-nums bg-slate-100/70 border-l-2 border-border border-b border-border/40">
+                      {fmtCurrencyShort(venueTotals.utilities + CORPORATE.utilities)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(venueTotals.utilities + CORPORATE.utilities, venueTotals.revenue))}</span>
                     </td>
                   </tr>
                 </>
               )}
-              {/* EBITDA */}
-              <tr className="border-t-2 border-border">
-                <td className="py-1 px-2 font-bold text-foreground sticky left-0 bg-background z-10">EBITDA</td>
+              {/* EBITDA — anchor row */}
+              <tr className="group bg-slate-50/40 hover:bg-slate-50/80 transition-colors">
+                <td className="py-2 px-2 text-[13px] font-semibold text-foreground sticky left-0 bg-slate-50/40 group-hover:bg-slate-50/80 z-10 border-t-2 border-foreground/15 border-b border-border transition-colors">
+                  EBITDA
+                </td>
                 {venueRows.map((v) => (
-                  <td key={v.id} className={`py-1 px-2 text-right font-bold ${v.ebitda >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                  <td
+                    key={v.id}
+                    className={`py-2 px-2 text-right text-[13px] font-semibold tabular-nums border-t-2 border-foreground/15 border-b border-border ${v.ebitda >= 0 ? "text-emerald-700" : "text-red-600"}`}
+                  >
                     {fmtCurrencyShort(v.ebitda)}
                   </td>
                 ))}
                 {(() => {
                   const corpE = corporateEbitda(CORPORATE);
                   return (
-                    <td className={`py-1 px-2 text-right font-bold bg-slate-50 border-l border-border ${corpE >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                    <td
+                      className={`py-2 px-2 text-right text-[13px] font-semibold tabular-nums bg-slate-50/60 border-l-2 border-border/80 border-t-2 border-foreground/15 border-b border-border ${corpE >= 0 ? "text-emerald-700" : "text-red-600"}`}
+                    >
                       {corpE !== 0 ? fmtCurrencyShort(corpE) : <span className="text-muted-foreground font-normal">&mdash;</span>}
                     </td>
                   );
@@ -917,39 +970,43 @@ function EBITDAOverviewContent({
                 {(() => {
                   const groupE = venueTotals.ebitda + corporateEbitda(CORPORATE);
                   return (
-                    <td className={`py-1 px-2 text-right font-bold bg-muted/30 border-l border-border ${groupE >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                    <td
+                      className={`py-2 px-2 text-right text-[13px] font-bold tabular-nums bg-slate-100/70 border-l-2 border-border border-t-2 border-foreground/15 border-b border-border ${groupE >= 0 ? "text-emerald-700" : "text-red-600"}`}
+                    >
                       {fmtCurrencyShort(groupE)}
                     </td>
                   );
                 })()}
               </tr>
               {/* EBITDA % */}
-              <tr>
-                <td className="py-1 px-2 font-bold text-foreground sticky left-0 bg-background z-10">EBITDA %</td>
+              <tr className="group bg-slate-50/40 hover:bg-slate-50/80 transition-colors">
+                <td className="py-2 px-2 text-[13px] font-semibold text-foreground sticky left-0 bg-slate-50/40 group-hover:bg-slate-50/80 z-10 transition-colors">
+                  EBITDA %
+                </td>
                 {venueRows.map((v) => {
                   const m = pctOf(v.ebitda, v.revenue);
-                  const badge = m >= 50 ? "bg-emerald-100 text-emerald-800"
-                              : m >= 30 ? "bg-amber-100 text-amber-800"
-                              : "bg-red-100 text-red-800";
+                  const badge = m >= 50 ? "border-emerald-200 text-emerald-700 bg-emerald-50/60"
+                              : m >= 30 ? "border-amber-200 text-amber-700 bg-amber-50/60"
+                              : "border-red-200 text-red-700 bg-red-50/60";
                   return (
-                    <td key={v.id} className="py-1 px-2 text-right">
-                      <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium ${badge}`}>
+                    <td key={v.id} className="py-2 px-2 text-right">
+                      <span className={`inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold tabular-nums ${badge}`}>
                         {fmtPct(m)}
                       </span>
                     </td>
                   );
                 })}
-                <td className="py-1 px-2 text-right bg-slate-50 border-l border-border">
+                <td className="py-2 px-2 text-right bg-slate-50/60 border-l-2 border-border/80">
                   <span className="text-muted-foreground">&mdash;</span>
                 </td>
-                <td className="py-1 px-2 text-right bg-muted/30 border-l border-border">
+                <td className="py-2 px-2 text-right bg-slate-100/70 border-l-2 border-border">
                   {(() => {
                     const m = pctOf(venueTotals.ebitda + corporateEbitda(CORPORATE), venueTotals.revenue);
-                    const badge = m >= 50 ? "bg-emerald-100 text-emerald-800"
-                                : m >= 30 ? "bg-amber-100 text-amber-800"
-                                : "bg-red-100 text-red-800";
+                    const badge = m >= 50 ? "border-emerald-300 text-emerald-800 bg-emerald-50"
+                                : m >= 30 ? "border-amber-300 text-amber-800 bg-amber-50"
+                                : "border-red-300 text-red-800 bg-red-50";
                     return (
-                      <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium ${badge}`}>
+                      <span className={`inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-bold tabular-nums ${badge}`}>
                         {fmtPct(m)}
                       </span>
                     );
@@ -958,19 +1015,6 @@ function EBITDAOverviewContent({
               </tr>
             </tbody>
           </table>
-        </div>
-
-        {/* Brand legend */}
-        <div className="flex flex-wrap gap-4 mt-4 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: chartColors.spa }} /> Spa
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: chartColors.aesthetics }} /> Aesthetics
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: chartColors.slimming }} /> Slimming
-          </span>
         </div>
       </Card>
 
