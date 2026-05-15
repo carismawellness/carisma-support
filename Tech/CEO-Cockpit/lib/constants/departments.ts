@@ -86,6 +86,7 @@ export const departments: Department[] = [
     children: [
       { slug: "coa-mapping",        label: "COA Mapping",        path: "/settings/coa-mapping",        icon: BookOpen },
       { slug: "salary-supplement",   label: "Salary Supplement",   path: "/settings/salary-supplement",   icon: BookOpen },
+      { slug: "logic-mapping",       label: "Logic Mapping",       path: "/settings/logic-mapping",       icon: BookOpen },
     ],
   },
 ];
