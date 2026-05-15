@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, ArrowUpRight, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { CIChat } from "@/components/ci/CIChat";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
+import { Sparkline } from "@/components/dashboard/Sparkline";
 import { Card } from "@/components/ui/card";
 import {
   chartColors,
@@ -317,6 +317,69 @@ function fmtCurrencyShort(value: number): string {
 }
 
 /* ------------------------------------------------------------------ */
+/*  CORPORATE OVERHEAD                                                 */
+/*  Placeholder zeros. When wages/SG&A/etc. for the corporate          */
+/*  cost center are attributed, edit these constants. Logic Mapping    */
+/*  page indexes this as the canonical source.                         */
+/* ------------------------------------------------------------------ */
+
+interface CorporateCosts {
+  revenue: number;     // always 0 \u2014 corporate has no revenue
+  wages: number;
+  advertising: number;
+  rent: number;
+  utilities: number;
+  cogs: number;
+  sga: number;
+}
+
+const CORPORATE: CorporateCosts = {
+  revenue: 0,
+  wages: 0,
+  advertising: 0,
+  rent: 0,
+  utilities: 0,
+  cogs: 0,
+  sga: 0,
+};
+
+function corporateEbitda(c: CorporateCosts): number {
+  return -(c.wages + c.advertising + c.rent + c.utilities + c.cogs + c.sga);
+}
+
+/* ------------------------------------------------------------------ */
+/*  STATUS / TREND HELPERS (Morning Pulse\u2013style KPI cards)             */
+/* ------------------------------------------------------------------ */
+
+type Status = "green" | "amber" | "red";
+
+function statusColor(s: Status): string {
+  return s === "green" ? "bg-emerald-50 border-emerald-200"
+       : s === "amber" ? "bg-amber-50 border-amber-200"
+       :                 "bg-red-50 border-red-200";
+}
+function statusDot(s: Status): string {
+  return s === "green" ? "bg-emerald-500"
+       : s === "amber" ? "bg-amber-500"
+       :                 "bg-red-500";
+}
+function statusText(s: Status): string {
+  return s === "green" ? "text-emerald-700"
+       : s === "amber" ? "text-amber-700"
+       :                 "text-red-700";
+}
+function getStatus(value: number, green: number, amber: number): Status {
+  if (value >= green) return "green";
+  if (value >= amber) return "amber";
+  return "red";
+}
+function TrendIcon({ trend }: { trend: number }) {
+  if (trend > 0) return <TrendingUp className="h-4 w-4 text-emerald-600" />;
+  if (trend < 0) return <TrendingDown className="h-4 w-4 text-red-500" />;
+  return <Minus className="h-4 w-4 text-gray-400" />;
+}
+
+/* ------------------------------------------------------------------ */
 /*  SG&A CATEGORY BREAKDOWN                                            */
 /*  Total SG&A comes from Zoho. We allocate it across these categories */
 /*  using fixed weights until Zoho line-item CoA mapping is wired up. */
@@ -388,12 +451,24 @@ function EBITDAOverviewContent({
     return { spaTotals: spa, aesSummary: aes, slimSummary: slim, groupRevenue: gRev, groupEbitda: gEbitda, groupMargin: gMargin };
   }, [locationTotals, filteredIdx]);
 
-  /* --- KPI cards --------------------------------------------------- */
-  const kpis: KPIData[] = useMemo(() => [
-    { label: "Group Revenue", value: formatCurrency(groupRevenue) },
-    { label: `Group EBITDA (${filteredCountLabel(monthCount, "month")})`, value: formatCurrency(groupEbitda) },
-    { label: "EBITDA Margin", value: `${groupMargin}%`, target: "30%", targetValue: 30, currentValue: groupMargin },
-  ], [groupRevenue, groupEbitda, groupMargin, monthCount]);
+  /* --- Sparkline data: per-month group revenue & EBITDA ------------- */
+  const { revenueSpark, ebitdaSpark } = useMemo(() => {
+    const rev: number[] = [];
+    const ebd: number[] = [];
+    for (const i of filteredIdx) {
+      let r = 0, e = 0;
+      for (const loc of LOCATIONS) {
+        const d = LOCATION_DATA[loc.id][i];
+        if (d) { r += d.revenue; e += d.ebitda; }
+      }
+      rev.push(r);
+      ebd.push(e);
+    }
+    return { revenueSpark: rev, ebitdaSpark: ebd };
+  }, [filteredIdx]);
+
+  /* --- KPI statuses ------------------------------------------------- */
+  const ebitdaStatus: Status = getStatus(groupMargin, 30, 15);
 
   /* --- Waterfall --------------------------------------------------- */
   const waterfallData = useMemo(() => buildWaterfall(filteredIdx), [filteredIdx]);
@@ -457,8 +532,76 @@ function EBITDAOverviewContent({
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <KPICardRow kpis={kpis} />
+      {/* KPI Cards — Morning Pulse style */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Group Net Revenue */}
+        <Card className="p-4 md:p-6 border-2 bg-emerald-50 border-emerald-200">
+          <div className="flex items-start justify-between mb-1">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              Group Net Revenue
+            </p>
+            <span className="text-muted-foreground">
+              <ArrowUpRight className="h-4 w-4" />
+            </span>
+          </div>
+          <div className="flex items-end gap-3 mb-2">
+            <span className="text-3xl md:text-4xl font-bold text-foreground">
+              {formatCurrency(groupRevenue)}
+            </span>
+            <div className="flex items-center gap-1 pb-1">
+              <TrendIcon trend={1} />
+              <span className="text-sm font-medium text-emerald-600">{filteredCountLabel(monthCount, "month")}</span>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+            <span>
+              <span className="font-medium" style={{ color: chartColors.spa }}>Spa</span>{" "}
+              {formatCurrency(spaTotals.revenue)}
+            </span>
+            <span>
+              <span className="font-medium" style={{ color: chartColors.aesthetics }}>Aes</span>{" "}
+              {formatCurrency(aesSummary.revenue)}
+            </span>
+            <span>
+              <span className="font-medium" style={{ color: chartColors.slimming }}>Slim</span>{" "}
+              {formatCurrency(slimSummary.revenue)}
+            </span>
+          </div>
+          <div className="mt-3">
+            <Sparkline data={revenueSpark} width={200} height={32} color={chartColors.spa} />
+          </div>
+        </Card>
+
+        {/* Group EBITDA */}
+        <Card className={`p-4 md:p-6 border-2 ${statusColor(ebitdaStatus)}`}>
+          <div className="flex items-start justify-between mb-1">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              Group EBITDA ({filteredCountLabel(monthCount, "month")})
+            </p>
+            <span className="text-muted-foreground">
+              <ArrowUpRight className="h-4 w-4" />
+            </span>
+          </div>
+          <div className="flex items-end gap-3 mb-2">
+            <span className="text-3xl md:text-4xl font-bold text-foreground">
+              {formatCurrency(groupEbitda)}
+            </span>
+            <span className="text-sm text-muted-foreground pb-1">
+              {groupMargin}% margin
+            </span>
+          </div>
+          <div className="flex items-center gap-1 text-xs">
+            <span className={`inline-block h-2 w-2 rounded-full ${statusDot(ebitdaStatus)}`} />
+            <span className={statusText(ebitdaStatus)}>
+              {ebitdaStatus === "green" ? "On track" : ebitdaStatus === "amber" ? "Below target" : "Critical"}
+            </span>
+            <span className="text-muted-foreground ml-2">Target 30%</span>
+          </div>
+          <div className="mt-3">
+            <Sparkline data={ebitdaSpark} width={200} height={32} color="#16a34a" />
+          </div>
+        </Card>
+      </div>
 
       {/* Brand Breakdown Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
@@ -504,17 +647,17 @@ function EBITDAOverviewContent({
           All {venueRows.length} active venues side-by-side. Color dots indicate brand.
         </p>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm whitespace-nowrap">
+          <table className="w-full text-xs whitespace-nowrap">
             <thead>
               <tr>
-                <th className="text-left py-2 px-3 font-semibold text-muted-foreground sticky left-0 bg-background z-10 min-w-[140px]">
+                <th className="text-left py-1.5 px-2 font-semibold text-muted-foreground sticky left-0 bg-background z-10 min-w-[110px]">
                   Line Item
                 </th>
                 {venueRows.map((v) => (
-                  <th key={v.id} className="text-right py-2 px-3 font-semibold text-foreground min-w-[110px]">
-                    <span className="inline-flex items-center gap-1.5">
+                  <th key={v.id} className="text-right py-1.5 px-2 font-semibold text-foreground min-w-[78px]">
+                    <span className="inline-flex items-center gap-1">
                       <span
-                        className="inline-block h-2.5 w-2.5 rounded-full flex-shrink-0"
+                        className="inline-block h-2 w-2 rounded-full flex-shrink-0"
                         style={{ backgroundColor: v.brandColor }}
                         title={v.brand}
                       />
@@ -522,7 +665,10 @@ function EBITDAOverviewContent({
                     </span>
                   </th>
                 ))}
-                <th className="text-right py-2 px-3 font-semibold text-foreground bg-muted/20 border-l border-border min-w-[110px]">
+                <th className="text-right py-1.5 px-2 font-semibold text-foreground bg-slate-50 border-l border-border min-w-[80px]" title="Corporate overhead (placeholder)">
+                  Corporate
+                </th>
+                <th className="text-right py-1.5 px-2 font-semibold text-foreground bg-muted/30 border-l border-border min-w-[80px]">
                   Group
                 </th>
               </tr>
@@ -530,196 +676,135 @@ function EBITDAOverviewContent({
             <tbody>
               {/* Net Revenue */}
               <tr className="border-b border-border">
-                <td className="py-1.5 px-3 font-bold text-foreground sticky left-0 bg-background z-10">Net Revenue</td>
+                <td className="py-1 px-2 font-bold text-foreground sticky left-0 bg-background z-10">Net Revenue</td>
                 {venueRows.map((v) => (
-                  <td key={v.id} className="py-1.5 px-3 text-right font-bold text-foreground">
+                  <td key={v.id} className="py-1 px-2 text-right font-bold text-foreground">
                     {fmtCurrencyShort(v.revenue)}
                   </td>
                 ))}
-                <td className="py-1.5 px-3 text-right font-bold text-foreground bg-muted/20 border-l border-border">
-                  {fmtCurrencyShort(venueTotals.revenue)}
+                <td className="py-1 px-2 text-right text-muted-foreground bg-slate-50 border-l border-border">&mdash;</td>
+                <td className="py-1 px-2 text-right font-bold text-foreground bg-muted/30 border-l border-border">
+                  {fmtCurrencyShort(venueTotals.revenue + CORPORATE.revenue)}
                 </td>
               </tr>
               {/* Wages & Salaries */}
               <tr className="border-b border-border">
-                <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">Wages &amp; Salaries</td>
+                <td className="py-1 px-2 text-foreground sticky left-0 bg-background z-10">Wages &amp; Salaries</td>
                 {venueRows.map((v) => (
-                  <td key={v.id} className="py-1.5 px-3 text-right text-foreground">
+                  <td key={v.id} className="py-1 px-2 text-right text-foreground">
                     ({fmtCurrencyShort(v.wages)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.wages, v.revenue))}</span>
                   </td>
                 ))}
-                <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
-                  ({fmtCurrencyShort(venueTotals.wages)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.wages, venueTotals.revenue))}</span>
+                <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                  {CORPORATE.wages > 0
+                    ? <>({fmtCurrencyShort(CORPORATE.wages)})</>
+                    : <span className="text-muted-foreground">&mdash;</span>}
+                </td>
+                <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                  ({fmtCurrencyShort(venueTotals.wages + CORPORATE.wages)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.wages + CORPORATE.wages, venueTotals.revenue))}</span>
                 </td>
               </tr>
               {/* Advertising Plus (collapsible: Meta / Google / Klaviyo) */}
               <tr className="border-b border-border">
-                <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">
+                <td className="py-1 px-2 text-foreground sticky left-0 bg-background z-10">
                   <button
                     type="button"
                     onClick={() => setAdsExpanded((x) => !x)}
-                    className="flex items-center gap-1.5 hover:text-foreground/70 transition-colors"
+                    className="flex items-center gap-1 hover:text-foreground/70 transition-colors"
                     aria-expanded={adsExpanded}
                   >
-                    {adsExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                    {adsExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
                     <span>Advertising</span>
                   </button>
                 </td>
                 {venueRows.map((v) => (
-                  <td key={v.id} className="py-1.5 px-3 text-right text-foreground">
+                  <td key={v.id} className="py-1 px-2 text-right text-foreground">
                     ({fmtCurrencyShort(v.advertising)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.advertising, v.revenue))}</span>
                   </td>
                 ))}
-                <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
-                  ({fmtCurrencyShort(venueTotals.advertising)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.advertising, venueTotals.revenue))}</span>
+                <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                  {CORPORATE.advertising > 0
+                    ? <>({fmtCurrencyShort(CORPORATE.advertising)})</>
+                    : <span className="text-muted-foreground">&mdash;</span>}
+                </td>
+                <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                  ({fmtCurrencyShort(venueTotals.advertising + CORPORATE.advertising)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.advertising + CORPORATE.advertising, venueTotals.revenue))}</span>
                 </td>
               </tr>
-              {adsExpanded && (
-                <>
-                  {/* TODO(api): replace placeholder splits with live Meta / Google / Klaviyo spend.
-                      SPA venues currently share one Meta/Google account — distribute spend across
-                      SPA venues by revenue share. Aesthetics and Slimming have their own ad accounts. */}
-                  {(() => {
-                    const META_PCT = 0.60;
-                    const GOOGLE_PCT = 0.30;
-                    const KLAVIYO_PCT = 0.10;
-                    const channels: { label: string; pct: number }[] = [
-                      { label: "Meta",    pct: META_PCT },
-                      { label: "Google",  pct: GOOGLE_PCT },
-                      { label: "Klaviyo", pct: KLAVIYO_PCT },
-                    ];
-                    return channels.map(({ label, pct }) => (
-                      <tr key={label} className="border-b border-border">
-                        <td className="py-1.5 px-3 pl-9 text-muted-foreground sticky left-0 bg-background z-10">
-                          {label} <span className="text-[10px] uppercase tracking-wider opacity-60">(api pending)</span>
-                        </td>
-                        {venueRows.map((v) => {
-                          const part = Math.round(v.advertising * pct);
-                          return (
-                            <td key={v.id} className="py-1.5 px-3 text-right text-foreground">
-                              ({fmtCurrencyShort(part)}) <span className="text-muted-foreground">{fmtPct(pctOf(part, v.revenue))}</span>
-                            </td>
-                          );
-                        })}
-                        <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
-                          {(() => {
-                            const part = Math.round(venueTotals.advertising * pct);
-                            return <>({fmtCurrencyShort(part)}) <span className="text-muted-foreground">{fmtPct(pctOf(part, venueTotals.revenue))}</span></>;
-                          })()}
-                        </td>
-                      </tr>
-                    ));
-                  })()}
-                </>
-              )}
-              {/* Rent Plus (collapsible: Rent + Utilities) */}
-              <tr className="border-b border-border">
-                <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">
-                  <button
-                    type="button"
-                    onClick={() => setRentExpanded((x) => !x)}
-                    className="flex items-center gap-1.5 hover:text-foreground/70 transition-colors"
-                    aria-expanded={rentExpanded}
-                  >
-                    {rentExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-                    <span>Rent Plus</span>
-                  </button>
-                </td>
-                {venueRows.map((v) => {
-                  const sum = v.rent + v.utilities;
-                  return (
-                    <td key={v.id} className="py-1.5 px-3 text-right text-foreground">
-                      ({fmtCurrencyShort(sum)}) <span className="text-muted-foreground">{fmtPct(pctOf(sum, v.revenue))}</span>
-                    </td>
-                  );
-                })}
-                <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
-                  {(() => {
-                    const sum = venueTotals.rent + venueTotals.utilities;
-                    return <>({fmtCurrencyShort(sum)}) <span className="text-muted-foreground">{fmtPct(pctOf(sum, venueTotals.revenue))}</span></>;
-                  })()}
-                </td>
-              </tr>
-              {rentExpanded && (
-                <>
-                  <tr className="border-b border-border">
-                    <td className="py-1.5 px-3 pl-9 text-muted-foreground sticky left-0 bg-background z-10">Rent</td>
-                    {venueRows.map((v) => (
-                      <td key={v.id} className="py-1.5 px-3 text-right text-foreground">
-                        {v.rent > 0
-                          ? <>({fmtCurrencyShort(v.rent)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.rent, v.revenue))}</span></>
-                          : <span className="text-muted-foreground">&mdash;</span>
-                        }
+              {adsExpanded && (() => {
+                  // TODO(api): replace placeholder splits with live Meta/Google/Klaviyo spend.
+                  // SPA venues share one Meta/Google account — distribute by revenue share.
+                  // Aesthetics and Slimming have their own ad accounts.
+                  const channels: { label: string; pct: number }[] = [
+                    { label: "Meta",    pct: 0.60 },
+                    { label: "Google",  pct: 0.30 },
+                    { label: "Klaviyo", pct: 0.10 },
+                  ];
+                  return channels.map(({ label, pct }) => (
+                    <tr key={label} className="border-b border-border">
+                      <td className="py-1 px-2 pl-7 text-muted-foreground sticky left-0 bg-background z-10">
+                        {label} <span className="text-[9px] uppercase tracking-wider opacity-60">(api pending)</span>
                       </td>
-                    ))}
-                    <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
-                      {venueTotals.rent > 0
-                        ? <>({fmtCurrencyShort(venueTotals.rent)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.rent, venueTotals.revenue))}</span></>
-                        : <span className="text-muted-foreground">&mdash;</span>
-                      }
-                    </td>
-                  </tr>
-                  <tr className="border-b border-border">
-                    <td className="py-1.5 px-3 pl-9 text-muted-foreground sticky left-0 bg-background z-10">Utilities</td>
-                    {venueRows.map((v) => (
-                      <td key={v.id} className="py-1.5 px-3 text-right text-foreground">
-                        ({fmtCurrencyShort(v.utilities)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.utilities, v.revenue))}</span>
+                      {venueRows.map((v) => {
+                        const part = Math.round(v.advertising * pct);
+                        return (
+                          <td key={v.id} className="py-1 px-2 text-right text-foreground">
+                            ({fmtCurrencyShort(part)}) <span className="text-muted-foreground">{fmtPct(pctOf(part, v.revenue))}</span>
+                          </td>
+                        );
+                      })}
+                      <td className="py-1 px-2 text-right text-muted-foreground bg-slate-50 border-l border-border">&mdash;</td>
+                      <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                        {(() => {
+                          const part = Math.round(venueTotals.advertising * pct);
+                          return <>({fmtCurrencyShort(part)}) <span className="text-muted-foreground">{fmtPct(pctOf(part, venueTotals.revenue))}</span></>;
+                        })()}
                       </td>
-                    ))}
-                    <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
-                      ({fmtCurrencyShort(venueTotals.utilities)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.utilities, venueTotals.revenue))}</span>
-                    </td>
-                  </tr>
-                </>
-              )}
-              {/* COGS */}
-              <tr className="border-b border-border">
-                <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">COGS</td>
-                {venueRows.map((v) => (
-                  <td key={v.id} className="py-1.5 px-3 text-right text-foreground">
-                    ({fmtCurrencyShort(v.cogs)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.cogs, v.revenue))}</span>
-                  </td>
-                ))}
-                <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
-                  ({fmtCurrencyShort(venueTotals.cogs)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.cogs, venueTotals.revenue))}</span>
-                </td>
-              </tr>
+                    </tr>
+                  ));
+                })()}
               {/* SG&A (collapsible: category breakdown) */}
               <tr className="border-b border-border">
-                <td className="py-1.5 px-3 text-foreground sticky left-0 bg-background z-10">
+                <td className="py-1 px-2 text-foreground sticky left-0 bg-background z-10">
                   <button
                     type="button"
                     onClick={() => setSgaExpanded((x) => !x)}
-                    className="flex items-center gap-1.5 hover:text-foreground/70 transition-colors"
+                    className="flex items-center gap-1 hover:text-foreground/70 transition-colors"
                     aria-expanded={sgaExpanded}
                   >
-                    {sgaExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                    {sgaExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
                     <span>SG&amp;A</span>
                   </button>
                 </td>
                 {venueRows.map((v) => (
-                  <td key={v.id} className="py-1.5 px-3 text-right text-foreground">
+                  <td key={v.id} className="py-1 px-2 text-right text-foreground">
                     ({fmtCurrencyShort(v.sga)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.sga, v.revenue))}</span>
                   </td>
                 ))}
-                <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
-                  ({fmtCurrencyShort(venueTotals.sga)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.sga, venueTotals.revenue))}</span>
+                <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                  {CORPORATE.sga > 0
+                    ? <>({fmtCurrencyShort(CORPORATE.sga)})</>
+                    : <span className="text-muted-foreground">&mdash;</span>}
+                </td>
+                <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                  ({fmtCurrencyShort(venueTotals.sga + CORPORATE.sga)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.sga + CORPORATE.sga, venueTotals.revenue))}</span>
                 </td>
               </tr>
               {sgaExpanded && SGA_CATEGORIES.map(({ label, weight }) => (
                 <tr key={label} className="border-b border-border">
-                  <td className="py-1.5 px-3 pl-9 text-muted-foreground sticky left-0 bg-background z-10">
-                    {label} <span className="text-[10px] uppercase tracking-wider opacity-60">(allocated)</span>
+                  <td className="py-1 px-2 pl-7 text-muted-foreground sticky left-0 bg-background z-10">
+                    {label} <span className="text-[9px] uppercase tracking-wider opacity-60">(allocated)</span>
                   </td>
                   {venueRows.map((v) => {
                     const part = sgaShare(v.sga, weight);
                     return (
-                      <td key={v.id} className="py-1.5 px-3 text-right text-foreground">
+                      <td key={v.id} className="py-1 px-2 text-right text-foreground">
                         ({fmtCurrencyShort(part)}) <span className="text-muted-foreground">{fmtPct(pctOf(part, v.revenue))}</span>
                       </td>
                     );
                   })}
-                  <td className="py-1.5 px-3 text-right text-foreground bg-muted/20 border-l border-border">
+                  <td className="py-1 px-2 text-right text-muted-foreground bg-slate-50 border-l border-border">&mdash;</td>
+                  <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
                     {(() => {
                       const part = sgaShare(venueTotals.sga, weight);
                       return <>({fmtCurrencyShort(part)}) <span className="text-muted-foreground">{fmtPct(pctOf(part, venueTotals.revenue))}</span></>;
@@ -727,42 +812,150 @@ function EBITDAOverviewContent({
                   </td>
                 </tr>
               ))}
+              {/* COGS */}
+              <tr className="border-b border-border">
+                <td className="py-1 px-2 text-foreground sticky left-0 bg-background z-10">COGS</td>
+                {venueRows.map((v) => (
+                  <td key={v.id} className="py-1 px-2 text-right text-foreground">
+                    ({fmtCurrencyShort(v.cogs)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.cogs, v.revenue))}</span>
+                  </td>
+                ))}
+                <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                  {CORPORATE.cogs > 0
+                    ? <>({fmtCurrencyShort(CORPORATE.cogs)})</>
+                    : <span className="text-muted-foreground">&mdash;</span>}
+                </td>
+                <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                  ({fmtCurrencyShort(venueTotals.cogs + CORPORATE.cogs)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.cogs + CORPORATE.cogs, venueTotals.revenue))}</span>
+                </td>
+              </tr>
+              {/* Rent Plus (collapsible: Rent + Utilities) */}
+              <tr className="border-b border-border">
+                <td className="py-1 px-2 text-foreground sticky left-0 bg-background z-10">
+                  <button
+                    type="button"
+                    onClick={() => setRentExpanded((x) => !x)}
+                    className="flex items-center gap-1 hover:text-foreground/70 transition-colors"
+                    aria-expanded={rentExpanded}
+                  >
+                    {rentExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                    <span>Rent Plus</span>
+                  </button>
+                </td>
+                {venueRows.map((v) => {
+                  const sum = v.rent + v.utilities;
+                  return (
+                    <td key={v.id} className="py-1 px-2 text-right text-foreground">
+                      ({fmtCurrencyShort(sum)}) <span className="text-muted-foreground">{fmtPct(pctOf(sum, v.revenue))}</span>
+                    </td>
+                  );
+                })}
+                <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                  {(CORPORATE.rent + CORPORATE.utilities) > 0
+                    ? <>({fmtCurrencyShort(CORPORATE.rent + CORPORATE.utilities)})</>
+                    : <span className="text-muted-foreground">&mdash;</span>}
+                </td>
+                <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                  {(() => {
+                    const sum = venueTotals.rent + venueTotals.utilities + CORPORATE.rent + CORPORATE.utilities;
+                    return <>({fmtCurrencyShort(sum)}) <span className="text-muted-foreground">{fmtPct(pctOf(sum, venueTotals.revenue))}</span></>;
+                  })()}
+                </td>
+              </tr>
+              {rentExpanded && (
+                <>
+                  <tr className="border-b border-border">
+                    <td className="py-1 px-2 pl-7 text-muted-foreground sticky left-0 bg-background z-10">Rent</td>
+                    {venueRows.map((v) => (
+                      <td key={v.id} className="py-1 px-2 text-right text-foreground">
+                        {v.rent > 0
+                          ? <>({fmtCurrencyShort(v.rent)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.rent, v.revenue))}</span></>
+                          : <span className="text-muted-foreground">&mdash;</span>
+                        }
+                      </td>
+                    ))}
+                    <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                      {CORPORATE.rent > 0
+                        ? <>({fmtCurrencyShort(CORPORATE.rent)})</>
+                        : <span className="text-muted-foreground">&mdash;</span>}
+                    </td>
+                    <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                      {(venueTotals.rent + CORPORATE.rent) > 0
+                        ? <>({fmtCurrencyShort(venueTotals.rent + CORPORATE.rent)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.rent + CORPORATE.rent, venueTotals.revenue))}</span></>
+                        : <span className="text-muted-foreground">&mdash;</span>
+                      }
+                    </td>
+                  </tr>
+                  <tr className="border-b border-border">
+                    <td className="py-1 px-2 pl-7 text-muted-foreground sticky left-0 bg-background z-10">Utilities</td>
+                    {venueRows.map((v) => (
+                      <td key={v.id} className="py-1 px-2 text-right text-foreground">
+                        ({fmtCurrencyShort(v.utilities)}) <span className="text-muted-foreground">{fmtPct(pctOf(v.utilities, v.revenue))}</span>
+                      </td>
+                    ))}
+                    <td className="py-1 px-2 text-right text-foreground bg-slate-50 border-l border-border">
+                      {CORPORATE.utilities > 0
+                        ? <>({fmtCurrencyShort(CORPORATE.utilities)})</>
+                        : <span className="text-muted-foreground">&mdash;</span>}
+                    </td>
+                    <td className="py-1 px-2 text-right text-foreground bg-muted/30 border-l border-border">
+                      ({fmtCurrencyShort(venueTotals.utilities + CORPORATE.utilities)}) <span className="text-muted-foreground">{fmtPct(pctOf(venueTotals.utilities + CORPORATE.utilities, venueTotals.revenue))}</span>
+                    </td>
+                  </tr>
+                </>
+              )}
               {/* EBITDA */}
               <tr className="border-t-2 border-border">
-                <td className="py-1.5 px-3 font-bold text-foreground sticky left-0 bg-background z-10">EBITDA</td>
+                <td className="py-1 px-2 font-bold text-foreground sticky left-0 bg-background z-10">EBITDA</td>
                 {venueRows.map((v) => (
-                  <td key={v.id} className={`py-1.5 px-3 text-right font-bold ${v.ebitda >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                  <td key={v.id} className={`py-1 px-2 text-right font-bold ${v.ebitda >= 0 ? "text-emerald-600" : "text-red-600"}`}>
                     {fmtCurrencyShort(v.ebitda)}
                   </td>
                 ))}
-                <td className={`py-1.5 px-3 text-right font-bold bg-muted/20 border-l border-border ${venueTotals.ebitda >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                  {fmtCurrencyShort(venueTotals.ebitda)}
-                </td>
+                {(() => {
+                  const corpE = corporateEbitda(CORPORATE);
+                  return (
+                    <td className={`py-1 px-2 text-right font-bold bg-slate-50 border-l border-border ${corpE >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                      {corpE !== 0 ? fmtCurrencyShort(corpE) : <span className="text-muted-foreground font-normal">&mdash;</span>}
+                    </td>
+                  );
+                })()}
+                {(() => {
+                  const groupE = venueTotals.ebitda + corporateEbitda(CORPORATE);
+                  return (
+                    <td className={`py-1 px-2 text-right font-bold bg-muted/30 border-l border-border ${groupE >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                      {fmtCurrencyShort(groupE)}
+                    </td>
+                  );
+                })()}
               </tr>
               {/* EBITDA % */}
               <tr>
-                <td className="py-1.5 px-3 font-bold text-foreground sticky left-0 bg-background z-10">EBITDA %</td>
+                <td className="py-1 px-2 font-bold text-foreground sticky left-0 bg-background z-10">EBITDA %</td>
                 {venueRows.map((v) => {
                   const m = pctOf(v.ebitda, v.revenue);
                   const badge = m >= 50 ? "bg-emerald-100 text-emerald-800"
                               : m >= 30 ? "bg-amber-100 text-amber-800"
                               : "bg-red-100 text-red-800";
                   return (
-                    <td key={v.id} className="py-1.5 px-3 text-right">
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${badge}`}>
+                    <td key={v.id} className="py-1 px-2 text-right">
+                      <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium ${badge}`}>
                         {fmtPct(m)}
                       </span>
                     </td>
                   );
                 })}
-                <td className="py-1.5 px-3 text-right bg-muted/20 border-l border-border">
+                <td className="py-1 px-2 text-right bg-slate-50 border-l border-border">
+                  <span className="text-muted-foreground">&mdash;</span>
+                </td>
+                <td className="py-1 px-2 text-right bg-muted/30 border-l border-border">
                   {(() => {
-                    const m = pctOf(venueTotals.ebitda, venueTotals.revenue);
+                    const m = pctOf(venueTotals.ebitda + corporateEbitda(CORPORATE), venueTotals.revenue);
                     const badge = m >= 50 ? "bg-emerald-100 text-emerald-800"
                                 : m >= 30 ? "bg-amber-100 text-amber-800"
                                 : "bg-red-100 text-red-800";
                     return (
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${badge}`}>
+                      <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium ${badge}`}>
                         {fmtPct(m)}
                       </span>
                     );
