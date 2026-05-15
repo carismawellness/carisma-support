@@ -818,9 +818,10 @@ function EBITDAOverviewContent({
                   // SPA venues share one Meta/Google account — distribute by revenue share.
                   // Aesthetics and Slimming have their own ad accounts.
                   const channels: { label: string; pct: number }[] = [
-                    { label: "Meta",    pct: 0.60 },
+                    { label: "Meta",    pct: 0.55 },
                     { label: "Google",  pct: 0.30 },
                     { label: "Klaviyo", pct: 0.10 },
+                    { label: "Misc",    pct: 0.05 },
                   ];
                   return channels.map(({ label, pct }) => (
                     <tr key={label} className="group hover:bg-muted/30 transition-colors">
