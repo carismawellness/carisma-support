@@ -41,26 +41,53 @@ async function getGoogleAccessToken(): Promise<string> {
 
 // ── Sheet fetch via Sheets API v4 ─────────────────────────────────────────────
 
-function tabNameFor(year: number, month: number): string {
-  return `Sale ${MONTH_NAMES[month - 1]} ${year}`;
+function tabCandidates(year: number, month: number): string[] {
+  const m  = MONTH_NAMES[month - 1];
+  const yy = String(year).slice(2);
+  return [
+    `Sales ${m} ${yy}`,   // "Sales April 26"  ← likely current naming
+    `Sale ${m} ${yy}`,    // "Sale April 26"
+    `Sales ${m} ${year}`, // "Sales April 2026"
+    `Sale ${m} ${year}`,  // "Sale April 2026"  ← old naming
+  ];
 }
 
-async function fetchTab(tab: string): Promise<Record<string, string>[]> {
+async function fetchTab(tab: string): Promise<{ rows: Record<string, string>[]; headers: string[] } | null> {
   const token  = await getGoogleAccessToken();
   const range  = encodeURIComponent(`'${tab}'!A:Z`);
   const url    = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}`;
   const resp   = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-  if (resp.status === 404) return [];
+  if (resp.status === 404) return null;
   if (!resp.ok) throw new Error(`Sheets API error ${resp.status} for tab ${tab}`);
   const data   = await resp.json() as { values?: string[][] };
   const values = data.values ?? [];
-  if (values.length < 2) return [];
+  if (values.length < 2) return null;
   // Normalise headers to lowercase so lookups are case-insensitive
   const headers = values[0].map(h => h.trim().toLowerCase());
-  return values.slice(1).map(row => {
+  const rows = values.slice(1).map(row => {
     const padded = [...row, ...Array(Math.max(0, headers.length - row.length)).fill("")];
     return Object.fromEntries(headers.map((h, i) => [h, padded[i] ?? ""]));
   });
+  return { rows, headers };
+}
+
+async function fetchBestTab(year: number, month: number, log: string[]): Promise<{ rows: Record<string, string>[]; tabName: string; headers: string[] } | null> {
+  const candidates = tabCandidates(year, month);
+  for (const tab of candidates) {
+    const result = await fetchTab(tab);
+    if (!result) continue;
+    log.push(`  Found tab '${tab}' — columns: [${result.headers.join(", ")}]`);
+    // Prefer the tab that has a "paid" column
+    if (result.headers.includes("paid")) return { rows: result.rows, tabName: tab, headers: result.headers };
+    // Fall back to any tab with data (keep trying for one with "paid" first)
+    log.push(`  (tab '${tab}' has no 'paid' column — checking next candidate)`);
+  }
+  // No tab with "paid" found — return first tab that had data, or null
+  for (const tab of candidates) {
+    const result = await fetchTab(tab);
+    if (result && result.rows.length) return { rows: result.rows, tabName: tab, headers: result.headers };
+  }
+  return null;
 }
 
 // ── Date parsing ──────────────────────────────────────────────────────────────
@@ -175,18 +202,18 @@ export async function runAestheticsSales(
   const processed: string[] = [];
 
   for (const [year, month] of months) {
-    const tab = tabNameFor(year, month);
-    log.push(`Fetching ${tab}…`);
-    const rawRows = await fetchTab(tab);
-    if (!rawRows.length) { log.push(`  ${tab}: not found or empty — skipping`); continue; }
-    if (rawRows[0]) log.push(`  ${tab}: columns = [${Object.keys(rawRows[0]).join(", ")}]`);
-    const rows = processTab(tab, rawRows, year, month);
-    if (!rows.length) { log.push(`  ${tab}: 0 usable rows — skipping`); continue; }
-    await deleteWhere("aesthetics_sales_daily", { sheet_tab: tab });
+    const label = `${MONTH_NAMES[month - 1]} ${year}`;
+    log.push(`Fetching ${label}…`);
+    const found = await fetchBestTab(year, month, log);
+    if (!found) { log.push(`  ${label}: no tab found — skipping`); continue; }
+    const { rows: rawRows, tabName } = found;
+    const rows = processTab(tabName, rawRows, year, month);
+    if (!rows.length) { log.push(`  ${tabName}: 0 usable rows — skipping`); continue; }
+    await deleteWhere("aesthetics_sales_daily", { sheet_tab: tabName });
     const n = await insertRows("aesthetics_sales_daily", rows);
     totalRows += n;
-    processed.push(tab);
-    log.push(`  ${tab}: ${n} rows inserted`);
+    processed.push(tabName);
+    log.push(`  ${tabName}: ${n} rows inserted`);
   }
 
   log.push(`Done — ${totalRows} total rows inserted across ${processed.length} tab(s).`);
