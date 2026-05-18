@@ -114,7 +114,7 @@ function processTab(tab: string, rawRows: Record<string, string>[], year: number
     const customer    = col(row, "Costumer", "Customer") || null;
     const service     = col(row, "Service / Products", "Service/Products") || null;
     const dateRaw     = col(row, "Date of service", "Date of Service");
-    const priceRaw    = col(row, "Price");
+    const priceRaw    = col(row, "Paid", "Price");
     const payment     = col(row, "Payment")      || null;
     const salesStaff  = col(row, "Sales Staf", "Sales Staff") || null;
     const note        = col(row, "Note");
