@@ -24,6 +24,7 @@ import {
   ArrowUpRight,
   Star,
 } from "lucide-react";
+import { ReconBadge } from "@/components/dashboard/ReconBadge";
 
 /* ------------------------------------------------------------------ */
 /*  MOCK DATA                                                          */
@@ -208,16 +209,14 @@ function CEOContent({
   return (
     <>
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-foreground">
             Morning Pulse
           </h1>
           <p className="text-sm text-muted-foreground">{subtitle}</p>
         </div>
-        <span className="text-[10px] uppercase tracking-wider text-text-secondary bg-gray-100 px-2 py-1 rounded">
-          sample data
-        </span>
+        <ReconBadge dateFrom={dateFrom} dateTo={dateTo} />
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════ */}
