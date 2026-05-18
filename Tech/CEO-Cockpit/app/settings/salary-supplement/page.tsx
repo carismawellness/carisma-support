@@ -26,7 +26,7 @@ const SPA_OPTIONS = [
   { slug: "hugos",       label: "Hugo's" },
   { slug: "hyatt",       label: "Hyatt" },
   { slug: "ramla",       label: "Ramla Bay" },
-  { slug: "labranda",    label: "Labranda" },
+  { slug: "labranda",    label: "Riviera" },
   { slug: "odycy",       label: "Sunny Coast" },
   { slug: "excelsior",   label: "Excelsior" },
   { slug: "novotel",     label: "Novotel" },
@@ -59,35 +59,6 @@ function availableMonths(): { value: string; label: string }[] {
 
 function fmtCurrency(n: number) {
   return `€${Math.round(n).toLocaleString()}`;
-}
-
-// ── Editable employee number cell ─────────────────────────────────────────────
-
-function EmpNoCell({
-  row,
-  onSave,
-}: {
-  row: SupplementRow;
-  onSave: (id: number, empNo: number | null) => void;
-}) {
-  const [val, setVal] = useState(String(row.talexio_id ?? ""));
-
-  const commit = () => {
-    const parsed = val.trim() ? parseInt(val.trim(), 10) : null;
-    if (parsed !== row.talexio_id) onSave(row.id, parsed);
-  };
-
-  return (
-    <input
-      type="number"
-      value={val}
-      onChange={(e) => setVal(e.target.value)}
-      onBlur={commit}
-      onKeyDown={(e) => e.key === "Enter" && commit()}
-      placeholder="—"
-      className="w-20 text-sm text-center border border-border rounded px-1 py-0.5 bg-background text-foreground"
-    />
-  );
 }
 
 async function apiFetch(url: string, opts?: RequestInit) {
@@ -153,31 +124,6 @@ export default function SalarySupplement() {
         body: JSON.stringify({ id, spa_slug }),
       }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["salary-supplement", month] }),
-  });
-
-  // ── Emp no update mutation ──────────────────────────────────────────────────
-  const updateEmpNo = useMutation({
-    mutationFn: ({ id, talexio_id }: { id: number; talexio_id: number | null }) =>
-      apiFetch("/api/settings/salary-supplement", {
-        method: "PATCH",
-        body: JSON.stringify({ id, talexio_id }),
-      }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["salary-supplement", month] }),
-  });
-
-  // ── Talexio allocate mutation ───────────────────────────────────────────────
-  const [talexioResult, setTalexioResult] = useState<{ allocated: number; skipped: number; unmatched: string[] } | null>(null);
-  const talexioAllocate = useMutation({
-    mutationFn: (force: boolean) =>
-      apiFetch("/api/settings/salary-supplement/talexio-allocate", {
-        method: "POST",
-        body: JSON.stringify({ month, force }),
-      }),
-    onSuccess: (data) => {
-      setTalexioResult(data);
-      queryClient.invalidateQueries({ queryKey: ["salary-supplement", month] });
-    },
-    onError: (e: Error) => setSyncError(e.message),
   });
 
   // ── Freeze mutation ─────────────────────────────────────────────────────────
@@ -249,23 +195,6 @@ export default function SalarySupplement() {
           {syncMutation.isPending ? "Syncing…" : "Sync from Sheet"}
         </button>
 
-        <button
-          onClick={() => { setTalexioResult(null); talexioAllocate.mutate(false); }}
-          disabled={talexioAllocate.isPending || isFrozen || rows.length === 0}
-          title="Auto-assign location from Talexio for unassigned rows"
-          className="text-sm px-4 py-2 rounded-md border border-border bg-background hover:bg-muted disabled:opacity-50 transition-colors flex items-center gap-1.5"
-        >
-          {talexioAllocate.isPending ? (
-            <>
-              <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-              </svg>
-              Allocating…
-            </>
-          ) : "Sync from Talexio"}
-        </button>
-
         {rows.length > 0 && !isFrozen && (
           <button
             onClick={() => freezeMutation.mutate()}
@@ -297,21 +226,6 @@ export default function SalarySupplement() {
         )}
       </div>
 
-      {talexioResult && (
-        <div className={`rounded-md px-4 py-3 text-sm flex flex-wrap items-start gap-3
-          ${talexioResult.allocated > 0 ? "bg-emerald-50 border border-emerald-200 text-emerald-800" : "bg-amber-50 border border-amber-200 text-amber-800"}`}>
-          <span className="font-semibold">Talexio allocation:</span>
-          <span>{talexioResult.allocated} assigned</span>
-          {talexioResult.skipped > 0 && <span className="text-muted-foreground">· {talexioResult.skipped} already set (skipped)</span>}
-          {talexioResult.unmatched.length > 0 && (
-            <span className="text-amber-700">
-              · {talexioResult.unmatched.length} unmatched: {talexioResult.unmatched.join(", ")}
-            </span>
-          )}
-          <button onClick={() => setTalexioResult(null)} className="ml-auto text-xs underline opacity-60 hover:opacity-100">Dismiss</button>
-        </div>
-      )}
-
       {/* Loading */}
       {isFetching && (
         <p className="text-sm text-muted-foreground">Loading…</p>
@@ -339,7 +253,6 @@ export default function SalarySupplement() {
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left py-2.5 px-4 font-semibold text-muted-foreground">Employee</th>
-                <th className="text-center py-2.5 px-3 font-semibold text-muted-foreground">Emp No</th>
                 <th className="text-right py-2.5 px-4 font-semibold text-muted-foreground">Amount</th>
                 <th className="text-left py-2.5 px-4 font-semibold text-muted-foreground">Allocated To</th>
               </tr>
@@ -348,17 +261,7 @@ export default function SalarySupplement() {
               {rows.map((row) => (
                 <tr key={row.id} className="border-b border-border last:border-0 hover:bg-muted/30">
                   <td className="py-2 px-4 text-foreground">
-                    {row.talexio_name || row.employee_name}
-                  </td>
-                  <td className="py-2 px-3 text-center text-muted-foreground">
-                    {isFrozen ? (
-                      row.talexio_id ?? <span className="text-xs">—</span>
-                    ) : (
-                      <EmpNoCell
-                        row={row}
-                        onSave={(id, empNo) => updateEmpNo.mutate({ id, talexio_id: empNo })}
-                      />
-                    )}
+                    {row.employee_name}
                   </td>
                   <td className="py-2 px-4 text-right font-medium text-foreground">
                     {fmtCurrency(row.amount)}
@@ -390,7 +293,7 @@ export default function SalarySupplement() {
             </tbody>
             <tfoot>
               <tr className="border-t-2 border-border bg-muted/20">
-                <td className="py-2.5 px-4 font-semibold text-foreground" colSpan={2}>
+                <td className="py-2.5 px-4 font-semibold text-foreground">
                   Total ({rows.length} employees)
                 </td>
                 <td className="py-2.5 px-4 text-right font-bold text-foreground">

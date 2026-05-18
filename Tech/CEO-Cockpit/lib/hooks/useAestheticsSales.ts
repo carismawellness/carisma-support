@@ -55,6 +55,7 @@ export interface UseAestheticsSalesResult {
   isFetching:    boolean;
   isSyncing:     boolean;
   syncError:     string | null;
+  syncLog:       string[] | null;
   missingMonths: string[];
   triggerSync:   () => void;
 }

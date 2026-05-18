@@ -3,7 +3,7 @@ import { getAdminClient } from "@/lib/supabase/admin";
 
 const SHEET_ID = "1AAnfm-SAYso6RpJhbdhJbTbcGDH1Ftlk0FHBPHfN98w";
 
-// Map spa names (as written in column BM) to Supabase location slugs
+// Map spa names (as written in column C) to Supabase location slugs
 const SPA_NAME_TO_SLUG: Record<string, string | null> = {
   intercontinental: "inter",
   inter: "inter",
@@ -14,6 +14,8 @@ const SPA_NAME_TO_SLUG: Record<string, string | null> = {
   ramla: "ramla",
   "ramla bay": "ramla",
   labranda: "labranda",
+  lamranda: "labranda",
+  riviera: "labranda",
   "sunny coast": "odycy",
   sunnycoast: "odycy",
   "suny coast": "odycy",
@@ -85,38 +87,6 @@ function parseCsvLine(line: string): string[] {
   return result;
 }
 
-// ── Talexio helpers ───────────────────────────────────────────────────────────
-
-const TALEXIO_GQL = "https://api.talexiohr.com/graphql";
-const TALEXIO_ORIGIN = "https://carismaspawellness.talexiohr.com";
-
-async function fetchTalexioNameMap(): Promise<Map<number, string>> {
-  const token = process.env.TALEXIO_TOKEN;
-  if (!token) return new Map();
-  try {
-    const res = await fetch(TALEXIO_GQL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-        Origin: TALEXIO_ORIGIN,
-      },
-      body: JSON.stringify({ query: `query { employees { employeeCode fullName } }` }),
-    });
-    if (!res.ok) return new Map();
-    const json = await res.json();
-    const emps: { employeeCode: string; fullName: string }[] = json?.data?.employees ?? [];
-    const map = new Map<number, string>();
-    for (const e of emps) {
-      const code = parseInt(e.employeeCode, 10);
-      if (!isNaN(code) && e.fullName) map.set(code, e.fullName);
-    }
-    return map;
-  } catch {
-    return new Map();
-  }
-}
-
 export async function POST(req: NextRequest) {
   const supabase = getAdminClient();
   const { month } = await req.json(); // "2026-03-01"
@@ -171,20 +141,18 @@ export async function POST(req: NextRequest) {
   for (let i = dataStartIdx; i < lines.length; i++) {
     const cols = parseCsvLine(lines[i]);
     const name   = cols[1]?.trim() ?? "";   // B
+    const spaRaw = cols[2]?.trim() ?? "";   // C — location
     const status = cols[3]?.trim() ?? "";   // D
     const amtRaw = cols[27]?.trim() ?? "";  // AB
-    const spaRaw = cols[64]?.trim() ?? "";  // BM
-    const empRaw = cols[65]?.trim() ?? "";  // BN
 
     if (!name || status.toLowerCase() !== "active") continue;
 
     const amount = parseAmount(amtRaw);
     if (amount <= 0) continue;
 
-    const talexioId = empRaw && /^\d+$/.test(empRaw) ? parseInt(empRaw, 10) : null;
     const slugResult = spaNameToSlug(spaRaw);
 
-    // null means explicitly excluded (Centre/Aesthetics)
+    // null means explicitly excluded (Centre/Aesthetics/Slimming)
     if (slugResult === null) {
       excluded.push(`${name} (${spaRaw})`);
       continue;
@@ -193,7 +161,7 @@ export async function POST(req: NextRequest) {
     // undefined means unknown spa — include with null slug so user can assign
     employees.push({
       employee_name: name,
-      talexio_id: talexioId,
+      talexio_id: null,
       talexio_name: null,
       amount,
       spa_slug: slugResult ?? null,
@@ -205,43 +173,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ synced: 0, excluded, tab: usedTab });
   }
 
-  // Carry forward spa, talexio_id, talexio_name from the most recent other month
-  // so users don't need to re-map every month and emp numbers missing from older tabs are filled in
-  const employeeNames = employees.map((e) => e.employee_name);
-  const { data: priorRows } = await supabase
-    .from("salary_supplement_monthly")
-    .select("employee_name, spa_slug, talexio_id, talexio_name, month")
-    .in("employee_name", employeeNames)
-    .neq("month", month)
-    .order("month", { ascending: false });
+  // Carry forward spa_slug from the most recent prior month for employees
+  // whose column C location didn't map to a known slug (leaves them assignable)
+  const unassigned = employees.filter((e) => !e.spa_slug);
+  if (unassigned.length > 0) {
+    const unassignedNames = unassigned.map((e) => e.employee_name);
+    const { data: priorRows } = await supabase
+      .from("salary_supplement_monthly")
+      .select("employee_name, spa_slug, month")
+      .in("employee_name", unassignedNames)
+      .neq("month", month)
+      .not("spa_slug", "is", null)
+      .order("month", { ascending: false });
 
-  if (priorRows && priorRows.length > 0) {
-    type Prior = { spa_slug: string | null; talexio_id: number | null; talexio_name: string | null };
-    const priorMap = new Map<string, Prior>();
-    for (const r of priorRows) {
-      if (!priorMap.has(r.employee_name)) {
-        priorMap.set(r.employee_name, {
-          spa_slug:     r.spa_slug,
-          talexio_id:   r.talexio_id,
-          talexio_name: r.talexio_name,
-        });
+    if (priorRows && priorRows.length > 0) {
+      const priorMap = new Map<string, string>();
+      for (const r of priorRows) {
+        if (!priorMap.has(r.employee_name) && r.spa_slug) {
+          priorMap.set(r.employee_name, r.spa_slug);
+        }
       }
-    }
-    for (const emp of employees) {
-      const prior = priorMap.get(emp.employee_name);
-      if (!prior) continue;
-      if (prior.spa_slug)                          emp.spa_slug     = prior.spa_slug;
-      if (!emp.talexio_id   && prior.talexio_id)   emp.talexio_id   = prior.talexio_id;
-      if (!emp.talexio_name && prior.talexio_name) emp.talexio_name = prior.talexio_name;
-    }
-  }
-
-  // Enrich with Talexio names where employee number is available
-  const talexioNames = await fetchTalexioNameMap();
-  if (talexioNames.size > 0) {
-    for (const emp of employees) {
-      if (emp.talexio_id && talexioNames.has(emp.talexio_id)) {
-        emp.talexio_name = talexioNames.get(emp.talexio_id)!;
+      for (const emp of employees) {
+        if (!emp.spa_slug) {
+          const prior = priorMap.get(emp.employee_name);
+          if (prior) emp.spa_slug = prior;
+        }
       }
     }
   }

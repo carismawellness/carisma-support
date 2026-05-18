@@ -7,14 +7,26 @@ Steps this script handles:
   3. You log into Zoho, grant access, and are redirected to localhost
      (the browser will show "This site can't be reached" — that's fine)
   4. You paste the full redirect URL (or just the ?code= value) back here
-  5. Script exchanges the code for tokens and writes ZOHO_BOOKS_REFRESH_TOKEN to .env
+  5. Script exchanges the code for tokens and writes the refresh token to .env
   6. Also fetches your list of Zoho Books organisations so you can confirm the org IDs
 
 Usage:
     cd carisma-support/Tech/CEO-Cockpit/etl
-    python zoho_books_auth.py
+
+    # Read-only token (for ETL/reporting — default)
+    python zoho_books_auth.py --org spa
+    python zoho_books_auth.py --org aesthetics
+
+    # Full-access token (required for tag updates and any write operations)
+    python zoho_books_auth.py --org spa --full-access
+    python zoho_books_auth.py --org aesthetics --full-access
+
+--org spa       → saves to ZOHO_BOOKS_SPA_REFRESH_TOKEN
+--org aesthetics → saves to ZOHO_BOOKS_REFRESH_TOKEN (used by aesthetics ETL)
+--full-access   → requests ZohoBooks.fullaccess.all scope (needed for writes)
 """
 
+import argparse
 import os
 import sys
 import webbrowser
@@ -37,9 +49,13 @@ except ImportError:
     from dotenv import load_dotenv, set_key
     load_dotenv(_ENV_PATH)
 
-_AUTH_BASE = "https://accounts.zoho.eu/oauth/v2"
-_REDIRECT  = "https://localhost"
-_SCOPES    = "ZohoBooks.accountants.READ,ZohoBooks.reports.READ,ZohoBooks.settings.READ"
+_AUTH_BASE    = "https://accounts.zoho.eu/oauth/v2"
+_REDIRECT     = "https://localhost"
+_SCOPES_READ  = "ZohoBooks.accountants.READ,ZohoBooks.reports.READ,ZohoBooks.settings.READ"
+_SCOPES_FULL  = "ZohoBooks.fullaccess.all"
+
+# Back-compat: keep the old name pointing at read scopes
+_SCOPES = _SCOPES_READ
 
 
 def _require_env(key: str) -> str:
@@ -52,15 +68,31 @@ def _require_env(key: str) -> str:
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Zoho Books OAuth token setup")
+    parser.add_argument(
+        "--org", choices=["spa", "aesthetics"], default=None,
+        help="Which org token to generate (spa → ZOHO_BOOKS_SPA_REFRESH_TOKEN, aesthetics → ZOHO_BOOKS_REFRESH_TOKEN)",
+    )
+    parser.add_argument(
+        "--full-access", action="store_true",
+        help="Request ZohoBooks.fullaccess.all scope (required for write operations like tag updates)",
+    )
+    args = parser.parse_args()
+
+    scopes = _SCOPES_FULL if args.full_access else _SCOPES_READ
+    env_key = "ZOHO_BOOKS_SPA_REFRESH_TOKEN" if args.org == "spa" else "ZOHO_BOOKS_REFRESH_TOKEN"
+
     print("\n=== Zoho Books OAuth Setup ===\n")
+    print(f"  Org:    {args.org or 'aesthetics (default)'}")
+    print(f"  Scopes: {scopes}")
+    print(f"  Saves → {env_key}\n")
 
     client_id     = _require_env("ZOHO_BOOKS_CLIENT_ID")
     client_secret = _require_env("ZOHO_BOOKS_CLIENT_SECRET")
 
-    # Build auth URL
     auth_url = (
         f"{_AUTH_BASE}/auth"
-        f"?scope={_SCOPES}"
+        f"?scope={scopes}"
         f"&client_id={client_id}"
         f"&response_type=code"
         f"&access_type=offline"
@@ -81,7 +113,6 @@ def main():
 
     raw = input("Paste the full redirect URL (or just the 'code' value): ").strip()
 
-    # Extract the code
     if raw.startswith("http"):
         parsed = urlparse(raw)
         qs = parse_qs(parsed.query)
@@ -91,9 +122,9 @@ def main():
             sys.exit(1)
         code = code_list[0]
     else:
-        code = raw  # user pasted just the code
+        code = raw
 
-    print(f"\nExchanging code for tokens...")
+    print("\nExchanging code for tokens...")
 
     resp = requests.post(
         f"{_AUTH_BASE}/token",
@@ -119,44 +150,39 @@ def main():
     refresh_token = data["refresh_token"]
     access_token  = data["access_token"]
 
-    # Save refresh token to .env
-    set_key(str(_ENV_PATH), "ZOHO_BOOKS_REFRESH_TOKEN", refresh_token)
-    os.environ["ZOHO_BOOKS_REFRESH_TOKEN"] = refresh_token
-    print(f"Refresh token saved to .env ✓")
+    set_key(str(_ENV_PATH), env_key, refresh_token)
+    os.environ[env_key] = refresh_token
+    print(f"{env_key} saved to .env ✓")
 
-    # Fetch organisations so the user can confirm org IDs
-    print("\nFetching your Zoho Books organisations...\n")
-    orgs_resp = requests.get(
-        "https://www.zohoapis.eu/books/v3/organizations",
-        headers={"Authorization": f"Zoho-oauthtoken {access_token}"},
-        timeout=15,
-    )
+    # Fetch organisations to confirm org IDs (only on first-time setup)
+    if not args.org:
+        print("\nFetching your Zoho Books organisations...\n")
+        orgs_resp = requests.get(
+            "https://www.zohoapis.eu/books/v3/organizations",
+            headers={"Authorization": f"Zoho-oauthtoken {access_token}"},
+            timeout=15,
+        )
 
-    if orgs_resp.status_code == 200:
-        orgs = orgs_resp.json().get("organizations", [])
-        print(f"{'Organisation Name':<35} {'Org ID':<20} {'Currency'}")
-        print("-" * 65)
-        for o in orgs:
-            print(f"{o.get('name',''):<35} {o.get('organization_id',''):<20} {o.get('currency_code','')}")
-        print()
+        if orgs_resp.status_code == 200:
+            orgs = orgs_resp.json().get("organizations", [])
+            print(f"{'Organisation Name':<35} {'Org ID':<20} {'Currency'}")
+            print("-" * 65)
+            for o in orgs:
+                print(f"{o.get('name',''):<35} {o.get('organization_id',''):<20} {o.get('currency_code','')}")
+            print()
 
-        if len(orgs) >= 1:
-            print("Copy the Org ID for each organisation and paste below.")
             spa_id   = input("SPA org ID (Carisma Spa): ").strip()
             aesth_id = input("Aesthetics/Slimming org ID (Carisma Aesthetics): ").strip()
-
             if spa_id:
                 set_key(str(_ENV_PATH), "ZOHO_BOOKS_SPA_ORG_ID", spa_id)
-                print(f"  ZOHO_BOOKS_SPA_ORG_ID saved ✓")
+                print("  ZOHO_BOOKS_SPA_ORG_ID saved ✓")
             if aesth_id:
                 set_key(str(_ENV_PATH), "ZOHO_BOOKS_AESTH_ORG_ID", aesth_id)
-                print(f"  ZOHO_BOOKS_AESTH_ORG_ID saved ✓")
-    else:
-        print(f"Could not fetch organisations ({orgs_resp.status_code}). Add org IDs to .env manually.")
-        print("  ZOHO_BOOKS_SPA_ORG_ID=<your spa org id>")
-        print("  ZOHO_BOOKS_AESTH_ORG_ID=<your aesthetics org id>")
+                print("  ZOHO_BOOKS_AESTH_ORG_ID saved ✓")
+        else:
+            print(f"Could not fetch organisations ({orgs_resp.status_code}). Org IDs already set in .env.")
 
-    print("\n=== Setup complete. Run etl_zoho_books_coa.py to fetch your Chart of Accounts. ===\n")
+    print("\n=== Setup complete. ===\n")
 
 
 if __name__ == "__main__":
