@@ -55,7 +55,8 @@ async function fetchTab(tab: string): Promise<Record<string, string>[]> {
   const data   = await resp.json() as { values?: string[][] };
   const values = data.values ?? [];
   if (values.length < 2) return [];
-  const headers = values[0].map(h => h.trim());
+  // Normalise headers to lowercase so lookups are case-insensitive
+  const headers = values[0].map(h => h.trim().toLowerCase());
   return values.slice(1).map(row => {
     const padded = [...row, ...Array(Math.max(0, headers.length - row.length)).fill("")];
     return Object.fromEntries(headers.map((h, i) => [h, padded[i] ?? ""]));
@@ -110,14 +111,14 @@ function processTab(tab: string, rawRows: Record<string, string>[], year: number
   const results: Record<string, unknown>[] = [];
 
   for (const row of rawRows) {
-    const invoice     = col(row, "Invoice")      || null;
-    const customer    = col(row, "Costumer", "Customer") || null;
-    const service     = col(row, "Service / Products", "Service/Products") || null;
-    const dateRaw     = col(row, "Date of service", "Date of Service");
-    const priceRaw    = col(row, "Paid", "Price");
-    const payment     = col(row, "Payment")      || null;
-    const salesStaff  = col(row, "Sales Staf", "Sales Staff") || null;
-    const note        = col(row, "Note");
+    const invoice     = col(row, "invoice")      || null;
+    const customer    = col(row, "costumer", "customer") || null;
+    const service     = col(row, "service / products", "service/products") || null;
+    const dateRaw     = col(row, "date of service");
+    const priceRaw    = col(row, "paid");
+    const payment     = col(row, "payment")      || null;
+    const salesStaff  = col(row, "sales staf", "sales staff") || null;
+    const note        = col(row, "note");
 
     if (!priceRaw || priceRaw === "-") continue;
     const priceInc = Math.abs(parseFloat(priceRaw.replace(/[€$,]/g, "").trim()));

@@ -113,7 +113,7 @@ def fetch_tab(tab: str) -> list[dict]:
     if len(values) < 2:
         return []
     # Convert rows to list-of-dicts using first row as header
-    headers_row = [str(h).strip() for h in values[0]]
+    headers_row = [str(h).strip().lower() for h in values[0]]
     rows = []
     for row in values[1:]:
         # Pad short rows
@@ -237,14 +237,14 @@ def process_tab(tab: str, year: int, month: int) -> list[dict]:
                     return str(v).strip()
             return ""
 
-        invoice      = col("Invoice")      or None
-        customer     = col("Costumer", "Customer") or None
-        service      = col("Service / Products", "Service/Products") or None
-        date_raw     = col("Date of service", "Date of Service")
-        price_raw    = col("Price")
-        payment      = col("Payment")      or None
-        sales_staff  = col("Sales Staf", "Sales Staff") or None
-        note         = col("Note")
+        invoice      = col("invoice")      or None
+        customer     = col("costumer", "customer") or None
+        service      = col("service / products", "service/products") or None
+        date_raw     = col("date of service")
+        price_raw    = col("paid")
+        payment      = col("payment")      or None
+        sales_staff  = col("sales staf", "sales staff") or None
+        note         = col("note")
 
         # Skip rows with no price
         if not price_raw or price_raw.strip() in ("", "-"):
