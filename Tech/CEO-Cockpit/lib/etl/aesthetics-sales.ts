@@ -57,8 +57,7 @@ async function fetchTab(tab: string): Promise<{ rows: Record<string, string>[]; 
   const range  = encodeURIComponent(`'${tab}'!A:Z`);
   const url    = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}`;
   const resp   = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-  if (resp.status === 404) return null;
-  if (!resp.ok) throw new Error(`Sheets API error ${resp.status} for tab ${tab}`);
+  if (!resp.ok) return null;  // 400 = tab not found, 404 = sheet not found — both skip
   const data   = await resp.json() as { values?: string[][] };
   const values = data.values ?? [];
   if (values.length < 2) return null;
