@@ -68,9 +68,10 @@ const SGA_CATEGORIES: AllocationRow[] = [
 const SGA_WEIGHT_TOTAL = SGA_CATEGORIES.reduce((a, c) => a + c.weight, 0);
 
 const AD_CHANNELS: AllocationRow[] = [
-  { category: "Meta",    weight: 60 },
-  { category: "Google",  weight: 30 },
+  { category: "Meta",    weight: 55 },
+  { category: "Google",  weight: 25 },
   { category: "Klaviyo", weight: 10 },
+  { category: "GHL",     weight: 10 },
 ];
 
 interface VenueMap {
@@ -111,7 +112,7 @@ const HARDCODED_CONSTANTS: ConstantRow[] = [
   { name: "Wages-from-salaries split",   value: "89 % wages, 8 % COGS, 3 % utilities", where: "app/finance/ebitda/page.tsx (buildVenueRows)" },
   { name: "SG&A-vs-advertising split",   value: "60 % SG&A, 40 % advertising",         where: "app/finance/ebitda/page.tsx (buildVenueRows)" },
   { name: "SG&A category weights",       value: "11 weights summing to 25,110",         where: "app/finance/ebitda/page.tsx (SGA_CATEGORIES) + sga-categorization skill" },
-  { name: "Ad-channel split",            value: "60 % Meta, 30 % Google, 10 % Klaviyo (placeholder)", where: "app/finance/ebitda/page.tsx (adsExpanded block)" },
+  { name: "Ad-channel split",            value: "55 % Meta, 25 % Google, 10 % Klaviyo, 10 % GHL (placeholder)", where: "app/finance/ebitda/page.tsx (adsExpanded block)" },
   { name: "EBITDA margin badge thresholds", value: "≥50 % green, ≥30 % amber, <30 % red", where: "app/finance/ebitda/page.tsx (EBITDA % row)" },
   { name: "Group EBITDA margin target",  value: "30 %",                                 where: "app/finance/ebitda/page.tsx (KPI cards)" },
 ];
@@ -231,7 +232,9 @@ export default function LogicMappingPage() {
           <Card className="p-3 md:p-6">
             <h2 className="text-lg font-semibold text-foreground mb-1">Advertising Sub-channels</h2>
             <p className="text-xs text-muted-foreground mb-4">
-              Placeholder allocation until Meta / Google / Klaviyo APIs are wired into the EBITDA page.
+              Placeholder allocation until Meta / Google / Klaviyo / GHL APIs are wired into the EBITDA page.
+              GHL is a flat monthly platform cost (CRM / automation), not a media spend — when wired, pull
+              the plan fee from GHL billing or hardcode per-location.
             </p>
             <SectionTable headers={["Channel", "Allocation"]}>
               {AD_CHANNELS.map((r) => (

@@ -786,7 +786,7 @@ function EBITDAOverviewContent({
                   {fmtCurrencyShort(venueTotals.wages + CORPORATE.wages)} <span className="text-muted-foreground/80 font-normal">· {fmtPct(pctOf(venueTotals.wages + CORPORATE.wages, venueTotals.revenue))}</span>
                 </td>
               </tr>
-              {/* Advertising Plus (collapsible: Meta / Google / Klaviyo) */}
+              {/* Advertising Plus (collapsible: Meta / Google / Klaviyo / GHL) */}
               <tr className="group hover:bg-muted/30 transition-colors">
                 <td className="py-1.5 px-2 text-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/60 transition-colors">
                   <button
@@ -814,13 +814,16 @@ function EBITDAOverviewContent({
                 </td>
               </tr>
               {adsExpanded && (() => {
-                  // TODO(api): replace placeholder splits with live Meta/Google/Klaviyo spend.
+                  // TODO(api): replace placeholder splits with live Meta/Google/Klaviyo/GHL spend.
                   // SPA venues share one Meta/Google account — distribute by revenue share.
                   // Aesthetics and Slimming have their own ad accounts.
+                  // GHL is a flat monthly platform fee (CRM/automation) — when wired, pull
+                  // from GHL billing API or hardcode the per-location plan cost.
                   const channels: { label: string; pct: number }[] = [
                     { label: "Meta",    pct: 0.55 },
-                    { label: "Google",  pct: 0.30 },
+                    { label: "Google",  pct: 0.20 },
                     { label: "Klaviyo", pct: 0.10 },
+                    { label: "GHL",     pct: 0.10 },
                     { label: "Misc",    pct: 0.05 },
                   ];
                   return channels.map(({ label, pct }) => (
