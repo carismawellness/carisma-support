@@ -14,7 +14,20 @@ export async function GET() {
     if (group) {
       detail = await client.get(`settings/tags/${group.tag_id}`, {}).catch((e: unknown) => ({ error: String(e) }));
     }
-    return NextResponse.json({ list, hq_group: group ?? null, detail });
+    // Step 3: test P&L filter with HQ option ID
+    let plTest: unknown = null;
+    const hqOptionId = (detail as { reporting_tag?: { tag_options?: Array<{ tag_option_id: string; tag_option_name: string }> } })
+      ?.reporting_tag?.tag_options?.find(o => o.tag_option_name.toLowerCase() === "hq")?.tag_option_id ?? null;
+    if (hqOptionId) {
+      const now = new Date();
+      const y = now.getFullYear(), m = String(now.getMonth() + 1).padStart(2, "0");
+      const last = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      plTest = await client.get("reports/profitandloss", {
+        from_date: `${y}-${m}-01`, to_date: `${y}-${m}-${last}`,
+        cash_based: "false", tag_id: hqOptionId, tag_option_id: hqOptionId,
+      }).catch((e: unknown) => ({ error: String(e) }));
+    }
+    return NextResponse.json({ hq_option_id: hqOptionId, hq_group: group ?? null, detail, pl_test: plTest });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
   }

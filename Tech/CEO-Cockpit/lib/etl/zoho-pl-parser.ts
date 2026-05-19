@@ -93,7 +93,10 @@ export async function fetchPlAccounts(
     to_date:    toDate,
     cash_based: "false",
   };
-  if (tagId) params.tag_id = tagId;
+  if (tagId) {
+    params.tag_id        = tagId;   // tag group ID filter (some Zoho versions)
+    params.tag_option_id = tagId;   // tag option ID filter (Zoho Books v3)
+  }
   const data = await client.get("reports/profitandloss", params) as Record<string, unknown>;
 
   const pl: unknown = data.profit_and_loss ?? data;
