@@ -23,10 +23,10 @@ interface SupplementRow {
 
 const SPA_OPTIONS = [
   { slug: "inter",       label: "InterContinental" },
-  { slug: "hugos",       label: "Hugo's" },
+  { slug: "hugos",       label: "Hugos" },
   { slug: "hyatt",       label: "Hyatt" },
   { slug: "ramla",       label: "Ramla Bay" },
-  { slug: "labranda",    label: "Riviera" },
+  { slug: "labranda",    label: "Labranda" },
   { slug: "odycy",       label: "Sunny Coast" },
   { slug: "excelsior",   label: "Excelsior" },
   { slug: "novotel",     label: "Novotel" },
