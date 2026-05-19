@@ -21,10 +21,10 @@ async function getHqTagOptionId(client: ZohoBooksClient): Promise<string | null>
 
     // Step 2: fetch the specific tag group to get individual option IDs
     const detail = await client.get(`settings/tags/${group.tag_id}`, {}) as {
-      tag?: { tag_options?: Array<{ tag_option_id: string; value: string }> };
+      reporting_tag?: { tag_options?: Array<{ tag_option_id: string; tag_option_name: string }> };
     };
-    const option = (detail.tag?.tag_options ?? []).find(
-      o => o.value.trim().toLowerCase() === "hq"
+    const option = (detail.reporting_tag?.tag_options ?? []).find(
+      o => o.tag_option_name.trim().toLowerCase() === "hq"
     );
     return option?.tag_option_id ?? null;
   } catch {
