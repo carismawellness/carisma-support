@@ -39,13 +39,26 @@ async function getGoogleAccessToken(): Promise<string> {
   return cachedAccessToken;
 }
 
+// ── Spreadsheet metadata: list all actual tab names ───────────────────────────
+
+async function listTabNames(): Promise<string[]> {
+  const token = await getGoogleAccessToken();
+  const url   = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}?fields=sheets.properties.title`;
+  const resp  = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  if (!resp.ok) return [];
+  const data  = await resp.json() as { sheets?: Array<{ properties?: { title?: string } }> };
+  return (data.sheets ?? []).map(s => s.properties?.title ?? "").filter(Boolean);
+}
+
 // ── Sheet fetch via Sheets API v4 ─────────────────────────────────────────────
 
+// tabCandidates generates the naming patterns we look for; we match these
+// case-insensitively against the spreadsheet's actual tab list.
 function tabCandidates(year: number, month: number): string[] {
   const m  = MONTH_NAMES[month - 1];
   const yy = String(year).slice(2);
   return [
-    `Sales ${m} ${yy}`,   // "Sales April 26"  ← likely current naming
+    `Sales ${m} ${yy}`,   // "Sales April 26"  ← current naming
     `Sale ${m} ${yy}`,    // "Sale April 26"
     `Sales ${m} ${year}`, // "Sales April 2026"
     `Sale ${m} ${year}`,  // "Sale April 2026"  ← old naming
@@ -57,7 +70,7 @@ async function fetchTab(tab: string): Promise<{ rows: Record<string, string>[]; 
   const range  = encodeURIComponent(`'${tab}'!A:Z`);
   const url    = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}`;
   const resp   = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-  if (!resp.ok) return null;  // 400 = tab not found, 404 = sheet not found — both skip
+  if (!resp.ok) return null;
   const data   = await resp.json() as { values?: string[][] };
   const values = data.values ?? [];
   if (values.length < 2) return null;
@@ -70,22 +83,39 @@ async function fetchTab(tab: string): Promise<{ rows: Record<string, string>[]; 
   return { rows, headers };
 }
 
-async function fetchBestTab(year: number, month: number, log: string[]): Promise<{ rows: Record<string, string>[]; tabName: string; headers: string[] } | null> {
+async function fetchBestTab(
+  year: number,
+  month: number,
+  log: string[],
+  allTabs: string[],
+): Promise<{ rows: Record<string, string>[]; tabName: string; headers: string[] } | null> {
   const candidates = tabCandidates(year, month);
-  for (const tab of candidates) {
-    const result = await fetchTab(tab);
+
+  // Case-insensitive lookup against the spreadsheet's actual tab names.
+  // This handles naming variations (casing, spacing) without guessing.
+  function findActual(candidate: string): string | null {
+    return allTabs.find(t => t.toLowerCase().trim() === candidate.toLowerCase().trim()) ?? null;
+  }
+
+  // First pass: prefer the tab that has a "paid" column
+  for (const candidate of candidates) {
+    const actualTab = findActual(candidate);
+    if (!actualTab) continue;
+    const result = await fetchTab(actualTab);
     if (!result) continue;
-    log.push(`  Found tab '${tab}' — columns: [${result.headers.join(", ")}]`);
-    // Prefer the tab that has a "paid" column
-    if (result.headers.includes("paid")) return { rows: result.rows, tabName: tab, headers: result.headers };
-    // Fall back to any tab with data (keep trying for one with "paid" first)
-    log.push(`  (tab '${tab}' has no 'paid' column — checking next candidate)`);
+    log.push(`  Found tab '${actualTab}' — columns: [${result.headers.join(", ")}]`);
+    if (result.headers.includes("paid")) return { rows: result.rows, tabName: actualTab, headers: result.headers };
+    log.push(`  (tab '${actualTab}' has no 'paid' column — checking next candidate)`);
   }
-  // No tab with "paid" found — return first tab that had data, or null
-  for (const tab of candidates) {
-    const result = await fetchTab(tab);
-    if (result && result.rows.length) return { rows: result.rows, tabName: tab, headers: result.headers };
+
+  // Second pass: fall back to the first matching tab that has any data
+  for (const candidate of candidates) {
+    const actualTab = findActual(candidate);
+    if (!actualTab) continue;
+    const result = await fetchTab(actualTab);
+    if (result && result.rows.length) return { rows: result.rows, tabName: actualTab, headers: result.headers };
   }
+
   return null;
 }
 
@@ -195,20 +225,30 @@ export async function runAestheticsSales(
   dateFrom: string,
   dateTo: string,
 ): Promise<{ rowsInserted: number; tabs: string[]; log: string[] }> {
+  // Force a fresh OAuth token each run so stale cached tokens don't cause failures
+  cachedAccessToken = null;
+
   const log: string[] = [];
   const months = monthsInRange(new Date(dateFrom), new Date(dateTo));
   let totalRows = 0;
   const processed: string[] = [];
 
+  // Fetch the spreadsheet's actual tab names once so we can match case-insensitively
+  const allTabs = await listTabNames();
+  log.push(`Spreadsheet tabs: [${allTabs.join(", ")}]`);
+
   for (const [year, month] of months) {
-    const label = `${MONTH_NAMES[month - 1]} ${year}`;
+    const label    = `${MONTH_NAMES[month - 1]} ${year}`;
+    const monthKey = new Date(year, month - 1, 1).toISOString().slice(0, 10);
     log.push(`Fetching ${label}…`);
-    const found = await fetchBestTab(year, month, log);
+    const found = await fetchBestTab(year, month, log, allTabs);
     if (!found) { log.push(`  ${label}: no tab found — skipping`); continue; }
     const { rows: rawRows, tabName } = found;
     const rows = processTab(tabName, rawRows, year, month);
     if (!rows.length) { log.push(`  ${tabName}: 0 usable rows — skipping`); continue; }
-    await deleteWhere("aesthetics_sales_daily", { sheet_tab: tabName });
+    // Delete ALL rows for this month (regardless of tab name) so stale data
+    // from any previously-used tab name is always replaced with fresh data.
+    await deleteWhere("aesthetics_sales_daily", { month: monthKey });
     const n = await insertRows("aesthetics_sales_daily", rows);
     totalRows += n;
     processed.push(tabName);
