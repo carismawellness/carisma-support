@@ -3,7 +3,7 @@ ETL: Aesthetics Sales Google Sheet → Supabase aesthetics_sales_daily
 
 Reads each "Sale MONTH YEAR" tab from the public Google Sheet.
 VAT rules (applied to Price column which is inc-VAT):
-  - Note column contains "Francesca" or "Giovanni" → 12% VAT
+  - Note column contains "Francesca", "Giovanni", or "Kendra" → 12% VAT
   - All others → 18% VAT
 Date format: D/M/YYYY or D/M (day-first Maltese format); year/month inferred
 from tab name when missing.
@@ -12,7 +12,7 @@ Sync strategy: delete all rows for the tab, then insert fresh rows.
 This means all fields are always fresh — no partial overwrites.
 """
 
-import sys, csv, io, re, json, os, argparse
+import sys, csv, io, re, json, os, argparse, time
 from datetime import date
 from pathlib import Path
 
@@ -85,8 +85,15 @@ def _get_access_token() -> str | None:
 
 # ── Sheet helpers ──────────────────────────────────────────────────────────────
 
-def tab_name_for(year: int, month: int) -> str:
-    return f"Sale {MONTH_NAMES[month - 1]} {year}"
+def tab_candidates_for(year: int, month: int) -> list[str]:
+    m  = MONTH_NAMES[month - 1]
+    yy = str(year)[2:]
+    return [
+        f"Sales {m} {yy}",   # "Sales April 26"
+        f"Sale {m} {yy}",    # "Sale April 26"
+        f"Sales {m} {year}", # "Sales April 2026"
+        f"Sale {m} {year}",  # "Sale April 2026"
+    ]
 
 
 def fetch_tab(tab: str) -> list[dict]:
@@ -105,8 +112,13 @@ def fetch_tab(tab: str) -> list[dict]:
         f"/values/{range_param}"
     )
     resp = _req.get(url, headers={"Authorization": f"Bearer {token}"}, timeout=30)
-    if resp.status_code == 404:
+    if resp.status_code in (400, 404):
         return []
+    if resp.status_code == 429:
+        time.sleep(10)
+        resp = _req.get(url, headers={"Authorization": f"Bearer {token}"}, timeout=30)
+        if resp.status_code in (400, 404):
+            return []
     resp.raise_for_status()
     data = resp.json()
     values = data.get("values", [])
@@ -201,6 +213,16 @@ def delete_tab(tab: str) -> None:
     resp.raise_for_status()
 
 
+def delete_month(month_key: str) -> None:
+    resp = _req.delete(
+        f"{_sb_base()}/rest/v1/aesthetics_sales_daily",
+        headers=_sb_headers(),
+        params={"month": f"eq.{month_key}"},
+        timeout=30,
+    )
+    resp.raise_for_status()
+
+
 def insert_rows(rows: list[dict]) -> int:
     if not rows:
         return 0
@@ -241,7 +263,7 @@ def process_tab(tab: str, year: int, month: int) -> list[dict]:
         customer     = col("costumer", "customer") or None
         service      = col("service / products", "service/products") or None
         date_raw     = col("date of service")
-        price_raw    = col("paid")
+        price_raw    = col("price", "paid")
         payment      = col("payment")      or None
         sales_staff  = col("sales staf", "sales staff") or None
         note         = col("note")
@@ -310,17 +332,24 @@ def run(date_from: str, date_to: str) -> dict:
     processed  = []
 
     for year, month in months:
-        tab = tab_name_for(year, month)
-        print(f"Fetching {tab}…", flush=True)
-        rows = process_tab(tab, year, month)
+        candidates = tab_candidates_for(year, month)
+        month_key  = date(year, month, 1).isoformat()
+        rows: list[dict] = []
+        found_tab: str   = ""
+        for candidate in candidates:
+            print(f"Fetching {candidate}…", flush=True)
+            rows = process_tab(candidate, year, month)
+            if rows:
+                found_tab = candidate
+                break
         if not rows:
-            print(f"  {tab}: not found or empty — skipping")
+            print(f"  {month_key}: no tab found or all empty — skipping")
             continue
-        delete_tab(tab)
+        delete_month(month_key)
         n = insert_rows(rows)
         total_rows += n
-        processed.append(tab)
-        print(f"  {tab}: {n} rows inserted")
+        processed.append(found_tab)
+        print(f"  {found_tab}: {n} rows inserted")
 
     print(f"\nDone — {total_rows} total rows inserted across {len(processed)} tab(s).")
     return {"rows_inserted": total_rows, "tabs": processed}

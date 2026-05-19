@@ -97,15 +97,15 @@ async function fetchBestTab(
     return allTabs.find(t => t.toLowerCase().trim() === candidate.toLowerCase().trim()) ?? null;
   }
 
-  // First pass: prefer the tab that has a "paid" column
+  // First pass: prefer the tab that has a "price" or "paid" column
   for (const candidate of candidates) {
     const actualTab = findActual(candidate);
     if (!actualTab) continue;
     const result = await fetchTab(actualTab);
     if (!result) continue;
     log.push(`  Found tab '${actualTab}' — columns: [${result.headers.join(", ")}]`);
-    if (result.headers.includes("paid")) return { rows: result.rows, tabName: actualTab, headers: result.headers };
-    log.push(`  (tab '${actualTab}' has no 'paid' column — checking next candidate)`);
+    if (result.headers.includes("price") || result.headers.includes("paid")) return { rows: result.rows, tabName: actualTab, headers: result.headers };
+    log.push(`  (tab '${actualTab}' has no price/paid column — checking next candidate)`);
   }
 
   // Second pass: fall back to the first matching tab that has any data
@@ -171,7 +171,7 @@ function processTab(tab: string, rawRows: Record<string, string>[], year: number
     const customer    = col(row, "costumer", "customer") || null;
     const service     = col(row, "service / products", "service/products") || null;
     const dateRaw     = col(row, "date of service");
-    const priceRaw    = col(row, "paid");
+    const priceRaw    = col(row, "price", "paid");
     const payment     = col(row, "payment")      || null;
     const salesStaff  = col(row, "sales staf", "sales staff") || null;
     const note        = col(row, "note");
