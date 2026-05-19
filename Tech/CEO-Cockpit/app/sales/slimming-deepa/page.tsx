@@ -16,7 +16,7 @@ const SERVICE_TYPE_COLORS: Record<string, string> = {
 
 function SlimmingDeepContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }) {
   const {
-    byServiceType, byService, totals,
+    byStaff, byServiceType, byService, totals,
     isFetching, isSyncing, syncError, triggerSync,
   } = useSlimmingSales(dateFrom, dateTo);
 
@@ -135,6 +135,50 @@ function SlimmingDeepContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Dat
             <p className="text-xl font-bold text-foreground">{trTotals.tx_count}</p>
           </div>
         </div>
+      </Card>
+
+      {/* ── Sales by Staff ──────────────────────────────────────────── */}
+      <Card className="p-4 md:p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <h2 className="text-base font-semibold text-foreground">Sales by Staff</h2>
+          <span className="text-xs text-muted-foreground">(from Sale of column of Sales tabs)</span>
+        </div>
+        {byStaff.length === 0 ? (
+          <p className="text-sm text-muted-foreground py-4 text-center">
+            {isLoading ? "Loading…" : "No data for selected period"}
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-xs text-muted-foreground uppercase tracking-wide">
+                  <th className="text-left pb-2 font-medium">Staff Member</th>
+                  <th className="text-right pb-2 font-medium">Transactions</th>
+                  <th className="text-right pb-2 font-medium">Revenue ex-VAT</th>
+                  <th className="text-right pb-2 font-medium">Revenue inc-VAT</th>
+                </tr>
+              </thead>
+              <tbody>
+                {byStaff.map((s, i) => (
+                  <tr key={s.staff} className={`border-b last:border-0 ${i % 2 === 0 ? "" : "bg-muted/20"}`}>
+                    <td className="py-2.5 font-medium">{s.staff}</td>
+                    <td className="py-2.5 text-right text-muted-foreground">{s.tx_count}</td>
+                    <td className="py-2.5 text-right font-medium">{formatCurrency(s.revenue_ex)}</td>
+                    <td className="py-2.5 text-right text-muted-foreground">{formatCurrency(s.revenue_inc)}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="border-t-2 font-semibold">
+                  <td className="pt-2.5">Total</td>
+                  <td className="pt-2.5 text-right text-muted-foreground">{totals.tx_count}</td>
+                  <td className="pt-2.5 text-right">{formatCurrency(totals.revenue_ex)}</td>
+                  <td className="pt-2.5 text-right text-muted-foreground">{formatCurrency(totals.revenue_inc)}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        )}
       </Card>
 
       {/* ── Treatment by Staff ──────────────────────────────────────── */}

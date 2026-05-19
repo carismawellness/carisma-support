@@ -88,12 +88,15 @@ function parsePrice(raw: string): number | null {
 
 // ── Row processor ─────────────────────────────────────────────────────────────
 
+// First-match-wins lookup. Some Sales tabs have a duplicate "Sale of" header
+// (col I + col J in Apr 26). Object.fromEntries would pick the LAST one (empty).
 function makeColFn(headers: string[], row: string[]) {
-  const idx = Object.fromEntries(headers.map((h, i) => [h.toLowerCase().trim(), i]));
+  const norm = headers.map(h => h.toLowerCase().trim());
   return (...keys: string[]) => {
     for (const k of keys) {
-      const i = idx[k.toLowerCase()];
-      if (i !== undefined && i < row.length && row[i].trim()) return row[i].trim();
+      const target = k.toLowerCase().trim();
+      const i = norm.findIndex(h => h === target);
+      if (i !== -1 && i < row.length && row[i].trim()) return row[i].trim();
     }
     return "";
   };
@@ -115,7 +118,7 @@ function processRows(
     const dateRaw  = col("Date");
     const client   = col("Client") || null;
     const treatment = col("Treatment", "Treatments") || null;
-    let   therapist = col("Therapist") || null;
+    let   therapist = col("Sale of", "Therapist") || null;
     const priceRaw  = col("Paid");
     const price     = parsePrice(priceRaw);
 
