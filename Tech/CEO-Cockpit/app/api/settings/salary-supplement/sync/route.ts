@@ -22,12 +22,13 @@ const SPA_NAME_TO_SLUG: Record<string, string | null> = {
   odycy: "odycy",
   excelsior: "excelsior",
   novotel: "novotel",
-  // Exclude these — not SPA locations
+  // Non-SPA brands — still valid slugs
   centre: "centre",
   center: "centre",
   aesthetics: "aesthetics",
   aesthtics: "aesthetics",
-  slimming: null,
+  slimming: "slimming",
+  slim: "slimming",
 };
 
 function spaNameToSlug(raw: string): string | null | undefined {
