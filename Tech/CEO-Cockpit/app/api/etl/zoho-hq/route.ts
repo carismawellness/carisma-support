@@ -3,6 +3,17 @@ import { ZohoBooksClient } from "@/lib/etl/zoho-client";
 import { loadHqCoaMap, runHqEbitdaMonth } from "@/lib/etl/hq-ebitda";
 import { ETLLogger } from "@/lib/etl/etl-logger";
 
+// GET — diagnostic: checks tag discovery and returns raw Zoho tag data
+export async function GET() {
+  try {
+    const client = new ZohoBooksClient("spa");
+    const tagsRaw = await client.get("settings/tags", {}).catch((e: unknown) => ({ error: String(e) }));
+    return NextResponse.json({ tags: tagsRaw });
+  } catch (e) {
+    return NextResponse.json({ error: String(e) }, { status: 500 });
+  }
+}
+
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
