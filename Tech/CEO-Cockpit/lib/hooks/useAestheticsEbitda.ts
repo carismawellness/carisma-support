@@ -144,7 +144,7 @@ export function useAestheticsEbitda(dateFrom: Date, dateTo: Date): UseAesthetics
   // ── 4. Sync mutation ───────────────────────────────────────────────────────
   const syncMutation = useMutation({
     mutationFn: async ({ force = false }: { force?: boolean }) => {
-      const res = await fetch("/api/etl/zoho-aesthetics", {
+      const res = await fetch("/api/etl/zoho-aesthetics-transactions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

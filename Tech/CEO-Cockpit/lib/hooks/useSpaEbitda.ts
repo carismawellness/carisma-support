@@ -126,7 +126,7 @@ export function useSpaEbitda(dateFrom: Date, dateTo: Date): UseSpaEbitdaResult {
   // ── 3. Sync mutation (calls Next.js API route → Python ETL) ──────────
   const syncMutation = useMutation({
     mutationFn: async ({ force = false }: { force?: boolean }) => {
-      const res = await fetch("/api/etl/zoho-spa", {
+      const res = await fetch("/api/etl/zoho-spa-transactions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -140,7 +140,10 @@ export function useSpaEbitda(dateFrom: Date, dateTo: Date): UseSpaEbitdaResult {
       return json;
     },
     onSuccess: () => {
+      // The transactions route writes both spa_ebitda_monthly and hq_ebitda_monthly
+      // in one call, so invalidate both queries.
       queryClient.invalidateQueries({ queryKey: ["spa-ebitda", fromStr, toStr] });
+      queryClient.invalidateQueries({ queryKey: ["hq-ebitda",  fromStr, toStr] });
     },
   });
 

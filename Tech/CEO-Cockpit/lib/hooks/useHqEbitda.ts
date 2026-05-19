@@ -1,7 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 
 export interface HqEbitdaData {
@@ -51,13 +50,9 @@ const EMPTY: HqEbitdaData = {
 
 export function useHqEbitda(dateFrom: Date, dateTo: Date): UseHqEbitdaResult {
   const supabase     = createClient();
-  const queryClient  = useQueryClient();
-  const lastFiredRef = useRef("");
 
   const fromStr      = toDateStr(new Date(dateFrom.getFullYear(), dateFrom.getMonth(), 1));
   const toStr        = toDateStr(new Date(dateTo.getFullYear(),   dateTo.getMonth(),   1));
-  const fromDateFull = toDateStr(dateFrom);
-  const toDateFull   = toDateStr(dateTo);
   const allMonths    = monthsInRange(dateFrom, dateTo);
 
   // ── Fetch from hq_ebitda_monthly ──────────────────────────────────────────
@@ -86,29 +81,10 @@ export function useHqEbitda(dateFrom: Date, dateTo: Date): UseHqEbitdaResult {
   const presentMonths = new Set((rows ?? []).map((r: HqRow) => r.month));
   const missingMonths = allMonths.filter(m => !presentMonths.has(m));
 
-  // ── Sync mutation ─────────────────────────────────────────────────────────
-  const syncMutation = useMutation({
-    mutationFn: async ({ force = false }: { force?: boolean }) => {
-      const res = await fetch("/api/etl/zoho-hq", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date_from: fromDateFull, date_to: toDateFull, force }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Sync failed");
-      return json;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hq-ebitda", fromStr, toStr] });
-    },
-  });
-
-  // Auto-trigger sync when months are missing
-  const missingKey = missingMonths.join(",");
-  if (missingMonths.length > 0 && !isFetching && !syncMutation.isPending && missingKey !== lastFiredRef.current) {
-    lastFiredRef.current = missingKey;
-    setTimeout(() => syncMutation.mutate({ force: false }), 0);
-  }
+  // Sync is owned by useSpaEbitda: the /api/etl/zoho-spa-transactions route
+  // writes BOTH spa_ebitda_monthly and hq_ebitda_monthly in a single call,
+  // and the SPA hook invalidates the hq-ebitda query on success.
+  // triggerSync here is a no-op to avoid double-firing the same ETL.
 
   // ── Aggregate ─────────────────────────────────────────────────────────────
   const data = (rows ?? []).reduce<HqEbitdaData>((acc, row: HqRow) => {
@@ -138,9 +114,9 @@ export function useHqEbitda(dateFrom: Date, dateTo: Date): UseHqEbitdaResult {
   return {
     data: rows?.length ? data : EMPTY,
     isFetching,
-    isSyncing:    syncMutation.isPending,
-    syncError:    syncMutation.error ? (syncMutation.error as Error).message : null,
+    isSyncing:    false,
+    syncError:    null,
     missingMonths,
-    triggerSync:  (force = false) => syncMutation.mutate({ force }),
+    triggerSync:  () => { /* no-op: handled by useSpaEbitda */ },
   };
 }
