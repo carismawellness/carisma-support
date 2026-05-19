@@ -322,6 +322,7 @@ const UI_KEY_TO_LOC: Record<string, string> = {
   odycy:     "sunny_coast",
   excelsior: "excelsior",
   novotel:   "novotel",
+  hq:        "hq",
 };
 
 function ruleFromDb(ruleType: string, config: Record<string, number> | null): string {
@@ -538,6 +539,7 @@ export async function runSpaEbitdaMonth(
     if (line.startsWith("sga_")) line = "sga";
     const loc  = detectLocation(acc.name);
     const rule = loc ?? configuredRule;
+    if (rule === "hq") continue; // routed to HQ EBITDA via HQ ETL, excluded from venue distribution
     if (!BASE_LINES.has(line)) continue;
     mapped.push([rule, line, acc.amount]);
   }

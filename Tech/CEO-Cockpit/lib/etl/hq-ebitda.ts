@@ -9,22 +9,34 @@ import { fetchPlAccounts } from "./zoho-pl-parser";
 export async function loadHqCoaMap(): Promise<Record<string, [string, string]>> {
   const base = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const key  = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-  const qs   = new URLSearchParams({
-    select:        "account_code,ebitda_line,coa_split_rules(rule_type,config)",
-    zoho_org:      "eq.hq",
+
+  // Find the "100% HQ" split rule ID in the SPA org
+  const ruleQs = new URLSearchParams({ select: "id", name: "eq.100% HQ", zoho_org: "eq.spa" });
+  const ruleResp = await fetch(`${base}/rest/v1/coa_split_rules?${ruleQs}`, {
+    headers: { apikey: key, Authorization: `Bearer ${key}` },
+  });
+  if (!ruleResp.ok) throw new Error(`Failed to load HQ split rule: ${ruleResp.status}`);
+  const rules = await ruleResp.json() as { id: number }[];
+  if (!rules.length) return {};
+  const ruleId = rules[0].id;
+
+  // Fetch all SPA accounts assigned the "100% HQ" split rule
+  const qs = new URLSearchParams({
+    select:        "account_code,ebitda_line",
+    zoho_org:      "eq.spa",
     ebitda_line:   "not.is.null",
-    split_rule_id: "not.is.null",
+    split_rule_id: `eq.${ruleId}`,
   });
   const resp = await fetch(`${base}/rest/v1/zoho_coa_mapping?${qs}`, {
     headers: { apikey: key, Authorization: `Bearer ${key}` },
   });
   if (!resp.ok) throw new Error(`Failed to load HQ CoA: ${resp.status}`);
-  const data = await resp.json() as Record<string, unknown>[];
+  const data = await resp.json() as { account_code: string; ebitda_line: string }[];
 
   const result: Record<string, [string, string]> = {};
   for (const row of data) {
     const code = String(row.account_code ?? "").trim();
-    const line = row.ebitda_line as string;
+    const line = row.ebitda_line;
     if (line === "excluded") { result[code] = ["excluded", "excluded"]; continue; }
     result[code] = ["hq", line];
   }
@@ -69,7 +81,7 @@ export async function runHqEbitdaMonth(
 
   const coaMap = opts.coaMap ?? {};
   if (!Object.keys(coaMap).length) {
-    log.push(`${monthKey}: HQ CoA map is empty — sync accounts on the HQ tab in COA Mapping first`);
+    log.push(`${monthKey}: HQ CoA map is empty — assign '100% HQ' split rule to accounts in COA Mapping (SPA tab)`);
     return { rowsUpserted: 0, log };
   }
 
