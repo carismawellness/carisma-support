@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useCallback } from "react";
+import Link from "next/link";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { KPICardRow, KPIData } from "@/components/dashboard/KPICardRow";
@@ -578,13 +579,21 @@ function SpaEBITDAContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }
             Per-location P&amp;L breakdown | {rangeLabel}
           </p>
         </div>
-        <button
-          onClick={() => triggerSync(true)}
-          disabled={isSyncing}
-          className="text-xs px-3 py-1.5 rounded-md border border-border bg-background hover:bg-muted disabled:opacity-50 transition-colors"
-        >
-          {isSyncing ? "Syncing…" : "Re-Sync"}
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/finance/ebitda/spa/breakdown"
+            className="text-xs px-3 py-1.5 rounded-md border border-border bg-background hover:bg-muted transition-colors"
+          >
+            Account Breakdown →
+          </Link>
+          <button
+            onClick={() => triggerSync(true)}
+            disabled={isSyncing}
+            className="text-xs px-3 py-1.5 rounded-md border border-border bg-background hover:bg-muted disabled:opacity-50 transition-colors"
+          >
+            {isSyncing ? "Syncing…" : "Re-Sync"}
+          </button>
+        </div>
       </div>
 
       {/* Sync status banner */}

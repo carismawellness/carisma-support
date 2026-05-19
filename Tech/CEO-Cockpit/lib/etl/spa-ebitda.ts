@@ -395,7 +395,7 @@ export function detectLocation(name: string): string | null {
   return null;
 }
 
-function detectLineFromName(name: string, section: string): string {
+export function detectLineFromName(name: string, section: string): string {
   const low = name.toLowerCase();
   if (section === "income") return "revenue";
   if (/salary|salaries|wage|overtime|bonus|ni |paye|payroll/.test(low)) return "wages";
