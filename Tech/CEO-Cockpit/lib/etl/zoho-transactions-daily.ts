@@ -6,12 +6,9 @@ import {
   loadSpaCoaFromSupabase,
 } from "./spa-ebitda";
 import {
-  discoverTagOptions,
   SLUG_DISPLAY,
-  ZOHO_TAG_TO_SLUG,
   SALARY_RATIO_CODES,
   UI_KEY_TO_SLUG,
-  TagOption,
 } from "./zoho-spa-breakdown";
 
 export type DailyRow = {
@@ -40,16 +37,31 @@ const SPA_VENUE_SLUGS = [
 ];
 const PAGE_THROTTLE_MS = 750;
 
-type TxnLine = {
-  date: string;
-  account_id?: string;
-  account_name: string;
-  account_code: string;
-  reporting_tags: Array<{ tag_id?: string; tag_option_id?: string; tag_option_name?: string }>;
-  bcy_amount: number;
-  debit_or_credit: string;
-  section: "income" | "expense";
+const MONTHS: Record<string, string> = {
+  jan: "01", feb: "02", mar: "03", apr: "04", may: "05", jun: "06",
+  jul: "07", aug: "08", sep: "09", oct: "10", nov: "11", dec: "12",
 };
+
+type JournalLine = {
+  date: string;
+  account_id: string;
+  account_code: string;
+  account_name: string;
+  section: "income" | "expense" | "other";
+  amount: number;
+};
+
+function parseZohoDate(s: string): string | null {
+  // "01 Jan 2025" → "2025-01-01"
+  const m = /^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})$/.exec(s.trim());
+  if (!m) {
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+    return null;
+  }
+  const mon = MONTHS[m[2].toLowerCase()];
+  if (!mon) return null;
+  return `${m[3]}-${mon}-${m[1].padStart(2, "0")}`;
+}
 
 function enumerateDates(fromDate: string, toDate: string): string[] {
   const out: string[] = [];
@@ -82,17 +94,91 @@ function monthChunks(fromDate: string, toDate: string): Array<{ from: string; to
   return chunks;
 }
 
-function classifySection(accountType: string | undefined): "income" | "expense" | null {
-  if (!accountType) return null;
-  const t = accountType.toLowerCase();
-  if (t.includes("income") || t.includes("revenue")) return "income";
-  if (
-    t.includes("expense") ||
-    t.includes("cost_of_goods") ||
-    t.includes("cogs") ||
-    t === "other_expense"
-  ) return "expense";
-  return null;
+type AccountMeta = { code: string; name: string; type: string; section: "income" | "expense" | "other" };
+
+async function loadAccountMeta(client: ZohoBooksClient): Promise<Map<string, AccountMeta>> {
+  const result = new Map<string, AccountMeta>();
+  let page = 1;
+  while (true) {
+    const data = await client.get("chartofaccounts", { page: String(page), per_page: "200" }) as Record<string, unknown>;
+    const accounts = (data.chartofaccounts ?? []) as Array<Record<string, unknown>>;
+    for (const a of accounts) {
+      const id = String(a.account_id ?? "");
+      if (!id) continue;
+      const code = String(a.account_code ?? "").trim();
+      const name = String(a.account_name ?? "").trim();
+      const type = String(a.account_type ?? "").toLowerCase();
+      let section: AccountMeta["section"] = "other";
+      if (type.includes("income") || type.includes("revenue")) section = "income";
+      else if (type.includes("expense") || type.includes("cost_of_goods") || type.includes("cogs")) section = "expense";
+      result.set(id, { code, name, type, section });
+    }
+    const ctx = data.page_context as Record<string, unknown> | undefined;
+    if (!ctx?.has_more_page) break;
+    page++;
+  }
+  return result;
+}
+
+async function fetchJournalChunk(
+  client: ZohoBooksClient,
+  fromDate: string,
+  toDate: string,
+  accountMeta: Map<string, AccountMeta>,
+  log: string[],
+): Promise<JournalLine[]> {
+  const out: JournalLine[] = [];
+  let page = 1;
+  let pageCount = 0;
+  while (true) {
+    if (pageCount > 0) await new Promise(r => setTimeout(r, PAGE_THROTTLE_MS));
+    const data = await client.get("reports/journal", {
+      filter_by: "TransactionDate.CustomDate",
+      from_date: fromDate,
+      to_date: toDate,
+      page: String(page),
+      per_page: "200",
+      report_basis: "Accrual",
+    }) as Record<string, unknown>;
+    pageCount++;
+
+    const journals = (data.journal ?? []) as Array<Record<string, unknown>>;
+    for (const j of journals) {
+      const date = parseZohoDate(String(j.date ?? ""));
+      if (!date) continue;
+      const lines = (j.account_transactions ?? []) as Array<Record<string, unknown>>;
+      for (const ln of lines) {
+        const accountId = String(ln.account_id ?? "");
+        if (!accountId) continue;
+        const meta = accountMeta.get(accountId);
+        const section = meta?.section ?? "other";
+        if (section === "other") continue; // skip balance-sheet movements
+
+        const code = (meta?.code || String(ln.account_code ?? "").trim());
+        const name = (meta?.name || String(ln.name ?? "").trim());
+        if (!code && !name) continue;
+
+        const debit  = Number(ln.debit_amount  ?? 0);
+        const credit = Number(ln.credit_amount ?? 0);
+        const net = section === "income" ? credit - debit : debit - credit;
+        if (net === 0) continue;
+
+        out.push({
+          date,
+          account_id: accountId,
+          account_code: code,
+          account_name: name,
+          section,
+          amount: net,
+        });
+      }
+    }
+    const ctx = data.page_context as Record<string, unknown> | undefined;
+    if (!ctx?.has_more_page) break;
+    page++;
+  }
+  log.push(`  ${fromDate}..${toDate}: ${pageCount} page(s), ${out.length} lines`);
+  return out;
 }
 
 function lineFromCoaOrName(
@@ -117,25 +203,20 @@ function venueShares(
 ): Record<string, number> {
   const out: Record<string, number> = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, 0]));
   if (amount === 0) return out;
-
   if (SPA_VENUE_SLUGS.includes(rule)) { out[rule] = amount; return out; }
-
   if (rule === "equal") {
     const share = amount / SPA_VENUE_SLUGS.length;
     for (const s of SPA_VENUE_SLUGS) out[s] = share;
     return out;
   }
-
   if (rule === "sales_ratio") {
     for (const s of SPA_VENUE_SLUGS) out[s] = amount * (revPct[s] ?? 0);
     return out;
   }
-
   if (rule === "salary_cost") {
     for (const s of SPA_VENUE_SLUGS) out[s] = amount * (salPct[s] ?? 0);
     return out;
   }
-
   if (rule.startsWith("custom:")) {
     const config: Record<string, number> = JSON.parse(rule.slice(7));
     const totalPct = Object.values(config).reduce((a, b) => a + b, 0) || 100;
@@ -145,110 +226,9 @@ function venueShares(
     }
     return out;
   }
-
   const share = amount / SPA_VENUE_SLUGS.length;
   for (const s of SPA_VENUE_SLUGS) out[s] = share;
   return out;
-}
-
-async function fetchTransactionDetailsChunk(
-  client: ZohoBooksClient,
-  fromDate: string,
-  toDate: string,
-  log: string[],
-): Promise<TxnLine[]> {
-  const out: TxnLine[] = [];
-  let page = 1;
-  let pageCount = 0;
-  while (true) {
-    if (pageCount > 0) await new Promise(r => setTimeout(r, PAGE_THROTTLE_MS));
-    const data = await client.get("reports/transactiondetails", {
-      from_date: fromDate,
-      to_date: toDate,
-      page: String(page),
-      per_page: "200",
-      cash_based: "false",
-      show_zero_activity_accounts: "false",
-    }) as Record<string, unknown>;
-    pageCount++;
-
-    const accounts = (data.account_transactions ?? data.transaction_details ?? []) as unknown[];
-    for (const acc of accounts) {
-      if (!acc || typeof acc !== "object") continue;
-      const a = acc as Record<string, unknown>;
-      const accountName = String(a.account_name ?? a.name ?? "").trim();
-      const accountCode = String(a.account_code ?? "").trim();
-      const accountType = String(a.account_type ?? a.account_group ?? "").trim();
-      const section = classifySection(accountType);
-      const txns = (a.account_transactions ?? a.transactions ?? []) as unknown[];
-
-      for (const txn of txns) {
-        if (!txn || typeof txn !== "object") continue;
-        const t = txn as Record<string, unknown>;
-        const date = String(t.date ?? t.transaction_date ?? "").slice(0, 10);
-        if (!date) continue;
-
-        const debit = Number(t.bcy_debit ?? t.debit_amount ?? 0);
-        const credit = Number(t.bcy_credit ?? t.credit_amount ?? 0);
-        let bcyAmount = Number(t.bcy_amount ?? 0);
-        const doc = String(t.debit_or_credit ?? "").toLowerCase();
-
-        const lineSection: "income" | "expense" =
-          section ?? (doc === "credit" && credit > 0 ? "income" : "expense");
-
-        if (!Number.isFinite(bcyAmount) || bcyAmount === 0) {
-          bcyAmount = lineSection === "income"
-            ? Math.max(0, credit - debit)
-            : Math.max(0, debit - credit);
-        } else {
-          const signed = doc === "credit" ? bcyAmount : -bcyAmount;
-          bcyAmount = lineSection === "income" ? signed : -signed;
-          bcyAmount = Math.max(0, bcyAmount);
-        }
-        if (bcyAmount === 0) continue;
-
-        const tags = (t.reporting_tags ?? t.tags ?? []) as unknown[];
-        const reporting_tags = tags
-          .filter((x): x is Record<string, unknown> => !!x && typeof x === "object")
-          .map(x => ({
-            tag_id: x.tag_id != null ? String(x.tag_id) : undefined,
-            tag_option_id: x.tag_option_id != null ? String(x.tag_option_id) : undefined,
-            tag_option_name: x.tag_option_name != null ? String(x.tag_option_name) : undefined,
-          }));
-
-        out.push({
-          date,
-          account_id: a.account_id != null ? String(a.account_id) : undefined,
-          account_name: accountName,
-          account_code: accountCode,
-          reporting_tags,
-          bcy_amount: bcyAmount,
-          debit_or_credit: doc,
-          section: lineSection,
-        });
-      }
-    }
-
-    const ctx = data.page_context as Record<string, unknown> | undefined;
-    if (!ctx?.has_more_page) break;
-    page++;
-  }
-  log.push(`  ${fromDate}..${toDate}: ${pageCount} page(s), ${out.length} lines`);
-  return out;
-}
-
-function resolveTagSlug(
-  tags: TxnLine["reporting_tags"],
-  optionIdToSlug: Map<string, string>,
-): string | null {
-  for (const tag of tags) {
-    if (tag.tag_option_id && optionIdToSlug.has(tag.tag_option_id)) {
-      return optionIdToSlug.get(tag.tag_option_id)!;
-    }
-    const name = (tag.tag_option_name ?? "").trim().toLowerCase();
-    if (name && name in ZOHO_TAG_TO_SLUG) return ZOHO_TAG_TO_SLUG[name];
-  }
-  return null;
 }
 
 export async function fetchZohoTransactionsDaily(
@@ -266,33 +246,34 @@ export async function fetchZohoTransactionsDaily(
     return { rows: [], dates, period, log };
   }
 
-  log.push("Discovering venue tag options…");
-  const tagOptions = await discoverTagOptions(client);
-  const optionIdToSlug = new Map<string, string>();
-  for (const t of tagOptions) optionIdToSlug.set(t.tag_option_id, t.slug);
-  log.push(`Tag options: ${tagOptions.map(t => t.slug).join(", ") || "(none)"}`);
+  log.push("Loading chart of accounts…");
+  const accountMeta = await loadAccountMeta(client);
+  log.push(`Loaded ${accountMeta.size} accounts`);
 
-  log.push("Loading SPA CoA…");
+  log.push("Loading SPA CoA mapping…");
   const coaMap = (await loadSpaCoaFromSupabase()) ?? COA_MAP;
 
-  log.push(`Fetching transaction details across ${monthChunks(fromDate, toDate).length} month chunk(s)…`);
-  const allLines: TxnLine[] = [];
-  for (const chunk of monthChunks(fromDate, toDate)) {
-    const lines = await fetchTransactionDetailsChunk(client, chunk.from, chunk.to, log);
+  const chunks = monthChunks(fromDate, toDate);
+  log.push(`Fetching journal across ${chunks.length} month chunk(s)…`);
+  const allLines: JournalLine[] = [];
+  for (const c of chunks) {
+    const lines = await fetchJournalChunk(client, c.from, c.to, accountMeta, log);
     allLines.push(...lines);
+    await new Promise(r => setTimeout(r, PAGE_THROTTLE_MS));
   }
   log.push(`Total lines: ${allLines.length}`);
 
+  // Ratio bases (name-detected, since no tag info is available at line level)
   const revBySlug: Record<string, number> = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, 0]));
   const salBySlug: Record<string, number> = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, 0]));
   for (const ln of allLines) {
-    const tagSlug = resolveTagSlug(ln.reporting_tags, optionIdToSlug);
-    if (ln.section === "income" && tagSlug && tagSlug !== "hq" && SPA_VENUE_SLUGS.includes(tagSlug)) {
-      revBySlug[tagSlug] += ln.bcy_amount;
+    if (ln.section === "income") {
+      const loc = detectLocation(ln.account_name);
+      if (loc && SPA_VENUE_SLUGS.includes(loc)) revBySlug[loc] += ln.amount;
     }
     if (ln.account_code && SALARY_RATIO_CODES[ln.account_code]) {
       const slug = SALARY_RATIO_CODES[ln.account_code];
-      if (SPA_VENUE_SLUGS.includes(slug)) salBySlug[slug] += ln.bcy_amount;
+      if (SPA_VENUE_SLUGS.includes(slug)) salBySlug[slug] += ln.amount;
     }
   }
   let totalRev = Object.values(revBySlug).reduce((a, b) => a + b, 0);
@@ -301,6 +282,7 @@ export async function fetchZohoTransactionsDaily(
   if (totalSal === 0) totalSal = 1;
   const revPct = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, revBySlug[s] / totalRev]));
   const salPct = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, salBySlug[s] / totalSal]));
+  log.push(`revPct: ${SPA_VENUE_SLUGS.map(s => `${s}=${(revPct[s] * 100).toFixed(1)}%`).join(" ")}`);
 
   type Bucket = {
     brand: "SPA";
@@ -310,39 +292,30 @@ export async function fetchZohoTransactionsDaily(
     account_code: string;
     ebitda_category: string;
     split_rule: string;
-    has_tagged: boolean;
-    has_split: boolean;
     daily: Record<string, number>;
   };
   const buckets = new Map<string, Bucket>();
-
   const venueDisplay = (slug: string): string => SLUG_DISPLAY[slug] ?? slug;
 
-  const allValidSlugs = new Set<string>([...SPA_VENUE_SLUGS, "hq"]);
-
   for (const ln of allLines) {
-    const { rule: rawRule, line: rawLine } = lineFromCoaOrName(ln.account_code, ln.account_name, ln.section, coaMap);
+    const lineSection: "income" | "expense" = ln.section === "income" ? "income" : "expense";
+    const { rule: rawRule, line: rawLine } = lineFromCoaOrName(ln.account_code, ln.account_name, lineSection, coaMap);
     let ebitdaLine = rawLine;
     if (ebitdaLine.startsWith("sga_")) ebitdaLine = "sga";
     if (ebitdaLine === "excluded" || !VALID_LINES.has(ebitdaLine)) continue;
 
-    const tagSlug = resolveTagSlug(ln.reporting_tags, optionIdToSlug);
+    const nameLoc = detectLocation(ln.account_name);
+    const effectiveRule = nameLoc ?? rawRule;
 
-    let allocations: Array<{ slug: string; amount: number; fromTag: boolean }> = [];
-    if (tagSlug && allValidSlugs.has(tagSlug)) {
-      allocations.push({ slug: tagSlug, amount: ln.bcy_amount, fromTag: true });
+    let allocations: Array<{ slug: string; amount: number }> = [];
+    if (effectiveRule === "hq") {
+      allocations.push({ slug: "hq", amount: ln.amount });
+    } else if (SPA_VENUE_SLUGS.includes(effectiveRule)) {
+      allocations.push({ slug: effectiveRule, amount: ln.amount });
     } else {
-      const nameLoc = detectLocation(ln.account_name);
-      const effectiveRule = nameLoc ?? rawRule;
-      if (effectiveRule === "hq") {
-        allocations.push({ slug: "hq", amount: ln.bcy_amount, fromTag: false });
-      } else if (SPA_VENUE_SLUGS.includes(effectiveRule)) {
-        allocations.push({ slug: effectiveRule, amount: ln.bcy_amount, fromTag: false });
-      } else {
-        const shares = venueShares(effectiveRule, ln.bcy_amount, revPct, salPct);
-        for (const [slug, amt] of Object.entries(shares)) {
-          if (amt !== 0) allocations.push({ slug, amount: amt, fromTag: false });
-        }
+      const shares = venueShares(effectiveRule, ln.amount, revPct, salPct);
+      for (const [slug, amt] of Object.entries(shares)) {
+        if (amt !== 0) allocations.push({ slug, amount: amt });
       }
     }
 
@@ -360,14 +333,11 @@ export async function fetchZohoTransactionsDaily(
           account_code: ln.account_code,
           ebitda_category: ebitdaLine,
           split_rule: rawRule,
-          has_tagged: false,
-          has_split: false,
           daily: {},
         };
         buckets.set(bucketKey, b);
       }
       b.daily[ln.date] = (b.daily[ln.date] ?? 0) + alloc.amount;
-      if (alloc.fromTag) b.has_tagged = true; else b.has_split = true;
     }
   }
 
@@ -387,7 +357,7 @@ export async function fetchZohoTransactionsDaily(
       account_code: b.account_code,
       ebitda_category: b.ebitda_category,
       split_rule: b.split_rule,
-      tag_source: b.has_tagged ? "tagged" : "split",
+      tag_source: "split",
       daily: cleanedDaily,
     });
   }
