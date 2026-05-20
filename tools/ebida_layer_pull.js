@@ -115,6 +115,10 @@ function pullAndWriteEbidaLayer(dateFrom, dateTo, org) {
   var startedAt = Date.now();
   var orgParam  = (org || "SPA").toLowerCase();
 
+  // Always sync the status cell at the start, regardless of which entry
+  // point triggered the pull. Avoids stale "Pulling…" text from previous runs.
+  _setStatus("Pulling " + dateFrom + " → " + dateTo + "… (" + (org || "SPA") + ")");
+
   var chunks = _computeChunks(dateFrom, dateTo, CHUNK_DAYS);
 
   var accRows  = {};        // brand|key|venue_slug -> { meta + daily }
@@ -157,9 +161,23 @@ function pullAndWriteEbidaLayer(dateFrom, dateTo, org) {
   var stats    = _mergeIntoSheet(accRows, allDates, dateFrom, dateTo, org);
 
   var elapsed = ((Date.now() - startedAt) / 1000).toFixed(0);
+  var stamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm");
+  _setStatus("✓ Last pulled " + stamp + " (" + dateFrom + " → " + dateTo + ", " + (org || "SPA") + ")");
   return "✓ " + chunks.length + " chunk(s) pulled in " + elapsed + "s\n" +
          "  " + Object.keys(accRows).length + " (account,venue) row(s) merged\n" +
          "  " + stats.appended + " new row(s), " + stats.updated + " cell update(s), " + stats.protected + " protected cell(s) skipped";
+}
+
+// Writes a one-line status into the control row's status cell. Safe even
+// if the tab doesn't exist yet (no-op in that case).
+function _setStatus(msg) {
+  try {
+    var ss    = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID);
+    var sheet = ss.getSheetByName(EBIDA_TAB);
+    if (!sheet) return;
+    sheet.getRange(CONTROL_ROW, CTRL_STATUS_COL).setValue(msg);
+    SpreadsheetApp.flush();
+  } catch (e) { /* ignore */ }
 }
 
 // Helper for one-shot full-period local backfill from clasp test
