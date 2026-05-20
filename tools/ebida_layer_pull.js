@@ -222,8 +222,12 @@ function resetAndRunTestPull() {
   var ss = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID);
   var existing = ss.getSheetByName(EBIDA_TAB);
   if (existing) {
+    var maxR = existing.getMaxRows();
+    var maxC = existing.getMaxColumns();
+    if (maxR > 0 && maxC > 0) {
+      existing.getRange(1, 1, maxR, maxC).clearDataValidations();
+    }
     existing.clear();             // clears content + formatting; drawings/images survive
-    existing.clearDataValidations();
     existing.setFrozenRows(0);    // reset frozen rows so next fresh-write applies cleanly
     existing.setFrozenColumns(0);
     Logger.log("Cleared existing '" + EBIDA_TAB + "' tab (button/drawing preserved).");
