@@ -13,6 +13,13 @@ import {
   loadAesthCockpitRevenue,
   loadSlimCockpitRevenue,
 } from "./cockpit-revenue-feeds";
+import {
+  fetchZohoProfitAndLoss,
+  reconcileApiVsPl,
+  formatReconcileLog,
+  loadExcludedCodes,
+  PlReconcileResult,
+} from "./zoho-pl-reconcile";
 
 // Daily-granular per (account, allocation-target) pull for the "EBIDA Layer"
 // Google Sheet tab. Source: zoho-line-extractor (invoices, bills, expenses,
@@ -36,10 +43,14 @@ export type DailyRow = {
 };
 
 export type DailyResult = {
-  rows:   DailyRow[];
-  dates:  string[];
-  period: { from_date: string; to_date: string };
-  log:    string[];
+  rows:           DailyRow[];
+  dates:          string[];
+  period:         { from_date: string; to_date: string };
+  log:            string[];
+  // Optional cross-check vs Zoho `reports/profitandloss` for the same window.
+  // Visibility-only: never blocks the pull. Absent when reconciliation failed
+  // (e.g. P&L endpoint errored) or org wasn't configured for recon.
+  reconciliation?: PlReconcileResult;
 };
 
 const VALID_LINES = new Set(["revenue", "cogs", "wages", "advertising", "rent", "utilities", "sga"]);
@@ -251,13 +262,42 @@ export async function fetchZohoTransactionsDaily(
   // (Lapis for SPA, Supabase POS tables for AES/SLIM) still needs to flow
   // into the EBIDA Layer sheet even when Zoho returns nothing for the window.
 
-  if (org === "spa") return buildSpaRows(lines, dates, period, log, fromDate, toDate);
-  return buildAesthRows(lines, dates, period, log, fromDate, toDate);
+  if (org === "spa") return buildSpaRows(client, lines, dates, period, log, fromDate, toDate);
+  return buildAesthRows(client, lines, dates, period, log, fromDate, toDate);
+}
+
+// ── P&L reconciliation helper ───────────────────────────────────────────────
+// Visibility-only cross-check. Never throws — any failure is logged and
+// returned as `undefined` so the caller can safely skip the recon block.
+
+async function runReconciliation(
+  client:   ZohoBooksClient,
+  org:      "spa" | "aesthetics",
+  rows:     DailyRow[],
+  fromDate: string,
+  toDate:   string,
+  log:      string[],
+): Promise<PlReconcileResult | undefined> {
+  try {
+    log.push(`Running P&L reconciliation for ${org} ${fromDate} → ${toDate}…`);
+    const [pl, excluded] = await Promise.all([
+      fetchZohoProfitAndLoss(client, fromDate, toDate),
+      loadExcludedCodes(org),
+    ]);
+    log.push(`  P&L accounts: ${pl.size}; excluded-by-design codes: ${excluded.size}`);
+    const recon = reconcileApiVsPl(rows, pl, excluded);
+    log.push(...formatReconcileLog(recon, org, fromDate, toDate));
+    return recon;
+  } catch (e) {
+    log.push(`  WARN P&L reconciliation failed: ${e}; continuing without recon block`);
+    return undefined;
+  }
 }
 
 // ── SPA rows ────────────────────────────────────────────────────────────────
 
 async function buildSpaRows(
+  client:   ZohoBooksClient,
   lines:    TxnLine[],
   dates:    string[],
   period:   { from_date: string; to_date: string },
@@ -426,12 +466,15 @@ async function buildSpaRows(
     log.push(`  WARN failed to load Lapis revenue: ${e}`);
   }
 
-  return finalizeRows(buckets, dates, period, log);
+  const result = finalizeRows(buckets, dates, period, log);
+  result.reconciliation = await runReconciliation(client, "spa", result.rows, fromDate, toDate, log);
+  return result;
 }
 
 // ── Aesthetics rows (covers AES + SLIM brands) ──────────────────────────────
 
 async function buildAesthRows(
+  client:   ZohoBooksClient,
   lines:    TxnLine[],
   dates:    string[],
   period:   { from_date: string; to_date: string },
@@ -623,7 +666,9 @@ async function buildAesthRows(
     log.push(`  WARN failed to load Cockpit POS revenue: ${e}`);
   }
 
-  return finalizeRows(buckets, dates, period, log);
+  const result = finalizeRows(buckets, dates, period, log);
+  result.reconciliation = await runReconciliation(client, "aesthetics", result.rows, fromDate, toDate, log);
+  return result;
 }
 
 // ── Common finalisation ─────────────────────────────────────────────────────
