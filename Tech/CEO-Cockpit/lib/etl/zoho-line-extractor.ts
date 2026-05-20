@@ -497,7 +497,15 @@ async function fetchJournalReportLines(
     pageCount++;
     const entries = (data.journal as Array<Record<string, unknown>>) ?? [];
     for (const j of entries) {
-      const txnId = String(j.transaction_id ?? "");
+      // IMPORTANT: the journal report has TWO ids per entry:
+      //   - transaction_id: an internal id specific to the journal report
+      //     (does NOT equal the entity's own id — e.g. for a bill it differs
+      //      from bill_id)
+      //   - entity_id: the entity's own id (= bill_id / invoice_id / etc.)
+      // We use entity_id as the txn_id so the (txn_id, account_id) covered
+      // Set actually matches the entity-endpoint lines.
+      const entityId = String(j.entity_id ?? "");
+      const txnId    = entityId || String(j.transaction_id ?? "");
       if (!txnId) continue;
       const rawDate = String(j.date ?? "");
       const isoDate = parseJournalReportDate(rawDate);
