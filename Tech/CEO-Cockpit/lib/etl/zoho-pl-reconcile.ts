@@ -97,8 +97,12 @@ export function reconcileApiVsPl(
   toleranceEur:              number = DEFAULT_TOLERANCE_EUR,
 ): PlReconcileResult {
   // 1. Aggregate API totals by account_code, summing across venues + days.
-  //    Use absolute value so revenue/cost both come out positive (matching
-  //    P&L's section-positive convention).
+  //    Sum SIGNED values first so positive expenses and negative refund/credit
+  //    lines net correctly per account; only then take absolute value once at
+  //    the end to match P&L's section-positive convention. Taking abs per row
+  //    would stack positives and negatives instead of netting them (e.g. a
+  //    +€34.72 expense + a -€114.95 expense_refund would sum to €149.68
+  //    instead of the correct net €80.23).
   const apiByCode = new Map<string, { account_name: string; amount: number }>();
   for (const row of apiRows) {
     const code = String(row.account_code ?? "").trim();
@@ -108,13 +112,14 @@ export function reconcileApiVsPl(
     for (const v of Object.values(row.daily)) dailySum += v;
     if (!dailySum) continue;
     const existing = apiByCode.get(code);
-    const signedAbs = Math.abs(dailySum);
     if (existing) {
-      existing.amount += signedAbs;
+      existing.amount += dailySum;
     } else {
-      apiByCode.set(code, { account_name: row.account_name, amount: signedAbs });
+      apiByCode.set(code, { account_name: row.account_name, amount: dailySum });
     }
   }
+  // Net first, abs once.
+  for (const [, e] of apiByCode) e.amount = Math.abs(e.amount);
 
   const matched:    PlReconcileResult["matched"]    = [];
   const mismatches: PlReconcileResult["mismatches"] = [];

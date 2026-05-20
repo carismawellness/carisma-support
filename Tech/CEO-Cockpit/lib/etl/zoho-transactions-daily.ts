@@ -161,6 +161,115 @@ function enumerateDates(fromDate: string, toDate: string): string[] {
   return out;
 }
 
+// Returns the set of calendar months ("YYYY-MM") touched by the inclusive
+// [fromDate, toDate] window, plus the first/last calendar day per month.
+// Used by the salary-cost fallback below: when a pull window contains no
+// salary postings (e.g. mid-month range on an org where salary books to
+// the last calendar day), we widen to the whole month(s) instead.
+function monthsCovering(fromDate: string, toDate: string): Array<{ ym: string; start: string; end: string }> {
+  const out: Array<{ ym: string; start: string; end: string }> = [];
+  const start = new Date(`${fromDate}T00:00:00Z`);
+  const end   = new Date(`${toDate}T00:00:00Z`);
+  const cur   = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1));
+  while (cur <= end) {
+    const y = cur.getUTCFullYear();
+    const m = cur.getUTCMonth();
+    const first = new Date(Date.UTC(y, m,     1));
+    const last  = new Date(Date.UTC(y, m + 1, 0));
+    const ym    = `${y}-${String(m + 1).padStart(2, "0")}`;
+    out.push({
+      ym,
+      start: first.toISOString().slice(0, 10),
+      end:   last.toISOString().slice(0, 10),
+    });
+    cur.setUTCMonth(cur.getUTCMonth() + 1);
+  }
+  return out;
+}
+
+// Zoho `reports/journal` returns dates in "DD Mon YYYY" form — mirror the
+// extractor's parser locally so this module stays self-contained.
+const JR_MONTH_ABBREV: Record<string, string> = {
+  jan: "01", feb: "02", mar: "03", apr: "04", may: "05", jun: "06",
+  jul: "07", aug: "08", sep: "09", oct: "10", nov: "11", dec: "12",
+};
+function parseJournalReportDate(s: string): string | null {
+  if (!s) return null;
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  const m = s.trim().match(/^(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})$/);
+  if (!m) return null;
+  const day = m[1].padStart(2, "0");
+  const mon = JR_MONTH_ABBREV[m[2].slice(0, 3).toLowerCase()];
+  if (!mon) return null;
+  return `${m[3]}-${mon}-${day}`;
+}
+
+// ── Salary-cost fallback ────────────────────────────────────────────────────
+// When the pull window contains no salary postings (e.g. Jan 8-17 in SPA
+// where salaries book on the last day of each month), `totalSal` is zero
+// and every venue's salPct collapses to 0 — which silently zeroes out any
+// line that uses the `salary_cost` split rule. To prevent that data loss
+// we widen to the WHOLE calendar month(s) the window touches and re-pull
+// salary postings for the SALARY_RATIO_CODES accounts from reports/journal.
+//
+// Returns updated salBySlug + totalSal. Caller decides whether to also
+// fall back to equal split if even the monthly pull returns zero.
+
+async function pullMonthlySalaryBase(
+  client:   ZohoBooksClient,
+  fromDate: string,
+  toDate:   string,
+  log:      string[],
+): Promise<{ salBySlug: Record<string, number>; total: number; monthsUsed: string[] }> {
+  const salBySlug: Record<string, number> = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, 0]));
+  const months = monthsCovering(fromDate, toDate);
+  const monthsUsed: string[] = [];
+  for (const { ym, start, end } of months) {
+    monthsUsed.push(ym);
+    let page = 1;
+    while (true) {
+      const params: Record<string, string> = {
+        filter_by: "TransactionDate.CustomDate",
+        from_date: start,
+        to_date:   end,
+        per_page:  "200",
+        page:      String(page),
+      };
+      let data: Record<string, unknown>;
+      try {
+        data = await client.get("reports/journal", params) as Record<string, unknown>;
+      } catch (e) {
+        log.push(`  WARN salary-fallback reports/journal ${ym} page ${page} failed: ${e}; skipping rest of month`);
+        break;
+      }
+      const entries = (data.journal as Array<Record<string, unknown>>) ?? [];
+      for (const j of entries) {
+        const rawDate = String(j.date ?? "");
+        const iso = parseJournalReportDate(rawDate);
+        if (!iso || iso < start || iso > end) continue;   // belt-and-suspenders
+        const atRows = (j.account_transactions as Array<Record<string, unknown>>) ?? [];
+        for (const at of atRows) {
+          const code = String(at.account_code ?? "").trim();
+          if (!code) continue;
+          const slug = SALARY_RATIO_CODES[code];
+          if (!slug || !SPA_VENUE_SLUGS.includes(slug)) continue;
+          // Salary accounts are expense-section — debit-positive convention.
+          const debit  = Number(at.debit_amount  ?? 0);
+          const credit = Number(at.credit_amount ?? 0);
+          const signed = debit - credit;
+          if (signed === 0) continue;
+          salBySlug[slug] += signed;
+        }
+      }
+      const ctx = data.page_context as Record<string, unknown> | undefined;
+      if (!ctx?.has_more_page) break;
+      page++;
+    }
+  }
+  const total = Object.values(salBySlug).reduce((a, b) => a + b, 0);
+  return { salBySlug, total, monthsUsed };
+}
+
 // ── SPA venue split (CoA-rule path, untagged lines only) ────────────────────
 
 function spaVenueShares(
@@ -351,10 +460,34 @@ async function buildSpaRows(
   let totalRev = Object.values(revBySlug).reduce((a, b) => a + b, 0);
   if (totalRev === 0) { for (const s of SPA_VENUE_SLUGS) revBySlug[s] = 1; totalRev = SPA_VENUE_SLUGS.length; }
   let totalSal = Object.values(salBySlug).reduce((a, b) => a + b, 0);
-  if (totalSal === 0) totalSal = 1;
+
+  // Salary-cost fallback: if the pull window contains no salary postings
+  // (typical for mid-month windows — SPA salaries book on the last
+  // calendar day), widen to the WHOLE month(s) the window touches and
+  // pull from reports/journal. Without this, every line on a
+  // `salary_cost` split rule would silently allocate to all-zero shares
+  // and disappear from the EBIDA Layer output.
+  let salPct: Record<string, number>;
+  if (totalSal === 0) {
+    log.push(`SPA salary base = 0 in window ${fromDate} → ${toDate}; falling back to monthly salary postings…`);
+    const fb = await pullMonthlySalaryBase(client, fromDate, toDate, log);
+    if (fb.total > 0) {
+      for (const s of SPA_VENUE_SLUGS) salBySlug[s] = fb.salBySlug[s] ?? 0;
+      totalSal = fb.total;
+      log.push(`Salary-cost fallback: pulled monthly salary postings for ${fb.monthsUsed.join(", ")} → totalSal=€${totalSal.toFixed(2)}`);
+      salPct = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, (salBySlug[s] ?? 0) / totalSal]));
+    } else {
+      // Final fallback: equal split (better than silently zeroing the line).
+      log.push(`Salary-cost fallback: monthly pull also €0 across ${fb.monthsUsed.join(", ") || "no months"}; using equal-share allocation`);
+      const equalShare = 1 / SPA_VENUE_SLUGS.length;
+      salPct = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, equalShare]));
+    }
+  } else {
+    salPct = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, salBySlug[s] / totalSal]));
+  }
   const revPct = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, revBySlug[s] / totalRev]));
-  const salPct = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, salBySlug[s] / totalSal]));
   log.push(`SPA revPct (untagged-only): ${SPA_VENUE_SLUGS.map(s => `${s}=${(revPct[s] * 100).toFixed(1)}%`).join(" ")}`);
+  log.push(`SPA salPct: ${SPA_VENUE_SLUGS.map(s => `${s}=${(salPct[s] * 100).toFixed(1)}%`).join(" ")}`);
 
   // 3. Bucket per (account, venue, tag_source, contact) — daily values inside
   type Bucket = {
