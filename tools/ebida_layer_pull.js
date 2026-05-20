@@ -689,7 +689,14 @@ function _formatDateHeader(iso) {
 
 function _parseDateHeader(raw, yearHint) {
   if (raw == null) return null;
-  if (raw instanceof Date && !isNaN(raw.getTime())) return _isoDate(raw);
+  if (raw instanceof Date && !isNaN(raw.getTime())) {
+    // Sheet-read Date objects are anchored to the spreadsheet's TZ, not UTC.
+    // Using _isoDate() (UTC methods) would shift "Jan 1 midnight Malta" back
+    // to "Dec 31" and make the dup-column detector fail, appending a fresh
+    // column on every pull. Use spreadsheet TZ explicitly.
+    var ssTz = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID).getSpreadsheetTimeZone();
+    return Utilities.formatDate(raw, ssTz, "yyyy-MM-dd");
+  }
   var s = String(raw).trim();
   if (!s) return null;
   // Already ISO?
