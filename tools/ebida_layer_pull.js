@@ -179,6 +179,21 @@ function runTestPullJan1to7() {
   return result;
 }
 
+// One-click reset: deletes the existing Zoho Raw Layer tab (if any) and runs
+// the 1-week test pull. Use this after a layout change to rebuild the tab
+// cleanly with the current schema.
+function resetAndRunTestPull() {
+  var ss = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID);
+  var existing = ss.getSheetByName(EBIDA_TAB);
+  if (existing) {
+    ss.deleteSheet(existing);
+    Logger.log("Deleted existing '" + EBIDA_TAB + "' tab.");
+  } else {
+    Logger.log("No existing '" + EBIDA_TAB + "' tab found.");
+  }
+  return runTestPullJan1to7();
+}
+
 // Reads From/To/Org from the control row at the top of the Zoho Raw Layer
 // tab and triggers a pull. This is the function to assign to the in-sheet
 // "Pull" button (Insert → Drawing → make a button → right-click → Assign
@@ -222,7 +237,15 @@ function pullFromSheetControls() {
 
 function _coerceDateToIso(v) {
   if (!v) return "";
-  if (v instanceof Date && !isNaN(v.getTime())) return _isoDate(v);
+  if (v instanceof Date && !isNaN(v.getTime())) {
+    // Date objects from sheet cells are in the spreadsheet's timezone (e.g.
+    // Malta UTC+1/+2). Reading with UTC methods shifts by one day. Use local
+    // date components to match what the user typed in the cell.
+    var y  = v.getFullYear();
+    var m  = String(v.getMonth() + 1).padStart(2, "0");
+    var dd = String(v.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + dd;
+  }
   var s = String(v).trim();
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
   // Try common DD/MM/YYYY and MM/DD/YYYY
