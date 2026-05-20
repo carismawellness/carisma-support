@@ -384,6 +384,33 @@ function _mergeIntoSheet(accRows, allDates, refreshFrom, refreshTo, org) {
     venueIdx = 4;
   }
 
+  // ── Step A: normalize date headers to TEXT format ──────────────────────
+  // Sheets auto-converts "Jan-1 2025" string headers to Date objects when
+  // a date format is auto-detected. That breaks dup-column detection on
+  // subsequent pulls. Force the entire date-header range to "@" (text)
+  // format and rewrite any existing Date-typed headers back to strings.
+  if (lastCol > META_COUNT) {
+    sheet.getRange(HEADER_ROW, META_COUNT + 1, 1, lastCol - META_COUNT).setNumberFormat("@");
+  }
+  var ssTzCached = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID).getSpreadsheetTimeZone();
+  Logger.log("Spreadsheet timezone: " + ssTzCached);
+  var normalizedAny = false;
+  for (var c = META_COUNT; c < lastCol; c++) {
+    var rawCell = values[HEADER_ROW - 1][c];
+    if (rawCell instanceof Date && !isNaN(rawCell.getTime())) {
+      var isoFromDate = Utilities.formatDate(rawCell, ssTzCached, "yyyy-MM-dd");
+      var canonicalStr = _formatDateHeader(isoFromDate);
+      sheet.getRange(HEADER_ROW, c + 1).setValue(canonicalStr);
+      values[HEADER_ROW - 1][c] = canonicalStr;
+      normalizedAny = true;
+      Logger.log("Normalized Date header col " + (c + 1) + ": " + rawCell.toISOString() + " → '" + canonicalStr + "'");
+    }
+  }
+  if (normalizedAny) {
+    header = values[HEADER_ROW - 1].map(function(v) { return String(v).trim(); });
+  }
+
+  // ── Step B: dup detection on now-string headers ────────────────────────
   // Parse existing date columns. If a header is undated (e.g. "Jan-1"),
   // default its year to the pull window's "from" year — and rewrite the
   // header in canonical "Mon-D YYYY" format so future pulls don't need to
@@ -393,11 +420,14 @@ function _mergeIntoSheet(accRows, allDates, refreshFrom, refreshTo, org) {
   var dateToCol   = {};
   var headerRewrites = [];   // [{ col1based, value }]
   var dupColsToBlank = [];   // 0-indexed col indexes whose values move into leftmost
+  Logger.log("Date-header scan (META_COUNT=" + META_COUNT + ", lastCol=" + lastCol + "):");
   for (var c = META_COUNT; c < header.length; c++) {
     var rawHeader = header[c];
     var iso = _parseDateHeader(rawHeader, refreshYear);
+    Logger.log("  col " + (c + 1) + " header='" + rawHeader + "' (type=" + typeof rawHeader + ") → iso=" + iso);
     if (!iso) continue;
     if (iso in dateToCol) {
+      Logger.log("    ↳ DUPLICATE of col " + (dateToCol[iso] + 1) + " — consolidating + marking for deletion");
       var leftCol = dateToCol[iso];
       for (var rr = HEADER_ROW; rr < values.length; rr++) {
         var dupVal = values[rr][c];
@@ -447,8 +477,11 @@ function _mergeIntoSheet(accRows, allDates, refreshFrom, refreshTo, org) {
     var insertAt = sheet.getLastColumn() + 1;
     sheet.insertColumnsAfter(sheet.getLastColumn(), missing.length);
     var headerCells = missing.map(_formatDateHeader);
+    // Force text format BEFORE writing so Sheets doesn't auto-convert
+    sheet.getRange(HEADER_ROW, insertAt, 1, missing.length).setNumberFormat("@");
     sheet.getRange(HEADER_ROW, insertAt, 1, missing.length).setValues([headerCells])
          .setBackground(HEADER_BG).setFontColor(HEADER_FG).setFontWeight("bold");
+    Logger.log("Appended " + missing.length + " missing date col(s): " + missing.join(", "));
     if (lastRow > HEADER_ROW) {
       sheet.getRange(HEADER_ROW + 1, insertAt, lastRow - HEADER_ROW, missing.length).setNumberFormat("#,##0.00;(#,##0.00);-");
     }
@@ -637,6 +670,11 @@ function _writeFreshSheet(sheet, accRows, allDates, refreshFrom, refreshTo, org)
   // Spacer row 2 — leave blank
 
   // ── Data area: header at row 3 ───────────────────────────────────────────
+  // Force text format on date headers FIRST so Sheets doesn't auto-convert
+  // "Jan-1 2025" → Date object (which then defeats dup-column detection).
+  if (allDates.length > 0) {
+    sheet.getRange(HEADER_ROW, META_COUNT + 1, 1, allDates.length).setNumberFormat("@");
+  }
   sheet.getRange(HEADER_ROW, 1, data.length, totalCols).setValues(data);
   sheet.getRange(HEADER_ROW, 1, 1, totalCols).setBackground(HEADER_BG).setFontColor(HEADER_FG).setFontWeight("bold");
 
