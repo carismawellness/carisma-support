@@ -414,13 +414,40 @@ async function buildSpaRows(
   fromDate: string,
   toDate:   string,
 ): Promise<DailyResult> {
-  log.push("Loading SPA CoA mapping + advertising contact mapping…");
-  const [coaMapMaybe, adContactMap] = await Promise.all([
+  log.push("Loading SPA CoA mapping + advertising contact mapping + Lapis POS revenue…");
+  const [coaMapMaybe, adContactMap, lapisRowsOrErr] = await Promise.all([
     loadSpaCoaFromSupabase(),
     loadAdvertisingContactMapping(),
+    loadSpaCockpitRevenue(fromDate, toDate).catch((e: unknown) => e as Error),
   ]);
   const coaMap = coaMapMaybe ?? COA_MAP;
+  const lapisRows: Array<{ date: string; venue_slug: string; amount: number }> =
+    Array.isArray(lapisRowsOrErr) ? lapisRowsOrErr : [];
+  if (!Array.isArray(lapisRowsOrErr)) {
+    log.push(`  WARN Lapis load failed: ${lapisRowsOrErr}; sales_ratio will fall back to Zoho-tagged revenue`);
+  } else {
+    log.push(`  Lapis rows fetched: ${lapisRows.length}`);
+  }
   log.push(`  advertising contact patterns loaded: ${adContactMap.length}`);
+
+  // Per-day per-venue revenue from Lapis — the authoritative sales_ratio base.
+  // Lapis is service+product ex-VAT, daily granularity, so a day's shared SG&A
+  // is split by THAT day's actual revenue mix per venue (not a window-wide avg).
+  const lapisByDate: Record<string, Record<string, number>> = {};
+  const lapisWindowTotal: Record<string, number> = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, 0]));
+  for (const r of lapisRows) {
+    if (!SPA_VENUE_SLUGS.includes(r.venue_slug)) continue;
+    if (!lapisByDate[r.date]) lapisByDate[r.date] = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, 0]));
+    lapisByDate[r.date][r.venue_slug] += r.amount;
+    lapisWindowTotal[r.venue_slug] += r.amount;
+  }
+  const lapisWindowSum = Object.values(lapisWindowTotal).reduce((a, b) => a + b, 0);
+  const lapisWindowPct: Record<string, number> | null = lapisWindowSum > 0
+    ? Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, lapisWindowTotal[s] / lapisWindowSum]))
+    : null;
+  if (lapisWindowPct) {
+    log.push(`SPA Lapis window revPct: ${SPA_VENUE_SLUGS.map(s => `${s}=${(lapisWindowPct[s] * 100).toFixed(1)}%`).join(" ")}`);
+  }
 
   type Classified = {
     line:    TxnLine;
@@ -498,9 +525,26 @@ async function buildSpaRows(
   } else {
     salPct = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, salBySlug[s] / totalSal]));
   }
-  const revPct = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, revBySlug[s] / totalRev]));
-  log.push(`SPA revPct: ${SPA_VENUE_SLUGS.map(s => `${s}=${(revPct[s] * 100).toFixed(1)}%`).join(" ")}`);
+  const zohoRevPct = Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, revBySlug[s] / totalRev]));
+  log.push(`SPA Zoho-tagged revPct (fallback): ${SPA_VENUE_SLUGS.map(s => `${s}=${(zohoRevPct[s] * 100).toFixed(1)}%`).join(" ")}`);
   log.push(`SPA salPct: ${SPA_VENUE_SLUGS.map(s => `${s}=${(salPct[s] * 100).toFixed(1)}%`).join(" ")}`);
+
+  // sales_ratio precedence for a given line date:
+  //   1. Lapis revenue per venue on that exact date  (truthiest signal)
+  //   2. Lapis revenue per venue across the pull window  (smooths empty days)
+  //   3. Zoho venue-tagged revenue across the window  (Lapis unavailable)
+  //   4. Equal 1/8 share  (degenerate fallback baked into zohoRevPct above)
+  function dailyRevPctSpa(date: string): Record<string, number> {
+    const day = lapisByDate[date];
+    if (day) {
+      const total = SPA_VENUE_SLUGS.reduce((a, s) => a + (day[s] ?? 0), 0);
+      if (total > 0) {
+        return Object.fromEntries(SPA_VENUE_SLUGS.map(s => [s, (day[s] ?? 0) / total]));
+      }
+    }
+    if (lapisWindowPct) return lapisWindowPct;
+    return zohoRevPct;
+  }
 
   // 3. Bucket per (account, venue, tag_source, contact) — daily values inside
   type Bucket = {
@@ -570,7 +614,7 @@ async function buildSpaRows(
     } else if (SPA_VENUE_SLUGS.includes(effectiveRule)) {
       addToBucket(c, effectiveRule, c.line.amount, "split");
     } else {
-      const shares = spaVenueShares(effectiveRule, c.line.amount, revPct, salPct);
+      const shares = spaVenueShares(effectiveRule, c.line.amount, dailyRevPctSpa(c.line.date), salPct);
       for (const [slug, amt] of Object.entries(shares)) addToBucket(c, slug, amt, "split");
     }
     tagCount.split++;
@@ -580,37 +624,31 @@ async function buildSpaRows(
   // 4. Cockpit-side revenue (Lapis POS) — one bucket per (date, venue_slug).
   //    Layered on TOP of Zoho-derived revenue so the EBIDA Layer sheet shows
   //    both authoritative POS revenue and Zoho's non-excluded revenue CoA.
-  try {
-    log.push("Loading Lapis (Cockpit POS) revenue for SPA…");
-    const lapisRows = await loadSpaCockpitRevenue(fromDate, toDate);
-    log.push(`  Lapis rows fetched: ${lapisRows.length}`);
-    let added = 0;
-    for (const r of lapisRows) {
-      if (!SPA_VENUE_SLUGS.includes(r.venue_slug)) continue;
-      const key = `LAPIS_REV::${r.venue_slug}::split::`;
-      let b = buckets.get(key);
-      if (!b) {
-        b = {
-          brand:           "SPA",
-          venue:           venueDisplay(r.venue_slug),
-          venue_slug:      r.venue_slug,
-          account_name:    "SPA Revenue (Lapis)",
-          account_code:    "LAPIS_REV",
-          ebitda_category: "revenue",
-          split_rule:      "lapis_pos",
-          tag_source:      "split",
-          contact:         "",
-          daily:           {},
-        };
-        buckets.set(key, b);
-      }
-      b.daily[r.date] = (b.daily[r.date] ?? 0) + r.amount;
-      added++;
+  //    Reuses lapisRows already loaded above for the sales_ratio base.
+  let lapisAdded = 0;
+  for (const r of lapisRows) {
+    if (!SPA_VENUE_SLUGS.includes(r.venue_slug)) continue;
+    const key = `LAPIS_REV::${r.venue_slug}::split::`;
+    let b = buckets.get(key);
+    if (!b) {
+      b = {
+        brand:           "SPA",
+        venue:           venueDisplay(r.venue_slug),
+        venue_slug:      r.venue_slug,
+        account_name:    "SPA Revenue (Lapis)",
+        account_code:    "LAPIS_REV",
+        ebitda_category: "revenue",
+        split_rule:      "lapis_pos",
+        tag_source:      "split",
+        contact:         "",
+        daily:           {},
+      };
+      buckets.set(key, b);
     }
-    log.push(`  Lapis bucket entries added: ${added}`);
-  } catch (e) {
-    log.push(`  WARN failed to load Lapis revenue: ${e}`);
+    b.daily[r.date] = (b.daily[r.date] ?? 0) + r.amount;
+    lapisAdded++;
   }
+  log.push(`  Lapis bucket entries added: ${lapisAdded}`);
 
   const result = finalizeRows(buckets, dates, period, log);
   result.reconciliation = await runReconciliation(client, "spa", result.rows, fromDate, toDate, log);
@@ -628,19 +666,51 @@ async function buildAesthRows(
   fromDate: string,
   toDate:   string,
 ): Promise<DailyResult> {
-  log.push("Loading Aesthetics CoA mapping + advertising contact mapping…");
+  log.push("Loading Aesthetics CoA mapping + advertising contact mapping + Cockpit POS revenue…");
   let coaMap: Record<string, [string, string]> = {};
   let adContactMap: AdContactMappingEntry[] = [];
+  let aesRows: Array<{ date: string; amount: number }> = [];
+  let slimRows: Array<{ date: string; amount: number }> = [];
   try {
-    [coaMap, adContactMap] = await Promise.all([
+    const aesRowsP  = loadAesthCockpitRevenue(fromDate, toDate).catch((e: unknown) => { log.push(`  WARN AES Cockpit revenue load failed: ${e}`); return [] as Array<{ date: string; amount: number }>; });
+    const slimRowsP = loadSlimCockpitRevenue(fromDate, toDate).catch((e: unknown) => { log.push(`  WARN SLIM Cockpit revenue load failed: ${e}`); return [] as Array<{ date: string; amount: number }>; });
+    [coaMap, adContactMap, aesRows, slimRows] = await Promise.all([
       loadAestheticsCoaMap(),
       loadAdvertisingContactMapping(),
+      aesRowsP,
+      slimRowsP,
     ]);
   } catch (e) {
     log.push(`  failed to load Aesthetics CoA: ${e}`);
     return { rows: [], dates, period, log };
   }
   log.push(`  advertising contact patterns loaded: ${adContactMap.length}`);
+  log.push(`  Cockpit POS rows fetched: AES=${aesRows.length} SLIM=${slimRows.length}`);
+
+  // Per-day per-dept revenue from Cockpit POS — the authoritative sales_ratio
+  // base. Daily-granular so a day's shared SG&A splits by THAT day's actual
+  // dept revenue mix, not a window-wide average that may be dominated by one
+  // dept's busier period.
+  const cockpitByDate: Record<string, Record<"aesthetics" | "slimming", number>> = {};
+  const cockpitWindow: Record<"aesthetics" | "slimming", number> = { aesthetics: 0, slimming: 0 };
+  for (const r of aesRows) {
+    if (!cockpitByDate[r.date]) cockpitByDate[r.date] = { aesthetics: 0, slimming: 0 };
+    cockpitByDate[r.date].aesthetics += r.amount;
+    cockpitWindow.aesthetics += r.amount;
+  }
+  for (const r of slimRows) {
+    if (!cockpitByDate[r.date]) cockpitByDate[r.date] = { aesthetics: 0, slimming: 0 };
+    cockpitByDate[r.date].slimming += r.amount;
+    cockpitWindow.slimming += r.amount;
+  }
+  const cockpitWindowSum = cockpitWindow.aesthetics + cockpitWindow.slimming;
+  const cockpitWindowPct: Record<"aesthetics" | "slimming", number> | null =
+    cockpitWindowSum > 0
+      ? { aesthetics: cockpitWindow.aesthetics / cockpitWindowSum, slimming: cockpitWindow.slimming / cockpitWindowSum }
+      : null;
+  if (cockpitWindowPct) {
+    log.push(`AES/SLIM Cockpit window revPct: aesthetics=${(cockpitWindowPct.aesthetics * 100).toFixed(1)}% slimming=${(cockpitWindowPct.slimming * 100).toFixed(1)}%`);
+  }
 
   type Classified = {
     line:    TxnLine;
@@ -692,11 +762,23 @@ async function buildAesthRows(
   }
   let totalRev = revBySlug.aesthetics + revBySlug.slimming;
   if (totalRev === 0) { revBySlug.aesthetics = 1; revBySlug.slimming = 1; totalRev = 2; }
-  const revPct: Record<"aesthetics" | "slimming", number> = {
+  const zohoRevPct: Record<"aesthetics" | "slimming", number> = {
     aesthetics: revBySlug.aesthetics / totalRev,
     slimming:   revBySlug.slimming   / totalRev,
   };
-  log.push(`AES/SLIM revPct: aesthetics=${(revPct.aesthetics * 100).toFixed(1)}% slimming=${(revPct.slimming * 100).toFixed(1)}%`);
+  log.push(`AES/SLIM Zoho-tagged revPct (fallback): aesthetics=${(zohoRevPct.aesthetics * 100).toFixed(1)}% slimming=${(zohoRevPct.slimming * 100).toFixed(1)}%`);
+
+  // sales_ratio precedence: per-day Cockpit POS → window-wide Cockpit POS →
+  // Zoho-tagged Zoho revenue → equal 50/50 (baked into zohoRevPct above).
+  function dailyRevPctAesth(date: string): Record<"aesthetics" | "slimming", number> {
+    const day = cockpitByDate[date];
+    if (day) {
+      const total = day.aesthetics + day.slimming;
+      if (total > 0) return { aesthetics: day.aesthetics / total, slimming: day.slimming / total };
+    }
+    if (cockpitWindowPct) return cockpitWindowPct;
+    return zohoRevPct;
+  }
 
   // 3. Bucket per (account, dept, tag_source, contact)
   type Bucket = {
@@ -756,7 +838,7 @@ async function buildAesthRows(
     if (nameDept) {
       addToBucket(c, nameDept, c.line.amount, "split");
     } else {
-      const shares = aesthDeptShares(c.rule, c.line.amount, revPct);
+      const shares = aesthDeptShares(c.rule, c.line.amount, dailyRevPctAesth(c.line.date));
       addToBucket(c, "aesthetics", shares.aesthetics, "split");
       addToBucket(c, "slimming",   shares.slimming,   "split");
     }
@@ -765,15 +847,9 @@ async function buildAesthRows(
   log.push(`AES/SLIM allocation: ${tagCount.tagged} tagged, ${tagCount.split} split-rule`);
 
   // 4. Cockpit-side revenue (Supabase POS tables) — one bucket per date for
-  //    each brand. Layered on top of Zoho-derived revenue.
-  try {
-    log.push("Loading Cockpit POS revenue for AES + SLIM…");
-    const [aesRows, slimRows] = await Promise.all([
-      loadAesthCockpitRevenue(fromDate, toDate),
-      loadSlimCockpitRevenue(fromDate, toDate),
-    ]);
-    log.push(`  AES daily rows: ${aesRows.length}; SLIM daily rows: ${slimRows.length}`);
-
+  //    each brand. Layered on top of Zoho-derived revenue. Reuses aesRows /
+  //    slimRows already loaded above for the sales_ratio base.
+  {
     function upsertCockpitBucket(
       brand:        "AES" | "SLIM",
       venue:        string,
@@ -814,8 +890,6 @@ async function buildAesthRows(
       "Slimming Revenue (Sales)", "POS_SLIM_REV",
       slimRows,
     );
-  } catch (e) {
-    log.push(`  WARN failed to load Cockpit POS revenue: ${e}`);
   }
 
   const result = finalizeRows(buckets, dates, period, log);
