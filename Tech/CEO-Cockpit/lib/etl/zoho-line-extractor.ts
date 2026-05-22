@@ -328,21 +328,27 @@ async function fetchDetails(
     const txnDate = String(entity[cfg.dateField] ?? s[cfg.dateField] ?? "").slice(0, 10);
     if (!txnDate) continue;
 
-    // Skip unpublished journals. Zoho's P&L and reports/journal both ignore
-    // draft journals; if we emit them here we'd over-count vs the P&L. The
-    // `journals` LIST endpoint returns drafts alongside published entries
-    // (verified 2026-05-21 on SPA Jan-Feb 2025: 148 total, 2 of which were
-    // `status="draft"`). Filter at the detail stage where `status` is
-    // reliable. Skipping unpublished journals on the entity pass also
-    // keeps the journal-report supplementary pass safe — the `covered`
-    // (txn_id, account_id) Set would otherwise mask the corresponding
-    // report row even though Zoho's P&L never posted it.
+    // Skip unposted transactions. Zoho's P&L excludes BOTH draft and void
+    // transactions of every type; emitting them here over-counts vs the P&L.
+    // Entity LIST endpoints return drafts/voids alongside posted entries.
+    // Filter at the detail stage where `status` is reliable. This also keeps
+    // the journal-report supplementary pass safe — the `covered`
+    // (entity_id, account_id) Set would otherwise mask the corresponding
+    // report row even though Zoho never posted it.
+    //  - journals: only "published" counts (draft journals verified on SPA
+    //    Jan-Feb 2025 — 2 of 148 were draft).
+    //  - all other entity types: drop "draft" and "void" (verified 2026-05-22
+    //    — void bill INV-2025-001 €4,354.20 inc-VAT leaked €3,690 ex-VAT into
+    //    SPA account 611193 for Mar 2025).
+    const entityStatus = String(entity.status ?? s.status ?? "").toLowerCase();
     if (cfg.source === "journal") {
-      const journalStatus = String(entity.status ?? s.status ?? "").toLowerCase();
-      if (journalStatus && journalStatus !== "published") {
-        log.push(`  skip journal/${id}: status="${journalStatus}" (not published)`);
+      if (entityStatus && entityStatus !== "published") {
+        log.push(`  skip journal/${id}: status="${entityStatus}" (not published)`);
         continue;
       }
+    } else if (entityStatus === "draft" || entityStatus === "void") {
+      log.push(`  skip ${cfg.source}/${id}: status="${entityStatus}"`);
+      continue;
     }
 
     // FX context: every transaction header carries currency_code +
