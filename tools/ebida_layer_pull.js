@@ -265,11 +265,27 @@ function doGet(e) {
   }
 }
 
-// One-click reset: clears the existing Zoho Raw Layer tab content (but
-// preserves the tab itself and any drawings/buttons on it) and runs the
-// 1-week test pull. Use this after a layout change to rebuild content
-// cleanly with the current schema without losing the assigned Pull button.
-function resetAndRunTestPull() {
+// DEV-ONLY one-click reset: clears the existing Zoho Raw Layer tab content
+// (but preserves the tab itself and any drawings/buttons on it) and runs the
+// 1-week test pull. Use this after a layout change to rebuild content cleanly
+// with the current schema without losing the assigned Pull button.
+//
+// IMPORTANT — this function WIPES the entire Zoho Raw Layer tab. It is named
+// with a "_devOnly" suffix and guarded by an alert prompt so it isn't fired
+// accidentally from the Apps Script editor's function picker. Re-populating
+// the tab from scratch requires hours of Web App backfill calls.
+function _resetAndRunTestPull_devOnly() {
+  var ui = SpreadsheetApp.getUi();
+  var resp = ui.alert(
+    "DESTRUCTIVE — Zoho Raw Layer wipe",
+    "This will CLEAR every row in the '" + EBIDA_TAB + "' tab and re-pull only Jan 1-7. " +
+    "All historical Zoho + Lapis data in that tab will be lost and would need ~7 hours of " +
+    "Web App calls to rebuild.\n\nContinue?",
+    ui.ButtonSet.YES_NO);
+  if (resp !== ui.Button.YES) {
+    Logger.log("_resetAndRunTestPull_devOnly: cancelled by user.");
+    return "Cancelled.";
+  }
   var ss = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID);
   var existing = ss.getSheetByName(EBIDA_TAB);
   if (existing) {
