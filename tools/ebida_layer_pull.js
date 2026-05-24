@@ -897,8 +897,20 @@ function _mergeIntoSheet(accRows, allDates, refreshFrom, refreshTo, org) {
   }
 
   // Clear existing rows that aren't in the new pull but have values in the refresh window
+  //
+  // CRITICAL: scope this to the org being pulled. A SPA pull must ONLY blank
+  // SPA rows that disappeared from the new data — never AES rows, and vice
+  // versa. Without this filter, an AES pull would iterate every SPA row,
+  // find no matching key in accRows (accRows is SPA-empty for an AES pull),
+  // and silently blank every SPA cell in the refresh window. That bug caused
+  // SPA Jan-Feb 2025 to go blank after the AES Jan-Feb backfill ran on top
+  // of an existing SPA dataset (commit 3e3128e or earlier — the bug was
+  // pre-existing, not introduced by the lock-feature work).
+  var orgKeyPrefix = String(org || "").trim().toLowerCase();
   for (var key in existingRowKey) {
     if (key in accRows) continue;
+    var keyBrand = key.split("|", 1)[0].toLowerCase();
+    if (keyBrand !== orgKeyPrefix) continue;  // never clear rows from another org
     var rowIdx = existingRowKey[key];
     for (var iso in refreshDates) {
       var colIdx = dateToCol[iso];
