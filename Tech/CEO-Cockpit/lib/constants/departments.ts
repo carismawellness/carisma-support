@@ -84,8 +84,9 @@ export const departments: Department[] = [
     icon: Settings,
     path: "/settings",
     children: [
-      { slug: "coa-mapping",        label: "COA Mapping",        path: "/settings/coa-mapping",        icon: BookOpen },
+      { slug: "coa-mapping",         label: "COA Mapping",         path: "/settings/coa-mapping",         icon: BookOpen },
       { slug: "salary-supplement",   label: "Salary Supplement",   path: "/settings/salary-supplement",   icon: BookOpen },
+      { slug: "fallback-rules",      label: "Fallback Rules",      path: "/settings/fallback-rules",      icon: BookOpen },
       { slug: "logic-mapping",       label: "Logic Mapping",       path: "/settings/logic-mapping",       icon: BookOpen },
     ],
   },

@@ -545,13 +545,26 @@ function lockVerifiedColumns(fromDateIso, toDateIso, editorEmail) {
     existingProtCols[pRng.getColumn()] = true;
   }
 
-  // OPT 2 — batch-paint backgrounds for ALL matched columns in ONE call
-  // instead of 487 setBackground calls. RangeList accepts a list of A1
-  // ranges and sets the background on all of them at once.
+  // OPT 2 — batch-paint backgrounds for ALL matched columns. Use the
+  // numeric form of getRange (start row, start col, num rows, num cols)
+  // and iterate per-column — but bypass the per-cell overhead by NOT
+  // touching .getEditors() / .removeEditors() for each.
+  // Use getRangeList with computed A1 notations so it's one batch call.
+  function colNumToA1(col) {
+    var s = "";
+    while (col > 0) {
+      var rem = (col - 1) % 26;
+      s = String.fromCharCode(65 + rem) + s;
+      col = Math.floor((col - 1) / 26);
+    }
+    return s;
+  }
   var paintRanges = [];
   for (var pj = 0; pj < matchedCols.length; pj++) {
     var c1 = matchedCols[pj];
-    var a1 = _colNumberToA1(c1) + FIRST_DATA_ROW + ":" + _colNumberToA1(c1) + lastRow;
+    if (existingProtCols[c1]) continue;   // already painted last run
+    var letter = colNumToA1(c1);
+    var a1 = letter + FIRST_DATA_ROW + ":" + letter + lastRow;
     paintRanges.push(a1);
   }
   if (paintRanges.length > 0) {
@@ -1431,6 +1444,44 @@ function doGet(e) {
     }
   }
 
+  // EBITDA Export — creates a timestamped tab in the Accounting Master
+  // spreadsheet with the period view that Cockpit just rendered. Cockpit
+  // sends a JSON payload (compressed in the `payload` URL param as Base64)
+  // describing brands, categories, totals, and which cells are fallback.
+  // Light-blue (#cfe2f3) background marks fallback-computed cells.
+  //   <web-app-url>/exec?token=<TOKEN>&action=ebitda_export&payload=<base64-json>
+  if (p.action === "ebitda_export") {
+    try {
+      var b64 = p.payload || "";
+      if (!b64) throw new Error("Missing 'payload' query param.");
+      var decoded = Utilities.newBlob(Utilities.base64Decode(b64)).getDataAsString();
+      var payload = JSON.parse(decoded);
+      var newTabUrl = writeEbitdaExportTab(payload);
+      return ContentService.createTextOutput(JSON.stringify({ ok: true, tab_url: newTabUrl }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } catch (err) {
+      return ContentService.createTextOutput(JSON.stringify({
+        error: (err && err.message ? err.message : String(err))
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+
+  // Per-row per-date data from the "Aggregated Data" tab over an arbitrary
+  // window. Used by Cockpit's /api/finance/ebitda-aggregated route to drive
+  // the new EBITDA dashboard. Pure read — no merge/write.
+  //   <web-app-url>/exec?token=<TOKEN>&action=aggregated_period&org=SPA&from=2026-01-01&to=2026-01-07
+  if (p.action === "aggregated_period") {
+    try {
+      var aggPeriodResult = exportAggregatedDataForPeriod(p.org, p.from, p.to);
+      return ContentService.createTextOutput(JSON.stringify(aggPeriodResult))
+        .setMimeType(ContentService.MimeType.JSON);
+    } catch (err) {
+      return ContentService.createTextOutput(JSON.stringify({
+        error: (err && err.message ? err.message : String(err))
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+
   // Diagnostic: dump every row matching a brand + account_code substring, with
   // per-date values, so we can see if multiple sheet rows aggregate to the
   // same account_code (a clue for duplicate-key bugs in the merge).
@@ -1567,6 +1618,130 @@ function exportSheetMonthlyTotals(org, ym) {
     accounts:         accounts,
     total_rows_read:  rowsRead,
     total_data_cells: dataCells,
+  };
+}
+
+// Per-row per-date data from the "Aggregated Data" tab over an arbitrary
+// [fromIso, toIso] window. Returns each row's daily signed values keyed by
+// ISO date, plus the row's identity metadata (brand, line_item, account_code,
+// ebitda_category, venue, contact, allocation). Used by Cockpit's
+// /api/finance/ebitda-aggregated route — the route then applies fallback
+// rules (TTM-spread / manual-annual / disabled) before aggregating per
+// (brand, ebitda_category) cell.
+//
+// Aggregated Data tab is the user's working copy (with overrides). When it
+// does not exist, falls back to reading Zoho Raw Layer so the endpoint still
+// works on a fresh deployment.
+//
+// org           "SPA" or "Aesthetics" (case-insensitive vs Brand column).
+//               "Aesthetics" returns AES + SLIM + HQ rows that live in that
+//               workbook tab — the Cockpit route splits them on its side.
+// fromIso/toIso YYYY-MM-DD inclusive.
+function exportAggregatedDataForPeriod(org, fromIso, toIso) {
+  if (!org)                                    throw new Error("org param required (SPA or Aesthetics).");
+  if (!fromIso || !/^\d{4}-\d{2}-\d{2}$/.test(fromIso)) {
+    throw new Error("from param required in YYYY-MM-DD format.");
+  }
+  if (!toIso   || !/^\d{4}-\d{2}-\d{2}$/.test(toIso)) {
+    throw new Error("to param required in YYYY-MM-DD format.");
+  }
+  if (fromIso > toIso) throw new Error("from must be on or before to.");
+
+  var orgLower = String(org).trim().toLowerCase();
+
+  var ss        = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID);
+  // Prefer Aggregated Data (carries user overrides); fall back to Zoho Raw Layer.
+  var sheet     = ss.getSheetByName(AGGREGATED_TAB) || ss.getSheetByName(EBIDA_TAB);
+  var sourceTab = sheet ? sheet.getName() : null;
+  if (!sheet) throw new Error("Neither '" + AGGREGATED_TAB + "' nor '" + EBIDA_TAB + "' tab found.");
+
+  var lastRow = sheet.getLastRow();
+  var lastCol = sheet.getLastColumn();
+  if (lastRow < FIRST_DATA_ROW || lastCol <= META_COUNT) {
+    return {
+      org:        org,
+      date_from:  fromIso,
+      date_to:    toIso,
+      source_tab: sourceTab,
+      rows:       [],
+      dates:      [],
+    };
+  }
+
+  var values     = sheet.getRange(1, 1, lastRow, lastCol).getValues();
+  var headerVals = values[HEADER_ROW - 1];
+
+  // Identify date columns that fall inside [fromIso, toIso].
+  var fromYear  = parseInt(fromIso.slice(0, 4), 10);
+  var matchedCols = [];   // [{ col: <0-indexed>, iso: 'YYYY-MM-DD' }]
+  var matchedIsoList = [];
+  for (var c = META_COUNT; c < lastCol; c++) {
+    var iso = _parseDateHeader(headerVals[c], fromYear);
+    if (!iso) continue;
+    if (iso < fromIso || iso > toIso) continue;
+    matchedCols.push({ col: c, iso: iso });
+    matchedIsoList.push(iso);
+  }
+
+  // Sort the ISO list for predictable response ordering.
+  matchedIsoList.sort();
+
+  var rowsOut = [];
+  for (var r = FIRST_DATA_ROW - 1; r < values.length; r++) {
+    var row   = values[r];
+    var brand = String(row[0] || "").trim();
+    if (!brand) continue;
+    // Brand-only section header rows (no line_item, no account_code).
+    var lineItem  = String(row[1] || "").trim();
+    var accCode   = String(row[2] || "").trim();
+    var ebitdaCat = String(row[3] || "").trim();
+    var venue     = String(row[4] || "").trim();
+    if (!lineItem && !accCode && !ebitdaCat && !venue) continue;
+
+    // Brand filter — SPA pulls SPA rows only; Aesthetics returns AES+SLIM+HQ.
+    var brandLow = brand.toLowerCase();
+    if (orgLower === "spa") {
+      if (brandLow !== "spa") continue;
+    } else {
+      if (brandLow === "spa") continue;
+    }
+
+    var contact = String(row[CONTACT_COL_IDX] || "").trim();
+    var alloc   = String(row[ALLOC_COL_IDX]   || "").trim();
+
+    var daily = {};
+    var anyValue = false;
+    for (var mi = 0; mi < matchedCols.length; mi++) {
+      var v = row[matchedCols[mi].col];
+      if (v === "" || v == null) continue;
+      var n = (typeof v === "number") ? v : parseFloat(v);
+      if (!isFinite(n) || n === 0) continue;
+      daily[matchedCols[mi].iso] = n;
+      anyValue = true;
+    }
+    // Always include rows even if they have no values in window — the
+    // Cockpit route uses fallback rules to fill them in for partial periods.
+    rowsOut.push({
+      brand:           brand,
+      line_item:       lineItem,
+      account_code:    accCode,
+      ebitda_category: ebitdaCat,
+      venue:           venue,
+      contact:         contact,
+      allocation:      alloc,
+      daily:           daily,
+    });
+    // Silence unused-var lint
+    if (anyValue && false) { /* no-op */ }
+  }
+
+  return {
+    org:        org,
+    date_from:  fromIso,
+    date_to:    toIso,
+    source_tab: sourceTab,
+    rows:       rowsOut,
+    dates:      matchedIsoList,
   };
 }
 
@@ -2342,4 +2517,179 @@ function _venueToSlug(venue) {
   };
   if (v in map) return map[v];
   return v.toLowerCase().replace(/\s+/g, "_");
+}
+
+// ── EBITDA Export — Cockpit "Export to Sheet" button writes here ─────────────
+//
+// Cockpit's /finance/ebitda page POSTs a payload to the Web App's
+// ?action=ebitda_export endpoint. We create a new TIMESTAMPED tab and
+// populate it with the same table Cockpit just rendered, plus a header
+// summary and light-blue (#cfe2f3) markers on any cell whose value came
+// from a fallback rule (TTM-spread or manual-annual).
+//
+// Payload shape (sent as Base64-encoded JSON in the `payload` URL param):
+//   {
+//     date_from:   "2026-01-01",
+//     date_to:     "2026-01-07",
+//     generated_at:"2026-05-26T12:34:56Z",
+//     brands:      ["SPA","AES","SLIM","HQ"],
+//     categories:  ["revenue","cogs","wages","rent","utilities","sga","advertising"],
+//     totals: {
+//       "SPA": { "revenue": {value: 31250.5, has_fallback: false},
+//                "wages":   {value: 18900.0, has_fallback: true},
+//                ... },
+//       "AES": { ... },
+//       ...
+//     },
+//     fallback_applied: [
+//       { brand:"SPA", account_code:"619140", account_name:"Rent - InterContinental",
+//         rule_type:"ttm_spread", period_value:1151.61,
+//         method_detail:"TTM €60000 × 7/365" },
+//       ...
+//     ]
+//   }
+
+var EBITDA_EXPORT_FALLBACK_BG = "#cfe2f3";  // light blue — fallback cells
+
+function writeEbitdaExportTab(payload) {
+  if (!payload || typeof payload !== "object") throw new Error("Invalid payload.");
+  if (!payload.date_from || !payload.date_to) throw new Error("payload missing date_from / date_to.");
+
+  var ss = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID);
+
+  // Timestamped tab name. Sheets disallows some chars in tab names; safe
+  // format: "EBITDA Export YYYY-MM-DD HH-mm" (no colons).
+  var tz = ss.getSpreadsheetTimeZone();
+  var stamp = Utilities.formatDate(new Date(), tz, "yyyy-MM-dd HH-mm");
+  var tabName = "EBITDA Export " + payload.date_from + " to " + payload.date_to + " (" + stamp + ")";
+  // Cap at 100 chars (Sheets limit ~100); truncate from the END so the
+  // human-readable prefix is preserved.
+  if (tabName.length > 99) tabName = tabName.substring(0, 99);
+
+  // If a tab with this exact name exists (unlikely with the stamp), append a counter.
+  var attempts = 0;
+  var finalName = tabName;
+  while (ss.getSheetByName(finalName) && attempts < 10) {
+    attempts++;
+    finalName = tabName + " #" + (attempts + 1);
+    if (finalName.length > 99) finalName = finalName.substring(0, 99);
+  }
+  var tab = ss.insertSheet(finalName);
+
+  // ── Header block (rows 1-5) ─────────────────────────────────────────────
+  tab.getRange(1, 1).setValue("EBITDA Export").setFontWeight("bold").setFontSize(14);
+  tab.getRange(2, 1).setValue("Period:").setFontWeight("bold");
+  tab.getRange(2, 2).setValue(payload.date_from + " → " + payload.date_to);
+  tab.getRange(3, 1).setValue("Generated:").setFontWeight("bold");
+  tab.getRange(3, 2).setValue(payload.generated_at || new Date().toISOString());
+  tab.getRange(4, 1).setValue("Legend:").setFontWeight("bold");
+  tab.getRange(4, 2).setValue("Light-blue cells = fallback-computed (TTM-spread or manual-annual)").setFontStyle("italic");
+  tab.getRange(4, 2).setBackground(EBITDA_EXPORT_FALLBACK_BG);
+
+  // ── Aggregated table (rows 6+) ──────────────────────────────────────────
+  var brands     = Array.isArray(payload.brands)     ? payload.brands     : [];
+  var categories = Array.isArray(payload.categories) ? payload.categories : [];
+  var totals     = payload.totals || {};
+
+  if (brands.length === 0 || categories.length === 0) {
+    tab.getRange(6, 1).setValue("(No data in selected period.)").setFontStyle("italic").setFontColor("#5f6368");
+    return ss.getUrl() + "#gid=" + tab.getSheetId();
+  }
+
+  // Header row: Category | brand1 | brand2 | ...
+  var headerRow = ["EBITDA Category"];
+  for (var bi = 0; bi < brands.length; bi++) headerRow.push(brands[bi]);
+  // Add a "Total" column at the right
+  headerRow.push("Total");
+  tab.getRange(6, 1, 1, headerRow.length).setValues([headerRow])
+     .setFontWeight("bold").setBackground("#e8f0fe").setFontColor("#1967d2");
+
+  // Body rows
+  var tableData = [];
+  var fallbackMarks = [];   // [{row, col}] for cells to paint light-blue
+  for (var ci = 0; ci < categories.length; ci++) {
+    var cat = categories[ci];
+    var row = [cat];
+    var rowTotal = 0;
+    for (var bi2 = 0; bi2 < brands.length; bi2++) {
+      var cell = totals[brands[bi2]] && totals[brands[bi2]][cat];
+      var v = cell ? Number(cell.value) || 0 : 0;
+      row.push(v);
+      rowTotal += v;
+      if (cell && cell.has_fallback) {
+        fallbackMarks.push({ row: 6 + 1 + ci, col: 1 + 1 + bi2 });   // 1-indexed
+      }
+    }
+    row.push(rowTotal);
+    tableData.push(row);
+  }
+  if (tableData.length > 0) {
+    var bodyRange = tab.getRange(7, 1, tableData.length, brands.length + 2);
+    bodyRange.setValues(tableData);
+    // Number format on all numeric cols
+    tab.getRange(7, 2, tableData.length, brands.length + 1)
+       .setNumberFormat("#,##0.00;(#,##0.00);-");
+    // First column (category names) bold
+    tab.getRange(7, 1, tableData.length, 1).setFontWeight("bold");
+  }
+
+  // Total row at bottom
+  var totalRowIdx = 7 + tableData.length;
+  var totalRow = ["TOTAL"];
+  var grandTotal = 0;
+  for (var bi3 = 0; bi3 < brands.length; bi3++) {
+    var brandSum = 0;
+    for (var ci2 = 0; ci2 < categories.length; ci2++) {
+      var c2 = totals[brands[bi3]] && totals[brands[bi3]][categories[ci2]];
+      brandSum += c2 ? (Number(c2.value) || 0) : 0;
+    }
+    totalRow.push(brandSum);
+    grandTotal += brandSum;
+  }
+  totalRow.push(grandTotal);
+  tab.getRange(totalRowIdx, 1, 1, totalRow.length).setValues([totalRow])
+     .setFontWeight("bold").setBackground("#fff2cc").setBorder(true, false, false, false, false, false);
+  tab.getRange(totalRowIdx, 2, 1, brands.length + 1).setNumberFormat("#,##0.00;(#,##0.00);-");
+
+  // Paint fallback markers
+  if (fallbackMarks.length > 0) {
+    var fallbackRanges = fallbackMarks.map(function(m) {
+      return tab.getRange(m.row, m.col).getA1Notation();
+    });
+    tab.getRangeList(fallbackRanges).setBackground(EBITDA_EXPORT_FALLBACK_BG);
+  }
+
+  // ── Fallback detail section ─────────────────────────────────────────────
+  var fbAppliedStart = totalRowIdx + 3;
+  var fbApplied = Array.isArray(payload.fallback_applied) ? payload.fallback_applied : [];
+  tab.getRange(fbAppliedStart, 1).setValue("Fallback-applied accounts").setFontWeight("bold").setFontSize(12);
+  if (fbApplied.length === 0) {
+    tab.getRange(fbAppliedStart + 1, 1).setValue("(No fallback rules fired for this period — all values are literal sums.)")
+       .setFontStyle("italic").setFontColor("#5f6368");
+  } else {
+    var fbHeader = ["Brand", "Account Code", "Account Name", "Rule", "Period Value", "Method"];
+    tab.getRange(fbAppliedStart + 1, 1, 1, fbHeader.length).setValues([fbHeader])
+       .setFontWeight("bold").setBackground("#e8f0fe").setFontColor("#1967d2");
+    var fbRows = fbApplied.map(function(f) {
+      return [
+        f.brand || "",
+        f.account_code || "",
+        f.account_name || "",
+        f.rule_type || "",
+        Number(f.period_value) || 0,
+        f.method_detail || "",
+      ];
+    });
+    tab.getRange(fbAppliedStart + 2, 1, fbRows.length, fbHeader.length).setValues(fbRows);
+    tab.getRange(fbAppliedStart + 2, 5, fbRows.length, 1)
+       .setNumberFormat("#,##0.00;(#,##0.00);-").setBackground(EBITDA_EXPORT_FALLBACK_BG);
+  }
+
+  // Cosmetic touches
+  tab.setFrozenRows(6);
+  tab.setColumnWidth(1, 200);
+  for (var ci3 = 2; ci3 <= brands.length + 2; ci3++) tab.setColumnWidth(ci3, 110);
+
+  SpreadsheetApp.flush();
+  return ss.getUrl() + "#gid=" + tab.getSheetId();
 }
