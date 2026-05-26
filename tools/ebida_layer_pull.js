@@ -530,34 +530,60 @@ function lockVerifiedColumns(fromDateIso, toDateIso, editorEmail) {
   }
 
   var numRows = lastRow - FIRST_DATA_ROW + 1;
+
+  // OPT 1 — find columns ALREADY protected so we can skip them (idempotent
+  // retry). For a 487-column range, this turns a re-run from "minutes" into
+  // "seconds" because we only touch the columns that weren't locked yet.
+  var existingProtCols = {};
+  var allProts = sheet.getProtections(SpreadsheetApp.ProtectionType.RANGE);
+  for (var pi = 0; pi < allProts.length; pi++) {
+    var prot = allProts[pi];
+    var pRng = prot.getRange();
+    if (!pRng) continue;
+    if (pRng.getRow() !== FIRST_DATA_ROW) continue;     // not a date-column protection
+    if (pRng.getNumColumns() !== 1) continue;
+    existingProtCols[pRng.getColumn()] = true;
+  }
+
+  // OPT 2 — batch-paint backgrounds for ALL matched columns in ONE call
+  // instead of 487 setBackground calls. RangeList accepts a list of A1
+  // ranges and sets the background on all of them at once.
+  var paintRanges = [];
+  for (var pj = 0; pj < matchedCols.length; pj++) {
+    var c1 = matchedCols[pj];
+    var a1 = _colNumberToA1(c1) + FIRST_DATA_ROW + ":" + _colNumberToA1(c1) + lastRow;
+    paintRanges.push(a1);
+  }
+  if (paintRanges.length > 0) {
+    sheet.getRangeList(paintRanges).setBackground(LOCKED_BG_COLOR);
+  }
+
+  // OPT 3 — get spreadsheet editor list ONCE rather than 487 times
+  var ssEditors = ss.getEditors();
+  var ssEditorEmails = [];
+  for (var sei = 0; sei < ssEditors.length; sei++) {
+    var em = ssEditors[sei].getEmail();
+    if (em && em.toLowerCase() !== ownerEmail.toLowerCase()) {
+      ssEditorEmails.push(em);
+    }
+  }
+
   var lockedCount = 0;
+  var skippedCount = 0;
   for (var i = 0; i < matchedCols.length; i++) {
     var col   = matchedCols[i];
+    if (existingProtCols[col]) { skippedCount++; continue; }
     var range = sheet.getRange(FIRST_DATA_ROW, col, numRows, 1);
     var protection = range.protect()
       .setDescription(LOCKED_DESC_PREFIX + " " + fromDateIso + " → " + toDateIso)
       .setWarningOnly(false);
-    // removeEditors(everyone except the owner). Apps Script forbids removing
-    // the sheet owner, so we enumerate and remove non-owner editors only.
-    var editors = protection.getEditors();
-    var toRemove = [];
-    for (var ei = 0; ei < editors.length; ei++) {
-      var emailE = editors[ei].getEmail();
-      if (emailE && emailE.toLowerCase() !== ownerEmail.toLowerCase()) {
-        toRemove.push(emailE);
-      }
+    if (ssEditorEmails.length > 0) {
+      try { protection.removeEditors(ssEditorEmails); } catch (e) { /* owner cannot be removed; ignore */ }
     }
-    if (toRemove.length > 0) {
-      try { protection.removeEditors(toRemove); } catch (e) { /* owner cannot be removed; ignore */ }
-    }
-    try { protection.addEditor(ownerEmail); } catch (e) { /* already an editor or invalid; ignore */ }
-    if (protection.canDomainEdit && protection.canDomainEdit()) {
-      try { protection.setDomainEdit(false); } catch (e) { /* not a domain doc; ignore */ }
-    }
-    range.setBackground(LOCKED_BG_COLOR);
     lockedCount++;
   }
   SpreadsheetApp.flush();
+  Logger.log("lockVerifiedColumns: locked " + lockedCount + " column(s); " + skippedCount + " already locked, skipped.");
 
   Logger.log("lockVerifiedColumns: locked " + lockedCount + " column(s) for " +
              fromDateIso + " → " + toDateIso + " (editor=" + ownerEmail + ")");
