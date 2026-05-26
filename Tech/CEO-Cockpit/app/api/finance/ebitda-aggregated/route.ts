@@ -206,10 +206,6 @@ function brandDisplayToCode(brand: string): Brand | null {
   return BRAND_DISPLAY_TO_CODE[k] ?? null;
 }
 
-function brandToZohoOrg(brand: Brand): ZohoOrg {
-  return brand === "SPA" ? "spa" : "aesthetics";
-}
-
 function isValidIsoDate(s: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
   const d = isoToDate(s);
@@ -453,8 +449,12 @@ export async function GET(req: NextRequest) {
     const ttmIndex = new Map<string, Record<string, number>>();
     if (ttm) {
       for (const row of ttm.rows) {
-        const code = brandDisplayToCode(row.brand);
-        if (!code) continue;
+        const raw = brandDisplayToCode(row.brand);
+        if (!raw) continue;
+        // Mirror the venue=HQ override used during period aggregation, so
+        // TTM keys match on both sides for HQ-venue rows that physically
+        // live in the SPA org.
+        const code: Brand = (row.venue || "").trim().toLowerCase() === "hq" ? "HQ" : raw;
         const key = `${code}|${row.account_code}|${row.line_item}|${row.venue}|${row.contact}|${row.allocation}`;
         // Merge in case multiple TTM rows collapse to the same key.
         const existing = ttmIndex.get(key);
@@ -469,16 +469,25 @@ export async function GET(req: NextRequest) {
     }
 
     for (const row of period.rows) {
-      const brand = brandDisplayToCode(row.brand);
-      if (!brand) continue;
+      const rawBrand = brandDisplayToCode(row.brand);
+      if (!rawBrand) continue;
+
+      // Column E (venue) = "HQ" is the user's corporate-cost marker.
+      // Re-route such rows to the HQ brand regardless of column A. This is
+      // how Director Salaries, Professional Services, Bank Fees etc.
+      // booked inside the SPA org end up under HQ in the dashboard.
+      const isHqVenue = (row.venue || "").trim().toLowerCase() === "hq";
+      const brand: Brand = isHqVenue ? "HQ" : rawBrand;
+
       if (brandFilter && brand !== brandFilter) continue;
 
       const category = (row.ebitda_category || "uncategorized").toLowerCase();
       const literalSum = sumDailyInRange(row.daily, dateFrom, dateTo);
 
-      // Look up a fallback rule for this account_code under the brand's
-      // underlying Zoho org. AES/SLIM/HQ all share the "aesthetics" org.
-      const zohoOrg = brandToZohoOrg(brand);
+      // Fallback rule lookup uses the ORG the row came from (orgParam),
+      // not the post-override brand, so the rules table key stays correct
+      // for HQ-venue rows that physically live in the SPA org.
+      const zohoOrg: ZohoOrg = orgParam === "SPA" ? "spa" : "aesthetics";
       const rule = row.account_code
         ? rules.get(`${zohoOrg}|${row.account_code}`)
         : undefined;
