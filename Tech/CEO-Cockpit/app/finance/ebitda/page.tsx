@@ -75,7 +75,9 @@ function fmtPct(v: number) { return `${Math.round(v)}%`; }
 function fmtCurrencyShort(v: number) {
   if (Math.abs(v) >= 1_000_000) return `€${(v / 1_000_000).toFixed(1)}M`;
   if (Math.abs(v) >= 1_000)     return `€${Math.round(v / 1_000)}K`;
-  return `€${v}`;
+  // Sub-€1K: round to whole euros so floating-point noise (e.g. 990.6666...)
+  // doesn't leak through to the UI.
+  return `€${Math.round(v)}`;
 }
 
 function statusColor(s: Status) {
