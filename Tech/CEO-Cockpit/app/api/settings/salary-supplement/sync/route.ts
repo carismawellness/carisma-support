@@ -133,10 +133,14 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Amount column varies by sheet layout:
-  //  - 2025 tabs: status at col D (3), cash at col X (23)
-  //  - 2026 tabs: status at col E (4), cash at col AC (28)
-  const amountCol = statusCol === 3 ? 23 : 28;
+  // Amount column varies by sheet era. "Cash or gross" column was inserted at
+  // col D mid-2025, shifting Active employee from D→E. Sep-Dec 2025 sheets are
+  // transitional — cash sits at col W (22). 2026+ sheets stabilized cash at col
+  // AC (28). No reliable "Cash" header label exists in row 7 of any era.
+  const amountCol =
+    statusCol === 3 ? 23 :                          // Jan-Aug 2025: col X
+    statusCol === 4 && year === 2025 ? 22 :         // Sep-Dec 2025: col W
+    28;                                              // 2026+: col AC
 
   const employees: {
     employee_name: string;
