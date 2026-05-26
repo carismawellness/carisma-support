@@ -62,10 +62,11 @@ var MONTH_LOOKUP  = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6, jul:7, aug:8, se
 function onOpenEbidaLayerMenu() {
   SpreadsheetApp.getUi()
     .createMenu("EBIDA Layer")
-    .addItem("Pull Daily Granular from Zoho…", "showEbidaLayerDialog")
+    .addItem("Pull Daily Granular from Zoho…",     "showEbidaLayerDialog")
+    .addItem("Refresh Salary Supplement only…",    "showSalarySupplementDialog")
     .addSeparator()
-    .addItem("Lock verified columns…",   "showLockVerifiedDialog")
-    .addItem("Unlock verified columns…", "showUnlockVerifiedDialog")
+    .addItem("Lock verified columns…",             "showLockVerifiedDialog")
+    .addItem("Unlock verified columns…",           "showUnlockVerifiedDialog")
     .addSeparator()
     .addItem("Install on-sheet lock buttons (one-time)", "installLockButtonsTrigger")
     .addToUi();
@@ -593,6 +594,280 @@ var EBIDA_DIALOG_HTML = '<!DOCTYPE html><html><head><base target="_top">' +
 function showEbidaLayerDialog() {
   var html = HtmlService.createHtmlOutput(EBIDA_DIALOG_HTML).setWidth(380).setHeight(440);
   SpreadsheetApp.getUi().showModalDialog(html, "Pull EBIDA Layer");
+}
+
+// ── Salary Supplement refresh (Cockpit-only data, both orgs, SUPP_SAL rows only) ──
+//
+// Pulls SUPP_SAL rows from BOTH SPA and AES orgs over [dateFrom, dateTo] and
+// merges ONLY those rows into the sheet. Non-SUPP_SAL rows (Zoho expenses,
+// Lapis revenue, POS revenue, etc.) are NEVER touched by this path — neither
+// updated nor cleared. Yellow background (#ffff00), red font (#ff0000), and
+// the locked-data background (#fff9c4) all block writes via _isProtected().
+//
+// Use case: salary_supplement_monthly Supabase data changed (verification,
+// corrections, talexio re-sync) → re-pull the affected date range without
+// re-pulling everything else.
+
+var SALARY_SUPPLEMENT_DIALOG_HTML = '<!DOCTYPE html><html><head><base target="_top">' +
+  '<style>' +
+  'body{font-family:Google Sans,Arial,sans-serif;padding:20px;margin:0;font-size:13px;color:#202124}' +
+  'h3{margin:0 0 6px;font-size:15px;color:#1a73e8}' +
+  'p{margin:0 0 14px;color:#5f6368;font-size:12px;line-height:1.5}' +
+  'label{display:block;font-weight:600;margin-bottom:4px;font-size:12px}' +
+  'input[type=date]{width:100%;padding:7px 9px;border:1px solid #dadce0;border-radius:4px;font-size:13px;margin-bottom:14px;box-sizing:border-box;outline:none;background:#fff}' +
+  'input[type=date]:focus{border-color:#1a73e8}' +
+  'button{width:100%;background:#137333;color:#fff;border:none;padding:9px 16px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s}' +
+  'button:hover{background:#0e5424}' +
+  'button:disabled{opacity:0.55;cursor:not-allowed}' +
+  '#status{margin-top:12px;padding:8px 10px;border-radius:4px;font-size:12px;display:none;white-space:pre-wrap}' +
+  '.info{background:#e8f0fe;color:#1967d2}' +
+  '.ok{background:#e6f4ea;color:#137333}' +
+  '.warn{background:#fef7e0;color:#b06000}' +
+  '.err{background:#fce8e6;color:#c5221f}' +
+  '.note{font-size:11px;color:#5f6368;margin-top:-10px;margin-bottom:14px;line-height:1.4}' +
+  '</style></head>' +
+  '<body>' +
+  '<h3>Refresh Salary Supplement</h3>' +
+  '<p>Re-pulls Salary Supplement rows (SUPP_SAL) from Cockpit for the chosen date range. ' +
+  'Posts each month\'s total on the LAST DAY of the month. ' +
+  'Only SUPP_SAL rows are touched — other Zoho/Lapis/POS data is left alone. ' +
+  'Yellow (#ffff00) bg or red (#ff0000) font cells are protected and never overwritten.</p>' +
+  '<label>From</label><input type="date" id="df"/>' +
+  '<label>To</label><input type="date" id="dt"/>' +
+  '<div class="note">Range must include the month-end day(s) you want refreshed (e.g. Jan 31 for January).</div>' +
+  '<button id="btn" onclick="go()">Refresh Salary Supplement</button>' +
+  '<div id="status"></div>' +
+  '<script>' +
+  'var now=new Date(),y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,"0"),d=String(now.getDate()).padStart(2,"0");' +
+  'var firstOfMonthAgo=new Date(y,now.getMonth()-1,1);' +
+  'var fy=firstOfMonthAgo.getFullYear(),fm=String(firstOfMonthAgo.getMonth()+1).padStart(2,"0"),fd="01";' +
+  'document.getElementById("df").value=fy+"-"+fm+"-"+fd;' +
+  'document.getElementById("dt").value=y+"-"+m+"-"+d;' +
+  'function go(){' +
+  '  var df=document.getElementById("df").value,dt=document.getElementById("dt").value;' +
+  '  if(!df||!dt){show("Please select both dates.","err");return;}' +
+  '  document.getElementById("btn").disabled=true;' +
+  '  show("Refreshing Salary Supplement — may take up to 5 minutes…","info");' +
+  '  google.script.run' +
+  '    .withSuccessHandler(function(r){show(r,"ok");document.getElementById("btn").disabled=false;})' +
+  '    .withFailureHandler(function(e){show("Error: "+e.message,"err");document.getElementById("btn").disabled=false;})' +
+  '    .refreshSalarySupplement(df,dt);' +
+  '}' +
+  'function show(msg,cls){var el=document.getElementById("status");el.textContent=msg;el.className=cls;el.style.display="block";}' +
+  '<\/script></body></html>';
+
+function showSalarySupplementDialog() {
+  var html = HtmlService.createHtmlOutput(SALARY_SUPPLEMENT_DIALOG_HTML).setWidth(420).setHeight(440);
+  SpreadsheetApp.getUi().showModalDialog(html, "Refresh Salary Supplement");
+}
+
+// Refreshes SUPP_SAL rows in the sheet over [dateFrom, dateTo]. Fetches from
+// BOTH SPA and AES orgs (SPA carries 8 SPA venues + HQ; AES carries
+// Aesthetics + Slimming). Only writes SUPP_SAL rows; never touches other
+// accounts. Returns a one-line result for the dialog.
+function refreshSalarySupplement(dateFrom, dateTo) {
+  if (!dateFrom || !dateTo) throw new Error("From and To dates required.");
+  if (dateFrom > dateTo) throw new Error("From date must be on or before To date.");
+  _setStatus("Refreshing Salary Supplement " + dateFrom + " → " + dateTo + "…");
+
+  // Pull both orgs' API responses, filter to SUPP_SAL only.
+  var allSuppRows = [];
+  var allDates    = {};
+  ["spa", "aesthetics"].forEach(function(org) {
+    var chunks = _splitIntoChunks(dateFrom, dateTo, CHUNK_DAYS);
+    for (var i = 0; i < chunks.length; i++) {
+      var c = chunks[i];
+      var data = _fetchChunk(c.from, c.to, org);
+      data.dates.forEach(function(d) { allDates[d] = true; });
+      for (var j = 0; j < data.rows.length; j++) {
+        var row = data.rows[j];
+        if (String(row.account_code).toUpperCase() === "SUPP_SAL") {
+          allSuppRows.push(row);
+        }
+      }
+    }
+  });
+
+  var datesList = Object.keys(allDates).sort();
+  var stats = _mergeSalarySupplementOnly(allSuppRows, datesList, dateFrom, dateTo);
+  var summary = "✓ Salary Supplement refreshed " + dateFrom + " → " + dateTo + "\n" +
+    "  " + allSuppRows.length + " SUPP_SAL row(s) from API\n" +
+    "  " + stats.updated + " cell update(s), " + stats.appended + " new row(s), " +
+    stats.protected + " protected cell(s) skipped, " +
+    stats.cleared + " stale cell(s) cleared";
+  _setStatus(summary.replace(/\n/g, " | "));
+  return summary;
+}
+
+// Specialised merge: ONLY touches rows where account_code = "SUPP_SAL".
+// Update / append / clear logic mirrors _mergeIntoSheet, but the clearing
+// scope is restricted to existing SUPP_SAL rows in the refresh window so
+// non-SUPP_SAL data in the same window is never affected.
+function _mergeSalarySupplementOnly(rows, allDates, refreshFrom, refreshTo) {
+  var ss    = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID);
+  var sheet = ss.getSheetByName(EBIDA_TAB);
+  if (!sheet) throw new Error("Tab '" + EBIDA_TAB + "' not found — run a full pull first.");
+  var stats = { updated: 0, appended: 0, protected: 0, cleared: 0 };
+
+  // Force column C to text format on the data block — preserves the
+  // SUPP_SAL string identity across reads.
+  var lastRow = sheet.getLastRow();
+  if (lastRow >= FIRST_DATA_ROW) {
+    sheet.getRange(FIRST_DATA_ROW, 3, lastRow - FIRST_DATA_ROW + 1, 1).setNumberFormat("@");
+  }
+  var lastCol = sheet.getLastColumn();
+  if (lastCol <= META_COUNT) throw new Error("Sheet has no date columns — run a full pull first.");
+
+  var values      = sheet.getRange(1, 1, lastRow, lastCol).getValues();
+  var backgrounds = sheet.getRange(1, 1, lastRow, lastCol).getBackgrounds();
+  var fontColors  = sheet.getRange(1, 1, lastRow, lastCol).getFontColors();
+  var headerVals  = values[HEADER_ROW - 1];
+
+  // Header → column-index map for dates inside the refresh window.
+  var refreshYear = parseInt(refreshFrom.slice(0, 4), 10);
+  var dateToCol   = {};
+  for (var c = META_COUNT; c < lastCol; c++) {
+    var iso = _parseDateHeader(headerVals[c], refreshYear);
+    if (!iso) continue;
+    if (iso < refreshFrom || iso > refreshTo) continue;
+    dateToCol[iso] = c;
+  }
+
+  // Build accRows from the new SUPP_SAL rows, keyed identically to the
+  // main merge (normalized code, same delimiter).
+  var venueIdx = 4;
+  var accRows = {};
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var allocation = row.tag_source === "tagged" ? "tag" : (row.split_rule || "split");
+    var contact    = String(row.contact || "");
+    var keyAccCode = _normalizeAccountCode(row.account_code) || row.account_name;
+    var key = row.brand + "|" + keyAccCode + "|" + row.venue_slug + "|" + contact + "|" + allocation;
+    if (!accRows[key]) {
+      accRows[key] = {
+        brand:           row.brand,
+        line_item:       row.account_name,
+        account_code:    row.account_code || "",
+        ebitda_category: _capitalize(row.ebitda_category),
+        venue:           row.venue,
+        venue_slug:      row.venue_slug,
+        contact:         contact,
+        allocation:      allocation,
+        daily:           {},
+      };
+    }
+    for (var iso in row.daily) {
+      accRows[key].daily[iso] = (accRows[key].daily[iso] || 0) + Number(row.daily[iso]);
+    }
+  }
+
+  // Existing SUPP_SAL row index: key → array of row indices (handles legacy
+  // duplicates from the leading-zero bug, same convention as _mergeIntoSheet).
+  var existingRowKey = {};
+  for (var r = HEADER_ROW; r < values.length; r++) {
+    var brand     = String(values[r][0]).trim();
+    var accCode   = String(values[r][2]).trim();
+    if (_normalizeAccountCode(accCode) !== "SUPP_SAL") continue;
+    var lineItem  = String(values[r][1]).trim();
+    var venue     = String(values[r][venueIdx]).trim();
+    var contact2  = String(values[r][CONTACT_COL_IDX] || "").trim();
+    var alloc     = String(values[r][ALLOC_COL_IDX] || "").trim() || "split";
+    var venueSlug = _venueToSlug(venue);
+    var keyAccCode2 = _normalizeAccountCode(accCode) || lineItem;
+    var key2 = brand + "|" + keyAccCode2 + "|" + venueSlug + "|" + contact2 + "|" + alloc;
+    if (!existingRowKey[key2]) existingRowKey[key2] = [];
+    existingRowKey[key2].push(r);
+  }
+
+  // Update step: write each new SUPP_SAL row's daily values into the
+  // matching existing row's refresh-window cells. Duplicate-keyed rows:
+  // primary gets the value, extras get cleared.
+  for (var key3 in accRows) {
+    var newRow = accRows[key3];
+    var idxList = existingRowKey[key3];
+    if (!idxList || idxList.length === 0) continue;
+    var primaryIdx = idxList[0];
+    for (var iso2 in dateToCol) {
+      var colIdx = dateToCol[iso2];
+      if (_isProtected(backgrounds[primaryIdx][colIdx], fontColors[primaryIdx][colIdx])) {
+        stats.protected++;
+      } else {
+        var newVal = newRow.daily[iso2];
+        sheet.getRange(primaryIdx + 1, colIdx + 1).setValue(newVal != null ? newVal : "");
+        stats.updated++;
+      }
+      for (var di = 1; di < idxList.length; di++) {
+        var dupIdx = idxList[di];
+        if (_isProtected(backgrounds[dupIdx][colIdx], fontColors[dupIdx][colIdx])) {
+          stats.protected++;
+          continue;
+        }
+        var existing = values[dupIdx][colIdx];
+        if (existing === "" || existing == null) continue;
+        sheet.getRange(dupIdx + 1, colIdx + 1).setValue("");
+        stats.cleared++;
+      }
+    }
+  }
+
+  // Clear step: SUPP_SAL rows in the sheet not in the new pull get their
+  // refresh-window cells cleared. Scoped to SUPP_SAL only — never touches
+  // other accounts.
+  for (var key4 in existingRowKey) {
+    if (key4 in accRows) continue;
+    var idxList2 = existingRowKey[key4];
+    for (var li = 0; li < idxList2.length; li++) {
+      var rowIdx = idxList2[li];
+      for (var iso3 in dateToCol) {
+        var colIdx3 = dateToCol[iso3];
+        var v = values[rowIdx][colIdx3];
+        if (v === "" || v == null) continue;
+        if (_isProtected(backgrounds[rowIdx][colIdx3], fontColors[rowIdx][colIdx3])) {
+          stats.protected++;
+          continue;
+        }
+        sheet.getRange(rowIdx + 1, colIdx3 + 1).setValue("");
+        stats.cleared++;
+      }
+    }
+  }
+
+  // Append step: SUPP_SAL rows in the new pull with no matching existing row.
+  var newKeys = [];
+  for (var key5 in accRows) {
+    if (existingRowKey[key5] == null) newKeys.push(key5);
+  }
+  if (newKeys.length > 0) {
+    newKeys.sort();
+    var headerLen = lastCol;
+    var rowsToAppend = [];
+    for (var ki = 0; ki < newKeys.length; ki++) {
+      var nr = accRows[newKeys[ki]];
+      var rowData = new Array(headerLen).fill("");
+      rowData[0] = nr.brand;
+      rowData[1] = nr.line_item;
+      rowData[2] = nr.account_code;
+      rowData[3] = nr.ebitda_category;
+      rowData[venueIdx] = nr.venue;
+      rowData[CONTACT_COL_IDX] = nr.contact || "";
+      rowData[ALLOC_COL_IDX] = nr.allocation;
+      for (var iso4 in nr.daily) {
+        var colIdx4 = dateToCol[iso4];
+        if (colIdx4 != null) rowData[colIdx4] = nr.daily[iso4];
+      }
+      rowsToAppend.push(rowData);
+    }
+    var startRow = sheet.getLastRow() + 1;
+    sheet.getRange(startRow, 3, rowsToAppend.length, 1).setNumberFormat("@");
+    sheet.getRange(startRow, 1, rowsToAppend.length, headerLen).setValues(rowsToAppend);
+    if (headerLen > META_COUNT) {
+      sheet.getRange(startRow, META_COUNT + 1, rowsToAppend.length, headerLen - META_COUNT)
+           .setNumberFormat("#,##0.00;(#,##0.00);-");
+    }
+    stats.appended = rowsToAppend.length;
+  }
+
+  return stats;
 }
 
 // ── Entry point ─────────────────────────────────────────────────────────────
