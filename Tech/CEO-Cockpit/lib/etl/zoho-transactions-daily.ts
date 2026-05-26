@@ -12,6 +12,7 @@ import {
   loadSpaCockpitRevenue,
   loadAesthCockpitRevenue,
   loadSlimCockpitRevenue,
+  loadSalarySupplementMonthly,
 } from "./cockpit-revenue-feeds";
 import {
   fetchZohoProfitAndLoss,
@@ -30,7 +31,7 @@ import {
 // allocation; everything else is "split".
 
 export type DailyRow = {
-  brand:           "SPA" | "AES" | "SLIM";
+  brand:           "SPA" | "AES" | "SLIM" | "HQ";
   venue:           string;        // display name (e.g. "Hugos", "AES", "SLIM")
   venue_slug:      string;        // machine slug
   account_name:    string;
@@ -419,14 +420,16 @@ async function buildSpaRows(
   // gross-of-adjustments revenue and diverge from spa_revenue_monthly. The
   // chunk runner already retries on failure, so propagating the error is
   // safer than silently writing wrong totals to the EBIDA Layer.
-  const [coaMapMaybe, adContactMap, lapisRows] = await Promise.all([
+  const [coaMapMaybe, adContactMap, lapisRows, suppSalaryRows] = await Promise.all([
     loadSpaCoaFromSupabase(),
     loadAdvertisingContactMapping(),
     loadSpaCockpitRevenue(fromDate, toDate),
+    loadSalarySupplementMonthly(fromDate, toDate),
   ]);
   const coaMap = coaMapMaybe ?? COA_MAP;
   log.push(`  Lapis rows fetched: ${lapisRows.length}`);
   log.push(`  advertising contact patterns loaded: ${adContactMap.length}`);
+  log.push(`  supplementary-salary rows fetched: ${suppSalaryRows.length}`);
 
   // Per-day per-venue revenue from Lapis — the authoritative sales_ratio base.
   // Lapis is service+product ex-VAT, daily granularity, so a day's shared SG&A
@@ -544,9 +547,12 @@ async function buildSpaRows(
     return zohoRevPct;
   }
 
-  // 3. Bucket per (account, venue, tag_source, contact) — daily values inside
+  // 3. Bucket per (account, venue, tag_source, contact) — daily values inside.
+  // Brand is "SPA" for Zoho-derived rows + Lapis revenue, plus "HQ" for the
+  // Supplementary Salary rows whose Cockpit slug = "hq" (HQ is a separate
+  // EBITDA department, not a SPA venue).
   type Bucket = {
-    brand:           "SPA";
+    brand:           "SPA" | "HQ";
     venue:           string;
     venue_slug:      string;
     account_name:    string;
@@ -648,6 +654,37 @@ async function buildSpaRows(
   }
   log.push(`  Lapis bucket entries added: ${lapisAdded}`);
 
+  // 5. Supplementary Salary (Cockpit salary_supplement_monthly) — SPA + HQ
+  //    brands only. AES and SLIM SUPP_SAL rows are emitted in buildAesthRows.
+  //    Each row carries account_code SUPP_SAL on the last day of its month;
+  //    venue_slug is the lowercased venue display so the merge's row-key
+  //    lines up with how other (account, venue) rows are keyed.
+  let suppSpaAdded = 0;
+  for (const r of suppSalaryRows) {
+    if (r.brand !== "SPA" && r.brand !== "HQ") continue;
+    const venue_slug = r.venue.toLowerCase().replace(/\s+/g, "_");
+    const key = `SUPP_SAL::${r.brand}::${venue_slug}::direct::`;
+    let b = buckets.get(key);
+    if (!b) {
+      b = {
+        brand:           r.brand,
+        venue:           r.venue,
+        venue_slug:      venue_slug,
+        account_name:    "Salary Supplement",
+        account_code:    "SUPP_SAL",
+        ebitda_category: "wages",
+        split_rule:      "direct",
+        tag_source:      "split",
+        contact:         "",
+        daily:           {},
+      };
+      buckets.set(key, b);
+    }
+    b.daily[r.date] = (b.daily[r.date] ?? 0) + r.amount;
+    suppSpaAdded++;
+  }
+  log.push(`  Supplementary-Salary SPA+HQ buckets added: ${suppSpaAdded}`);
+
   const result = finalizeRows(buckets, dates, period, log);
   result.reconciliation = await runReconciliation(client, "spa", result.rows, fromDate, toDate, log);
   return result;
@@ -670,19 +707,22 @@ async function buildAesthRows(
   // bias every shared-cost split (sales_ratio uses AES+SLIM as denominator).
   // The chunk runner retries on failure, so propagating is safer than silent
   // zeros.
-  const [coaMap, adContactMap, aesRows, slimRows]: [
-    Record<string, [string, string]>,
-    AdContactMappingEntry[],
-    Array<{ date: string; amount: number }>,
-    Array<{ date: string; amount: number }>,
-  ] = await Promise.all([
+  const [coaMap, adContactMap, aesRows, slimRows, suppSalaryRows] = await Promise.all([
     loadAestheticsCoaMap(),
     loadAdvertisingContactMapping(),
     loadAesthCockpitRevenue(fromDate, toDate),
     loadSlimCockpitRevenue(fromDate, toDate),
-  ]);
+    loadSalarySupplementMonthly(fromDate, toDate),
+  ]) as [
+    Record<string, [string, string]>,
+    AdContactMappingEntry[],
+    Array<{ date: string; amount: number }>,
+    Array<{ date: string; amount: number }>,
+    Array<{ date: string; brand: "SPA" | "AES" | "SLIM" | "HQ"; venue: string; amount: number }>,
+  ];
   log.push(`  advertising contact patterns loaded: ${adContactMap.length}`);
   log.push(`  Cockpit POS rows fetched: AES=${aesRows.length} SLIM=${slimRows.length}`);
+  log.push(`  supplementary-salary rows fetched: ${suppSalaryRows.length}`);
 
   // Per-day per-dept revenue from Cockpit POS — the authoritative sales_ratio
   // base. Daily-granular so a day's shared SG&A splits by THAT day's actual
@@ -889,6 +929,35 @@ async function buildAesthRows(
     );
   }
 
+  // Supplementary Salary (Cockpit salary_supplement_monthly) — AES + SLIM brands
+  // emit here; SPA + HQ are emitted in buildSpaRows so this same row-set never
+  // gets double-counted from a single Aesthetics-org pull.
+  let suppAesAdded = 0;
+  for (const r of suppSalaryRows) {
+    if (r.brand !== "AES" && r.brand !== "SLIM") continue;
+    const venue_slug = r.venue.toLowerCase().replace(/\s+/g, "_");
+    const key = `SUPP_SAL::${r.brand}::${venue_slug}::direct::`;
+    let b = buckets.get(key);
+    if (!b) {
+      b = {
+        brand:           r.brand,
+        venue:           r.venue,
+        venue_slug:      venue_slug,
+        account_name:    "Salary Supplement",
+        account_code:    "SUPP_SAL",
+        ebitda_category: "wages",
+        split_rule:      "direct",
+        tag_source:      "split",
+        contact:         "",
+        daily:           {},
+      };
+      buckets.set(key, b);
+    }
+    b.daily[r.date] = (b.daily[r.date] ?? 0) + r.amount;
+    suppAesAdded++;
+  }
+  log.push(`  Supplementary-Salary AES+SLIM buckets added: ${suppAesAdded}`);
+
   const result = finalizeRows(buckets, dates, period, log);
   result.reconciliation = await runReconciliation(client, "aesthetics", result.rows, fromDate, toDate, log);
   return result;
@@ -897,7 +966,7 @@ async function buildAesthRows(
 // ── Common finalisation ─────────────────────────────────────────────────────
 
 type BucketLike = {
-  brand:           "SPA" | "AES" | "SLIM";
+  brand:           "SPA" | "AES" | "SLIM" | "HQ";
   venue:           string;
   venue_slug:      string;
   account_name:    string;

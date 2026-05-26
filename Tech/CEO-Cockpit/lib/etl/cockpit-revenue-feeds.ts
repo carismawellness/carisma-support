@@ -415,3 +415,106 @@ export async function loadSlimCockpitRevenue(
   const combined = groupDailySum([...salesRows, ...trtRows]);
   return mapToSortedRows(combined);
 }
+
+// ── Supplementary Salary (Cockpit salary_supplement_monthly) ────────────────
+//
+// Monthly per-(slug) supplementary salary amounts. Read from Supabase, aggregated
+// from per-employee records. Each amount is posted to the LAST DAY of the
+// referenced month in the EBIDA Layer sheet. Slug → display-name mapping
+// matches the existing parser convention (see spa-ebitda.ts LOC_KEYWORDS):
+//   inter → InterContinental
+//   odycy → Sunny Coast
+//   (others are 1:1)
+// Rows with spa_slug = null are bucketed into HQ (most are tiny corporate
+// overhead amounts).
+
+// slug → { display_name, brand }
+const SALARY_SLUG_TO_ENTITY: Record<string, { display: string; brand: "SPA" | "AES" | "SLIM" | "HQ" }> = {
+  hugos:       { display: "Hugos",            brand: "SPA" },
+  inter:       { display: "InterContinental", brand: "SPA" },
+  hyatt:       { display: "Hyatt",            brand: "SPA" },
+  ramla:       { display: "Ramla",            brand: "SPA" },
+  labranda:    { display: "Labranda",         brand: "SPA" },
+  odycy:       { display: "Sunny Coast",      brand: "SPA" },
+  excelsior:   { display: "Excelsior",        brand: "SPA" },
+  novotel:     { display: "Novotel",          brand: "SPA" },
+  hq:          { display: "HQ",               brand: "HQ"  },
+  aesthetics:  { display: "Aesthetics",       brand: "AES" },
+  slimming:    { display: "Slimming",         brand: "SLIM" },
+};
+
+// Last day of a YYYY-MM-DD's calendar month, returned as YYYY-MM-DD.
+function lastDayOfMonth(monthFirstDayIso: string): string {
+  const y = Number(monthFirstDayIso.slice(0, 4));
+  const m = Number(monthFirstDayIso.slice(5, 7));
+  const lastD = new Date(y, m, 0).getDate();   // m is 1-indexed; day 0 of next month = last day of this month
+  return `${monthFirstDayIso.slice(0, 7)}-${String(lastD).padStart(2, "0")}`;
+}
+
+export type SupplementarySalaryRow = {
+  date:    string;             // YYYY-MM-DD (last day of month)
+  brand:   "SPA" | "AES" | "SLIM" | "HQ";
+  venue:   string;             // display name (Hugos, HQ, Aesthetics, ...)
+  amount:  number;             // EUR, total for that (month, slug)
+};
+
+// Returns one row per (last-day-of-month, brand, venue) for every month
+// overlapping [fromDate, toDate]. Empty list if Supabase env unavailable.
+export async function loadSalarySupplementMonthly(
+  fromDate: string,
+  toDate:   string,
+): Promise<SupplementarySalaryRow[]> {
+  const env = supabaseEnv();
+  if (!env) return [];
+
+  // salary_supplement_monthly.month is the 1st of the month. We want any
+  // record whose month-end day falls inside [fromDate, toDate]. Easiest:
+  // filter by month ∈ [first-of-from-month, first-of-to-month].
+  const fromMonth = `${fromDate.slice(0, 7)}-01`;
+  const toMonth   = `${toDate.slice(0, 7)}-01`;
+
+  const qs = new URLSearchParams({
+    select: "month,spa_slug,amount",
+    month:  `gte.${fromMonth}`,
+  });
+  qs.append("month", `lte.${toMonth}`);
+
+  const resp = await fetch(`${env.base}/rest/v1/salary_supplement_monthly?${qs}`, {
+    headers: { apikey: env.key, Authorization: `Bearer ${env.key}` },
+  });
+  if (!resp.ok) {
+    throw new Error(`Supabase select salary_supplement_monthly failed ${resp.status}: ${await resp.text()}`);
+  }
+  const rows = (await resp.json()) as Array<{ month: string; spa_slug: string | null; amount: unknown }>;
+
+  // Aggregate per (month, slug). Null slugs lumped into "hq".
+  const buckets = new Map<string, number>();   // key = `${month}|${slug}`
+  for (const r of rows) {
+    const slug = (r.spa_slug ?? "hq").trim();
+    const key  = `${r.month}|${slug}`;
+    const amt  = Number(r.amount ?? 0);
+    if (!Number.isFinite(amt) || amt === 0) continue;
+    buckets.set(key, (buckets.get(key) ?? 0) + amt);
+  }
+
+  // Emit one row per bucket, posted to the LAST day of the bucket's month.
+  // Filter by the actual requested window (fromDate..toDate) so a month with
+  // last-day outside the window doesn't sneak in.
+  const out: SupplementarySalaryRow[] = [];
+  for (const [key, amount] of buckets) {
+    const [monthFirstDay, slug] = key.split("|");
+    const entity = SALARY_SLUG_TO_ENTITY[slug];
+    if (!entity) continue;   // unknown slug — skip silently rather than guess
+    const date = lastDayOfMonth(monthFirstDay);
+    if (date < fromDate || date > toDate) continue;
+    const rounded = Math.round(amount * 100) / 100;
+    if (rounded === 0) continue;
+    out.push({ date, brand: entity.brand, venue: entity.display, amount: rounded });
+  }
+  out.sort((a, b) =>
+    a.date.localeCompare(b.date) ||
+    a.brand.localeCompare(b.brand) ||
+    a.venue.localeCompare(b.venue),
+  );
+  return out;
+}

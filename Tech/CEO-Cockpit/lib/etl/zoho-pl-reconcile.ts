@@ -43,6 +43,7 @@ const API_SENTINEL_CODES = new Set<string>([
   "LAPIS_REV",      // SPA Lapis POS revenue
   "POS_AES_REV",    // Aesthetics POS revenue
   "POS_SLIM_REV",   // Slimming POS revenue
+  "SUPP_SAL",       // Supplementary salary (Cockpit salary_supplement_monthly)
 ]);
 
 const DEFAULT_TOLERANCE_EUR = 1.0;
