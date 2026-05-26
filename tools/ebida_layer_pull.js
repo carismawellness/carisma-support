@@ -797,6 +797,38 @@ function onEditLockButtons(e) {
   var sheet;
   try { sheet = e.range.getSheet(); } catch (_) { return; }
   if (!sheet || sheet.getName() !== EBIDA_TAB) return;
+
+  // Auto-revert manual edits to locked cells. The protection blocks other
+  // users hard, but the owner (who must remain an editor so the Web App
+  // pull can write) can technically still type into locked cells. Catch
+  // that here and snap the cell back. Programmatic merge writes don't
+  // fire onEdit, so this only fires on UI-driven user edits.
+  if (e.range.getRow() >= FIRST_DATA_ROW && e.range.getColumn() > META_COUNT) {
+    try {
+      var bg = String(e.range.getBackground() || "").toLowerCase();
+      if (bg === LOCKED_BG_COLOR) {
+        if (e.oldValue !== undefined && e.range.getNumRows() === 1 && e.range.getNumColumns() === 1) {
+          // Single-cell edit — we have the original value, restore it.
+          e.range.setValue(e.oldValue);
+        } else {
+          // Multi-cell paste/clear — Apps Script doesn't give us the
+          // originals. Clear the new values so at minimum the locked
+          // figures are not corrupted with wrong data.
+          e.range.clearContent();
+        }
+        SpreadsheetApp.getActiveSpreadsheet().toast(
+          "Locked cells in Zoho Raw Layer are read-only. " +
+          "Use the L1 'Edit data' checkbox to unlock the range first.",
+          "Edit reverted",
+          5
+        );
+        return;
+      }
+    } catch (revertErr) {
+      Logger.log("onEditLockButtons revert error: " + revertErr);
+    }
+  }
+
   if (e.range.getRow() !== CONTROL_ROW) return;
 
   var col = e.range.getColumn();
