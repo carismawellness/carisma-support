@@ -77,8 +77,38 @@ function tabNamesForMonth(year: number, month: number): string[] {
   ];
 }
 
+// In-memory cache of gids discovered from the workbook's htmlview metadata.
+// Populated lazily when a tab isn't in SHEET_GIDS — so new monthly sheets
+// created in the future work without a code change. Persists for the lifetime
+// of the server instance; resets on cold start (one extra fetch worst case).
+let discoveredGids: Record<string, string> | null = null;
+
+async function discoverGidsFromWorkbook(): Promise<Record<string, string>> {
+  if (discoveredGids) return discoveredGids;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/htmlview`;
+  const res = await fetch(url, { redirect: "follow" });
+  if (!res.ok) {
+    discoveredGids = {};
+    return discoveredGids;
+  }
+  const html = await res.text();
+  // Tab metadata is embedded as JS objects: items.push({name: "...", gid: "..."})
+  const re = /items\.push\(\{name:\s*"([^"]+)"[^}]*gid:\s*"(\d+)"/g;
+  const map: Record<string, string> = {};
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(html)) !== null) {
+    map[m[1]] = m[2];
+  }
+  discoveredGids = map;
+  return map;
+}
+
 async function fetchSheetCsv(tabName: string): Promise<string | null> {
-  const gid = SHEET_GIDS[tabName];
+  let gid: string | undefined = SHEET_GIDS[tabName];
+  if (!gid) {
+    const discovered = await discoverGidsFromWorkbook();
+    gid = discovered[tabName];
+  }
   if (!gid) return null;
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
   const res = await fetch(url, { redirect: "follow" });
