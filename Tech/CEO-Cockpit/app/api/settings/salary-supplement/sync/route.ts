@@ -37,30 +37,54 @@ function spaNameToSlug(raw: string): string | null | undefined {
   return SPA_NAME_TO_SLUG[key] ?? undefined;
 }
 
-// Build the Google Sheet tab name for a given month
-// 2025 tabs use the full month name ("January 25 (C)"); 2026+ tabs use the
-// abbreviation ("Mar 26 (C)"). gviz silently returns a wrong tab when the
-// name doesn't match exactly, so order matters per year.
+// Monthly sheet gids. Required because gviz lookup by tab name silently resolves
+// to wrong tabs when the name doesn't match exactly (and 2025 vs 2026 naming
+// conventions differ), AND because gviz rewrites the sheet's column structure
+// — its CSV loses the literal "Cash" header. The standard /export?format=csv
+// endpoint preserves the real sheet, but only accepts gid (not name).
+// Workbook: https://docs.google.com/spreadsheets/d/1AAnfm-SAYso6RpJhbdhJbTbcGDH1Ftlk0FHBPHfN98w
+const SHEET_GIDS: Record<string, string> = {
+  "January 25 (C)":  "1889848854",
+  "February 25 (C)": "295193285",
+  "March 25 (C)":    "808048092",
+  "April 25 (C)":    "2038839385",
+  "May 25 (C)":      "1737106163",
+  "June 25 (C)":     "1046162311",
+  "July 25 (C)":     "368791753",
+  "Aug 25 (C)":      "642818850",
+  "Sep 25 (C)":      "1971689418",
+  "Oct 25 (C)":      "730419658",
+  "Nov 25 (C)":      "351939064",
+  "Dec 25 (C)":      "832779718",
+  "Jan 26 (C)":      "1980328196",
+  "Feb 26 (C)":      "894938105",
+  "Mar 26 (C)":      "2142024247",
+  "Apr 26 (C)":      "1904323287",
+  "May 26 (C)":      "768462961",
+};
+
+// Candidate tab names for a given month. Convention is inconsistent across the
+// workbook: Jan-Jul 25 use the full month name ("January 25 (C)"); Aug 25
+// onwards use the abbreviation ("Aug 25 (C)"). We try both forms against the
+// gid map.
 function tabNamesForMonth(year: number, month: number): string[] {
   const abbrevs = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const fulls   = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   const yy = String(year).slice(2);
-  const abbr = abbrevs[month - 1];
-  const full = fulls[month - 1];
-  if (year <= 2025) {
-    return [`${full} ${yy} (C)`, `${abbr} ${yy} (C)`];
-  }
-  return [`${abbr} ${yy} (C)`, `${full} ${yy} (C)`];
+  return [
+    `${fulls[month - 1]} ${yy} (C)`,
+    `${abbrevs[month - 1]} ${yy} (C)`,
+  ];
 }
 
 async function fetchSheetCsv(tabName: string): Promise<string | null> {
-  const encoded = encodeURIComponent(tabName);
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encoded}`;
+  const gid = SHEET_GIDS[tabName];
+  if (!gid) return null;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
   const res = await fetch(url, { redirect: "follow" });
   if (!res.ok) return null;
   const text = await res.text();
-  // gviz returns an error page if sheet not found (not a 404)
-  if (text.startsWith("<!") || text.includes("google.visualization.Query.setResponse")) return null;
+  if (text.startsWith("<!")) return null; // HTML error page (access denied / not public)
   return text;
 }
 
@@ -133,18 +157,18 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Amount column detection. Prefer a column whose header is exactly "Cash" —
-  // this makes the parser layout-independent so the user can shield against
-  // future column shifts by labeling the right column "Cash" in any sheet.
-  // Fall back to per-era hardcoded positions for legacy sheets that don't
-  // have the label yet.
+  // Amount column: must be a row-7 header literally labeled "Cash" (exact
+  // match, case-insensitive). Other "cash"-containing headers like "Cash
+  // advance" or "Cash or gross" are deliberately NOT used.
   const headerCols = parseCsvLine(lines[dataStartIdx - 1]);
-  const labelIdx = headerCols.findIndex(c => c?.trim().toLowerCase() === "cash");
-  const amountCol =
-    labelIdx !== -1 ? labelIdx :                    // Header literally says "Cash"
-    statusCol === 3 ? 23 :                          // Jan-Aug 2025: col X
-    statusCol === 4 && year === 2025 ? 22 :         // Sep-Dec 2025: col W
-    28;                                              // 2026+: col AC
+  const amountCol = headerCols.findIndex(c => c?.trim().toLowerCase() === "cash");
+  if (amountCol === -1) {
+    const headerSummary = headerCols.map((h, i) => h ? `[${i}]${h}` : "").filter(Boolean).join(" | ");
+    return NextResponse.json(
+      { error: `No 'Cash' header found in row 7 of ${usedTab}. Headers: ${headerSummary}` },
+      { status: 422 }
+    );
+  }
 
   const employees: {
     employee_name: string;
