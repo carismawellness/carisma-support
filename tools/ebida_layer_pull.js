@@ -65,11 +65,145 @@ function onOpenEbidaLayerMenu() {
     .addItem("Pull Daily Granular from Zoho…",     "showEbidaLayerDialog")
     .addItem("Refresh Salary Supplement only…",    "showSalarySupplementDialog")
     .addSeparator()
+    .addItem("Refresh Aggregated Data from Zoho Raw Layer", "refreshAggregatedData")
+    .addSeparator()
     .addItem("Lock verified columns…",             "showLockVerifiedDialog")
     .addItem("Unlock verified columns…",           "showUnlockVerifiedDialog")
     .addSeparator()
-    .addItem("Install on-sheet lock buttons (one-time)", "installLockButtonsTrigger")
+    .addItem("Install on-sheet lock buttons (one-time)",         "installLockButtonsTrigger")
+    .addItem("Install Aggregated Data override trigger (one-time)", "installAggregatedDataTrigger")
     .addToUi();
+}
+
+// ── Aggregated Data tab (working copy of Zoho Raw Layer for user overrides) ──
+//
+// "Aggregated Data" sits next to "Zoho Raw Layer" and starts as a 1-for-1
+// copy. The user edits cells here when figures need to be overridden; the
+// onEdit trigger paints any edited cell with AGGREGATED_OVERRIDE_BG so the
+// refresh logic can preserve those edits on subsequent re-pulls from the
+// raw layer.
+var AGGREGATED_TAB              = "Aggregated Data";
+var AGGREGATED_OVERRIDE_BG      = "#ffd966";   // orange — user override marker
+
+function refreshAggregatedData() {
+  var ui = SpreadsheetApp.getUi();
+  var ss = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID);
+  var src = ss.getSheetByName(EBIDA_TAB);
+  if (!src) throw new Error("Source tab '" + EBIDA_TAB + "' not found.");
+
+  var srcLastRow = src.getLastRow();
+  var srcLastCol = src.getLastColumn();
+  if (srcLastRow < HEADER_ROW || srcLastCol <= META_COUNT) {
+    throw new Error("Source tab '" + EBIDA_TAB + "' has no data to copy.");
+  }
+
+  var dst = ss.getSheetByName(AGGREGATED_TAB);
+  var firstTime = !dst;
+  if (firstTime) {
+    dst = ss.insertSheet(AGGREGATED_TAB);
+    // Move it right after Zoho Raw Layer
+    ss.setActiveSheet(dst);
+    ss.moveActiveSheet(src.getIndex() + 1);
+  }
+
+  // Read the full source snapshot (values + colours so we can preserve user
+  // edits AND existing protection markers from the raw layer).
+  var srcRange = src.getRange(1, 1, srcLastRow, srcLastCol);
+  var srcValues = srcRange.getValues();
+  var srcBgs    = srcRange.getBackgrounds();
+  var srcFmts   = srcRange.getNumberFormats();
+
+  if (firstTime) {
+    // Brand-new tab — straight copy of Zoho Raw Layer.
+    dst.getRange(1, 1, srcLastRow, srcLastCol).setValues(srcValues);
+    dst.getRange(1, 1, srcLastRow, srcLastCol).setNumberFormats(srcFmts);
+    dst.setFrozenRows(HEADER_ROW);
+    dst.setFrozenColumns(META_COUNT);
+    dst.getRange(CONTROL_ROW, 1).setValue("Aggregated Data (overrides — orange = manual)").setFontWeight("bold");
+    ui.alert("Aggregated Data created with " + (srcLastRow - HEADER_ROW) + " row(s) × " +
+             (srcLastCol - META_COUNT) + " date column(s).");
+    return "Aggregated Data tab created — " + (srcLastRow - HEADER_ROW) + " rows copied from Zoho Raw Layer.";
+  }
+
+  // Existing tab — REFRESH only non-override cells. Read current dst state.
+  var dstLastRow = dst.getLastRow();
+  var dstLastCol = dst.getLastColumn();
+  var resize = (dstLastRow !== srcLastRow) || (dstLastCol !== srcLastCol);
+  if (resize) {
+    // Grow / shrink the destination to match source shape. New cells will
+    // start blank and get filled below.
+    if (dstLastRow < srcLastRow) dst.insertRowsAfter(Math.max(dstLastRow, 1), srcLastRow - dstLastRow);
+    if (dstLastCol < srcLastCol) dst.insertColumnsAfter(Math.max(dstLastCol, 1), srcLastCol - dstLastCol);
+    dstLastRow = dst.getLastRow();
+    dstLastCol = dst.getLastColumn();
+  }
+  var dstRange = dst.getRange(1, 1, srcLastRow, srcLastCol);
+  var dstValues = dstRange.getValues();
+  var dstBgs    = dstRange.getBackgrounds();
+
+  var updates = 0, preserved = 0;
+  for (var r = 0; r < srcLastRow; r++) {
+    for (var c = 0; c < srcLastCol; c++) {
+      var dstBg = String(dstBgs[r][c] || "").toLowerCase();
+      // Preserve any cell already marked as user override OR as a manual
+      // edit (yellow / red font / locked) — those are intentional and
+      // shouldn't be clobbered by refreshing from the raw layer.
+      if (dstBg === AGGREGATED_OVERRIDE_BG ||
+          dstBg === PROTECTED_BG_COLOR ||
+          dstBg === LOCKED_BG_COLOR) {
+        preserved++;
+        continue;
+      }
+      if (dstValues[r][c] !== srcValues[r][c]) {
+        dst.getRange(r + 1, c + 1).setValue(srcValues[r][c]);
+        updates++;
+      }
+    }
+  }
+  // Reapply source number-formats only on the data block (not the override cells)
+  // so user-edited values still render as numbers.
+  dst.getRange(HEADER_ROW + 1, META_COUNT + 1, srcLastRow - HEADER_ROW, srcLastCol - META_COUNT)
+     .setNumberFormat("#,##0.00;(#,##0.00);-");
+
+  var msg = "Aggregated Data refreshed — " + updates + " cell update(s), " + preserved + " override cell(s) preserved.";
+  ui.alert(msg);
+  return msg;
+}
+
+// onEdit handler — paint any cell the user changes in the Aggregated Data tab
+// orange (#ffd966). Run as an installable trigger so we have authority to
+// call setBackground (simple triggers can do this, but installable is more
+// robust against re-auth issues).
+function onEditAggregatedData(e) {
+  try {
+    if (!e || !e.range) return;
+    var sheet = e.range.getSheet();
+    if (sheet.getName() !== AGGREGATED_TAB) return;
+    // Skip header rows + meta cols — overrides only make sense on data area.
+    if (e.range.getRow() < FIRST_DATA_ROW) return;
+    if (e.range.getColumn() <= META_COUNT) return;
+    // Skip the case where the user clears a cell back to empty AND the cell
+    // was painted orange — we'll keep the orange so they know it's still an
+    // override (intentional zero).
+    e.range.setBackground(AGGREGATED_OVERRIDE_BG);
+  } catch (err) {
+    Logger.log("onEditAggregatedData error: " + err);
+  }
+}
+
+// One-time installer for the onEdit trigger on Aggregated Data tab.
+function installAggregatedDataTrigger() {
+  var existing = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < existing.length; i++) {
+    if (existing[i].getHandlerFunction() === "onEditAggregatedData") {
+      ScriptApp.deleteTrigger(existing[i]);
+    }
+  }
+  ScriptApp.newTrigger("onEditAggregatedData")
+    .forSpreadsheet(EBIDA_SPREADSHEET_ID)
+    .onEdit()
+    .create();
+  SpreadsheetApp.getUi().alert("Aggregated Data override trigger installed.\nAny edit on the 'Aggregated Data' tab will now auto-paint the cell orange (#ffd966).");
 }
 
 // Light-yellow background applied to locked cells. Chosen because:
