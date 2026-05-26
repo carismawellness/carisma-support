@@ -67,6 +67,7 @@ function onOpenEbidaLayerMenu() {
     .addSeparator()
     .addItem("Refresh Aggregated Data (full)",          "refreshAggregatedData")
     .addItem("Refresh Aggregated Data (range from B1/D1)", "refreshAggregatedDataFromControlRange")
+    .addItem("Clean up false orange (matches source)",   "cleanupFalseOrange")
     .addSeparator()
     .addItem("Lock verified columns…",             "showLockVerifiedDialog")
     .addItem("Unlock verified columns…",           "showUnlockVerifiedDialog")
@@ -260,6 +261,21 @@ function _ensureAggregatedControlCells(sheet) {
 // orange (#ffd966). Run as an installable trigger so we have authority to
 // call setBackground (simple triggers can do this, but installable is more
 // robust against re-auth issues).
+// Normalises a cell value for "is this an override?" comparison. Empty,
+// null, and "" all collapse to null. Numbers stay numbers; numeric-looking
+// strings get parsed. Otherwise trimmed string.
+function _normalizeCellValue(v) {
+  if (v === null || v === undefined || v === "") return null;
+  if (typeof v === "number") {
+    return isFinite(v) ? Math.round(v * 100) / 100 : null;   // round to cents to absorb float dust
+  }
+  var s = String(v).trim();
+  if (s === "") return null;
+  var n = parseFloat(s.replace(/,/g, ""));
+  if (isFinite(n) && /^-?\d/.test(s)) return Math.round(n * 100) / 100;
+  return s;
+}
+
 function onEditAggregatedData(e) {
   try {
     if (!e || !e.range) return;
@@ -268,8 +284,7 @@ function onEditAggregatedData(e) {
     var row = e.range.getRow();
     var col = e.range.getColumn();
 
-    // J1 checkbox checked → run range refresh, then auto-uncheck so the
-    // checkbox acts like a one-shot button.
+    // J1 checkbox checked → run range refresh, then auto-uncheck.
     if (row === CONTROL_ROW && col === AGG_CTRL_REFRESH_CHECKBOX && e.value === "TRUE") {
       try {
         var result = refreshAggregatedDataFromControlRange();
@@ -285,12 +300,85 @@ function onEditAggregatedData(e) {
     // Skip header rows + meta cols — overrides only make sense on data area.
     if (row < FIRST_DATA_ROW) return;
     if (col <= META_COUNT) return;
-    // Paint the edited cell orange — marks it as a user override so the
-    // next refresh from Zoho Raw Layer preserves it.
-    e.range.setBackground(AGGREGATED_OVERRIDE_BG);
+
+    // Compare the new value to the corresponding cell in Zoho Raw Layer.
+    // ONLY paint orange when the user-supplied value actually differs from
+    // the source — otherwise we'd flag accidental delete-then-untouched as
+    // an override (false orange). If the value matches source, clear any
+    // existing orange so the cell goes back to "in sync".
+    var ss = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID);
+    var src = ss.getSheetByName(EBIDA_TAB);
+    if (!src) return;
+    // Range edits (paste / clear-multi-cell) can cover many cells; handle each.
+    var rng = e.range;
+    var numR = rng.getNumRows();
+    var numC = rng.getNumColumns();
+    var dstVals = rng.getValues();
+    var srcVals = src.getRange(rng.getRow(), rng.getColumn(), numR, numC).getValues();
+    for (var rr = 0; rr < numR; rr++) {
+      for (var cc = 0; cc < numC; cc++) {
+        var dstCellRow = rng.getRow() + rr;
+        var dstCellCol = rng.getColumn() + cc;
+        if (dstCellRow < FIRST_DATA_ROW || dstCellCol <= META_COUNT) continue;
+        var dstN = _normalizeCellValue(dstVals[rr][cc]);
+        var srcN = _normalizeCellValue(srcVals[rr][cc]);
+        var cell = sheet.getRange(dstCellRow, dstCellCol);
+        if (dstN === srcN) {
+          // Matches source — not a real override. Clear orange if present.
+          var currentBg = String(cell.getBackground() || "").toLowerCase();
+          if (currentBg === AGGREGATED_OVERRIDE_BG) cell.setBackground(null);
+        } else {
+          cell.setBackground(AGGREGATED_OVERRIDE_BG);
+        }
+      }
+    }
   } catch (err) {
     Logger.log("onEditAggregatedData error: " + err);
   }
+}
+
+// Sweep the Aggregated Data tab and clear "false orange" — cells currently
+// painted orange whose value matches Zoho Raw Layer at the same position.
+// Useful one-shot cleanup if accidental edits (e.g., delete + retype) left
+// stale orange marks behind from before the fix.
+function cleanupFalseOrange() {
+  var ui = SpreadsheetApp.getUi();
+  var ss = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID);
+  var dst = ss.getSheetByName(AGGREGATED_TAB);
+  var src = ss.getSheetByName(EBIDA_TAB);
+  if (!dst || !src) throw new Error("Aggregated Data or Zoho Raw Layer tab not found.");
+
+  var lastRow = Math.max(dst.getLastRow(), src.getLastRow());
+  var lastCol = Math.max(dst.getLastColumn(), src.getLastColumn());
+  if (lastRow < FIRST_DATA_ROW || lastCol <= META_COUNT) {
+    ui.alert("Nothing to scan — sheets are empty.");
+    return;
+  }
+
+  var dstVals = dst.getRange(1, 1, lastRow, lastCol).getValues();
+  var dstBgs  = dst.getRange(1, 1, lastRow, lastCol).getBackgrounds();
+  var srcVals = src.getRange(1, 1, Math.min(src.getLastRow(), lastRow),
+                                    Math.min(src.getLastColumn(), lastCol)).getValues();
+  var cleared = 0, kept = 0;
+  for (var r = FIRST_DATA_ROW - 1; r < lastRow; r++) {
+    for (var c = META_COUNT; c < lastCol; c++) {
+      var bg = String(dstBgs[r] && dstBgs[r][c] || "").toLowerCase();
+      if (bg !== AGGREGATED_OVERRIDE_BG) continue;
+      var srcVal = (srcVals[r] && srcVals[r][c] !== undefined) ? srcVals[r][c] : "";
+      var dstN = _normalizeCellValue(dstVals[r][c]);
+      var srcN = _normalizeCellValue(srcVal);
+      if (dstN === srcN) {
+        dst.getRange(r + 1, c + 1).setBackground(null);
+        cleared++;
+      } else {
+        kept++;
+      }
+    }
+  }
+  var msg = "False-orange cleanup — cleared " + cleared + " cell(s); kept " + kept + " real override(s).";
+  dst.getRange(CONTROL_ROW, AGG_CTRL_STATUS_COL).setValue(msg);
+  ui.alert(msg);
+  return msg;
 }
 
 // One-time installer for the onEdit trigger on Aggregated Data tab.
