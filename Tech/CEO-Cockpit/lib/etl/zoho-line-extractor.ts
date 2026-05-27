@@ -205,18 +205,37 @@ async function listAllPages(
   return out;
 }
 
-function pickAmount(line: Record<string, unknown>): number {
+function pickAmount(line: Record<string, unknown>, isInclusiveTax: boolean): number {
   // Order matches Zoho's per-line field availability across endpoint types.
   // bcy_* (base-currency) variants are PREFERRED over plain amount/item_total
   // because Zoho gives the latter in the transaction's source currency.
+  let amt = 0;
   for (const field of ["bcy_amount", "bcy_total", "amount", "item_total", "total"]) {
     const v = line[field];
     if (v != null) {
       const n = Number(v);
-      if (!isNaN(n)) return n;
+      if (!isNaN(n)) { amt = n; break; }
     }
   }
-  return 0;
+  // When the entity is recorded tax-inclusive, line.amount / item_total are
+  // GROSS (incl VAT) but Zoho posts only the NET to the income/expense
+  // account — VAT goes to a balance-sheet input/output VAT account. The
+  // gross-tax-inclusive expense booked €804.24 on a Computers & Electronics
+  // line carrying €122.68 of 18% VAT lands as €681.56 in the P&L, so
+  // returning the picked gross would over-state that account by 18%. Detect
+  // the line-level override first (Zoho allows per-line overrides via
+  // `tax_treatment_code` / `is_inclusive_tax`), fall back to the entity flag.
+  // Verified 2026-05-27 on SPA expenses 128265000029132178 + …92 (Apr 2026
+  // 616730 Computers & Electronics, €1,262.74 gross vs €1,070.12 net).
+  if (amt) {
+    const lineInclusive = line.is_inclusive_tax;
+    const inclusive = typeof lineInclusive === "boolean" ? lineInclusive : isInclusiveTax;
+    if (inclusive) {
+      const tax = Number(line.tax_amount ?? 0);
+      if (tax) amt -= tax;
+    }
+  }
+  return amt;
 }
 
 /**
@@ -420,6 +439,9 @@ async function fetchDetails(
     }
 
     const lineArr  = (entity[cfg.lineKey] as Array<Record<string, unknown>>) ?? [];
+    // Entity-level tax-inclusivity flag — fed into pickAmount so gross-incl-tax
+    // line amounts can be reduced to the net actually posted to the GL.
+    const entityInclusiveTax = entity.is_inclusive_tax === true;
 
     for (const ln of lineArr) {
       const accountId = String(ln.account_id ?? "");
@@ -432,7 +454,7 @@ async function fetchDetails(
       if (cfg.source === "journal") {
         rawAmount = pickJournalAmount(ln, section);
       } else {
-        rawAmount = pickAmount(ln) * cfg.signMultiplier;
+        rawAmount = pickAmount(ln, entityInclusiveTax) * cfg.signMultiplier;
       }
       if (rawAmount === 0) continue;
 
