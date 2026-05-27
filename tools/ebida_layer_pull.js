@@ -1510,6 +1510,26 @@ function doGet(e) {
     }
   }
 
+  // One-off: clear the manual-edit protection (#ffff00 bg / #ff0000 font)
+  // on every date cell falling in [from..to] for rows matching brand +
+  // account_code. Leaves the verified-data lock (#fff9c4) alone. Use this
+  // when an upstream parser bug caused the wrong value to be written, then
+  // the user manually fixed (and marked yellow/red) — and now we need to
+  // re-let the merge overwrite with corrected parser output.
+  //   <web-app-url>/exec?token=<TOKEN>&action=clear_protection&org=SPA&code=616730&from=2026-04-01&to=2026-04-30
+  if (p.action === "clear_protection") {
+    try {
+      var includeLocks = String(p.include_locks || "").toLowerCase() === "true";
+      var clearResult = clearProtectionOnRows(p.org, p.code, p.from, p.to, includeLocks);
+      return ContentService.createTextOutput(JSON.stringify(clearResult))
+        .setMimeType(ContentService.MimeType.JSON);
+    } catch (err) {
+      return ContentService.createTextOutput(JSON.stringify({
+        error: (err && err.message ? err.message : String(err))
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+
   // Diagnostic: dump every row matching a brand + account_code substring, with
   // per-date values, so we can see if multiple sheet rows aggregate to the
   // same account_code (a clue for duplicate-key bugs in the merge).
@@ -1850,6 +1870,122 @@ function dumpSheetRows(org, code, ym) {
     });
   }
   return { org: org, code: code, ym: ym, matched_rows: rows.length, rows: rows };
+}
+
+// Clear the manual-edit protection (#ffff00 bg / #ff0000 font) on every
+// date cell falling in [fromIso, toIso] for rows matching brand +
+// account_code. Pass include_locks=true to also clear the verified-data
+// lock (#fff9c4) on those cells. Caller is expected to follow up with a
+// re-pull so the merge can overwrite the now-unprotected cells with
+// corrected parser output.
+function clearProtectionOnRows(org, code, fromIso, toIso, includeLocks) {
+  if (!org)  throw new Error("org param required (SPA or Aesthetics).");
+  if (!code) throw new Error("code param required (account_code).");
+  if (!fromIso || !/^\d{4}-\d{2}-\d{2}$/.test(fromIso)) throw new Error("from param required (YYYY-MM-DD).");
+  if (!toIso   || !/^\d{4}-\d{2}-\d{2}$/.test(toIso))   throw new Error("to param required (YYYY-MM-DD).");
+  if (toIso < fromIso) throw new Error("to must be >= from");
+
+  var orgLower   = String(org).trim().toLowerCase();
+  var searchCode = String(code).trim();
+  var stripped   = /^\d+$/.test(searchCode) ? searchCode.replace(/^0+/, "") : searchCode;
+  if (stripped === "" && /^\d+$/.test(searchCode)) stripped = "0";
+
+  var ss    = SpreadsheetApp.openById(EBIDA_SPREADSHEET_ID);
+  var sheet = ss.getSheetByName(EBIDA_TAB);
+  if (!sheet) throw new Error("Tab '" + EBIDA_TAB + "' not found.");
+
+  var lastRow = sheet.getLastRow();
+  var lastCol = sheet.getLastColumn();
+  if (lastRow < FIRST_DATA_ROW || lastCol <= META_COUNT) {
+    return { org: org, code: code, from: fromIso, to: toIso, rows_touched: 0, cells_cleared: 0 };
+  }
+
+  var headerRange = sheet.getRange(HEADER_ROW, 1, 1, lastCol);
+  var headerVals  = headerRange.getValues()[0];
+  var fromYear    = parseInt(fromIso.slice(0, 4), 10);
+  var matchedCols = [];
+  for (var c = META_COUNT; c < lastCol; c++) {
+    var iso = _parseDateHeader(headerVals[c], fromYear);
+    if (!iso) continue;
+    if (iso < fromIso || iso > toIso) continue;
+    matchedCols.push(c);
+  }
+  if (matchedCols.length === 0) {
+    return { org: org, code: code, from: fromIso, to: toIso, rows_touched: 0, cells_cleared: 0, note: "no date columns in window" };
+  }
+
+  // Read brand + code columns + the matched date columns' formatting.
+  var dataRange = sheet.getRange(FIRST_DATA_ROW, 1, lastRow - FIRST_DATA_ROW + 1, lastCol);
+  var vals      = dataRange.getValues();
+  var bgs       = dataRange.getBackgrounds();
+  var fgs       = dataRange.getFontColors();
+
+  var rowsTouched = 0;
+  var cellsCleared = 0;
+  for (var r = 0; r < vals.length; r++) {
+    var brand = String(vals[r][0] || "").trim().toLowerCase();
+    if (orgLower === "spa") { if (brand !== "spa") continue; }
+    else                    { if (brand === "spa") continue; }
+
+    var rowCode = String(vals[r][2] || "").trim();
+    var rowCodeStripped = /^\d+$/.test(rowCode) ? rowCode.replace(/^0+/, "") : rowCode;
+    if (rowCodeStripped === "" && /^\d+$/.test(rowCode)) rowCodeStripped = "0";
+    if (rowCode !== searchCode && rowCodeStripped !== stripped) continue;
+
+    var changedAny = false;
+    for (var mi = 0; mi < matchedCols.length; mi++) {
+      var col = matchedCols[mi];
+      var bg  = String(bgs[r][col] || "").toLowerCase();
+      var fg  = String(fgs[r][col] || "").toLowerCase();
+      var hadYellow = (bg === PROTECTED_BG_COLOR);
+      var hadLock   = includeLocks && (bg === LOCKED_BG_COLOR);
+      var hadRed    = (fg === PROTECTED_FONT_COLOR);
+      if (!hadYellow && !hadRed && !hadLock) continue;
+      // Sheet absolute coords (1-indexed)
+      var cell = sheet.getRange(FIRST_DATA_ROW + r, col + 1);
+      if (hadYellow || hadLock) cell.setBackground(null);
+      if (hadRed)               cell.setFontColor(null);
+      cellsCleared++;
+      changedAny = true;
+    }
+    if (changedAny) rowsTouched++;
+  }
+
+  // Build a small color snapshot so callers can see WHY cells were
+  // skipped (e.g. matched rows but cells were a different color).
+  var colorSnapshot = [];
+  for (var r2 = 0; r2 < vals.length && colorSnapshot.length < 16; r2++) {
+    var brand2 = String(vals[r2][0] || "").trim().toLowerCase();
+    if (orgLower === "spa") { if (brand2 !== "spa") continue; }
+    else                    { if (brand2 === "spa") continue; }
+    var rowCode2 = String(vals[r2][2] || "").trim();
+    var rowCodeStripped2 = /^\d+$/.test(rowCode2) ? rowCode2.replace(/^0+/, "") : rowCode2;
+    if (rowCodeStripped2 === "" && /^\d+$/.test(rowCode2)) rowCodeStripped2 = "0";
+    if (rowCode2 !== searchCode && rowCodeStripped2 !== stripped) continue;
+    for (var mi2 = 0; mi2 < matchedCols.length && colorSnapshot.length < 16; mi2++) {
+      var col2 = matchedCols[mi2];
+      var bg2  = String(bgs[r2][col2] || "").toLowerCase();
+      var fg2  = String(fgs[r2][col2] || "").toLowerCase();
+      colorSnapshot.push({
+        sheet_row:    FIRST_DATA_ROW + r2,
+        sheet_col:    col2 + 1,
+        bg:           bg2,
+        fg:           fg2,
+        is_protected: (bg2 === PROTECTED_BG_COLOR || bg2 === LOCKED_BG_COLOR || fg2 === PROTECTED_FONT_COLOR),
+      });
+    }
+  }
+
+  return {
+    org:          org,
+    code:         searchCode,
+    from:         fromIso,
+    to:           toIso,
+    include_locks: !!includeLocks,
+    rows_touched: rowsTouched,
+    cells_cleared: cellsCleared,
+    color_sample: colorSnapshot,
+  };
 }
 
 // DEV-ONLY one-click reset: clears the existing Zoho Raw Layer tab content
