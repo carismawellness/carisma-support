@@ -74,12 +74,13 @@ interface CellTotal {
 }
 
 interface FallbackApplied {
-  brand:         Brand;
-  account_code:  string;
-  account_name:  string;
-  rule_type:     RuleType;
-  period_value:  number;
-  method_detail: string;
+  brand:           Brand;
+  account_code:    string;
+  account_name:    string;
+  ebitda_category: string;
+  rule_type:       RuleType;
+  period_value:    number;
+  method_detail:   string;
 }
 
 // One row in the detailed breakdown — every account that contributed to a
@@ -534,11 +535,12 @@ export async function GET(req: NextRequest) {
             appliedMethodDetail = `Manual annual €${annual.toFixed(2)} × ${daysInPeriod}/365`;
             fallbackApplied.push({
               brand,
-              account_code:  row.account_code,
-              account_name:  row.line_item,
-              rule_type:     "manual_annual",
-              period_value:  periodValue,
-              method_detail: appliedMethodDetail,
+              account_code:    row.account_code,
+              account_name:    row.line_item,
+              ebitda_category: category,
+              rule_type:       "manual_annual",
+              period_value:    periodValue,
+              method_detail:   appliedMethodDetail,
             });
           } else {
             // Rule says manual_annual but no amount — keep literal, flag warning.
@@ -564,11 +566,12 @@ export async function GET(req: NextRequest) {
                 ` → annualized €${annualEstimate.toFixed(2)} × ${daysInPeriod}/365`;
               fallbackApplied.push({
                 brand,
-                account_code:  row.account_code,
-                account_name:  row.line_item,
-                rule_type:     "ttm_spread",
-                period_value:  periodValue,
-                method_detail: appliedMethodDetail,
+                account_code:    row.account_code,
+                account_name:    row.line_item,
+                ebitda_category: category,
+                rule_type:       "ttm_spread",
+                period_value:    periodValue,
+                method_detail:   appliedMethodDetail,
               });
             }
             // No TTM history for this row key → keep literal, no fallback flag.
@@ -589,11 +592,12 @@ export async function GET(req: NextRequest) {
                 ` × ${daysInPeriod}/${pm.days}`;
               fallbackApplied.push({
                 brand,
-                account_code:  row.account_code,
-                account_name:  row.line_item,
-                rule_type:     "previous_month",
-                period_value:  periodValue,
-                method_detail: appliedMethodDetail,
+                account_code:    row.account_code,
+                account_name:    row.line_item,
+                ebitda_category: category,
+                rule_type:       "previous_month",
+                period_value:    periodValue,
+                method_detail:   appliedMethodDetail,
               });
             }
           }
@@ -614,11 +618,12 @@ export async function GET(req: NextRequest) {
                 ` / ${q.days} × ${daysInPeriod}`;
               fallbackApplied.push({
                 brand,
-                account_code:  row.account_code,
-                account_name:  row.line_item,
-                rule_type:     "quarterly_average",
-                period_value:  periodValue,
-                method_detail: appliedMethodDetail,
+                account_code:    row.account_code,
+                account_name:    row.line_item,
+                ebitda_category: category,
+                rule_type:       "quarterly_average",
+                period_value:    periodValue,
+                method_detail:   appliedMethodDetail,
               });
             }
           }

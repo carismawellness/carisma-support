@@ -2761,16 +2761,21 @@ function writeEbitdaExportTab(payload) {
   tab.getRange(6, 1, 1, headerRow.length).setValues([headerRow])
      .setFontWeight("bold").setBackground("#e8f0fe").setFontColor("#1967d2");
 
-  // Body rows
+  // Body rows. Revenue values are flipped to negative so the per-row Total
+  // column and the bottom TOTAL row sum to a meaningful figure
+  // (expenses − revenue = −EBITDA). Cockpit itself still shows revenue as
+  // positive; this convention only applies in the exported sheet.
   var tableData = [];
   var fallbackMarks = [];   // [{row, col}] for cells to paint light-blue
   for (var ci = 0; ci < categories.length; ci++) {
     var cat = categories[ci];
+    var isRevenue = String(cat).toLowerCase() === "revenue";
     var row = [cat];
     var rowTotal = 0;
     for (var bi2 = 0; bi2 < brands.length; bi2++) {
       var cell = totals[brands[bi2]] && totals[brands[bi2]][cat];
       var v = cell ? Number(cell.value) || 0 : 0;
+      if (isRevenue) v = -v;
       row.push(v);
       rowTotal += v;
       if (cell && cell.has_fallback) {
@@ -2798,7 +2803,9 @@ function writeEbitdaExportTab(payload) {
     var brandSum = 0;
     for (var ci2 = 0; ci2 < categories.length; ci2++) {
       var c2 = totals[brands[bi3]] && totals[brands[bi3]][categories[ci2]];
-      brandSum += c2 ? (Number(c2.value) || 0) : 0;
+      var v2 = c2 ? (Number(c2.value) || 0) : 0;
+      if (String(categories[ci2]).toLowerCase() === "revenue") v2 = -v2;
+      brandSum += v2;
     }
     totalRow.push(brandSum);
     grandTotal += brandSum;
@@ -2829,12 +2836,14 @@ function writeEbitdaExportTab(payload) {
     tab.getRange(fbAppliedStart + 1, 1, 1, fbHeader.length).setValues([fbHeader])
        .setFontWeight("bold").setBackground("#e8f0fe").setFontColor("#1967d2");
     var fbRows = fbApplied.map(function(f) {
+      var fbVal = Number(f.period_value) || 0;
+      if (String(f.ebitda_category || "").toLowerCase() === "revenue") fbVal = -fbVal;
       return [
         f.brand || "",
         f.account_code || "",
         f.account_name || "",
         f.rule_type || "",
-        Number(f.period_value) || 0,
+        fbVal,
         f.method_detail || "",
       ];
     });
@@ -2877,6 +2886,12 @@ function writeEbitdaExportTab(payload) {
     tab.getRange(liStart + 2, 1, 1, liHeader.length).setValues([liHeader])
        .setFontWeight("bold").setBackground("#e8f0fe").setFontColor("#1967d2");
     var liRows = lineItems.map(function(li) {
+      var litVal = Number(li.literal_sum)  || 0;
+      var perVal = Number(li.period_value) || 0;
+      if (String(li.ebitda_category || "").toLowerCase() === "revenue") {
+        litVal = -litVal;
+        perVal = -perVal;
+      }
       return [
         li.brand || "",
         li.ebitda_category || "",
@@ -2884,8 +2899,8 @@ function writeEbitdaExportTab(payload) {
         li.account_name || "",
         li.venue || "",
         li.zoho_org || "",
-        Number(li.literal_sum)  || 0,
-        Number(li.period_value) || 0,
+        litVal,
+        perVal,
         li.used_fallback ? "yes" : "no",
         li.rule_type     || "",
         li.method_detail || (li.used_fallback ? "" : "literal sum"),
