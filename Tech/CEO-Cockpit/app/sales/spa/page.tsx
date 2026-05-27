@@ -200,7 +200,7 @@ function SpaContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }) {
             <BarChart data={hotelChartData} margin={{ top: 24, right: 12, left: 8, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
               <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-              <YAxis tickFormatter={(v: number) => v >= 1000 ? `€${Math.round(v/1000)}K` : `€${v}`} tick={{ fontSize: 11 }} />
+              <YAxis tickFormatter={(v: number) => v >= 1000 ? `€${(v/1000).toFixed(1)}K` : `€${v.toFixed(1)}`} tick={{ fontSize: 11 }} />
               <Tooltip formatter={(v) => [formatCurrency(Number(v)), "Revenue"]} />
               <Bar dataKey="revenue" radius={[4,4,0,0]} barSize={44}>
                 {hotelChartData.map((h) => <Cell key={h.id} fill={h.color} />)}
@@ -211,7 +211,7 @@ function SpaContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date }) {
                   const v = Number(value);
                   return (
                     <text x={Number(x)+w/2} y={Number(y)-7} textAnchor="middle" fontSize={10} fontWeight={700} fill="#374151">
-                      {v >= 1000 ? `€${Math.round(v/1000)}K` : `€${v}`}
+                      {v >= 1000 ? `€${(v/1000).toFixed(1)}K` : `€${v.toFixed(1)}`}
                     </text>
                   );
                 }} />

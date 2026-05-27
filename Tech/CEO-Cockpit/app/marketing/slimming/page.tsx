@@ -147,8 +147,8 @@ function SlimmingMarketingContent({
     return [
       { label: "Revenue", value: formatCurrency(totalRevenue) },
       { label: "Total Marketing Spend", value: formatCurrency(totalSpend) },
-      { label: "Meta Blended CPL", value: `€${metaBlendedCpl.toFixed(2)}` },
-      { label: "Google Blended CPL", value: `€${googleBlendedCpl.toFixed(2)}` },
+      { label: "Meta Blended CPL", value: `€${metaBlendedCpl.toFixed(1)}` },
+      { label: "Google Blended CPL", value: `€${googleBlendedCpl.toFixed(1)}` },
       { label: "Total Leads", value: String(totalLeads) },
       { label: "Conversion / Leads", value: `${conversionRate.toFixed(1)}%` },
       { label: "Blended ROAS", value: totalSpend > 0 ? `${(totalRevenue / totalSpend).toFixed(1)}x` : "—" },
@@ -167,7 +167,7 @@ function SlimmingMarketingContent({
           cpl: c.cpl,
           fullName: c.campaign,
           fill: status.fill,
-          cplLabel: `€${c.cpl.toFixed(2)}`,
+          cplLabel: `€${c.cpl.toFixed(1)}`,
         };
       }),
   [metaCampaigns]);
@@ -184,7 +184,7 @@ function SlimmingMarketingContent({
           cpl: c.cpl,
           fullName: c.campaign,
           fill: status.fill,
-          cplLabel: `€${c.cpl.toFixed(2)}`,
+          cplLabel: `€${c.cpl.toFixed(1)}`,
         };
       }),
   [googleCampaigns]);
@@ -193,14 +193,14 @@ function SlimmingMarketingContent({
 
   const metaColumns = [
     { key: "campaign", label: "Campaign Name" },
-    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
     { key: "dailyBudget", label: "Daily Budget", align: "right" as const, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalSpend", label: "Total Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalLeads", label: "Total Leads", align: "right" as const, sortable: true },
-    { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69)).toFixed(2)}` : "—"; } },
-    { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69 * 0.59)).toFixed(2)}` : "—"; } },
+    { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69)).toFixed(1)}` : "—"; } },
+    { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69 * 0.59)).toFixed(1)}` : "—"; } },
     { key: "ctr", label: "CTR", align: "right" as const, sortable: true, render: (v: unknown) => `${(v as number).toFixed(1)}%` },
-    { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
     { key: "frequency", label: "Freq", align: "right" as const, render: (v: unknown) => (v as number).toFixed(1) },
     { key: "attributedRevenue", label: "Attributed Rev", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
   ];
@@ -214,14 +214,14 @@ function SlimmingMarketingContent({
 
   const googleColumns = [
     { key: "campaign", label: "Campaign Name" },
-    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
     { key: "dailyBudget", label: "Daily Budget", align: "right" as const, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalSpend", label: "Total Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "totalLeads", label: "Total Leads", align: "right" as const, sortable: true },
-    { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69)).toFixed(2)}` : "—"; } },
-    { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69 * 0.59)).toFixed(2)}` : "—"; } },
+    { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69)).toFixed(1)}` : "—"; } },
+    { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (_v: unknown, row: Record<string, unknown>) => { const spend = row.totalSpend as number; const leads = row.totalLeads as number; return leads > 0 ? `€${(spend / (leads * 0.69 * 0.59)).toFixed(1)}` : "—"; } },
     { key: "ctr", label: "CTR", align: "right" as const, sortable: true, render: (v: unknown) => `${(v as number).toFixed(1)}%` },
-    { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
     { key: "frequency", label: "Freq", align: "right" as const, render: (v: unknown) => (v as number).toFixed(1) },
     { key: "attributedRevenue", label: "Attributed Rev", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
   ];
@@ -284,9 +284,9 @@ function SlimmingMarketingContent({
     { key: "channel", label: "Channel", render: (v: unknown) => <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${(v as string) === "Meta" ? "bg-blue-50 text-blue-700" : "bg-emerald-50 text-emerald-700"}`}>{v as string}</span> },
     { key: "totalLeads", label: "Leads", align: "right" as const, sortable: true },
     { key: "totalSpend", label: "Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
-    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
-    { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
-    { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
+    { key: "costPerShow", label: "CP Show", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
+    { key: "costPerResult", label: "CP Result", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
     { key: "attributedRevenue", label: "Attr. Rev", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "netExpectedRevenue", label: "Net Exp. Rev", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "roas", label: "ROAS", align: "right" as const, sortable: true, render: (v: unknown) => { const r = v as number; return <span style={{ color: getRoasColor(r), fontWeight: 600 }}>{r.toFixed(1)}x</span>; } },
@@ -435,7 +435,7 @@ function SlimmingMarketingContent({
                       <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                       <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
                       <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-                      <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
+                      <Tooltip formatter={(value) => `€${Number(value).toFixed(1)}`} />
                       <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
                         {metaCplChartData.map((entry, i) => (
                           <Cell key={i} fill={entry.fill} />
@@ -502,7 +502,7 @@ function SlimmingMarketingContent({
                       <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                       <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
                       <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-                      <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
+                      <Tooltip formatter={(value) => `€${Number(value).toFixed(1)}`} />
                       <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
                         {googleCplChartData.map((entry, i) => (
                           <Cell key={i} fill={entry.fill} />
@@ -631,7 +631,7 @@ function SlimmingMarketingContent({
               </div>
               <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
                 <p className="text-xs text-gray-500">Blended CPL</p>
-                <p className="text-lg font-bold text-gray-900">€{profitabilityTotals.blendedCpl.toFixed(2)}</p>
+                <p className="text-lg font-bold text-gray-900">€{profitabilityTotals.blendedCpl.toFixed(1)}</p>
               </div>
               <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
                 <p className="text-xs text-gray-500">Blended ROAS</p>
@@ -651,11 +651,11 @@ function SlimmingMarketingContent({
               </div>
               <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
                 <p className="text-xs text-gray-500">Blended CP Show</p>
-                <p className="text-lg font-bold text-gray-900">€{profitabilityTotals.blendedCpShow.toFixed(2)}</p>
+                <p className="text-lg font-bold text-gray-900">€{profitabilityTotals.blendedCpShow.toFixed(1)}</p>
               </div>
               <div className="rounded-lg border p-3 text-center" style={{ borderColor: BRAND_COLOR, backgroundColor: `${BRAND_COLOR}10` }}>
                 <p className="text-xs text-gray-500">Blended CP Result</p>
-                <p className="text-lg font-bold text-gray-900">€{profitabilityTotals.blendedCpResult.toFixed(2)}</p>
+                <p className="text-lg font-bold text-gray-900">€{profitabilityTotals.blendedCpResult.toFixed(1)}</p>
               </div>
             </div>
           </>

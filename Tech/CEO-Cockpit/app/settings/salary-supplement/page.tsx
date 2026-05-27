@@ -58,7 +58,12 @@ function availableMonths(): { value: string; label: string }[] {
 }
 
 function fmtCurrency(n: number) {
-  return `€${Math.round(n).toLocaleString()}`;
+  if (!Number.isFinite(n)) return "€0.0";
+  const abs = Math.abs(n);
+  const sign = n < 0 ? "-" : "";
+  if (abs >= 1_000_000) return `${sign}€${(abs / 1_000_000).toFixed(1)}M`;
+  if (abs >= 1_000)     return `${sign}€${(abs / 1_000).toFixed(1)}K`;
+  return `${sign}€${abs.toFixed(1)}`;
 }
 
 async function apiFetch(url: string, opts?: RequestInit) {

@@ -23,8 +23,8 @@ import { RefreshCw, AlertCircle, TrendingDown, Database, FileSpreadsheet } from 
 
 function fmtShort(v: number): string {
   if (Math.abs(v) >= 1_000_000) return `€${(v / 1_000_000).toFixed(1)}M`;
-  if (Math.abs(v) >= 1_000)     return `€${Math.round(v / 1_000)}K`;
-  return `€${v}`;
+  if (Math.abs(v) >= 1_000)     return `€${(v / 1_000).toFixed(1)}K`;
+  return `€${v.toFixed(1)}`;
 }
 
 function pct(part: number, whole: number): string {

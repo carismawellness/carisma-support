@@ -152,8 +152,8 @@ function MarketingMasterContent({
         spend: formatCurrency(spend),
         roas: spend > 0 ? `${(revenue / spend).toFixed(1)}x` : "—",
         roasNum: spend > 0 ? revenue / spend : 0,
-        cpl: metaLeads > 0 ? `€${(metaSpend / metaLeads).toFixed(2)}` : "—",
-        cpc: googleLeads > 0 ? `€${(googleSpend / googleLeads).toFixed(2)}` : "—",
+        cpl: metaLeads > 0 ? `€${(metaSpend / metaLeads).toFixed(1)}` : "—",
+        cpc: googleLeads > 0 ? `€${(googleSpend / googleLeads).toFixed(1)}` : "—",
       };
     }
 

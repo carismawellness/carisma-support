@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { chartColors } from "@/lib/charts/config";
+import { chartColors, formatCurrency } from "@/lib/charts/config";
 import {
   overallConversionSeverity,
   severityClasses,
@@ -247,13 +247,13 @@ function CampaignTable({ campaigns, brandColor }: { campaigns: CampaignRow[]; br
                   </div>
                 </td>
                 <td className="py-2.5 px-2 text-center text-sm text-foreground tabular-nums">
-                  €{c.cpl.toFixed(2)}
+                  €{c.cpl.toFixed(1)}
                 </td>
                 <td className="py-2.5 px-2 text-center text-sm text-foreground tabular-nums">
-                  €{c.spend.toLocaleString()}
+                  {formatCurrency(c.spend)}
                 </td>
                 <td className="py-2.5 px-2 text-center text-sm text-foreground tabular-nums">
-                  €{c.expectedRevenue.toLocaleString()}
+                  {formatCurrency(c.expectedRevenue)}
                 </td>
                 <td className="py-2 px-2">
                   <div className={`text-center py-1 rounded-lg ${severityClasses[roasSev].bg}`}>
@@ -284,13 +284,13 @@ function CampaignTable({ campaigns, brandColor }: { campaigns: CampaignRow[]; br
               </div>
             </td>
             <td className="py-2.5 px-2 text-center text-sm font-semibold text-foreground tabular-nums">
-              €{avgCpl.toFixed(2)}
+              €{avgCpl.toFixed(1)}
             </td>
             <td className="py-2.5 px-2 text-center text-sm font-semibold text-foreground tabular-nums">
-              €{totalSpend.toLocaleString()}
+              {formatCurrency(totalSpend)}
             </td>
             <td className="py-2.5 px-2 text-center text-sm font-semibold text-foreground tabular-nums">
-              €{totalExpRev.toLocaleString()}
+              {formatCurrency(totalExpRev)}
             </td>
             {(() => {
               const totalRoas = totalSpend > 0 ? totalExpRev / totalSpend : 0;

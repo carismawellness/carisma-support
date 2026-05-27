@@ -13,13 +13,17 @@ import type { ZohoSpaBreakdownResult, AccountRow, TagOption } from "@/lib/etl/zo
 function fmt(v: number): string {
   if (v === 0) return "—";
   if (Math.abs(v) >= 1_000_000) return `€${(v / 1_000_000).toFixed(1)}M`;
-  if (Math.abs(v) >= 1_000)     return `€${Math.round(v / 1_000)}K`;
-  return `€${Math.round(v)}`;
+  if (Math.abs(v) >= 1_000)     return `€${(v / 1_000).toFixed(1)}K`;
+  return `€${v.toFixed(1)}`;
 }
 
 function fmtFull(v: number): string {
-  if (v === 0) return "€0";
-  return new Intl.NumberFormat("en-IE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(v);
+  if (v === 0) return "€0.0";
+  const sign = v < 0 ? "-" : "";
+  const abs = Math.abs(v);
+  if (abs >= 1_000_000) return `${sign}€${(abs / 1_000_000).toFixed(1)}M`;
+  if (abs >= 1_000)     return `${sign}€${(abs / 1_000).toFixed(1)}K`;
+  return `${sign}€${abs.toFixed(1)}`;
 }
 
 function toDateStr(d: Date): string {

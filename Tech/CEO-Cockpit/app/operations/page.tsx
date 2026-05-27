@@ -183,11 +183,11 @@ function OperationsContent({
   const totalReviews = REVIEW_LOCATIONS.reduce((s, l) => s + l.totalReviews, 0);
   const weightedAvg = +(
     REVIEW_LOCATIONS.reduce((s, l) => s + l.avgScore * l.totalReviews, 0) / totalReviews
-  ).toFixed(2);
+  ).toFixed(1);
   const weightedPrevAvg = +(
     REVIEW_LOCATIONS.reduce((s, l) => s + l.prevScore * l.totalReviews, 0) / totalReviews
-  ).toFixed(2);
-  const ratingDelta = +(weightedAvg - weightedPrevAvg).toFixed(2);
+  ).toFixed(1);
+  const ratingDelta = +(weightedAvg - weightedPrevAvg).toFixed(1);
   const reviewVelocity = 25.4;
   const complaints4wk = 3;
   const maintenanceOpen = 8;

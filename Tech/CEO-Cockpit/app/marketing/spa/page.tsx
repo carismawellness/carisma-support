@@ -168,7 +168,7 @@ function SpaMarketingContent({
         </button>
       ),
     },
-    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
     {
       key: "dailyBudget",
       label: "Daily Budget",
@@ -185,7 +185,7 @@ function SpaMarketingContent({
       render: (_v: unknown, row: Record<string, unknown>) => {
         const spend = row.totalSpend as number;
         const leads = row.totalLeads as number;
-        return leads > 0 ? `€${(spend / (leads * 0.65)).toFixed(2)}` : "—";
+        return leads > 0 ? `€${(spend / (leads * 0.65)).toFixed(1)}` : "—";
       },
     },
     {
@@ -196,11 +196,11 @@ function SpaMarketingContent({
       render: (_v: unknown, row: Record<string, unknown>) => {
         const spend = row.totalSpend as number;
         const leads = row.totalLeads as number;
-        return leads > 0 ? `€${(spend / (leads * 0.65 * 0.55)).toFixed(2)}` : "—";
+        return leads > 0 ? `€${(spend / (leads * 0.65 * 0.55)).toFixed(1)}` : "—";
       },
     },
     { key: "ctr", label: "CTR", align: "right" as const, sortable: true, render: (v: unknown) => `${(v as number).toFixed(1)}%` },
-    { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "cpm", label: "CPM", align: "right" as const, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
     { key: "frequency", label: "Freq", align: "right" as const, render: (v: unknown) => (v as number).toFixed(1) },
     {
       key: "attributedRevenue",
@@ -332,9 +332,9 @@ function SpaMarketingContent({
     },
     { key: "totalLeads", label: "Leads", align: "right" as const, sortable: true },
     { key: "totalSpend", label: "Spend", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
-    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
-    { key: "costPerShow", label: "Cost/Show", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
-    { key: "costPerResult", label: "Cost/Booking", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(2)}` },
+    { key: "cpl", label: "CPL", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
+    { key: "costPerShow", label: "Cost/Show", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
+    { key: "costPerResult", label: "Cost/Booking", align: "right" as const, sortable: true, render: (v: unknown) => `€${(v as number).toFixed(1)}` },
     { key: "attributedRevenue", label: "Revenue", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     { key: "netExpectedRevenue", label: "Net Exp. Rev", align: "right" as const, sortable: true, render: (v: unknown) => formatCurrency(v as number) },
     {
@@ -450,8 +450,8 @@ function SpaMarketingContent({
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
             <HeroKPICard label="Revenue" value={formatCurrency(totalRevenue)} lastYear="—" yoyLabel="—" positive />
             <HeroKPICard label="Total Marketing Spend" value={formatCurrency(totalSpend)} lastYear="—" yoyLabel="—" positive={false} />
-            <HeroKPICard label="Meta Blended CPL" value={`€${metaBlendedCpl.toFixed(2)}`} lastYear="—" yoyLabel="—" positive />
-            <HeroKPICard label="Google Blended CPL" value={`€${googleBlendedCpc.toFixed(2)}`} lastYear="—" yoyLabel="—" positive />
+            <HeroKPICard label="Meta Blended CPL" value={`€${metaBlendedCpl.toFixed(1)}`} lastYear="—" yoyLabel="—" positive />
+            <HeroKPICard label="Google Blended CPL" value={`€${googleBlendedCpc.toFixed(1)}`} lastYear="—" yoyLabel="—" positive />
             <HeroKPICard label="Total Leads" value={String(totalLeads)} lastYear="—" yoyLabel="—" positive />
             <HeroKPICard label="Conversion / Leads" value={`${conversionRate.toFixed(1)}%`} lastYear="—" yoyLabel="—" positive />
             <HeroKPICard label="Blended ROAS" value={totalSpend > 0 ? `${(totalRevenue / totalSpend).toFixed(1)}x` : "—"} lastYear="—" yoyLabel="—" positive />
@@ -496,7 +496,7 @@ function SpaMarketingContent({
                       <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                       <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
                       <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-                      <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
+                      <Tooltip formatter={(value) => `€${Number(value).toFixed(1)}`} />
                       <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
                         {metaCplChartData.map((entry, i) => (
                           <Cell key={i} fill={entry.color} />
@@ -504,7 +504,7 @@ function SpaMarketingContent({
                         <LabelList
                           dataKey="cpl"
                           position="right"
-                          formatter={(v) => `€${Number(v).toFixed(2)}`}
+                          formatter={(v) => `€${Number(v).toFixed(1)}`}
                           style={{ fontSize: 11, fill: "#374151" }}
                         />
                       </Bar>
@@ -568,7 +568,7 @@ function SpaMarketingContent({
                       <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                       <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
                       <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-                      <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
+                      <Tooltip formatter={(value) => `€${Number(value).toFixed(1)}`} />
                       <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
                         {googleCplChartData.map((entry, i) => (
                           <Cell key={i} fill={entry.color} />
@@ -576,7 +576,7 @@ function SpaMarketingContent({
                         <LabelList
                           dataKey="cpl"
                           position="right"
-                          formatter={(v) => `€${Number(v).toFixed(2)}`}
+                          formatter={(v) => `€${Number(v).toFixed(1)}`}
                           style={{ fontSize: 11, fill: "#374151" }}
                         />
                       </Bar>

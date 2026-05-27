@@ -13,13 +13,18 @@ import { useReconCheck, ReconStatus } from "@/lib/hooks/useReconCheck";
 
 function fmtEur(v: number): string {
   const abs = Math.abs(v);
-  if (abs >= 1_000_000) return `€${(v / 1_000_000).toFixed(1)}M`;
-  if (abs >= 1_000)     return `€${Math.round(v / 1_000)}K`;
-  return `€${Math.round(v)}`;
+  const sign = v < 0 ? "-" : "";
+  if (abs >= 1_000_000) return `${sign}€${(abs / 1_000_000).toFixed(1)}M`;
+  if (abs >= 1_000)     return `${sign}€${(abs / 1_000).toFixed(1)}K`;
+  return `${sign}€${abs.toFixed(1)}`;
 }
 
 function fmtDiff(v: number): string {
-  return `${v >= 0 ? "+" : ""}€${Math.round(Math.abs(v))}`;
+  const abs = Math.abs(v);
+  const compact = abs >= 1_000_000 ? `${(abs / 1_000_000).toFixed(1)}M`
+                : abs >= 1_000     ? `${(abs / 1_000).toFixed(1)}K`
+                : abs.toFixed(1);
+  return `${v >= 0 ? "+" : "-"}€${compact}`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -231,7 +236,7 @@ export function ReconBadge({ dateFrom, dateTo }: { dateFrom: Date; dateTo: Date 
                   .map(item => (
                     <div key={item.code} className="flex justify-between items-baseline gap-2 text-[10px]">
                       <span className="text-amber-700 truncate">{item.name}</span>
-                      <span className="text-amber-600 shrink-0 tabular-nums">€{Math.round(item.amount)}</span>
+                      <span className="text-amber-600 shrink-0 tabular-nums">{fmtEur(item.amount)}</span>
                     </div>
                   ))}
                 {(recon.spa.gap_analysis.not_linked_expenses.length +

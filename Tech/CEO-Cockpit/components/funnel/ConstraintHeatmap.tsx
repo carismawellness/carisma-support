@@ -196,7 +196,7 @@ export function ConstraintHeatmap() {
                   } else if (row.metric === "Ad Refresh") {
                     formatted = `${cell.value}d`;
                   } else if (row.metric === "Cost per Lead") {
-                    formatted = `\u20AC${cell.value.toFixed(2)}`;
+                    formatted = `\u20AC${cell.value.toFixed(1)}`;
                   } else if (row.metric === "Speed to Lead") {
                     formatted = `${cell.value.toFixed(1)}m`;
                   } else if (row.unit === "%") {

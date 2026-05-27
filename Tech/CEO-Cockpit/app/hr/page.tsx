@@ -558,7 +558,7 @@ function HRContent() {
                         fontWeight={600}
                         fill="currentColor"
                       >
-                        €{Number(value).toFixed(0)}
+                        €{Number(value).toFixed(1)}
                       </text>
                     );
                   }}
@@ -792,7 +792,7 @@ function HRContent() {
             margin={{ top: 5, right: 100, left: 10, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" horizontal={false} />
-            <XAxis type="number" tickFormatter={(v: number) => `€${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
+            <XAxis type="number" tickFormatter={(v: number) => `€${(v / 1000).toFixed(1)}K`} tick={{ fontSize: 11 }} />
             <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} width={120} />
             <Tooltip formatter={(v) => formatCurrency(Number(v))} />
             <Bar dataKey="gross" name="Gross Pay" fill={chartColors.spa} barSize={28} radius={[0, 4, 4, 0]}>

@@ -178,7 +178,7 @@ function AestheticsMarketingContent({
       label: "CPL",
       align: "right" as const,
       sortable: true,
-      render: (v: unknown) => `€${(v as number).toFixed(2)}`,
+      render: (v: unknown) => `€${(v as number).toFixed(1)}`,
     },
     {
       key: "totalSpend",
@@ -196,7 +196,7 @@ function AestheticsMarketingContent({
       render: (_v: unknown, row: Record<string, unknown>) => {
         const leads = row.totalLeads as number;
         const spend = row.totalSpend as number;
-        return leads > 0 ? `€${(spend / (leads * 0.6)).toFixed(2)}` : "—";
+        return leads > 0 ? `€${(spend / (leads * 0.6)).toFixed(1)}` : "—";
       },
     },
     {
@@ -207,7 +207,7 @@ function AestheticsMarketingContent({
       render: (_v: unknown, row: Record<string, unknown>) => {
         const leads = row.totalLeads as number;
         const spend = row.totalSpend as number;
-        return leads > 0 ? `€${(spend / (leads * 0.6 * 0.58)).toFixed(2)}` : "—";
+        return leads > 0 ? `€${(spend / (leads * 0.6 * 0.58)).toFixed(1)}` : "—";
       },
     },
     {
@@ -221,7 +221,7 @@ function AestheticsMarketingContent({
       key: "cpm",
       label: "CPM",
       align: "right" as const,
-      render: (v: unknown) => `€${(v as number).toFixed(2)}`,
+      render: (v: unknown) => `€${(v as number).toFixed(1)}`,
     },
     {
       key: "frequency",
@@ -385,8 +385,8 @@ function AestheticsMarketingContent({
         const heroKpis = [
           { label: "Revenue", value: formatCurrency(totalRevenue) },
           { label: "Total Marketing Spend", value: formatCurrency(totalSpend) },
-          { label: "Meta Blended CPL", value: `€${metaBlendedCpl.toFixed(2)}` },
-          { label: "Google Blended CPL", value: `€${googleBlendedCpl.toFixed(2)}` },
+          { label: "Meta Blended CPL", value: `€${metaBlendedCpl.toFixed(1)}` },
+          { label: "Google Blended CPL", value: `€${googleBlendedCpl.toFixed(1)}` },
           { label: "Total Leads", value: String(totalLeads) },
           { label: "Conversion / Leads", value: `${conversionRate.toFixed(1)}%` },
           { label: "Blended ROAS", value: totalSpend > 0 ? `${(totalRevenue / totalSpend).toFixed(1)}x` : "—" },
@@ -486,7 +486,7 @@ function AestheticsMarketingContent({
                       <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                       <XAxis type="number" tickFormatter={(v: number) => `€${v}`} />
                       <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-                      <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
+                      <Tooltip formatter={(value) => `€${Number(value).toFixed(1)}`} />
                       <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
                         {metaCplChartData.map((entry, i) => (
                           <Cell key={i} fill={entry.barColor} />
@@ -494,7 +494,7 @@ function AestheticsMarketingContent({
                         <LabelList
                           dataKey="cpl"
                           position="right"
-                          formatter={(v) => `€${Number(v).toFixed(2)}`}
+                          formatter={(v) => `€${Number(v).toFixed(1)}`}
                           style={{ fontSize: 11, fill: "#374151" }}
                         />
                       </Bar>
@@ -593,7 +593,7 @@ function AestheticsMarketingContent({
                         tick={{ fontSize: 11 }}
                         width={130}
                       />
-                      <Tooltip formatter={(value) => `€${Number(value).toFixed(2)}`} />
+                      <Tooltip formatter={(value) => `€${Number(value).toFixed(1)}`} />
                       <Bar dataKey="cpl" name="CPL" radius={[0, 4, 4, 0]}>
                         {googleCplChartData.map((entry, i) => (
                           <Cell key={i} fill={entry.barColor} />
@@ -601,7 +601,7 @@ function AestheticsMarketingContent({
                         <LabelList
                           dataKey="cpl"
                           position="right"
-                          formatter={(v) => `€${Number(v).toFixed(2)}`}
+                          formatter={(v) => `€${Number(v).toFixed(1)}`}
                           style={{ fontSize: 11, fill: "#374151" }}
                         />
                       </Bar>
@@ -790,21 +790,21 @@ function AestheticsMarketingContent({
                 label: "CPL",
                 align: "right" as const,
                 sortable: true,
-                render: (v: unknown) => `€${(v as number).toFixed(2)}`,
+                render: (v: unknown) => `€${(v as number).toFixed(1)}`,
               },
               {
                 key: "costPerShow",
                 label: "CP Show",
                 align: "right" as const,
                 sortable: true,
-                render: (v: unknown) => `€${(v as number).toFixed(2)}`,
+                render: (v: unknown) => `€${(v as number).toFixed(1)}`,
               },
               {
                 key: "costPerResult",
                 label: "CP Result",
                 align: "right" as const,
                 sortable: true,
-                render: (v: unknown) => `€${(v as number).toFixed(2)}`,
+                render: (v: unknown) => `€${(v as number).toFixed(1)}`,
               },
               {
                 key: "attributedRevenue",

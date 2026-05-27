@@ -52,10 +52,8 @@ function pctOf(part: number, whole: number) {
 function fmtPct(v: number) { return `${Math.round(v)}%`; }
 function fmtCurrencyShort(v: number) {
   if (Math.abs(v) >= 1_000_000) return `€${(v / 1_000_000).toFixed(1)}M`;
-  if (Math.abs(v) >= 1_000)     return `€${Math.round(v / 1_000)}K`;
-  // Sub-€1K: round to whole euros so floating-point noise (e.g. 990.6666...)
-  // doesn't leak through to the UI.
-  return `€${Math.round(v)}`;
+  if (Math.abs(v) >= 1_000)     return `€${(v / 1_000).toFixed(1)}K`;
+  return `€${v.toFixed(1)}`;
 }
 
 function statusColor(s: Status) {
@@ -873,7 +871,7 @@ function EBITDAOverviewContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: D
             <BarChart data={waterfallData} margin={{ top: 20, right: 10, left: 10, bottom: 70 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" angle={-40} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
-              <YAxis tickFormatter={(v: number) => `€${Math.round(v / 1000)}k`} />
+              <YAxis tickFormatter={(v: number) => `€${(v / 1000).toFixed(1)}K`} />
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (!active || !payload?.length) return null;

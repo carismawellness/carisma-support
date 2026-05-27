@@ -136,9 +136,9 @@ interface CheckResult {
 
 function fmt(v: number): string {
   const abs = Math.abs(v);
-  const s = abs >= 1_000_000 ? `€${(abs / 1_000_000).toFixed(2)}M`
+  const s = abs >= 1_000_000 ? `€${(abs / 1_000_000).toFixed(1)}M`
           : abs >= 1_000     ? `€${(abs / 1_000).toFixed(1)}K`
-          : `€${abs.toFixed(0)}`;
+          : `€${abs.toFixed(1)}`;
   return v < 0 ? `(${s})` : s;
 }
 

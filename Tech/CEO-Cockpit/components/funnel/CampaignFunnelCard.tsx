@@ -1,6 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/charts/config";
 import {
   overallConversionSeverity,
   severityClasses,
@@ -56,7 +57,7 @@ export function CampaignFunnelCard({ campaign, brandColor }: CampaignFunnelCardP
             {campaign.campaignName}
           </h4>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Spend: &euro;{campaign.spend.toLocaleString()} &middot; CPL: &euro;{campaign.cpl.toFixed(2)}
+            Spend: {formatCurrency(campaign.spend)} &middot; CPL: &euro;{campaign.cpl.toFixed(1)}
           </p>
         </div>
         <div className="flex gap-2 ml-3 shrink-0">

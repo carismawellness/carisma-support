@@ -14,12 +14,28 @@ export const chartDefaults = {
 } as const;
 
 export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat("en-MT", {
-    style: "currency",
-    currency: "EUR",
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }).format(value);
+  if (!Number.isFinite(value)) return "€0.0";
+  const abs = Math.abs(value);
+  const sign = value < 0 ? "-" : "";
+  if (abs >= 1_000_000_000) return `${sign}€${(abs / 1_000_000_000).toFixed(1)}B`;
+  if (abs >= 1_000_000) return `${sign}€${(abs / 1_000_000).toFixed(1)}M`;
+  if (abs >= 1_000) return `${sign}€${(abs / 1_000).toFixed(1)}K`;
+  return `${sign}€${abs.toFixed(1)}`;
+}
+
+export function formatNumberCompact(value: number): string {
+  if (!Number.isFinite(value)) return "0.0";
+  const abs = Math.abs(value);
+  const sign = value < 0 ? "-" : "";
+  if (abs >= 1_000_000_000) return `${sign}${(abs / 1_000_000_000).toFixed(1)}B`;
+  if (abs >= 1_000_000) return `${sign}${(abs / 1_000_000).toFixed(1)}M`;
+  if (abs >= 1_000) return `${sign}${(abs / 1_000).toFixed(1)}K`;
+  return `${sign}${abs.toFixed(1)}`;
+}
+
+export function formatMultiplier(value: number): string {
+  if (!Number.isFinite(value)) return "0.0x";
+  return `${value.toFixed(1)}x`;
 }
 
 export function formatPercent(value: number): string {
