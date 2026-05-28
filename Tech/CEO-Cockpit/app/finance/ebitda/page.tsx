@@ -14,6 +14,7 @@ import { useSpaEbitda, SPA_LOCATION_META } from "@/lib/hooks/useSpaEbitda";
 import { useAestheticsEbitda } from "@/lib/hooks/useAestheticsEbitda";
 import { useHqEbitda } from "@/lib/hooks/useHqEbitda";
 import { useEbitdaAggregated } from "@/lib/hooks/useEbitdaAggregated";
+import { useSlimmingSales } from "@/lib/hooks/useSlimmingSales";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, ReferenceLine, Cell,
@@ -146,6 +147,13 @@ function EBITDAOverviewContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: D
   // which applies TTM / manual / previous-month / quarterly-average
   // fallback rules and reads from the live Zoho-backed Aggregated Data tab.
   const agg = useEbitdaAggregated(dateFrom, dateTo);
+  // Slimming revenue is sourced from slimming_sales_daily (same path as
+  // /sales/slimming-deepa) instead of the Zoho Aggregated Data total. The
+  // Zoho total combines sales+treatments under one bucket; the dashboard
+  // matches the Sales page semantics ("Revenue = services delivered, Full
+  // Price ex-VAT"). Costs and SG&A still come from agg.slim — only revenue
+  // and the derived EBITDA / margin are overridden.
+  const slimSales = useSlimmingSales(dateFrom, dateTo);
 
   /* ── EBITDA Export ───────────────────────────────────────────────── */
   // Calls /api/finance/ebitda-export which talks to Apps Script and writes
@@ -187,10 +195,10 @@ function EBITDAOverviewContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: D
     }
   }
 
-  const isFetching    = spa.isFetching || aes.isFetching || hq.isFetching || agg.isFetching;
-  const isSyncing     = spa.isSyncing  || aes.isSyncing  || hq.isSyncing;
-  const syncError     = spa.syncError  || aes.syncError  || hq.syncError || (agg.error ? agg.error.message : null);
-  const missingMonths = [...spa.missingMonths, ...aes.missingMonths, ...hq.missingMonths];
+  const isFetching    = spa.isFetching || aes.isFetching || hq.isFetching || agg.isFetching || slimSales.isFetching;
+  const isSyncing     = spa.isSyncing  || aes.isSyncing  || hq.isSyncing  || slimSales.isSyncing;
+  const syncError     = spa.syncError  || aes.syncError  || hq.syncError  || slimSales.syncError || (agg.error ? agg.error.message : null);
+  const missingMonths = [...spa.missingMonths, ...aes.missingMonths, ...hq.missingMonths, ...slimSales.missingMonths];
   // CORPORATE (= HQ) used to come from the old useHqEbitda hook. It now
   // comes from the aggregated API so partial periods get fallback
   // smoothing too. Field shape is identical (revenue/wages/.../ebitda).
@@ -198,7 +206,21 @@ function EBITDAOverviewContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: D
 
   /* ── Dept splits (now from aggregated API) ─────────────────────── */
   const aesData  = agg.aesRow;
-  const slimData = agg.slimRow;
+  // Slimming venue row: replace Zoho revenue with sales-daily revenue, then
+  // recompute EBITDA as (sales revenue − same cost columns) so the P&L row
+  // and margin stay internally consistent with the new revenue figure.
+  const slimData = useMemo(() => {
+    const slimSalesRevenue = slimSales.totals.revenue_ex;
+    const costs = agg.slimRow.cogs + agg.slimRow.wages + agg.slimRow.advertising
+                + agg.slimRow.rent + agg.slimRow.utilities + agg.slimRow.sga;
+    const ebitda = slimSalesRevenue - costs;
+    return {
+      ...agg.slimRow,
+      revenue:   slimSalesRevenue,
+      ebitda,
+      ebitdaPct: slimSalesRevenue > 0 ? Math.round((ebitda / slimSalesRevenue) * 100) : 0,
+    };
+  }, [agg.slimRow, slimSales.totals.revenue_ex]);
 
   /* ── Brand aggregates (sourced from aggregated API) ─────────────── */
   // These now reflect TTM-spread / manual-annual / previous-month /
@@ -216,10 +238,10 @@ function EBITDAOverviewContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: D
   }), [agg.aes.revenue, agg.aes.ebitda, agg.aes.ebitdaPct]);
 
   const slimSummary = useMemo(() => ({
-    revenue:   agg.slim.revenue,
-    ebitda:    agg.slim.ebitda,
-    ebitdaPct: agg.slim.ebitdaPct,
-  }), [agg.slim.revenue, agg.slim.ebitda, agg.slim.ebitdaPct]);
+    revenue:   slimData.revenue,
+    ebitda:    slimData.ebitda,
+    ebitdaPct: slimData.ebitdaPct,
+  }), [slimData.revenue, slimData.ebitda, slimData.ebitdaPct]);
 
   const groupRevenue = spaTotals.revenue + aesSummary.revenue + slimSummary.revenue + agg.hq.revenue;
   const groupEbitda  = spaTotals.ebitda  + aesSummary.ebitda  + slimSummary.ebitda  + agg.hq.ebitda;
@@ -493,7 +515,7 @@ function EBITDAOverviewContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: D
           )}
           <button
             type="button"
-            onClick={() => { spa.triggerSync(true); aes.triggerSync(true); hq.triggerSync(true); }}
+            onClick={() => { spa.triggerSync(true); aes.triggerSync(true); hq.triggerSync(true); slimSales.triggerSync(); }}
             disabled={isSyncing || isFetching}
             className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground shadow-sm hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
