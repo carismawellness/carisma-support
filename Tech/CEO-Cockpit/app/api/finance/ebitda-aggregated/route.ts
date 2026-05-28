@@ -736,6 +736,37 @@ export async function GET(req: NextRequest) {
     void orgParam;
   }
 
+  // Post-pass: roll every granular sga_* category into the brand-level
+  // "sga" parent, so existing consumers (the BrandAggregatedSummary hook,
+  // the EBITDA arithmetic, the parent SG&A row on /finance/ebitda) keep
+  // working when the upstream ETL emits granular sga_* sub-categories
+  // alongside (or instead of) the legacy collapsed "sga". Sub-category
+  // cells themselves are LEFT IN PLACE so the dashboard can render the
+  // 11 real per-bucket numbers — they're additive, not replacing "sga".
+  function addCell(into: Record<string, CellTotal>, key: string, from: CellTotal) {
+    const dest = into[key] ?? { value: 0, has_fallback: false, fallback_account_count: 0 };
+    dest.value += from.value;
+    if (from.has_fallback) {
+      dest.has_fallback = true;
+      dest.fallback_account_count += from.fallback_account_count;
+    }
+    into[key] = dest;
+  }
+  for (const brand of ALL_BRANDS) {
+    const cats = totals[brand];
+    for (const cat of Object.keys(cats)) {
+      if (cat.startsWith("sga_")) addCell(cats, "sga", cats[cat]);
+    }
+    seenCategories.add("sga");
+    const venueBuckets = venueTotals[brand];
+    for (const venueKey in venueBuckets) {
+      const vCats = venueBuckets[venueKey];
+      for (const cat of Object.keys(vCats)) {
+        if (cat.startsWith("sga_")) addCell(vCats, "sga", vCats[cat]);
+      }
+    }
+  }
+
   // Sort brands and categories for stable response shape.
   const responseBrands = ALL_BRANDS.filter(b => seenBrands.has(b));
   const responseCategories = Array.from(seenCategories).sort();

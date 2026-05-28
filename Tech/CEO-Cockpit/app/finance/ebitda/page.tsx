@@ -394,6 +394,66 @@ function EBITDAOverviewContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: D
     return sum;
   }
 
+  /* ── SG&A sub-bucket breakdown (real per-account data when available) ─ */
+  // Aggregates lineItems where ebitda_category starts with "sga_" into the
+  // 11 fixed sub-buckets configured in COA Settings (migration 036). When
+  // a period has NO granular sga_* rows (e.g. older months pulled before
+  // the ETL uncollapse shipped), `hasReal` is false and the parent SG&A
+  // total stays under the legacy "sga" key — the render falls back to the
+  // SGA_CATEGORIES weighted-share allocation in that case.
+  const SGA_SUBCATS = useMemo(() => SGA_CATEGORIES.map((s, i) => ({
+    key: ["sga_prof_services", "sga_fuel",   "sga_laundry", "sga_software",
+          "sga_cleaning",      "sga_travel", "sga_misc",    "sga_insurance",
+          "sga_events",        "sga_maintenance", "sga_telecom"][i],
+    label: s.label,
+    weight: s.weight,
+  })), []);
+
+  type SgaSubcatRow = {
+    key:      string;
+    label:    string;
+    perVenue: Record<string, number>;
+    hq:       number;
+    total:    number;
+  };
+  const sgaSubcatData = useMemo(() => {
+    const rows: SgaSubcatRow[] = SGA_SUBCATS.map(s => ({
+      key: s.key, label: s.label, perVenue: {}, hq: 0, total: 0,
+    }));
+    const byKey: Record<string, SgaSubcatRow> = Object.fromEntries(rows.map(r => [r.key, r]));
+    let hasReal = false;
+    for (const li of agg.lineItems) {
+      if (!li.ebitda_category.startsWith("sga_")) continue;
+      const row = byKey[li.ebitda_category];
+      if (!row) continue;
+      const v = li.period_value;
+      if (v === 0) continue;
+      hasReal = true;
+      if (li.brand === "HQ") {
+        row.hq += v;
+      } else if (li.brand === "SPA") {
+        const slug = spaVenueDisplayMeta[li.venue.toLowerCase()]?.slug
+                  ?? (li.venue || "spa-other");
+        row.perVenue[slug] = (row.perVenue[slug] ?? 0) + v;
+      } else if (li.brand === "AES") {
+        row.perVenue["aesthetics"] = (row.perVenue["aesthetics"] ?? 0) + v;
+      } else if (li.brand === "SLIM") {
+        row.perVenue["slimming"] = (row.perVenue["slimming"] ?? 0) + v;
+      }
+      row.total += v;
+    }
+    return { rows, hasReal };
+  }, [agg.lineItems, spaVenueDisplayMeta, SGA_SUBCATS]);
+
+  function sgaSubcatValueForVenue(row: SgaSubcatRow, venueId: string): number {
+    if (venueId !== "spa-aggregate") return row.perVenue[venueId] ?? 0;
+    let sum = 0;
+    for (const k in row.perVenue) {
+      if (spaSlugs.has(k) || k === "spa-other") sum += row.perVenue[k];
+    }
+    return sum;
+  }
+
   /* ── Waterfall & brand cards ─────────────────────────────────────── */
   const waterfallData = useMemo(() => buildWaterfall(venueRows, CORPORATE.ebitda), [venueRows, CORPORATE.ebitda]);
 
@@ -737,7 +797,36 @@ function EBITDAOverviewContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: D
                   <span className="text-muted-foreground/80 font-normal">· {fmtPct(pctOf(venueTotals.sga + CORPORATE.sga, venueTotals.revenue))}</span>
                 </td>
               </tr>
-              {sgaExpanded && SGA_CATEGORIES.map(({ label, weight }) => {
+              {sgaExpanded && sgaSubcatData.hasReal && sgaSubcatData.rows.map(row => (
+                <tr key={row.key} className="group hover:bg-muted/30 transition-colors">
+                  <td className="py-1 px-2 text-muted-foreground sticky left-0 bg-background group-hover:bg-muted/30 z-10 border-b border-border/40 transition-colors">
+                    <span className="inline-flex items-center pl-5 border-l border-border/60 ml-1">
+                      <span>{row.label}</span>
+                    </span>
+                  </td>
+                  {displayedVenues.map(v => {
+                    const part = sgaSubcatValueForVenue(row, v.id);
+                    return (
+                      <td key={v.id} className="py-1 px-2 text-right text-muted-foreground tabular-nums border-b border-border/40">
+                        {part === 0
+                          ? <span className="text-muted-foreground/40">&mdash;</span>
+                          : <>{fmtCurrencyShort(part)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(part, v.revenue))}</span></>}
+                      </td>
+                    );
+                  })}
+                  <td className="py-1 px-2 text-right text-muted-foreground tabular-nums bg-slate-50/60 border-l-2 border-border/80 border-b border-border/40">
+                    {row.hq === 0
+                      ? <span className="text-muted-foreground/40">&mdash;</span>
+                      : fmtCurrencyShort(row.hq)}
+                  </td>
+                  <td className="py-1 px-2 text-right text-muted-foreground tabular-nums bg-slate-100/70 border-l-2 border-border border-b border-border/40">
+                    {row.total === 0
+                      ? <span className="text-muted-foreground/40">&mdash;</span>
+                      : <>{fmtCurrencyShort(row.total)} <span className="text-muted-foreground/60">· {fmtPct(pctOf(row.total, venueTotals.revenue))}</span></>}
+                  </td>
+                </tr>
+              ))}
+              {sgaExpanded && !sgaSubcatData.hasReal && SGA_CATEGORIES.map(({ label, weight }) => {
                 const hqPart    = sgaShare(CORPORATE.sga, weight);
                 const groupPart = sgaShare(venueTotals.sga + CORPORATE.sga, weight);
                 return (

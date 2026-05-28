@@ -54,7 +54,20 @@ export type DailyResult = {
   reconciliation?: PlReconcileResult;
 };
 
-const VALID_LINES = new Set(["revenue", "cogs", "wages", "advertising", "rent", "utilities", "sga"]);
+// EBITDA category strings allowed through the pipeline. Sub-bucket sga_*
+// values are produced when the CoA mapping (in zoho_coa_mapping.ebitda_line,
+// per migration 036) classifies an account into one of the 11 granular SG&A
+// sub-categories. The parent "sga" stays in the set as a fallback for
+// accounts whose CoA mapping is still on the legacy collapsed line. The
+// aggregator at /api/finance/ebitda-aggregated post-sums every sga_* into
+// the brand-level parent "sga" so existing consumers keep working.
+const VALID_LINES = new Set([
+  "revenue", "cogs", "wages", "advertising", "rent", "utilities",
+  "sga",
+  "sga_prof_services", "sga_fuel",        "sga_laundry", "sga_software",
+  "sga_cleaning",      "sga_travel",      "sga_misc",    "sga_insurance",
+  "sga_events",        "sga_maintenance", "sga_telecom",
+]);
 
 const SPA_VENUE_SLUGS = [
   "intercontinental", "hugos", "hyatt", "ramla",
@@ -465,7 +478,11 @@ async function buildSpaRows(
     if (!mapped) { droppedUnmapped++; continue; }
     const [rule, rawLine] = mapped;
     if (rawLine === "excluded") { droppedExcluded++; continue; }
-    const ebitda = rawLine.startsWith("sga_") ? "sga" : rawLine;
+    // Granular sga_* sub-categories now flow through untouched. The
+    // aggregator at /api/finance/ebitda-aggregated will post-sum every
+    // sga_* row into the brand-level "sga" total so the parent SG&A row
+    // on /finance/ebitda keeps showing the correct combined number.
+    const ebitda = rawLine;
     if (!VALID_LINES.has(ebitda)) { droppedExcluded++; continue; }
     classified.push({ line: ln, ebitda, rule, tagSlug: spaTagToSlug(ln.tags) });
   }
