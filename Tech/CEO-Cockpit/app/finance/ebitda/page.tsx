@@ -443,14 +443,26 @@ function EBITDAOverviewContent({ dateFrom, dateTo }: { dateFrom: Date; dateTo: D
       key: s.key, label: s.label, perVenue: {}, hq: 0, total: 0,
     }));
     const byKey: Record<string, SgaSubcatRow> = Object.fromEntries(rows.map(r => [r.key, r]));
+    const miscRow = byKey["sga_misc"];   // fallback bucket for unmapped sga
     let hasReal = false;
     for (const li of agg.lineItems) {
-      if (!li.ebitda_category.startsWith("sga_")) continue;
-      const row = byKey[li.ebitda_category];
+      const cat = li.ebitda_category;
+      // Granular sga_* rows go to their named sub-bucket. Plain "sga"
+      // (no underscore) rows belong to accounts whose CoA mapping is
+      // still on the collapsed parent — bucket them into Misc so the
+      // sub-bucket totals reconcile with the parent SG&A row instead of
+      // silently dropping them. Common case today: AES org accounts not
+      // yet mapped to sga_* sub-categories in /settings/coa-mapping.
+      let row: SgaSubcatRow | undefined;
+      if (cat.startsWith("sga_")) {
+        row = byKey[cat];
+        if (row) hasReal = true;          // a granular bucket exists somewhere
+      } else if (cat === "sga") {
+        row = miscRow;
+      }
       if (!row) continue;
       const v = li.period_value;
       if (v === 0) continue;
-      hasReal = true;
       if (li.brand === "HQ") {
         row.hq += v;
       } else if (li.brand === "SPA") {
