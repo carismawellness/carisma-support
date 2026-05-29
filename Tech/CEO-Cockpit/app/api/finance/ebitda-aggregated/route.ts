@@ -22,7 +22,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminClient } from "@/lib/supabase/admin";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 // Force dynamic — query params + external fetch make caching unsafe.
 export const dynamic = "force-dynamic";
 
