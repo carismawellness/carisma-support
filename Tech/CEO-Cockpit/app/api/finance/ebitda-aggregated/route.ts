@@ -22,7 +22,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminClient } from "@/lib/supabase/admin";
 
-export const maxDuration = 300;
+export const maxDuration = 60;
 // Force dynamic — query params + external fetch make caching unsafe.
 export const dynamic = "force-dynamic";
 
@@ -162,10 +162,13 @@ const ALL_BRANDS: readonly Brand[] = ["SPA", "AES", "SLIM", "HQ"] as const;
 // as ebitda_fallback_rules. Applied as a read-side adjustment AFTER aggregation,
 // on both full and partial periods (unlike fallback rules). Keyed by lowercased
 // venue display name (column E).
-//   • Novotel  — fixed €2,750/month lease. Overrides any Zoho rent, pro-rated
-//                per calendar month for partial periods.
+//   • Novotel  — fixed €2,750/month lease, effective Nov 2025 onward (zero rent
+//                before that). Overrides any Zoho rent, pro-rated per calendar
+//                month for partial periods.
 //   • Excelsior — turnover rent: base rent + 5% of the period's net revenue.
-const SPA_FIXED_RENT_MONTHLY: Record<string, number> = { novotel: 2750 };
+const SPA_FIXED_RENT_MONTHLY: Record<string, { monthly: number; effectiveFrom: string }> = {
+  novotel: { monthly: 2750, effectiveFrom: "2025-11-01" },
+};
 const SPA_REVENUE_RENT_SURCHARGE: Record<string, number> = { excelsior: 0.05 };
 
 // ── Utility helpers ──────────────────────────────────────────────────────────
@@ -843,9 +846,14 @@ async function handleGet(req: NextRequest): Promise<NextResponse> {
       spaTotals.rent = cell;
     };
 
-    // Novotel — fixed monthly rent; overrides whatever (if anything) Zoho posted.
+    // Novotel — fixed monthly rent from effectiveFrom onward; overrides whatever
+    // (if anything) Zoho posted. Pre-effective periods get €0 (no rent).
     for (const wantLower in SPA_FIXED_RENT_MONTHLY) {
-      const fixed = proratedMonthlyAmount(SPA_FIXED_RENT_MONTHLY[wantLower], dateFrom, dateTo);
+      const { monthly, effectiveFrom } = SPA_FIXED_RENT_MONTHLY[wantLower];
+      // Clamp the proration window to the effective-from date; if the whole
+      // period predates it, the fixed rent is €0.
+      const effFrom = dateFrom > effectiveFrom ? dateFrom : effectiveFrom;
+      const fixed   = effFrom > dateTo ? 0 : proratedMonthlyAmount(monthly, effFrom, dateTo);
       const key   = findVenueKey(wantLower)
         ?? (wantLower.charAt(0).toUpperCase() + wantLower.slice(1));
       const cell  = ensureVenueRentCell(key);
