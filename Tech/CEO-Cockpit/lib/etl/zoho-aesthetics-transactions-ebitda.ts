@@ -52,6 +52,33 @@ function detectLine(name: string, section: string): string {
   return "sga";
 }
 
+// ── Wages reclassification contacts ──────────────────────────────────────────
+// Specific Aesthetics-org practitioners/contacts whose payments must roll up to
+// Wages & Salaries regardless of which Chart-of-Account they were booked to in
+// Zoho. Department still follows the line tag (Aesthetics / Slimming) and
+// defaults to Aesthetics when untagged. Only non-excluded P&L lines are
+// reclassified (excluded accounts are dropped before this runs). Exact
+// full-name match, case / punctuation / whitespace-insensitive. Mirror of the
+// same list in zoho-transactions-daily.ts — keep both in sync.
+function normalizeContactKey(name: string): string {
+  return name.toLowerCase().replace(/\./g, "").replace(/\s+/g, " ").trim();
+}
+
+const WAGES_RECLASS_CONTACT_KEYS: Set<string> = new Set(
+  [
+    "Dr. Walter",
+    "FRANCESCA CHIRCOP",
+    "Giovanni Scornavacca",
+    "Dr Zaid Teebi",
+    "Ivana Boskovic Stamenkovic",
+  ].map(normalizeContactKey),
+);
+
+function isWagesReclassContact(contactName: string): boolean {
+  if (!contactName) return false;
+  return WAGES_RECLASS_CONTACT_KEYS.has(normalizeContactKey(contactName));
+}
+
 // ── Marketing spend ratio (Growth Sheet) ─────────────────────────────────────
 
 const GROWTH_SHEET_ID  = "1JGlBdii7Zu25yha0zrmi72PPH1BFZRdVeGvcig3r6GE";
@@ -239,6 +266,7 @@ export async function runAestheticsEbitdaMonthFromTransactions(
     code:    string;
     amount:  number;
     isHq:    boolean;
+    reclass: boolean;   // forced Wages & Salaries via WAGES_RECLASS_CONTACT_KEYS
     section: TxnLine["section"];
   };
 
@@ -260,6 +288,11 @@ export async function runAestheticsEbitdaMonthFromTransactions(
     if (line.startsWith("sga_")) line = "sga";
     if (!VALID_LINES.has(line)) { droppedExcluded++; continue; }
 
+    // Wages reclassification: named contacts roll up to Wages & Salaries
+    // regardless of CoA. Never reclassify revenue (these are vendor expenses).
+    const reclass = line !== "revenue" && isWagesReclassContact(ln.contact_name);
+    if (reclass) line = "wages";
+
     classified.push({
       date:    ln.date,
       line,
@@ -269,6 +302,7 @@ export async function runAestheticsEbitdaMonthFromTransactions(
       code:    ln.account_code,
       amount:  ln.amount,
       isHq:    isHqOnlyRule(rule),
+      reclass,
       section: ln.section,
     });
   }
@@ -285,6 +319,7 @@ export async function runAestheticsEbitdaMonthFromTransactions(
     if (c.line !== "wages") continue;
     let dept: Dept | null = null;
     if (c.tagDept) dept = c.tagDept;
+    else if (c.reclass) dept = "aesthetics";   // reclassed contacts default to Aesthetics
     else if (c.nameDept) dept = c.nameDept;
     else if (c.rule === "aesthetics" || c.rule === "slimming") dept = c.rule;
     if (dept) deptSalary[dept] += c.amount;
@@ -315,6 +350,14 @@ export async function runAestheticsEbitdaMonthFromTransactions(
 
   for (const c of classified) {
     const b = dayBuckets(c.date);
+    // Reclassed contacts → Wages & Salaries under their tagged dept, defaulting
+    // to Aesthetics. Routed before the HQ/name/split paths so a doctor's pay
+    // never lands in HQ or gets revenue-split across depts.
+    if (c.reclass) {
+      const dept: Dept = c.tagDept ?? "aesthetics";
+      b.dept[dept][c.line] += c.amount;
+      continue;
+    }
     if (c.isHq) {
       b.hq[c.line] += c.amount;
       continue;

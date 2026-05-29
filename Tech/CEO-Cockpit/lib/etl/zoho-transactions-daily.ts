@@ -144,6 +144,35 @@ function resolveAdvertisingContact(
   return "Misc";
 }
 
+// ── Wages reclassification contacts (Aesthetics org) ─────────────────────────
+// Specific Aesthetics-org practitioners/contacts whose payments must roll up to
+// Wages & Salaries regardless of which Chart-of-Account they were booked to in
+// Zoho. Department still follows the line tag (Aesthetics / Slimming) and
+// defaults to Aesthetics when untagged. Only non-excluded P&L lines are
+// reclassified (excluded accounts are dropped before this runs). The matched
+// contact name is surfaced on the raw row so it is visible in the EBIDA Layer
+// sheet and the aggregated-route line_items. Exact full-name match, case /
+// punctuation / whitespace-insensitive. Mirror of the same list in
+// zoho-aesthetics-transactions-ebitda.ts — keep both in sync.
+function normalizeContactKey(name: string): string {
+  return name.toLowerCase().replace(/\./g, "").replace(/\s+/g, " ").trim();
+}
+
+const WAGES_RECLASS_CONTACT_KEYS: Set<string> = new Set(
+  [
+    "Dr. Walter",
+    "FRANCESCA CHIRCOP",
+    "Giovanni Scornavacca",
+    "Dr Zaid Teebi",
+    "Ivana Boskovic Stamenkovic",
+  ].map(normalizeContactKey),
+);
+
+function isWagesReclassContact(contactName: string): boolean {
+  if (!contactName) return false;
+  return WAGES_RECLASS_CONTACT_KEYS.has(normalizeContactKey(contactName));
+}
+
 // ── Tag resolution ──────────────────────────────────────────────────────────
 
 function spaTagToSlug(tags: TxnLine["tags"]): string | null {
@@ -798,6 +827,10 @@ async function buildAesthRows(
     ebitda:  string;
     rule:    string;
     tagDept: "aesthetics" | "slimming" | null;
+    // Canonical contact name when this line was force-reclassified to Wages &
+    // Salaries via WAGES_RECLASS_CONTACTS; null otherwise. Surfaced on the row
+    // so the contact shows in raw + aggregated views.
+    reclassContact: string | null;
   };
   const classified: Classified[] = [];
   let droppedUnmappedIncome = 0, droppedExcluded = 0, droppedUnmappedExpense = 0;
@@ -822,7 +855,16 @@ async function buildAesthRows(
     }
     if (ebitda.startsWith("sga_")) ebitda = "sga";
     if (!VALID_LINES.has(ebitda)) { droppedExcluded++; continue; }
-    classified.push({ line: ln, ebitda, rule, tagDept: aesthTagToDept(ln.tags) });
+    // Wages reclassification: named contacts roll up to Wages & Salaries
+    // regardless of CoA. Never reclassify revenue (these are vendor expenses).
+    // Surface the exact Zoho contact name (unchanged) so it shows verbatim in
+    // the raw + aggregated views.
+    let reclassContact: string | null = null;
+    if (ebitda !== "revenue" && isWagesReclassContact(ln.contact_name)) {
+      ebitda = "wages";
+      reclassContact = ln.contact_name;
+    }
+    classified.push({ line: ln, ebitda, rule, tagDept: aesthTagToDept(ln.tags), reclassContact });
   }
   log.push(`AES/SLIM classified: ${classified.length} kept; dropped ${droppedUnmappedIncome} unmapped-income, ${droppedUnmappedExpense} unmapped-expense kept as SGA-equal, ${droppedExcluded} excluded`);
 
@@ -886,7 +928,7 @@ async function buildAesthRows(
     if (amount === 0) return;
     const contact = c.ebitda === "advertising"
       ? resolveAdvertisingContact(c.line.contact_name, adContactMap)
-      : "";
+      : (c.reclassContact ?? "");
     const meta = AESTH_BRAND_DISPLAY[dept];
     const accountKey = c.line.account_code || c.line.account_name;
     const key = `${accountKey}::${dept}::${tagSource}::${contact}`;
@@ -913,6 +955,13 @@ async function buildAesthRows(
     if (c.tagDept) {
       addToBucket(c, c.tagDept, c.line.amount, "tagged");
       tagCount.tagged++;
+      continue;
+    }
+    // Reclassed contacts default to Aesthetics when untagged, bypassing
+    // name-detection / revenue split (a doctor's pay must not be split 50/50).
+    if (c.reclassContact) {
+      addToBucket(c, "aesthetics", c.line.amount, "split");
+      tagCount.split++;
       continue;
     }
     const nameDept = detectAesthDept(c.line.account_name);
